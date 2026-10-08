@@ -1,0 +1,378 @@
+{
+  "status": "AUDITED_REQUIREMENTS_NOT_IMPLEMENTATION_ACCEPTANCE",
+  "audit_date": "2026-10-08",
+  "scope": "Six original upstream frontend packages. Singlevendor admin is an additional original web package, not a claim that its product role equals Fair merchant-web. Customer candidate copied previously; its runtime is unverified.",
+  "ui_rule": "Preserve complete original Enatega UI and navigation. Only transport/session/configuration integration changes; missing backend is not permission to redesign or stub success.",
+  "sources": {
+    "customer_web": {
+      "path": "upstream/enatega-multivendor-web",
+      "endpoint_source": "lib/mode/environment.ts:11",
+      "http_env": [
+        "NEXT_PUBLIC_SERVER_URL",
+        "NEXT_PUBLIC_SINGLE_VENDOR_SERVER_URL"
+      ],
+      "ws_env": [
+        "NEXT_PUBLIC_WS_SERVER_URL",
+        "NEXT_PUBLIC_SINGLE_VENDOR_WS_SERVER_URL"
+      ],
+      "rest_env": ["NEXT_PUBLIC_SINGLE_VENDOR_REST_URL"],
+      "url_rule": "HTTP/WS base normalized to /graphql; REST base normalized to trailing slash; missing HTTP base currently becomes relative /graphql and must instead fail configuration validation.",
+      "transport_source": "lib/hooks/useSetApollo.tsx:131"
+    },
+    "admin_web": {
+      "path": "upstream/enatega-multivendor-admin",
+      "endpoint_source": "lib/hooks/useSetApollo.tsx:300",
+      "http_env": ["NEXT_PUBLIC_SERVER_URL"],
+      "ws_env": ["NEXT_PUBLIC_WS_SERVER_URL"],
+      "url_rule": "Literal BASE + graphql; configure a base ending in /, without graphql suffix.",
+      "transport_source": "lib/hooks/useSetApollo.tsx:307"
+    },
+    "singlevendor_admin_web": {
+      "path": "upstream/enatega-singlevendor-admin",
+      "endpoint_source": "lib/hooks/useSetApollo.tsx:292",
+      "http_env": ["NEXT_PUBLIC_SERVER_URL"],
+      "ws_env": ["NEXT_PUBLIC_WS_SERVER_URL"],
+      "url_rule": "requireBaseUrl plus literal BASE + graphql.",
+      "transport_source": "lib/hooks/useSetApollo.tsx:321"
+    },
+    "customer_mobile": {
+      "path": "upstream/enatega-multivendor-app",
+      "endpoint_source": "environment.config.js:6",
+      "http_env": ["EXPO_PUBLIC_SINGLE_VENDOR_GRAPHQL_URL"],
+      "ws_env": ["EXPO_PUBLIC_SINGLE_VENDOR_WS_GRAPHQL_URL"],
+      "rest_env": ["EXPO_PUBLIC_SINGLE_VENDOR_REST_URL"],
+      "url_rule": "Full GraphQL URLs; REST base requires trailing slash. MULTI mode is hardcoded upstream in all environments and needs integration-layer configuration.",
+      "transport_source": "src/apollo/index.js:165"
+    },
+    "merchant_mobile": {
+      "path": "upstream/enatega-multivendor-store",
+      "endpoint_source": "environment.ts:9",
+      "http_env": ["EXPO_PUBLIC_SINGLE_VENDOR_GRAPHQL_URL"],
+      "ws_env": ["EXPO_PUBLIC_SINGLE_VENDOR_WS_GRAPHQL_URL"],
+      "url_rule": "Full GraphQL URLs. MULTI mode hardcoded upstream and needs integration-layer configuration.",
+      "transport_source": "lib/apollo/index.ts:75"
+    },
+    "rider_mobile": {
+      "path": "upstream/enatega-multivendor-rider",
+      "endpoint_source": "environment.ts:10",
+      "http_env": [
+        "EXPO_PUBLIC_GRAPHQL_URL",
+        "EXPO_PUBLIC_SINGLE_VENDOR_GRAPHQL_URL"
+      ],
+      "ws_env": [
+        "EXPO_PUBLIC_WS_GRAPHQL_URL",
+        "EXPO_PUBLIC_SINGLE_VENDOR_WS_GRAPHQL_URL"
+      ],
+      "url_rule": "Full GraphQL URLs; currently fallback to upstream if absent; remove fallbacks.",
+      "transport_source": "lib/apollo/index.ts:120"
+    }
+  },
+  "graphql": {
+    "http_path": "/graphql",
+    "http_method": "POST",
+    "request_shape": ["query", "variables", "operationName"],
+    "websocket_path": "/graphql",
+    "websocket_library": "subscriptions-transport-ws via Apollo WebSocketLink in all six clients",
+    "websocket_subprotocol": "graphql-ws (legacy subscriptions-transport-ws protocol), distinct from graphql-transport-ws",
+    "requirement": "Either implement audited legacy compatibility with authentication and per-subscription ownership or deliberately migrate all transport clients together while preserving UI. Merely exposing modern graphql-ws library is not protocol compatibility.",
+    "headers_observed": [
+      "authorization: Bearer access token",
+      "nonce",
+      "bop-auth: Bearer public metrics token",
+      "x-platform",
+      "X-Client-Type",
+      "userId",
+      "isAuth"
+    ],
+    "authorization_rule": "Client userId/isAuth are untrusted hints; derive identity, role and tenant from verified server session. Configure exact allowed web origins and required headers; secure native token storage / HttpOnly web session bridge.",
+    "bootstrap": "metricsGeneral returns experience and hehe; current original transports initialize/refresh these public access tokens. Adapt bootstrap explicitly or implement real bounded public token contract; do not fabricate metrics/token success.",
+    "bootstrap_sources": [
+      "upstream/enatega-multivendor-web/lib/hooks/useSetApollo.tsx:64",
+      "upstream/enatega-multivendor-admin/lib/hooks/useSetApollo.tsx:159",
+      "upstream/enatega-singlevendor-admin/lib/hooks/useSetApollo.tsx:166",
+      "upstream/enatega-multivendor-app/src/services/publicAcccessService.js:74"
+    ],
+    "refresh_source": "upstream/enatega-multivendor-admin/lib/hooks/useSetApollo.tsx:221",
+    "refresh_contract": "GraphQL REFRESH_TOKEN with variables refreshToken,userType; must map to application-bound canonical sessions without trusting supplied userType."
+  },
+  "rest_requirements": [
+    {
+      "method": "GET",
+      "path": "/maps/autocomplete",
+      "query": ["input", "language", "types"],
+      "response": "JSON data envelope; failures error.message",
+      "source": "upstream/enatega-multivendor-app/src/api/googleMapsProxy.js:43"
+    },
+    {
+      "method": "GET",
+      "path": "/maps/place-details",
+      "query": ["placeId", "language"],
+      "response": "JSON data envelope; failures error.message",
+      "source": "upstream/enatega-multivendor-app/src/api/googleMapsProxy.js:65"
+    },
+    {
+      "method": "GET",
+      "path": "/maps/reverse-geocode",
+      "query": ["latitude", "longitude", "language"],
+      "response": "success,error,data with data status,errorMessage,formattedAddress,city for admin",
+      "sources": [
+        "upstream/enatega-multivendor-app/src/api/googleMapsProxy.js:86",
+        "upstream/enatega-multivendor-admin/lib/api/google-maps.ts:28"
+      ],
+      "web_proxy": "Customer web /api/maps/reverse-geocode forwards to backend maps/reverse-geocode; source app/api/maps/reverse-geocode/route.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/stripe/create-checkout-session",
+      "query": ["id", "platform=web (customer web)"],
+      "sources": [
+        "upstream/enatega-multivendor-web/lib/ui/screens/protected/order/checkout/index.tsx:794",
+        "upstream/enatega-multivendor-app/src/screens/Stripe/StripeCheckout.js:181"
+      ],
+      "note": "Existing presentation initiates payment here; server must own order price and authenticate order owner. Provider remains unconfigured."
+    },
+    {
+      "method": "POST",
+      "path": "/stripe/create-web-checkout-session",
+      "body": ["id", "payment_method"],
+      "response": "checkoutUrl or error",
+      "source": "upstream/enatega-multivendor-web/lib/ui/single-vendor/Checkout.tsx:140"
+    },
+    {
+      "method": "POST",
+      "path": "/stripe/account",
+      "body": ["restaurantId"],
+      "response": "url",
+      "sources": [
+        "upstream/enatega-multivendor-admin/lib/ui/screen-components/protected/restaurant/payment/main/index.tsx:55",
+        "upstream/enatega-singlevendor-admin/lib/ui/screen-components/protected/restaurant/payment/main/index.tsx:51"
+      ],
+      "note": "Current fetch lacks auth headers; integration must authenticate and enforce restaurant ownership rather than replicate insecure call."
+    },
+    {
+      "method": "GET",
+      "path": "/paypal",
+      "query": ["id"],
+      "source": "upstream/enatega-multivendor-app/src/screens/Paypal/Paypal.js:149",
+      "defect": "Code concatenates SERVER_URL + paypal but MULTI SERVER_URL ends /graphql, producing /graphqlpaypal. Fix integration use of REST base, do not make malformed URL canonical."
+    }
+  ],
+  "media": {
+    "upload": "GraphQL uploadImageToS3(image: String!) { imageUrl }; base64 data URL used by chat/admin",
+    "sources": [
+      "upstream/enatega-multivendor-app/src/apollo/mutations.js:3",
+      "upstream/enatega-multivendor-app/src/screens/ChatWithRider/useChatScreen.js:232",
+      "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/upload/index.ts:5"
+    ],
+    "requirement": "Provider-neutral bounded authenticated upload, content validation, tenant ownership; persist durable media references. GraphQL operation name does not require actual S3 vendor.",
+    "legacy_cloudinary": "Admin cloudinary.ts service POSTs FormData to configured cloudinaryUploadUrl; no default external upload account may activate.",
+    "managed_media": "Singlevendor admin rewrites /media/<key> and public-media/<key> against configured backend (lib/utils/media.ts:1). Customer media-url helper also normalizes relative paths. Preserve returned URL contract."
+  },
+  "client_routes": [
+    {
+      "route": "/browse",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/browse/page.tsx"
+    },
+    {
+      "route": "/category/[slug]",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/category/[slug]/page.tsx"
+    },
+    {
+      "route": "/deals",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/deals/page.tsx"
+    },
+    {
+      "route": "/discovery",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/discovery/page.tsx"
+    },
+    {
+      "route": "/product/[foodId]",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/product/[foodId]/page.tsx"
+    },
+    {
+      "route": "/restaurants",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/restaurants/page.tsx"
+    },
+    {
+      "route": "/search/[slug]",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/search/[slug]/page.tsx"
+    },
+    {
+      "route": "/see-all/[slug]",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/see-all/[slug]/page.tsx"
+    },
+    {
+      "route": "/shop-type/[slug]",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/shop-type/[slug]/page.tsx"
+    },
+    {
+      "route": "/store",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(home)/store/page.tsx"
+    },
+    {
+      "route": "/restaurant/[slug]/[id]",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(restaurant-store)/restaurant/[slug]/[id]/page.tsx"
+    },
+    {
+      "route": "/store/[slug]/[id]",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/(restaurant-store)/store/[slug]/[id]/page.tsx"
+    },
+    {
+      "route": "/about",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/about/page.jsx"
+    },
+    {
+      "route": "/auth/forgot-password",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/auth/forgot-password/page.tsx"
+    },
+    {
+      "route": "/auth/login",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/auth/login/page.tsx"
+    },
+    {
+      "route": "/auth/reset",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/auth/reset/page.tsx"
+    },
+    {
+      "route": "/forbidden",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/forbidden/page.tsx"
+    },
+    {
+      "route": "/mapview/[slug]",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/mapview/[slug]/page.tsx"
+    },
+    {
+      "route": "/not-found",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/not-found/page.tsx"
+    },
+    {
+      "route": "/order/[id]/tracking",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/order/[id]/tracking/page.tsx"
+    },
+    {
+      "route": "/order/checkout",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/order/checkout/page.tsx"
+    },
+    {
+      "route": "/",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/page.tsx"
+    },
+    {
+      "route": "/privacy",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/privacy/page.tsx"
+    },
+    {
+      "route": "/profile/addresses",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/addresses/page.tsx"
+    },
+    {
+      "route": "/profile/customerTicket",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/customerTicket/page.tsx"
+    },
+    {
+      "route": "/profile/favorites",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/favorites/page.tsx"
+    },
+    {
+      "route": "/profile/getHelp",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/getHelp/page.tsx"
+    },
+    {
+      "route": "/profile/membership",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/membership/page.tsx"
+    },
+    {
+      "route": "/profile/order-history",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/order-history/page.tsx"
+    },
+    {
+      "route": "/profile",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/page.tsx"
+    },
+    {
+      "route": "/profile/referral",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/referral/page.tsx"
+    },
+    {
+      "route": "/profile/settings",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/settings/page.tsx"
+    },
+    {
+      "route": "/profile/vouchers",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/vouchers/page.tsx"
+    },
+    {
+      "route": "/profile/wallet",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/profile/wallet/page.tsx"
+    },
+    {
+      "route": "/restaurantInfo",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/restaurantInfo/page.tsx"
+    },
+    {
+      "route": "/rider",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/rider/page.tsx"
+    },
+    {
+      "route": "/stripe/cancel",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/stripe/cancel/page.tsx"
+    },
+    {
+      "route": "/stripe/pending",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/stripe/pending/page.tsx"
+    },
+    {
+      "route": "/stripe/success",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/stripe/success/page.tsx"
+    },
+    {
+      "route": "/terms",
+      "source": "upstream/enatega-multivendor-web/app/(localized)/terms/page.tsx"
+    }
+  ],
+  "navigation_and_callbacks": {
+    "customer_mobile_prefixes": [
+      "enategamultivendor://",
+      "https://multivendor.enatega.com",
+      "https://www.multivendor.enatega.com"
+    ],
+    "customer_mobile_paths": ["auth/reset", "order-tracking"],
+    "source": "upstream/enatega-multivendor-app/src/routes/index.js:80",
+    "rider_scheme_source": "upstream/enatega-multivendor-rider/app.config.js:20",
+    "rider_scheme": "com.enatega.multirider",
+    "observed_payment_navigation": [
+      "stripe/success",
+      "stripe/cancel",
+      "paypal/success",
+      "paypal/cancel"
+    ],
+    "web_payment_pages": [
+      "/stripe/pending",
+      "/stripe/success",
+      "/stripe/cancel"
+    ],
+    "note": "Preserve navigation shapes; configure owned deployment origins/deep-link associations and validated redirects. Browser/WebView success navigation cannot authorize payment success. No provider webhook path inferred: none audited in frontend."
+  },
+  "hardcodes_and_configuration_blockers": [
+    "Customer mobile environment.config.js MULTI all stages and store environment.ts MULTI point to aws-server-v2.enatega.com; rider fallback same. Singlevendor fallback points to enatega-multivendor-api-production-9b09.up.railway.app. Remove all active upstream endpoint fallbacks before any local frontend launch.",
+    "Admin lib/utils/constants/url.ts also contains upstream defaults; audit imports/reachability before removal.",
+    "Customer app layout.tsx:60 EmailJS CDN and :69 Clarity script hardcoded; gate trackers through approved configuration.",
+    "Customer web next.config.mjs:39 connect-src self https wss ws excludes cross-origin local http API; derive allowed configured API origin without wildcard expansion.",
+    "Country/currency/minor precision/fleet selection, provider enablement, taxes/fees/refunds must be validated versioned runtime settings; initial MY/MYR/own fleet do not restrict configuration."
+  ],
+  "current_backend_evidence": {
+    "source": "implementation/services/api/src/app.ts:154",
+    "implemented": "HTTP /graphql loads foundation,identity,catalog,addresses SDL. Health controller exists. This is transport existence, not Enatega operation compatibility.",
+    "unimplemented_or_unverified": "Legacy Enatega GraphQL operation parity, WS subscriptions, maps proxy, media uploads, payment sessions/callbacks and runtime configuration are not accepted implementations in this audit. No suites run in this read-only source audit."
+  },
+  "implementation_sequence": [
+    "Freeze mapping of original operation documents, input/output shapes, runtime roots and preserved routes for each app, including nested fields and subscription events.",
+    "Centralize validated HTTP/WS/REST/media/public-app origins; remove active upstream fallbacks and resolve trailing slash and PayPal REST-base defects in transport layers.",
+    "Implement runtime configuration and secure session/bootstrap compatibility; run original configuration/auth screens against real backend.",
+    "Expand catalog/merchant metadata and source contracts; integrate original discovery/menu/address flows, genuine map provider only when configured.",
+    "Implement server-priced carts/quotes/order state machine, audited configurable payment/fleet policies and immutable ledger, then payment provider sessions and verified webhook handlers.",
+    "Implement merchant acceptance, dispatch/rider state transitions and authenticated event subscriptions, then tracking/chat/uploads/notifications.",
+    "Complete remaining source operations for admin, support, reviews, favorites, coupons/referrals and finance; verify each original workflow negative paths and ownership with independent QA/security.",
+    "Run original web apps and native device workflows end to end against local backend; only verified complete original UI may lift presentation launch restriction."
+  ]
+}

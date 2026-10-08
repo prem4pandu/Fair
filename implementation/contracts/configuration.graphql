@@ -1,0 +1,44 @@
+# Original Enatega public configuration read contract. No provider or checkout
+# availability is implied by this schema; absent active configuration fails closed.
+extend type Query {
+  configuration: EnategaPublicConfiguration
+  publicConfiguration: EnategaPublicConfiguration
+}
+
+type EnategaPublicConfiguration {
+  _id: ID!
+  currency: String!
+  currencySymbol: String!
+  deliveryRate: Float
+  costType: String
+  twilioEnabled: Boolean!
+  webClientID: String
+  webAmplitudeApiKey: String
+  appAmplitudeApiKey: String
+  googleMapLibraries: String
+  googleColor: String
+  webSentryUrl: String
+  customerAppSentryUrl: String
+  restaurantAppSentryUrl: String
+  riderAppSentryUrl: String
+  publishableKey: String
+  clientId: String
+  skipEmailVerification: Boolean!
+  skipMobileVerification: Boolean!
+  firebaseKey: String
+  authDomain: String
+  projectId: String
+  storageBucket: String
+  msgSenderId: String
+  appId: String
+  measurementId: String
+  vapidKey: String
+  termsAndConditions: String
+  privacyPolicy: String
+  enableCustomerDemoMode: Boolean!
+  customerDemoZoneId: ID
+  version: Int!
+  countryCode: String!
+  currencyMinorUnits: Int!
+  checkoutAvailable: Boolean!
+}

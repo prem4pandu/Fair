@@ -80,6 +80,45 @@ export type CustomerRegistrationInput = {
 
 export type EmailVerificationStatus = "UNVERIFIED" | "VERIFIED";
 
+export type EnategaPublicConfiguration = {
+  __typename?: "EnategaPublicConfiguration";
+  _id: Scalars["ID"]["output"];
+  appAmplitudeApiKey?: Maybe<Scalars["String"]["output"]>;
+  appId?: Maybe<Scalars["String"]["output"]>;
+  authDomain?: Maybe<Scalars["String"]["output"]>;
+  checkoutAvailable: Scalars["Boolean"]["output"];
+  clientId?: Maybe<Scalars["String"]["output"]>;
+  costType?: Maybe<Scalars["String"]["output"]>;
+  countryCode: Scalars["String"]["output"];
+  currency: Scalars["String"]["output"];
+  currencyMinorUnits: Scalars["Int"]["output"];
+  currencySymbol: Scalars["String"]["output"];
+  customerAppSentryUrl?: Maybe<Scalars["String"]["output"]>;
+  customerDemoZoneId?: Maybe<Scalars["ID"]["output"]>;
+  deliveryRate?: Maybe<Scalars["Float"]["output"]>;
+  enableCustomerDemoMode: Scalars["Boolean"]["output"];
+  firebaseKey?: Maybe<Scalars["String"]["output"]>;
+  googleColor?: Maybe<Scalars["String"]["output"]>;
+  googleMapLibraries?: Maybe<Scalars["String"]["output"]>;
+  measurementId?: Maybe<Scalars["String"]["output"]>;
+  msgSenderId?: Maybe<Scalars["String"]["output"]>;
+  privacyPolicy?: Maybe<Scalars["String"]["output"]>;
+  projectId?: Maybe<Scalars["String"]["output"]>;
+  publishableKey?: Maybe<Scalars["String"]["output"]>;
+  restaurantAppSentryUrl?: Maybe<Scalars["String"]["output"]>;
+  riderAppSentryUrl?: Maybe<Scalars["String"]["output"]>;
+  skipEmailVerification: Scalars["Boolean"]["output"];
+  skipMobileVerification: Scalars["Boolean"]["output"];
+  storageBucket?: Maybe<Scalars["String"]["output"]>;
+  termsAndConditions?: Maybe<Scalars["String"]["output"]>;
+  twilioEnabled: Scalars["Boolean"]["output"];
+  vapidKey?: Maybe<Scalars["String"]["output"]>;
+  version: Scalars["Int"]["output"];
+  webAmplitudeApiKey?: Maybe<Scalars["String"]["output"]>;
+  webClientID?: Maybe<Scalars["String"]["output"]>;
+  webSentryUrl?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type IdentityRole = "ADMIN" | "CUSTOMER" | "MERCHANT_STAFF" | "RIDER";
 
 export type IdentityUser = {
@@ -159,8 +198,10 @@ export type Query = {
   catalogItems: CatalogItemPage;
   catalogOutlet?: Maybe<CatalogOutlet>;
   catalogOutlets: CatalogOutletPage;
+  configuration?: Maybe<EnategaPublicConfiguration>;
   customerAddresses: Array<CustomerAddress>;
   me: IdentityUser;
+  publicConfiguration?: Maybe<EnategaPublicConfiguration>;
   serviceInfo: ServiceInfo;
 };
 

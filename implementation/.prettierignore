@@ -13,3 +13,6 @@ dist-verified/
 .toolchain/
 docs/artifacts/
 dist-identity/
+
+# Preserve the exact licensed upstream query bytes and recorded SHA256.
+services/api/test/fixtures/enatega-customer-configuration.graphql

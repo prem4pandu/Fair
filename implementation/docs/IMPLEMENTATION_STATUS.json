@@ -13,5 +13,13 @@
   "FB05_FB20": "NOT_IMPLEMENTED; no full product/commerce/fleet/provider completion claim",
   "latest_verification": "190unit/HTTP +30database integration +5clients +36browser; lint/typecheck/build/codegen passed; independent scoped QA/security approved",
   "frontend_acceptance": "WITHHELD; no simplified screen can satisfy Enatega parity",
-  "frontend_launch_policy": "BLOCK_REPLACEMENT_UI_UNTIL_ORIGINAL_ENATEGA_MIGRATION_VERIFIED"
+  "frontend_launch_policy": "BLOCK_REPLACEMENT_UI_UNTIL_ORIGINAL_ENATEGA_MIGRATION_VERIFIED",
+  "enatega_alignment": {
+    "owner_rule": "Complete original Enatega UI; backend must implement original workflows and configured URL contracts",
+    "url_contract": "docs/ENATEGA_URL_CONTRACT.json",
+    "schema_gate": "docs/ENATEGA_COMPATIBILITY_REPORT.json",
+    "result": "FAIL; complete original frontend compatibility not achieved",
+    "configuration": "Public configuration/publicConfiguration read slice verified; activation/admin/market/fleet/economics/providers remain IN_PROGRESS",
+    "evidence": "docs/ENATEGA_CONFIGURATION_PACKET.json"
+  }
 }

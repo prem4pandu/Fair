@@ -243,5 +243,33 @@
     "activation": "Versioned, validated, audited administrative configuration; preserve country/currency/fleet and rule versions on existing quotes/orders/financial records rather than rewriting history",
     "scope": "Runtime configuration and integrations remain NOT_IMPLEMENTED; no provider or market support claimed solely from an enabled setting"
   },
-  "frontend_rule": "AGENTS.md#mandatory-frontend-boundary--owner-directive-2026-10-08"
+  "frontend_rule": "AGENTS.md#mandatory-frontend-boundary--owner-directive-2026-10-08",
+  "frontend_backend_alignment": {
+    "owner_directive_date": "2026-10-08",
+    "contract_source": "Complete pinned original Enatega UI across all six applications, including its operations, variables, selected response fields, routes, URLs and realtime interactions.",
+    "backend_scope": "Implement the complete backend required by original frontend workflows; canonical internal services may remain behind explicit, tested compatibility adapters.",
+    "ui_boundary": "Preserve original screens, navigation, layouts, components, assets and interaction flows. Only transport, session, configuration, validated mapping, centralized brand and necessary security/accessibility integration changes are allowed.",
+    "url_boundary": "Preserve frontend route/deep-link contracts. Configure API, websocket, REST, upload and provider return URLs explicitly for each environment; no upstream production fallback. Validate base-path normalization and actual subscription protocol, not only matching hostnames.",
+    "acceptance": [
+      "Every original request validates against the served schema including variables and complete selection sets.",
+      "Every reachable action maps to an implemented, authorized domain workflow with real persistence and negative-path evidence.",
+      "HTTP, websocket, REST, upload and callback behavior is verified with configured local endpoints.",
+      "No fabricated data, default economic success, secret exposure or removal of unsupported actions.",
+      "Real original-UI browser workflows and visual checks pass; native flows require device evidence.",
+      "Independent QA and security approve each bounded packet; complete product acceptance remains withheld until all workflows pass."
+    ],
+    "static_contract_check": "node tools/check-enatega-compatibility.mjs ../upstream contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check",
+    "static_check_limit": "Schema and static limit compatibility are necessary, not proof of runtime reachability, authorization, business correctness, URL behavior or UI parity.",
+    "implementation_order": [
+      "Original-source operation and URL contract inventory plus failing compatibility gate",
+      "Versioned configuration and safe provider/session transport integration",
+      "Identity and tenant/staff authorization compatible with original flows",
+      "Merchant/outlet/catalog/media/hours, discovery and customer profile/address/favorites",
+      "Server-priced carts/quotes/orders, payments and immutable ledger",
+      "Merchant fulfilment, configurable own/external fleets, rider dispatch/tracking",
+      "Notifications/chat, ratings/support, promotions/membership/referrals, reporting/admin and remaining source workflows",
+      "Full original-UI integration and independent end-to-end/native/release acceptance"
+    ],
+    "status": "IN_PROGRESS; compatibility gate and URL map do not implement missing backend modules"
+  }
 }

@@ -24,6 +24,7 @@ import {
 } from "graphql";
 import { AddressesModule } from "./addresses/module.js";
 import { CatalogModule } from "./catalog/module.js";
+import { ConfigurationModule } from "./configuration/module.js";
 import { IdentityService } from "./identity/service.js";
 import { IdentityResolver } from "./identity/resolver.js";
 import type { Config } from "./config.js";
@@ -146,6 +147,7 @@ export async function createApp(config: Config) {
   @Module({
     imports: [
       CatalogModule.register(config),
+      ConfigurationModule.register(config),
       AddressesModule.register(config, {
         authorize: (context) => identity.identity("CUSTOMER", context),
       }),
@@ -177,6 +179,13 @@ export async function createApp(config: Config) {
             new URL("../../../contracts/addresses.graphql", import.meta.url),
             "utf8",
           ),
+          readFileSync(
+            new URL(
+              "../../../contracts/configuration.graphql",
+              import.meta.url,
+            ),
+            "utf8",
+          ),
         ],
         playground: false,
         introspection: config.APP_ENV !== "production",
@@ -193,6 +202,7 @@ export async function createApp(config: Config) {
             FORBIDDEN: "Access denied",
             RATE_LIMITED: "Too many authentication attempts",
             SERVICE_UNAVAILABLE: "Service unavailable",
+            CONFIGURATION_UNAVAILABLE: "Configuration unavailable",
             AUTH_DISABLED: "Password authentication is unavailable",
             ACCOUNT_EXISTS: "Account already exists",
           };

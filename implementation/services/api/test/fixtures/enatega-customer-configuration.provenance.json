@@ -1,0 +1,8 @@
+{
+  "source": "upstream/enatega-multivendor-web/lib/api/graphql/queries/config.ts",
+  "claimedPinnedCommit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
+  "commitIndependentlyVerified": false,
+  "sourceSha256": "113c5767f4009e26952a9067d63cbe5b9dbc29607cf98833143051665e16440f",
+  "querySha256": "b2aa0bd527c4c946d1bb3c403babd8c1af54c942aa10a9be1064feb6f21f9897",
+  "licenseFile": "enatega-customer-configuration.LICENSE"
+}

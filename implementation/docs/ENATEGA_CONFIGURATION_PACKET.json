@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-08",
+  "status": "PUBLIC_READ_SLICE_VERIFIED; FULL_CONFIGURATION_IN_PROGRESS",
+  "owner_requirement": "Original Enatega UI only; backend and integration align with its complete workflows and URLs.",
+  "contract": "contracts/configuration.graphql",
+  "scope": [
+    "Original configuration/publicConfiguration public read roots",
+    "Immutable stored public snapshots and singleton active pointer; no activation seed",
+    "Explicit public allowlist; unavailable configuration produces bounded error",
+    "Unimplemented payment/delivery/Twilio/demo capabilities unavailable; no invented charges"
+  ],
+  "excluded_pending": [
+    "Audited version creation/activation and optimistic concurrency",
+    "ADMIN MFA/provisioning and adminConfiguration plus 17 original mutation families",
+    "Market/currency/fleet administration and provider secret-store integrations",
+    "Approved economic-rule activation and checkout",
+    "Original configuration provider adapters must stop fallback pricing without replacing UI",
+    "Real original-UI browser/native acceptance"
+  ],
+  "verification": {
+    "unit_http_regression": "PASS190 via ./tools/pnpm.sh test",
+    "database_integration_regression": "PASS35 via ./tools/pnpm.sh test:integration, 15.43s",
+    "configuration_integration": "PASS5 real Nest/PostGIS/Redis tests including exact original query, inactive/invalid snapshots, immutable history, secret rejection and outage recovery",
+    "compatibility_tool": "PASS10 checker tests; original source gate EXPECTED_FAIL: 846 sites, 8 static-valid, 132 unresolved, 329 missing roots, 3 operation-limit violations",
+    "lint": "PASS",
+    "typecheck": "PASS all10 packages",
+    "build": "PASS all10 packages; existing harness build only, no original-UI or native acceptance",
+    "codegen": "PASS",
+    "review": "Independent url_contract_map QA/security approved bounded tool and public-read slice; final fixture makes configuration tests independent of ignored upstream source",
+    "browser_native": "NOT_RUN; original UI remains unintegrated and withheld"
+  },
+  "url_requirements": "docs/ENATEGA_URL_CONTRACT.json",
+  "compatibility_gate": "docs/ENATEGA_COMPATIBILITY_REPORT.json",
+  "no_completion_claim": "Public read slice is groundwork only; complete backend and full Enatega compatibility remain IN_PROGRESS.",
+  "validation_reference": {
+    "sentry_public_dsn": "https://docs.sentry.io/api/projects/create-a-new-client-key/",
+    "country_codes": "Public-domain IANA tzdb iso3166.tab, pinned in services/api/src/configuration/regions.ts",
+    "currencies": "Supported runtime Intl currency codes and matching minor precision; this is metadata validation, not activated market/payment support"
+  },
+  "local_runtime": {
+    "api": "Restarted with additive migration005; HTTP200 readiness",
+    "configuration": "Both roots return bounded CONFIGURATION_UNAVAILABLE and null, because no version has been activated",
+    "frontends": "Remain stopped under original-UI launch guard"
+  }
+}

@@ -121,3 +121,16 @@ model IdentityAuditEvent {
  outcome String @db.VarChar(10)
  occurredAt DateTime @default(now()) @db.Timestamptz(3)
 }
+
+model RuntimeConfigurationVersion {
+ id String @id @default(uuid()) @db.Uuid
+ version Int @unique
+ document Json @db.JsonB
+ createdAt DateTime @default(now()) @db.Timestamptz(3)
+ activePointer RuntimeConfigurationPointer?
+}
+model RuntimeConfigurationPointer {
+ id Int @id
+ versionId String @unique @db.Uuid
+ version RuntimeConfigurationVersion @relation(fields:[versionId],references:[id],onDelete:Restrict)
+}
