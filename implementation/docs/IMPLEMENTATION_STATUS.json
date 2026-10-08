@@ -1,10 +1,17 @@
 {
   "date": "2026-10-08",
   "overall": "IN_PROGRESS",
-  "frontend_baseline": "CORRECTED: complete pinned Enatega UI migration/integration required; current lightweight shells are backend verification harnesses only",
+  "frontend_baseline": "NONCOMPLIANT: running shells and rewritten source-derived screens are not the required original Enatega UI; full source migration pending",
   "FB00": "Static source/action baseline and selected identity audits recorded; full semantics/runtime parity/cloud catalog reconciliation pending",
   "FB01": "Bounded public API/worker/six-app connection foundation implemented, independently reviewed and checked; full foundation gates pending",
   "FB02": "Password identity/session slice implemented and verified across API and six apps; recovery, OTP/social, MFA/provisioning, native-device and release gates remain IN_PROGRESS",
-  "FB03_FB20": "NOT_IMPLEMENTED in fresh workspace",
-  "release": "NOT_APPROVED; four high and four moderate dependency advisories, external providers, signed native devices and later phase gates pending"
+  "release": "NOT_APPROVED; four high and four moderate dependency advisories, external providers, signed native devices and later phase gates pending",
+  "customer_identity_presentation": "NONCOMPLIANT product presentation; password backend/BFF/test evidence retained, original Enatega auth UI migration required",
+  "latest_evidence": "docs/FULL_IMPLEMENTATION_REPORT.json",
+  "FB03": "Public catalog storage and GraphQL read slice implemented and independently QA/security reviewed; onboarding, tenant staff writes, publication workflows, hours and media remain IN_PROGRESS",
+  "FB04": "Owned customer addresses and catalog web integration verified with real-stack tests; full discovery/search/favorites and source/native parity remain IN_PROGRESS",
+  "FB05_FB20": "NOT_IMPLEMENTED; no full product/commerce/fleet/provider completion claim",
+  "latest_verification": "190unit/HTTP +30database integration +5clients +36browser; lint/typecheck/build/codegen passed; independent scoped QA/security approved",
+  "frontend_acceptance": "WITHHELD; no simplified screen can satisfy Enatega parity",
+  "frontend_launch_policy": "BLOCK_REPLACEMENT_UI_UNTIL_ORIGINAL_ENATEGA_MIGRATION_VERIFIED"
 }

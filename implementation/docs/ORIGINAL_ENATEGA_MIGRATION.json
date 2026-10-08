@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-08",
+  "rule": "Original complete pinned Enatega UI only; FairBite backend/integration only; no custom/source-derived replacement UI",
+  "candidate": ".toolchain/enatega-original-customer-web",
+  "source_files": 711,
+  "page_routes": 39,
+  "source_hash_mismatches": 0,
+  "claimed_upstream_commit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
+  "provenance_limit": "Hash comparison to local pinned source; independent upstream clone revision not verified",
+  "candidate_state": "Unchanged source copied; dependencies not installed; build/E2E NOT_RUN; not integrated into live apps",
+  "required_integration": [
+    "Validated server public configuration without provider secrets/fake activation",
+    "Secure transport/session bridge replaces original localStorage token handling without redesigning UI",
+    "Original GraphQL query adapters and persistent outlet/media/hours/location/variants data",
+    "Config-gate source hard-coded Clarity/EmailJS and unconfigured Google/Firebase/Maps startup",
+    "Validated localhost CSP configuration; preserve original layout/routes/styles/assets and license",
+    "Independent original-source visual/action parity plus real-stack tests before frontend launch"
+  ],
+  "runtime": "All6 replacement frontend servers stopped; launch helper rejects restarting noncompliant UI. API/worker/database/cache preserved.",
+  "backend_evidence": "Existing backend/BFF/integration tests retained; replacement-screen tests do not establish Enatega UI acceptance",
+  "owner_reference": {
+    "url": "https://deepwiki.com/enatega/food-delivery-multivendor",
+    "role": "Owner-provided secondary architecture/flow reference; reconcile against pinned upstream source, never substitute UI or assume current API compatibility",
+    "access": "Direct browser fetch unavailable; contents not verified yet",
+    "rule": "Original complete Enatega UI only; our backend and integration only"
+  }
+}

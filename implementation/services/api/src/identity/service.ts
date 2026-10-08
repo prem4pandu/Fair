@@ -91,6 +91,7 @@ export class IdentityService {
         max: 5,
         connectionTimeoutMillis: 1500,
         statement_timeout: 3000,
+        query_timeout: 3500,
       }),
     });
     this.redis = new Redis(config.REDIS_URL, {
@@ -524,10 +525,14 @@ export class IdentityService {
       !application.safeParse(p.app).success
     )
       return fail();
-    const session = await this.prisma.identityRefreshSession.findUnique({
-      where: { id: p.sid },
-      include: { family: { include: { user: { include: { grants: true } } } } },
-    });
+    const session = await this.prisma.identityRefreshSession
+      .findUnique({
+        where: { id: p.sid },
+        include: {
+          family: { include: { user: { include: { grants: true } } } },
+        },
+      })
+      .catch(() => unavailable());
     if (
       !session ||
       session.userId !== p.sub ||

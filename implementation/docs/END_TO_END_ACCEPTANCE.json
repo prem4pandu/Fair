@@ -1,0 +1,714 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-08",
+  "authority": "Derived acceptance candidate; does not advance implementation or release status.",
+  "sourcePlan": "docs/EXECUTION_PLAN.json",
+  "sourceOperations": "docs/ENATEGA_OPERATION_COVERAGE.json",
+  "phaseGraph": [
+    {
+      "id": "FB00",
+      "scope": "Source/action/mode inventory and licensing",
+      "dependencies": []
+    },
+    {
+      "id": "FB01",
+      "scope": "API/worker, persistence, six-app foundations and real-stack harness",
+      "dependencies": ["FB00"]
+    },
+    {
+      "id": "FB02",
+      "scope": "Identity, roles, staff scopes and secure sessions",
+      "dependencies": ["FB01"]
+    },
+    {
+      "id": "FB03",
+      "scope": "Merchant/outlet/catalog/media/hours",
+      "dependencies": ["FB02"]
+    },
+    {
+      "id": "FB04",
+      "scope": "Discovery, search, addresses and favorites",
+      "dependencies": ["FB03"]
+    },
+    {
+      "id": "FB05",
+      "scope": "Integer pricing, quotes, cart and immutable orders",
+      "dependencies": ["FB04"]
+    },
+    {
+      "id": "FB06",
+      "scope": "Payments, ledger, refunds and signed webhooks",
+      "dependencies": ["FB05"]
+    },
+    {
+      "id": "FB07",
+      "scope": "Merchant acceptance/preparation/readiness",
+      "dependencies": ["FB06"]
+    },
+    {
+      "id": "FB08",
+      "scope": "Provider-neutral dispatch/reconciliation",
+      "dependencies": ["FB07"]
+    },
+    {
+      "id": "FB09",
+      "scope": "Own-fleet rider workflow and native tracking",
+      "dependencies": ["FB08"]
+    },
+    {
+      "id": "FB10",
+      "scope": "Lalamove verified-contract/sandbox adapter",
+      "dependencies": ["FB08"]
+    },
+    {
+      "id": "FB11",
+      "scope": "Subscriptions, notifications, chat and media",
+      "dependencies": ["FB09", "FB10"]
+    },
+    {
+      "id": "FB12",
+      "scope": "History/tracking/reorder/cancellation/ratings",
+      "dependencies": ["FB11"]
+    },
+    {
+      "id": "FB13",
+      "scope": "Earnings, payables, withdrawals and reconciliation",
+      "dependencies": ["FB06", "FB07", "FB09"]
+    },
+    {
+      "id": "FB14",
+      "scope": "Support/disputes/risk/privacy lifecycle",
+      "dependencies": ["FB12", "FB13"]
+    },
+    {
+      "id": "FB15",
+      "scope": "Membership/credits/referrals/deals",
+      "dependencies": ["FB05", "FB06", "FB13"]
+    },
+    {
+      "id": "FB16",
+      "scope": "Full administrative operations and reporting",
+      "dependencies": ["FB03", "FB10", "FB13", "FB14", "FB15"]
+    },
+    {
+      "id": "FB17",
+      "scope": "Public/provider configuration, localization and observability",
+      "dependencies": ["FB11", "FB16"]
+    },
+    {
+      "id": "FB18",
+      "scope": "Full UI/action parity and regression",
+      "dependencies": ["FB17"]
+    },
+    {
+      "id": "FB19",
+      "scope": "Load, resilience, retention, restore and security",
+      "dependencies": ["FB18"]
+    },
+    {
+      "id": "FB20",
+      "scope": "Signed devices, provider readiness and owner release decision",
+      "dependencies": ["FB19"]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "identity",
+      "phases": ["FB02"],
+      "dependencies": [],
+      "targets": [
+        "customer-web",
+        "customer-mobile",
+        "merchant-web",
+        "merchant-mobile",
+        "rider-mobile",
+        "admin-web"
+      ],
+      "positiveAcceptance": [
+        "Register customer; sign in; rotate refresh token; sign out; restart and verify persistence",
+        "Provision approved staff roles and outlet scopes through administrative workflow"
+      ],
+      "negativeAcceptance": [
+        "Reject invalid credentials without account enumeration",
+        "Reject revoked/replayed refresh tokens, wrong application, expired access and cross-tenant actions",
+        "Complete email verification/reset/social only with configured verified providers"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "merchant-catalog",
+      "phases": ["FB03"],
+      "dependencies": ["identity"],
+      "targets": [
+        "merchant-web",
+        "merchant-mobile",
+        "admin-web",
+        "customer-web",
+        "customer-mobile"
+      ],
+      "positiveAcceptance": [
+        "Onboard merchant; approve outlet; maintain categories/items/addons/availability/hours/media",
+        "Publish outlet and verify customer reads match stored server catalog"
+      ],
+      "negativeAcceptance": [
+        "Reject cross-outlet writes and unapproved publication",
+        "Validate schedule/timezone and image ownership",
+        "Closed/unavailable/deleted items cannot be ordered"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "discovery-address",
+      "phases": ["FB04"],
+      "dependencies": ["merchant-catalog"],
+      "targets": ["customer-web", "customer-mobile"],
+      "positiveAcceptance": [
+        "Search/filter/paginate published outlets; save geocoded address; favorite outlet",
+        "Verify delivery eligibility using real configured maps/routing contract"
+      ],
+      "negativeAcceptance": [
+        "Reject another customer address access",
+        "Validate service-area boundary, malformed coordinates and unavailable geocoder"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "checkout-order",
+      "phases": ["FB05"],
+      "dependencies": ["discovery-address"],
+      "targets": ["customer-web", "customer-mobile"],
+      "positiveAcceptance": [
+        "Build cart with variants/addons; obtain expiring server quote; place idempotent order",
+        "Persist immutable item/price/address snapshots and show customer order details"
+      ],
+      "negativeAcceptance": [
+        "Reject client price/currency manipulation, mixed-outlet cart, stale quote and unavailable catalog",
+        "Concurrent duplicate placement yields one order",
+        "Validate integer bounds and zero core food commission"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "payment-webhook",
+      "phases": ["FB06"],
+      "dependencies": ["checkout-order"],
+      "targets": ["customer-web", "customer-mobile", "admin-web"],
+      "positiveAcceptance": [
+        "Create configured provider checkout; complete provider sandbox payment",
+        "Authenticate signed provider callback; persist unique provider event and balanced immutable journal; publish order payment result"
+      ],
+      "negativeAcceptance": [
+        "Invalid signature/old timestamp/unknown provider event cannot change order",
+        "Duplicate/out-of-order/concurrent events cannot double charge or journal",
+        "No card data persisted; provider outage remains pending/reconcilable"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [
+        "Payment provider account, sandbox credentials and payment/fee/tax policies"
+      ],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "refund",
+      "phases": ["FB06", "FB12"],
+      "dependencies": ["payment-webhook"],
+      "targets": ["customer-web", "customer-mobile", "admin-web"],
+      "positiveAcceptance": [
+        "Apply approved cancellation/refund policy; initiate provider refund; reconcile callback",
+        "Record balanced refund transaction and customer/merchant visibility"
+      ],
+      "negativeAcceptance": [
+        "Reject excess/double refund and unauthorized staff",
+        "Provider failure must not report refunded",
+        "Duplicate callback cannot double credit"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [
+        "Approved cancellation/refund/economic policy and provider refund sandbox"
+      ],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "merchant-fulfillment",
+      "phases": ["FB07"],
+      "dependencies": ["payment-webhook"],
+      "targets": ["merchant-web", "merchant-mobile"],
+      "positiveAcceptance": [
+        "Scoped merchant receives paid order; accepts; prepares; marks ready",
+        "Customer receives persisted centrally validated state changes"
+      ],
+      "negativeAcceptance": [
+        "Reject cross-outlet acceptance, skipped/backward transitions and unpaid fulfillment",
+        "Concurrent accept/cancel decisions remain consistent"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "delivery-webhook",
+      "phases": ["FB08", "FB10"],
+      "dependencies": ["merchant-fulfillment"],
+      "targets": [
+        "merchant-web",
+        "merchant-mobile",
+        "admin-web",
+        "customer-web",
+        "customer-mobile"
+      ],
+      "positiveAcceptance": [
+        "Select provider-independent routing; create delivery; persist external correlation",
+        "Validate signed provider lifecycle webhook; reconcile dispatch and customer tracking"
+      ],
+      "negativeAcceptance": [
+        "Reject forged/replayed/cross-tenant webhook",
+        "Duplicate/out-of-order events cannot regress terminal delivery",
+        "Provider timeout/retry/cancel/quote expiry remain explicit"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [
+        "Lalamove market/API contract, sandbox credentials and routing/fee rules"
+      ],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "rider-delivery",
+      "phases": ["FB09"],
+      "dependencies": ["merchant-fulfillment"],
+      "targets": [
+        "rider-mobile",
+        "merchant-mobile",
+        "merchant-web",
+        "customer-web",
+        "customer-mobile"
+      ],
+      "positiveAcceptance": [
+        "Dispatch own-fleet job; scoped eligible rider accepts; picks up; reports location; completes verified delivery",
+        "Native customer observes permitted live location and completed order"
+      ],
+      "negativeAcceptance": [
+        "Reject another rider job/location update, stale location and impossible transitions",
+        "Offline retry/reconnect preserves idempotency and terminal states",
+        "Validate background tracking permission denial and minimized location disclosure"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [
+        "Approved fleet assignment/proof rules; signed Android/iOS device environment"
+      ],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "communications",
+      "phases": ["FB11"],
+      "dependencies": ["rider-delivery", "delivery-webhook"],
+      "targets": [
+        "customer-web",
+        "customer-mobile",
+        "merchant-web",
+        "merchant-mobile",
+        "rider-mobile",
+        "admin-web"
+      ],
+      "positiveAcceptance": [
+        "Subscribe to scoped order events; reconnect from durable cursor",
+        "Send scoped chat/media and configured push/email notification"
+      ],
+      "negativeAcceptance": [
+        "Reject cross-order subscriptions/chat/media",
+        "Revocation disconnects access; retry avoids duplicate notification",
+        "Provider failure cannot report delivered"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [
+        "Notification/push/media credentials and moderation/retention policies"
+      ],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "history-ratings",
+      "phases": ["FB12"],
+      "dependencies": ["communications"],
+      "targets": [
+        "customer-web",
+        "customer-mobile",
+        "merchant-web",
+        "merchant-mobile",
+        "rider-mobile"
+      ],
+      "positiveAcceptance": [
+        "View paginated order history/tracking; reorder against current catalog; rate eligible completed delivery"
+      ],
+      "negativeAcceptance": [
+        "Reject another customer history, duplicate/ineligible rating and outdated reorder price"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "payables",
+      "phases": ["FB13"],
+      "dependencies": [
+        "payment-webhook",
+        "merchant-fulfillment",
+        "rider-delivery"
+      ],
+      "targets": [
+        "merchant-web",
+        "merchant-mobile",
+        "rider-mobile",
+        "admin-web"
+      ],
+      "positiveAcceptance": [
+        "Reconcile merchant/rider payables with balanced ledger; request/approve withdrawal; record confirmed payout"
+      ],
+      "negativeAcceptance": [
+        "Reject insufficient balance, duplicate payout and arbitrary journal edits",
+        "Concurrent withdrawal requests cannot overdraw; provider failures reconcile"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [
+        "Approved settlement/payout/tax rules and payout provider sandbox"
+      ],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "support-privacy",
+      "phases": ["FB14"],
+      "dependencies": ["history-ratings", "payables"],
+      "targets": [
+        "customer-web",
+        "customer-mobile",
+        "merchant-web",
+        "admin-web"
+      ],
+      "positiveAcceptance": [
+        "Open scoped support/dispute; review with audited authorization",
+        "Execute approved export/deletion/retention lifecycle while preserving required financial records"
+      ],
+      "negativeAcceptance": [
+        "Reject unauthorized support access and removal of retained ledger records"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": ["Approved privacy/retention/dispute policy"],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "promotions",
+      "phases": ["FB15"],
+      "dependencies": ["checkout-order", "payment-webhook", "payables"],
+      "targets": ["customer-web", "customer-mobile", "admin-web"],
+      "positiveAcceptance": [
+        "Configure approved membership/credit/referral/deal rules; apply server quote and ledger accounting"
+      ],
+      "negativeAcceptance": [
+        "Reject repeated redemption, expired eligibility and concurrent overspend"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [
+        "Approved membership/credits/referrals/deal economics"
+      ],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "administration",
+      "phases": ["FB16"],
+      "dependencies": [
+        "merchant-catalog",
+        "delivery-webhook",
+        "payables",
+        "support-privacy",
+        "promotions"
+      ],
+      "targets": ["admin-web", "merchant-web"],
+      "positiveAcceptance": [
+        "Manage explicitly authorized users/outlets/riders/zones/staff/configuration; inspect audited reports"
+      ],
+      "negativeAcceptance": [
+        "Reject privilege escalation, arbitrary cross-tenant writes and secret disclosure"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "configuration",
+      "phases": ["FB17"],
+      "dependencies": ["communications", "administration"],
+      "targets": [
+        "customer-web",
+        "customer-mobile",
+        "merchant-web",
+        "merchant-mobile",
+        "rider-mobile",
+        "admin-web"
+      ],
+      "positiveAcceptance": [
+        "Load allowlisted public configuration and localized content; trace order/provider failures across API/worker"
+      ],
+      "negativeAcceptance": [
+        "Missing secrets fail closed; production disables named sandbox adapters",
+        "Logs redact tokens/PII; health readiness detects DB/Redis failures"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "full-parity",
+      "phases": ["FB18"],
+      "dependencies": ["configuration"],
+      "targets": [
+        "customer-web",
+        "customer-mobile",
+        "merchant-web",
+        "merchant-mobile",
+        "rider-mobile",
+        "admin-web"
+      ],
+      "positiveAcceptance": [
+        "Resolve each static operation into mode-specific reachable action or explicitly reviewed disabled/deferred action",
+        "Run all accepted routes/actions against local backend with upstream remote endpoints absent"
+      ],
+      "negativeAcceptance": [
+        "Keyboard/accessibility/responsive negative paths; no placeholder success",
+        "Signed native device workflows required for mobile parity"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    },
+    {
+      "id": "resilience-release",
+      "phases": ["FB19", "FB20"],
+      "dependencies": ["full-parity"],
+      "targets": [
+        "customer-web",
+        "customer-mobile",
+        "merchant-web",
+        "merchant-mobile",
+        "rider-mobile",
+        "admin-web"
+      ],
+      "positiveAcceptance": [
+        "Load/concurrency/outage recovery; restore backup; verify retention/SLO; complete independent security and owner release review"
+      ],
+      "negativeAcceptance": [
+        "Unverified provider/device workflows remain blocked",
+        "Service smoke HTTP responses cannot substitute for full workflow E2E"
+      ],
+      "requiredEvidence": [
+        "Actual unit and PostgreSQL/Redis integration commands/results",
+        "Playwright real-stack web workflow with responsive/keyboard/accessibility inspection",
+        "Signed Android/iOS device E2E for affected native workflow",
+        "Lint, typecheck and build",
+        "Independent QA, security and correctness review"
+      ],
+      "externalInputs": [
+        "SLO/hosting/retention/device/provider inputs and owner release approval"
+      ],
+      "status": "NOT_VERIFIED_END_TO_END",
+      "evidence": []
+    }
+  ],
+  "invariants": [
+    "Integer minor currency units and server-owned pricing",
+    "Zero core-plan food commission",
+    "Immutable balanced financial transactions",
+    "Central order state validation",
+    "Server-side tenant and actor ownership",
+    "Provider-independent delivery routing",
+    "No card data and no embedded secrets",
+    "Sandbox providers explicitly named and disabled in production"
+  ],
+  "runtimeTraceability": {
+    "requiredRecordFields": [
+      "workflowId",
+      "target",
+      "sourceRouteOrScreen",
+      "operationDocumentSource",
+      "operationName",
+      "root",
+      "backendContract",
+      "actorAndTenant",
+      "positiveTest",
+      "negativeTests",
+      "actualCommand",
+      "resultArtifact",
+      "independentReviewer"
+    ],
+    "currentAcceptedRuntimeActions": [
+      {
+        "workflowId": "customer-public-catalog-browse",
+        "target": "customer-web",
+        "sourceRouteOrScreen": "Enatega restaurants and store screens adapted in customer-web/SOURCE_PROVENANCE.md",
+        "backendContract": "contracts/catalog.graphql",
+        "actorAndTenant": "public published catalog only",
+        "positiveTest": "tests/e2e/enatega-catalog.spec.ts:restaurant-to-menu/cursors",
+        "negativeTests": [
+          "hidden/missing404",
+          "invalidcursor",
+          "DBoutage/recovery"
+        ],
+        "actualCommand": "./tools/pnpm.sh test:e2e",
+        "resultArtifact": "docs/FULL_IMPLEMENTATION_REPORT.json;docs/artifacts/enatega-catalog",
+        "independentReviewer": "coverage_plan and integration_security",
+        "scope": "Partial canonical adapter; geospatial/search/commerce absent"
+      },
+      {
+        "workflowId": "customer-own-addresses",
+        "target": "customer-web",
+        "sourceRouteOrScreen": "/profile/addresses",
+        "backendContract": "contracts/addresses.graphql;GET/POST /api/customer/addresses BFF",
+        "actorAndTenant": "Current CUSTOMER session; server-derived owner only",
+        "positiveTest": "tests/e2e/enatega-addresses.spec.ts:registration/login/create/edit/select/reload/delete",
+        "negativeTests": [
+          "foreignowner",
+          "CSRF",
+          "invalidcoordinates",
+          "revokedsession",
+          "APIoutage"
+        ],
+        "actualCommand": "./tools/pnpm.sh test:e2e",
+        "resultArtifact": "docs/FULL_IMPLEMENTATION_REPORT.json;docs/artifacts/enatega-addresses",
+        "independentReviewer": "coverage_plan and integration_security",
+        "scope": "Manual/unverified coordinates; no geocoding or serviceability claim"
+      }
+    ],
+    "note": "Existing identity/catalog slice evidence is not full upstream UI E2E acceptance. Populate records only with actual observed workflow evidence."
+  },
+  "localStartupAcceptance": [
+    "Six apps use explicit local backend configuration",
+    "API, worker, PostgreSQL and Redis processes verified",
+    "Per-app health/connectivity verified separately from business E2E",
+    "Startup evidence records commands, ports, failures and process ownership",
+    "Stop the managed API as well as Next dev servers before aggregate tests: foundation harness owns4100; otherwise readiness can accidentally probe the live development API."
+  ],
+  "completionRule": "Every applicable reachable action and workflow requires actual evidence and independent approval; missing external inputs remain blockers. Static inventories, smoke checks and Expo exports are not completeness evidence."
+}

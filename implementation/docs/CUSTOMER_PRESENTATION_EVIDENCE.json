@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-08",
+  "packet": "FB02-CW-PRESENTATION-01",
+  "status": "BOUNDED_SLICE_VERIFIED; full FB02 remains IN_PROGRESS",
+  "implementation": [
+    "Source-derived responsive customer login/register panels and upstream email SVG",
+    "Accessible password visibility and permanently exposed live error region",
+    "Existing identity/BFF contract, HttpOnly cookie and validation boundaries preserved",
+    "Unavailable providers stated honestly; upstream license preserved"
+  ],
+  "environment": "Node24.21.0; pnpm10.28.2; local Docker Desktop; disposable PostGIS17 AMD64 and Redis7; actual NestJS API and Next16.3.8; Chromium; approved local Docker/socket access",
+  "commands": [
+    {
+      "command": "./tools/pnpm.sh test",
+      "result": "PASS 134 unit/HTTP tests; initial sandbox HTTP listen EPERM resolved through approved escalation"
+    },
+    {
+      "command": "./tools/pnpm.sh test:integration",
+      "result": "PASS 17 actual PostgreSQL/PostGIS and Redis tests"
+    },
+    {
+      "command": "./tools/pnpm.sh test:clients",
+      "result": "PASS 5 real API client integration tests"
+    },
+    {
+      "command": "./tools/pnpm.sh lint",
+      "result": "PASS final UI and QA file"
+    },
+    {
+      "command": "./tools/pnpm.sh typecheck",
+      "result": "PASS all 10 packages; unchanged tasks reused cache"
+    },
+    {
+      "command": "./tools/pnpm.sh build",
+      "result": "PASS all 10 packages; Expo web exports are not device E2E"
+    },
+    {
+      "command": "./tools/pnpm.sh --filter @fairbite/customer-web build",
+      "result": "PASS rebuilt after live-region fix"
+    },
+    {
+      "command": "./tools/pnpm.sh codegen:check",
+      "result": "PASS generated schema matches frozen SDL"
+    },
+    {
+      "command": "./tools/pnpm.sh format:check",
+      "result": "PASS after restoring formatting changed automatically by Turbo"
+    },
+    {
+      "command": "./tools/pnpm.sh exec playwright test identity.spec.ts identity-production-tls.spec.ts foundation.spec.ts",
+      "result": "PASS 22 real-stack regressions in 30.6s before CSS live-region fix"
+    },
+    {
+      "command": "./tools/pnpm.sh exec playwright test customer-presentation.spec.ts",
+      "result": "PASS final 5 real-stack tests in 8.8s after CSS fix; first run failed incorrect duplicate-error assertion, corrected and rerun"
+    }
+  ],
+  "visual_qa": {
+    "artifacts": "docs/artifacts/customer-presentation",
+    "views": [
+      "customer-login-375.png",
+      "customer-login-1280.png",
+      "customer-register-375.png",
+      "customer-register-1280.png"
+    ],
+    "result": "Independent QA and reviewer inspected all four; no clipping/overlap/horizontal overflow; register uses normal vertical scrolling. Development indicator is a harness artifact."
+  },
+  "review": {
+    "independent_security": "independent_review approved bounded slice after live-region fix and actual QA evidence",
+    "independent_qa": "backend_audit approved bounded slice; independently inspected final five-test result and all four screenshots"
+  },
+  "open_gates": [
+    "Full upstream UI routes/actions/parity across six applications",
+    "Recovery, OTP/social, MFA and privileged provisioning require frozen provider/policy inputs",
+    "FB03-FB20 not implemented",
+    "Signed native devices, external provider sandbox, dependency advisories and release approval remain open"
+  ],
+  "followup_candidates": [
+    "Correct refresh audit event classification on eligibility loss; requires separate packet and real-PG audit assertions",
+    "Lead dependency remediation with compatibility verification; no security waiver",
+    "Continue source-derived UI migration as domain contracts become available"
+  ]
+}

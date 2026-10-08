@@ -22,6 +22,8 @@ import {
   type FragmentDefinitionNode,
   type ValidationRule,
 } from "graphql";
+import { AddressesModule } from "./addresses/module.js";
+import { CatalogModule } from "./catalog/module.js";
 import { IdentityService } from "./identity/service.js";
 import { IdentityResolver } from "./identity/resolver.js";
 import type { Config } from "./config.js";
@@ -143,6 +145,10 @@ export async function createApp(config: Config) {
   }
   @Module({
     imports: [
+      CatalogModule.register(config),
+      AddressesModule.register(config, {
+        authorize: (context) => identity.identity("CUSTOMER", context),
+      }),
       GraphQLModule.forRoot<ApolloDriverConfig>({
         driver: ApolloDriver,
         path: "/graphql",
@@ -163,6 +169,14 @@ export async function createApp(config: Config) {
             new URL("../../../contracts/identity.graphql", import.meta.url),
             "utf8",
           ),
+          readFileSync(
+            new URL("../../../contracts/catalog.graphql", import.meta.url),
+            "utf8",
+          ),
+          readFileSync(
+            new URL("../../../contracts/addresses.graphql", import.meta.url),
+            "utf8",
+          ),
         ],
         playground: false,
         introspection: config.APP_ENV !== "production",
@@ -173,10 +187,12 @@ export async function createApp(config: Config) {
           );
           const messages: Record<string, string> = {
             BAD_USER_INPUT: "Invalid request",
+            NOT_FOUND: "Resource not found",
+            ADDRESS_LIMIT_REACHED: "Saved address limit reached",
             AUTHENTICATION_FAILED: "Authentication required",
             FORBIDDEN: "Access denied",
             RATE_LIMITED: "Too many authentication attempts",
-            SERVICE_UNAVAILABLE: "Authentication service unavailable",
+            SERVICE_UNAVAILABLE: "Service unavailable",
             AUTH_DISABLED: "Password authentication is unavailable",
             ACCOUNT_EXISTS: "Account already exists",
           };

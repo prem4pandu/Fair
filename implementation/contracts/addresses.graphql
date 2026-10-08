@@ -1,0 +1,28 @@
+input CustomerAddressInput {
+  label: String!
+  deliveryAddress: String!
+  details: String!
+  longitude: Float!
+  latitude: Float!
+}
+type CustomerAddress {
+  id: ID!
+  label: String!
+  deliveryAddress: String!
+  details: String!
+  longitude: Float!
+  latitude: Float!
+  selected: Boolean!
+}
+type CustomerAddressAcknowledgement {
+  accepted: Boolean!
+}
+extend type Query {
+  customerAddresses: [CustomerAddress!]!
+}
+extend type Mutation {
+  createCustomerAddress(input: CustomerAddressInput!): CustomerAddress!
+  updateCustomerAddress(id: ID!, input: CustomerAddressInput!): CustomerAddress!
+  deleteCustomerAddress(id: ID!): CustomerAddressAcknowledgement!
+  selectCustomerAddress(id: ID!): CustomerAddress!
+}

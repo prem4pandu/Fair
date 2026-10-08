@@ -10,6 +10,62 @@ model FoundationMigration {
  appliedAt DateTime @default(now()) @db.Timestamptz(3)
 }
 
+model CustomerAddress {
+ id String @id @default(uuid()) @db.Uuid
+ userId String @db.Uuid
+ user IdentityUser @relation(fields:[userId],references:[id],onDelete:Restrict)
+ label String @db.VarChar(100)
+ deliveryAddress String @db.VarChar(500)
+ details String @db.VarChar(1000)
+ longitude Float
+ latitude Float
+ selected Boolean @default(false)
+ @@index([userId,id])
+}
+
+model CatalogMerchant {
+ id String @id @default(uuid()) @db.Uuid
+ name String @db.VarChar(100)
+ published Boolean @default(false)
+ outlets CatalogOutlet[]
+}
+model CatalogOutlet {
+ id String @id @default(uuid()) @db.Uuid
+ merchantId String @db.Uuid
+ name String @db.VarChar(100)
+ currency String @db.VarChar(3)
+ published Boolean @default(false)
+ merchant CatalogMerchant @relation(fields:[merchantId],references:[id],onDelete:Restrict)
+ categories CatalogCategory[]
+ items CatalogItem[]
+ @@index([merchantId])
+ @@index([published,id])
+}
+model CatalogCategory {
+ id String @id @default(uuid()) @db.Uuid
+ outletId String @db.Uuid
+ name String @db.VarChar(100)
+ published Boolean @default(false)
+ outlet CatalogOutlet @relation(fields:[outletId],references:[id],onDelete:Restrict)
+ items CatalogItem[]
+ @@unique([id,outletId])
+ @@index([outletId,published,id])
+}
+model CatalogItem {
+ id String @id @default(uuid()) @db.Uuid
+ outletId String @db.Uuid
+ categoryId String @db.Uuid
+ name String @db.VarChar(100)
+ description String @default("") @db.VarChar(2000)
+ priceMinor Int
+ available Boolean @default(true)
+ published Boolean @default(false)
+ outlet CatalogOutlet @relation(fields:[outletId],references:[id],onDelete:Restrict)
+ category CatalogCategory @relation(fields:[categoryId,outletId],references:[id,outletId],onDelete:Restrict)
+ @@index([outletId,published,id])
+ @@index([categoryId,outletId])
+}
+
 model IdentityUser {
  id String @id @default(uuid()) @db.Uuid
  email String @unique @db.VarChar(254)
@@ -21,6 +77,7 @@ model IdentityUser {
  credential IdentityCredential?
  grants IdentityApplicationGrant[]
  families IdentitySessionFamily[]
+ addresses CustomerAddress[]
 }
 model IdentityCredential {
  userId String @id @db.Uuid

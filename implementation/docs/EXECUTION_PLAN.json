@@ -3,7 +3,7 @@
   "execution": "Multiple independent Codex agents; no local AI",
   "source_session": "https://chatgpt.com/local/01a115d1-c437-7040-ba6a-47ee7d3100ac",
   "source_commit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
-  "frontend_strategy": "Use the complete pinned Enatega multivendor customer web, customer mobile, merchant store, rider and admin UI code as the product presentation baseline. Preserve its routes, screens, components and interaction model; replace remote Enatega API dependencies with the new FairBite NestJS modular backend domain by domain. Lightweight implementation shells are verification harnesses only and are not the product UI.",
+  "frontend_strategy": "STRICT OWNER RULE: complete original pinned Enatega UI only. FairBite owns backend/integration only. No custom or source-derived replacement UI. Preserve screens, assets, styling and interactions; missing backend capabilities are blockers, not permission to simplify UI.",
   "full_cloud_export": "Pending; partial conversation/roadmap recovered, not a faithful full file transfer",
   "phase_sequence": [
     {
@@ -34,16 +34,16 @@
       "id": "FB03",
       "scope": "Merchant/outlet/catalog/media/hours",
       "dependencies": ["FB02"],
-      "functionality": "NOT_STARTED",
-      "verification": "NOT_RUN",
+      "functionality": "IN_PROGRESS",
+      "verification": "PUBLIC_READ_SLICE_VERIFIED",
       "release_gates": "PENDING"
     },
     {
       "id": "FB04",
       "scope": "Discovery, search, addresses and favorites",
       "dependencies": ["FB03"],
-      "functionality": "NOT_STARTED",
-      "verification": "NOT_RUN",
+      "functionality": "IN_PROGRESS",
+      "verification": "ADDRESSES_AND_CATALOG_WEB_SLICES_VERIFIED",
       "release_gates": "PENDING"
     },
     {
@@ -206,5 +206,42 @@
       "Prisma migration compatibility and dependency locks require actual checks",
       "Source-derived full UI import follows route/action audit"
     ]
-  }
+  },
+  "latest_packet": {
+    "ids": [
+      "FB04-CUSTOMER-ADDRESSES-01",
+      "FB04-ENATEGA-CATALOG-WEB-01",
+      "FB04-ENATEGA-ADDRESSES-WEB-01"
+    ],
+    "functionality": "BOUNDED_SLICES_IMPLEMENTED",
+    "verification": "Final190unit/HTTP,30integration,5clients,36browser; independentQA/security approved",
+    "release_gates": "PENDING; no full-product/parity/native/provider approval",
+    "evidence": "docs/FULL_IMPLEMENTATION_REPORT.json"
+  },
+  "module_plan": "docs/BACKEND_MODULE_PLAN.json",
+  "operation_coverage": "docs/ENATEGA_OPERATION_COVERAGE.json",
+  "acceptance_graph": "docs/END_TO_END_ACCEPTANCE.json",
+  "launch_decisions": {
+    "country": "MY",
+    "currency": "MYR",
+    "delivery": "OWN_FLEET_FIRST",
+    "configuration": "Country, supported markets, currencies, delivery fleets/providers, payment methods, fees, tax and refund policies configurable; no invented activation defaults",
+    "payment_provider": "Not selected; provider adapters must be disabled until actual configuration/sandbox verification",
+    "external_delivery": "Optional later configuration; not required for first own-fleet path",
+    "policy_rules": "Versioned validated configuration; activated rules audited; quotes/orders retain applied version; existing orders not recalculated after a policy edit; zero core food commission invariant cannot be bypassed",
+    "initial_selections_only": true
+  },
+  "initial_launch_dependencies": {
+    "FB11": ["FB09"],
+    "FB16": ["FB03", "FB09", "FB13", "FB14", "FB15"],
+    "note": "Owner selected own fleet first; FB10 external delivery remains later module, no full-product completion claim."
+  },
+  "market_currency_fleet_configuration": {
+    "country": "Configurable launch country and supported markets; MY is the initial selection, not a hard-coded system restriction",
+    "currency": "Configurable supported currencies and market/outlet currency; MYR is the initial selection. Validate currency codes and minor-unit precision; never silently convert or mix currencies",
+    "delivery_fleets": "Configurable multiple own fleets and external-provider fleets with per-market/outlet eligibility, availability, priority and fallback routing. Own fleet is the initial selection; unconfigured/unverified providers disabled",
+    "activation": "Versioned, validated, audited administrative configuration; preserve country/currency/fleet and rule versions on existing quotes/orders/financial records rather than rewriting history",
+    "scope": "Runtime configuration and integrations remain NOT_IMPLEMENTED; no provider or market support claimed solely from an enabled setting"
+  },
+  "frontend_rule": "AGENTS.md#mandatory-frontend-boundary--owner-directive-2026-10-08"
 }

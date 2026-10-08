@@ -33,6 +33,11 @@ export default async function Account() {
             <Link href="/login">Sign in</Link>
           </>
         )}
+        {user && (
+          <p>
+            <Link href="/profile/addresses">Manage addresses</Link>
+          </p>
+        )}
         <SessionControls />
       </section>
     </>

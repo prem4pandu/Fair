@@ -1,0 +1,34 @@
+{
+  "id": "FB04-CUSTOMER-ADDRESSES-01",
+  "state": "FROZEN",
+  "date": "2026-10-08",
+  "scope": "Customer-owned saved addresses CRUD and selection, no geocoding/dispatch/serviceability claims",
+  "contract": "contracts/addresses.graphql",
+  "architecture": [
+    "Address module owns Address table and Prisma or pg pool lifecycle; no arbitrary Identity table access",
+    "Inject authority facade authorize(ctx) calling existing identity.identity(CUSTOMER,ctx); server owns userId",
+    "Lead owns app integration SDL/shared generated types; backend owns src/addresses schema new migration202610080004_addresses and unit tests",
+    "Declared userId foreign key to IdentityUser.id restricts orphan/delete; explicit referential binding only, no address-service identity table reads."
+  ],
+  "rules": [
+    "Only current CUSTOMER-bound session; missing/inactive/revoked/wrong-application denied",
+    "Never accept userId/role/selected in public input; unknown fields rejected GraphQL and strict validation",
+    "Name label trim1..100, deliveryAddress trim1..500, details trim0..1000; finite longitude[-180,180] latitude[-90,90]",
+    "Coordinates are supplied by user and unverified; no claim address deliverable/geocoded",
+    "Limit50 saved addresses per customer technical abuse bound; initial selected false, explicit select only",
+    "Creation cap and selection serialize per owner through pg transaction advisory lock; unique partial index userId where selected; no auto-select on deletion or invented default-address policy",
+    "Updates/deletes/select SQL include id+serveruserId; hidden/foreign/missing same NOT_FOUND; deleting unknown/foreign returns generic accepted true without changes",
+    "List deterministic ORDER BY id; selected status exactly stored",
+    "Parameterize all SQL, bound database deadlines, close module pool, bounded errors; no body/address/token logging",
+    "Production privacy retention/deletion/consent review remains release gate; no new policy claims"
+  ],
+  "acceptance": [
+    "Actual PG/Redis/NestGraphQL CRUD and session validation",
+    "Cross-customer read/write/select/delete attacks fail; no userId serialization",
+    "Concurrent select leaves at most one selected; failed foreign select preserves previous choice",
+    "Concurrent creates cannot exceed50; exact boundary validation DB constraints",
+    "Auth revocation/session app binding and DB outage failclosed",
+    "Independent QA/security, lint/typecheck/build/unit/integration checks"
+  ],
+  "status": "IN_PROGRESS"
+}

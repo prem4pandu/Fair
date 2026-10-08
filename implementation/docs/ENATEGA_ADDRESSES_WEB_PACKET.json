@@ -1,0 +1,33 @@
+{
+  "id": "FB04-ENATEGA-ADDRESSES-WEB-01",
+  "state": "SUPERSEDED_NONCOMPLIANT_PRESENTATION",
+  "scope": "Source-derived Enatega profile address management via genuine customer-owned backend",
+  "ownership": "apps/customer-web only including BFF and UI; independent tests QA owner",
+  "route": "/profile/addresses",
+  "source": "Pinned Enatega profile addresses/main/address-listings and address component structure; preserve provenance/license",
+  "transport": [
+    "GET /api/customer/addresses returns allowlisted own records; cache no-store",
+    "POST /api/customer/addresses fixed action create/update/delete/select; exact allowed shape action/id/input, no client tokens/userId/roles/selected",
+    "Reuse existing exported endpoint/sameOrigin/names/boundedJson/BoundaryError for input/CSRF/cookies; bounded dedicated backend response parser up to524288bytes for50addresses,8sec timeout no redirect",
+    "Read access from existing HttpOnly cookie; backend CUSTOMER-bound facade owns authorization; never return/store bearer tokens",
+    "Backend bounded codes map to401/403/404/409/400/503; malformedbackendJSON ->503; no SQL/PII logs"
+  ],
+  "ui": [
+    "List/create/edit/delete/select server-backed records; accessible unique names/live region/forms and keyboard Enter",
+    "Manual label/address/details/longitude/latitude fields; maps/geocoding unavailable honestly no coordinate defaults guessed",
+    "Busy disables affected actions and prevents duplicate submissions; final list reread after mutations",
+    "Loggedout signin link; empty real state; expiredsession/outage show bounded honest feedback",
+    "Preserve existing identity/catalog routes and scoped styles; do not new dependency/root locks",
+    "Profile link from account; no whole upstream provider tree initialization"
+  ],
+  "acceptance": [
+    "Actual registration/login->addresscreate->edit->select->reload->delete browserworkflow realPGRedisAPI",
+    "Cross-customer ID injection denial and state preservation; foreign/missing origin rejects mutations",
+    "No browser tokens localStorage/sessionStorage or returned JSON; no upstreamrequests",
+    "Malformedform input, revokedsession, serviceoutage failclosed",
+    "Responsive3751280 screenshots and keyboard/accessiblenames",
+    "Unit/typecheck/lint/build and independent QA/security review"
+  ],
+  "status": "IN_PROGRESS",
+  "owner_rule": "Complete original Enatega UI only; source-derived replacement screens prohibited. Backend evidence retained."
+}

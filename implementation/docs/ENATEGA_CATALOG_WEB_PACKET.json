@@ -1,0 +1,22 @@
+{
+  "id": "FB04-ENATEGA-CATALOG-WEB-01",
+  "state": "SUPERSEDED_NONCOMPLIANT_PRESENTATION",
+  "scope": "Actual pinned source restaurant listing/card/store structure adapted to canonical public catalog API",
+  "ownership": "apps/customer-web only; backend/lock/packages/contracts lead",
+  "routes": ["/restaurants", "/store/[slug]/[id]"],
+  "dependencies": "React/Next existing; scoped CSS adapts original source markup; no providers initialized",
+  "requirements": [
+    "Read installed Next guides",
+    "Preserve routes and source component boundaries/render structure where backend fields exist; exact source provenance and MIT notice",
+    "Use canonical catalogOutlets/catalogOutlet/catalogItems through server-only bounded fetch with no-store; strict output parsing",
+    "Server cursors validated, real next-page links, no guessed distance/rating/images/fees/open status; explicit unavailable commerce",
+    "Hidden/missing outlet404; API errors honest unavailable page and retry; malformed response rejected",
+    "Money format uses server integer priceMinor and outlet currency only; no fee/order calculations",
+    "No upstream requests/provider configuration imports; existing identity routes preserved",
+    "Navigation expose restaurants and first real product browse path",
+    "Responsive375/1280 keyboard/accessibility and real PG/Redis/API/Next Playwright required",
+    "Phase/full Enatega parity remain in progress"
+  ],
+  "status": "IN_PROGRESS",
+  "owner_rule": "Complete original Enatega UI only; source-derived replacement screens prohibited. Backend evidence retained."
+}

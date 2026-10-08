@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-08",
+  "packet": "FB03-PUBLIC-CATALOG-01",
+  "status": "BOUNDED_SLICE_VERIFIED; full FB03 IN_PROGRESS",
+  "implementation": [
+    "Catalog-owned merchant/outlet/category/item schema and migration",
+    "NestJS CatalogModule with private bounded PostgreSQL pool and shutdown",
+    "catalogOutlets/catalogOutlet/catalogItems GraphQL reads with strict UUID pagination",
+    "Default unpublished records; atomic ancestor publication visibility; no catalog writes",
+    "Integer minor prices and composite category/outlet FK; public output allowlist"
+  ],
+  "commands": [
+    {
+      "command": "./tools/pnpm.sh test",
+      "result": "PASS141 unit/HTTP including7 new catalog cases; sockets require approved escalation"
+    },
+    {
+      "command": "./tools/pnpm.sh test:integration",
+      "result": "PASS23 real PostGIS/PostgreSQL and Redis integration cases in10.50s"
+    },
+    {
+      "command": "./tools/pnpm.sh --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/catalog.integration.spec.ts",
+      "result": "PASS final6 catalog cases in10.54s after boundary-whitespace review fix/tests"
+    },
+    {
+      "command": "./tools/pnpm.sh lint",
+      "result": "PASS repository ESLint"
+    },
+    {
+      "command": "./tools/pnpm.sh typecheck",
+      "result": "PASS all10 workspace packages"
+    },
+    {
+      "command": "./tools/pnpm.sh --filter @fairbite/api build",
+      "result": "PASS production backend build; affected brand/shared-contract builds passed through prerequisite tasks"
+    },
+    {
+      "command": "./tools/pnpm.sh --filter @fairbite/api db:validate",
+      "result": "PASS Prisma schema validation"
+    },
+    {
+      "command": "./tools/pnpm.sh codegen; ./tools/pnpm.sh codegen:check",
+      "result": "PASS generated shared GraphQL types match frozen SDL"
+    },
+    {
+      "command": "./tools/pnpm.sh format:check; git diff --check",
+      "result": "PASS final source and evidence formatting"
+    }
+  ],
+  "independent_review": {
+    "implementation": "catalog_backend agent bounded directory ownership; lead SDL/app integration",
+    "qa": "catalog_qa independently authored real-stack tests and approved final6/6 evidence",
+    "security_architecture": "catalog_security approved final code/schema/tests; found whitespace defect fixed and rerun"
+  },
+  "local_runtime": {
+    "migration": "202610080003_catalog applied via Prisma migrate deploy to isolated fresh local PostgreSQL; existing data preserved",
+    "api": "Restarted fresh API on localhost:4100; local ephemeral signing keys refreshed, existing sessions must sign in again",
+    "smoke": "Actual local catalogOutlets returns empty page; invalid outlet ID BAD_USER_INPUT; API readiness and all6 existing app URLs HTTP200",
+    "data": "No demo/runtime catalog seed; synthetic catalog records occur only in tests"
+  },
+  "limitations": [
+    "Read-only preparatory catalog slice; no onboarding, staff access, write/publication workflows, hours or media",
+    "Full identity provider/policy gates and full FB03 remain open",
+    "No frontend route integration or complete Enatega GraphQL adapter",
+    "Browser catalog/native E2E not run: no consuming catalog UI implemented",
+    "Prior dependency advisories remain unresolved; no new dependency or waiver",
+    "No hosted deployment/provider sandbox/signed-device/release approval"
+  ]
+}

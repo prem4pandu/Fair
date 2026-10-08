@@ -1,0 +1,46 @@
+{
+  "id": "FB03-PUBLIC-CATALOG-01",
+  "date": "2026-10-08",
+  "state": "FROZEN",
+  "scope": "Policy-independent storage and public catalog reads; preparatory FB03 slice, no privileged writes or source UI integration",
+  "contract": "contracts/catalog.graphql",
+  "architecture": [
+    "Catalog owns Merchant, Outlet, Category and Item records; no cross-module identity database queries",
+    "Separate NestJS CatalogModule exporting service; resolver validates inputs; module owns its bounded PostgreSQL pool and lifecycle",
+    "Lead integrates module and SDL in app.ts, generated contracts, root docs/status"
+  ],
+  "storage": [
+    "UUID primary keys; publication booleans default false on merchant/outlet/category/item",
+    "Outlet belongs to merchant; category belongs to outlet; item references category using composite categoryId+outletId foreign key to prevent cross-outlet association",
+    "Bounded trimmed nonempty names max100; descriptions max2000; integer priceMinor 0..2147483647; outlet currency uppercase 3 ASCII letters, syntactic only, no market support claim",
+    "Restrict parent deletion; indexes support outlet/id keyset paging and publication filters"
+  ],
+  "visibility": [
+    "Return outlet only if outlet and parent merchant published",
+    "Return item only if merchant/outlet/category/item all published; available may be false and accurately serialized",
+    "No drafts or hidden tenant data exposed; unpublished/nonexistent outlets both null/detail or empty item page",
+    "Do not expose internal merchant IDs, publication flags, memberships or identity/private fields"
+  ],
+  "query_bounds": [
+    "Strict canonical UUID parser for every ID/cursor; absent optional cursor accepted, malformed rejected BAD_USER_INPUT",
+    "limit default20 range1..50; lexicographic UUID keyset ORDER BY id ASC; fetch limit+1 and compute endCursor/hasNextPage",
+    "Allowlisted output fields; parameterized SQL; statement and connection deadlines; bounded SERVICE_UNAVAILABLE on DB failures",
+    "One SQL statement per query for consistent parent publication visibility; no caching stale publication status"
+  ],
+  "constraints": [
+    "No catalog seed/demo success in local runtime; synthetic DB fixtures only in tests",
+    "No onboarding/staff/publication mutations until authorization and policy packets",
+    "No hours/media/search/cart/quote/tax/delivery/payment integration claimed",
+    "Preserve all prior dirty files and running apps"
+  ],
+  "acceptance": [
+    "Real migrations applied to PostgreSQL; defaults/checks/FK constraints reject invalid and cross-outlet records",
+    "Real GraphQL positive queries and hidden merchant/outlet/category/item negative cases",
+    "No price precision loss; pagination no duplicates and accurate page boundaries",
+    "Invalid IDs/cursors/limits fail bounded; no SQL errors/private data leak",
+    "DB outage fail closed, recovery works",
+    "Unit/integration plus repository lint/typecheck/build/codegen checks",
+    "Independent QA/security review after implementation"
+  ],
+  "status": "IN_PROGRESS"
+}

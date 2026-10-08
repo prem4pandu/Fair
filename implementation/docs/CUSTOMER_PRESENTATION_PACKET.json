@@ -1,0 +1,33 @@
+{
+  "id": "FB02-CW-PRESENTATION-01",
+  "date": "2026-10-08",
+  "state": "SUPERSEDED_NONCOMPLIANT_PRESENTATION",
+  "execution": "Codex agents; owner confirmed fresh-plan execution",
+  "scope": "Source-derived customer password identity presentation using existing real identity API and same-origin BFF",
+  "ownership": {
+    "implementation": "apps/customer-web UI only",
+    "independent_qa": "tests/e2e/customer-presentation.spec.ts",
+    "lead": "contracts, root tooling, integration and evidence"
+  },
+  "source": "Pinned upstream/enatega-multivendor-web authentication panels; preserve license",
+  "contract": "Existing contracts/identity.graphql and /api/auth routes unchanged",
+  "constraints": [
+    "Preserve existing user edits",
+    "No upstream Apollo/Firebase/Stripe/maps provider graph",
+    "No fake recovery, OTP or social success",
+    "No bearer tokens in browser state/storage",
+    "Preserve 12..128 registration password and 100-character display-name boundaries",
+    "Do not claim full source UI parity or phase completion"
+  ],
+  "acceptance": [
+    "Real PostgreSQL/Redis/API/Next browser workflow",
+    "Registration/login/logout and failure-path regression",
+    "375px and 1280px layout screenshots inspected",
+    "Keyboard completion and accessible input/button names",
+    "No upstream provider requests or browser token exposure",
+    "Lint, typecheck, build and affected tests pass",
+    "Independent QA/security review after implementation"
+  ],
+  "status": "IN_PROGRESS",
+  "owner_rule": "Complete original Enatega UI only; source-derived replacement screens prohibited. Backend evidence retained."
+}

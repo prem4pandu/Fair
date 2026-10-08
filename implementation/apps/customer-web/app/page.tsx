@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getServiceInfo } from "../lib/service";
 export const dynamic = "force-dynamic";
 export default async function Home() {
@@ -7,8 +8,11 @@ export default async function Home() {
       <p className="eyebrow">Customer foundation</p>
       <h1>Discover your next meal</h1>
       <p className="intro">
-        Customer experience foundation. Restaurant discovery, ordering and
-        account access are not available yet.
+        Browse published restaurants and their menus. Ordering remains in
+        development.
+      </p>
+      <p>
+        <Link href="/restaurants">Browse restaurants</Link>
       </p>
       <section className="panel" aria-labelledby="service-heading">
         <h2 id="service-heading">Backend connection</h2>

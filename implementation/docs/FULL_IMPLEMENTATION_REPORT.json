@@ -1,0 +1,160 @@
+{
+  "date": "2026-10-08",
+  "overall": "IN_PROGRESS; product UI NONCOMPLIANT pending full original Enatega source migration",
+  "workspace": "/Users/premkumarmamidi/Development/FairBiteFresh/implementation",
+  "execution": "Multiple Codex agents with bounded backend/web/QA/security ownership; local AI disabled",
+  "launch": {
+    "country": "Malaysia",
+    "currency": "MYR",
+    "delivery": "Own fleet first",
+    "configuration_requirement": "Country, currency, delivery fleets/providers, payment methods and economic rules configurable; Malaysia/MYR/own fleet are initial selections only",
+    "configuration_implementation": "Full market/currency/fleet/platform/payment/fee/tax/refund configuration module NOT_IMPLEMENTED",
+    "initial_selections_only": true
+  },
+  "plan": {
+    "module_backlog": "docs/BACKEND_MODULE_PLAN.json",
+    "source_inventory": "docs/ENATEGA_OPERATION_COVERAGE.json",
+    "acceptance_graph": "docs/END_TO_END_ACCEPTANCE.json",
+    "static_graphql_documents": 702,
+    "distinct_kind_root_pairs": 335,
+    "limitations": "Static inventory is not reachable action acceptance; no unchanged-upstream GraphQL compatibility claim."
+  },
+  "implemented_this_checkpoint": [
+    "Customer-owned saved-address GraphQL CRUD/selection with role/session authority, owner FK, transactional concurrency/cap, strict validation",
+    "Source-derived Enatega restaurant listing/store menu using real catalog queries and server minor-unit prices",
+    "Source-derived Enatega profile addresses and same-origin HttpOnly-cookie BFF with CSRF/output boundaries",
+    "Identity client query deadline and bounded error mapping for actual PostgreSQL outages",
+    "Reviewed repeatable local stack manager with owned process groups, isolated database/cache, synthetic local secrets and no demo seeds"
+  ],
+  "commands": [
+    {
+      "command": "./tools/pnpm.sh test",
+      "result": "PASS190 unit/HTTP tests"
+    },
+    {
+      "command": "./tools/pnpm.sh test:integration",
+      "result": "PASS30 actual PostGIS/PostgreSQL/Redis tests in14.61s"
+    },
+    {
+      "command": "./tools/pnpm.sh test:clients",
+      "result": "PASS5 real API client integration tests in5.74s"
+    },
+    {
+      "command": "./tools/pnpm.sh test:e2e",
+      "result": "PASS final36/36 actual browser tests in59.0s after defects fixed"
+    },
+    {
+      "command": "./tools/pnpm.sh lint",
+      "result": "PASS repository ESLint"
+    },
+    {
+      "command": "./tools/pnpm.sh typecheck",
+      "result": "PASS all10 workspace packages"
+    },
+    {
+      "command": "./tools/pnpm.sh build",
+      "result": "PASS all10 package builds; Expo exports do not close device gates"
+    },
+    {
+      "command": "./tools/pnpm.sh --filter @fairbite/api db:validate",
+      "result": "PASS Prisma schema validation"
+    },
+    {
+      "command": "./tools/pnpm.sh codegen:check",
+      "result": "PASS schema generated types match frozen SDL"
+    },
+    {
+      "command": "python3 tools/local-stack.py start --restart; python3 tools/local-stack.py status",
+      "result": "All8 processes launched and address migration applied; immediate status raced startup; subsequent statusPASS7HTTP200 and workerownedrunning"
+    },
+    {
+      "command": "./tools/pnpm.sh format:check; git diff --check",
+      "result": "PASS final source/report formatting"
+    }
+  ],
+  "defects_fixed": [
+    "Authorization DB pause hang: add query_timeout3500 and redacted SERVICE_UNAVAILABLE;7case integration rerunPASS",
+    "QA incorrect CUSTOMER-grant assumption corrected to current-role removal, no policy change",
+    "Populated Details textarea accessible label explicitly associated; exact label test unchanged; final36browserPASS",
+    "Live API4100 collided with foundation fixture; managed API stopped before final aggregate rerun",
+    "Duplicate address-label action names disambiguated; local manager session ownership and secret exposure hardened"
+  ],
+  "review": {
+    "independent_qa": "coverage_plan approved bounded backend/catalog/address flows after final36pass record and all6screens inspected",
+    "independent_security": "integration_security approved bounded backend/BFF/UI, identity fix, local manager; no outstanding scoped findings",
+    "phase_release": "OPEN; bounded approvals do not close full module/parity/native/provider/release gates"
+  },
+  "artifacts": [
+    "docs/artifacts/enatega-catalog",
+    "docs/artifacts/enatega-addresses"
+  ],
+  "local_apps": [
+    {
+      "name": "Customer web",
+      "url": "http://localhost:3100",
+      "status": "STOPPED_NONCOMPLIANT_UI",
+      "presentation": "Original complete Enatega source migration required; replacement screen launch prohibited"
+    },
+    {
+      "name": "Merchant web",
+      "url": "http://localhost:3101",
+      "status": "STOPPED_NONCOMPLIANT_UI",
+      "presentation": "Original complete Enatega source migration required; replacement screen launch prohibited"
+    },
+    {
+      "name": "Admin web",
+      "url": "http://localhost:3102",
+      "status": "STOPPED_NONCOMPLIANT_UI",
+      "presentation": "Original complete Enatega source migration required; replacement screen launch prohibited"
+    },
+    {
+      "name": "Customer Expo",
+      "url": "http://localhost:8081",
+      "status": "STOPPED_NONCOMPLIANT_UI",
+      "presentation": "Original complete Enatega source migration required; replacement screen launch prohibited"
+    },
+    {
+      "name": "Merchant Expo",
+      "url": "http://localhost:8082",
+      "status": "STOPPED_NONCOMPLIANT_UI",
+      "presentation": "Original complete Enatega source migration required; replacement screen launch prohibited"
+    },
+    {
+      "name": "Rider Expo",
+      "url": "http://localhost:8083",
+      "status": "STOPPED_NONCOMPLIANT_UI",
+      "presentation": "Original complete Enatega source migration required; replacement screen launch prohibited"
+    }
+  ],
+  "api": {
+    "url": "http://localhost:4100/graphql",
+    "readiness": "HTTP200",
+    "worker": "Owned process running",
+    "database": "Isolated fresh PostgreSQL and Redis running; no product/demo catalog seed",
+    "business_smoke": "Local /restaurants and /profile/addresses HTTP200; BFF anonymous addresses401 UNAUTHENTICATED; GraphQL anonymous addresses AUTHENTICATION_FAILED.",
+    "sessions": "Initial restart generated local development keys; sign in again if using an earlier session. Future manager restarts reuse ignored0600 local configuration."
+  },
+  "still_unimplemented_or_unverified": [
+    "Merchant/outlet onboarding, staff capabilities/provisioning/MFA and privileged catalog writes",
+    "Discovery/search/favorites, cart/pricing quotes and immutable orders",
+    "Configurable policy activation, real payments/webhooks, balanced ledger/refunds/settlements",
+    "Merchant acceptance/preparation and own-fleet dispatch/rider/tracking workflows",
+    "Notifications/chat/media, history/reorder/ratings, support/disputes/privacy lifecycle",
+    "Membership/credits/referrals/deals, complete admin/reporting/localization/observability",
+    "Complete pinned Enatega routes/screens/actions across all six apps",
+    "Signed native device E2E: full Xcode not present; connected Android device count0",
+    "Payment/maps/notification provider setup and sandbox evidence; policies/hosting/privacy/release inputs",
+    "Dependency advisories, load/restore/security gates and owner release approval"
+  ],
+  "native_check": "xcode-select identifies CommandLineTools only; actual connected Android devices0; no device E2E claimed",
+  "market_currency_fleet_configuration": {
+    "country": "Configurable launch country and supported markets; MY is the initial selection, not a hard-coded system restriction",
+    "currency": "Configurable supported currencies and market/outlet currency; MYR is the initial selection. Validate currency codes and minor-unit precision; never silently convert or mix currencies",
+    "delivery_fleets": "Configurable multiple own fleets and external-provider fleets with per-market/outlet eligibility, availability, priority and fallback routing. Own fleet is the initial selection; unconfigured/unverified providers disabled",
+    "activation": "Versioned, validated, audited administrative configuration; preserve country/currency/fleet and rule versions on existing quotes/orders/financial records rather than rewriting history",
+    "scope": "Runtime configuration and integrations remain NOT_IMPLEMENTED; no provider or market support claimed solely from an enabled setting"
+  },
+  "frontend_owner_correction": "Original Enatega UI exclusively. Existing source-derived/replacement presentation rejected as product UI; prior tests establish bounded backend/integration behavior only.",
+  "local_apps_current_state": "STOPPED_BY_OWNER_UI_RULE; earlier HTTP200 results are historical checkpoint evidence",
+  "original_ui_migration": "docs/ORIGINAL_ENATEGA_MIGRATION.json"
+}

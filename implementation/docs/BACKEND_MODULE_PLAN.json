@@ -1,0 +1,1792 @@
+{
+  "date": "2026-10-08",
+  "status": "LEAD_REVIEWED_MODULE_BACKLOG; exact contracts require separate frozen packets",
+  "strategy": "Pinned upstream UI presentation; explicit adapter per operation to new domain contracts. Do not expose unsafe legacy Float money, client userId or provider-secret configuration contracts.",
+  "audit_limits": [
+    "Static regex named-operation inventory; comments and unused singlevendor documents may be included. Not runtime reachability or exhaustive anonymous-operation proof.",
+    "No tests run by this planning packet. Existing evidence cited from authoritative execution plan only."
+  ],
+  "boundaries": [
+    "Each module owns persistence access; cross-module access through explicit services/contracts.",
+    "Current identity application grants are not merchant ownership or staff capability.",
+    "Production privileged password login remains denied; no public tenant provisioning introduced.",
+    "All money integer minor units, server-owned totals, core food commission zero; balanced immutable journal and state transitions centralized."
+  ],
+  "phases": [
+    {
+      "id": "FB02",
+      "scope": "Identity, roles, staff scopes and secure sessions",
+      "dependencies": ["FB01"],
+      "module": "identity",
+      "current_functionality": "IN_PROGRESS",
+      "coverage": "registerCustomer/loginPassword/refreshSession/logoutSession/logoutAllSessions/me implemented; tenant membership, MFA, recovery and invitation missing",
+      "external_or_policy_inputs": [
+        "Privileged provisioning/MFA policy",
+        "OTP/social provider configuration"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB03",
+      "scope": "Merchant/outlet/catalog/media/hours",
+      "dependencies": ["FB02"],
+      "module": "catalog",
+      "current_functionality": "IN_PROGRESS",
+      "coverage": "catalogOutlets/catalogOutlet/catalogItems implemented; CreateVendor/CreateRestaurant/CreateCategory/CreateFood/EditFood/UpdateTimings/media missing",
+      "external_or_policy_inputs": [
+        "Tenant membership/provisioning authorization",
+        "Timezone/hours rules",
+        "Storage upload credentials"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB04",
+      "scope": "Discovery, search, addresses and favorites",
+      "dependencies": ["FB03"],
+      "module": "discovery_customer",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Restaurants/search/UserFavourite/CreateAddress/EditAddress/DeleteAddress/SelectAddress missing; public catalog reads available",
+      "external_or_policy_inputs": [
+        "Geocoder/maps configuration for search distance; owned text/coordinate addresses need no provider"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB05",
+      "scope": "Integer pricing, quotes, cart and immutable orders",
+      "dependencies": ["FB04"],
+      "module": "commerce",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "CalculateCheckout/UserCartData/ClearCart/PlaceOrder missing",
+      "external_or_policy_inputs": [
+        "Tax/fee/tip/delivery pricing policy",
+        "Quote expiry and cancellation policy"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB06",
+      "scope": "Payments, ledger, refunds and signed webhooks",
+      "dependencies": ["FB05"],
+      "module": "payments_ledger",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "PaymentSuccess/refunds/reconciliation missing",
+      "external_or_policy_inputs": [
+        "Payment provider sandbox credentials and verified contract",
+        "Refund/settlement policies"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB07",
+      "scope": "Merchant acceptance/preparation/readiness",
+      "dependencies": ["FB06"],
+      "module": "fulfilment",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "AcceptOrder/CancelOrder/OrderPickedUp/UpdateStatus missing",
+      "external_or_policy_inputs": [
+        "Transition rules, cancellation deadlines and membership"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB08",
+      "scope": "Provider-neutral dispatch/reconciliation",
+      "dependencies": ["FB07"],
+      "module": "dispatch",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "AssignRider/OrderTracking/provider reconciliation missing",
+      "external_or_policy_inputs": [
+        "Fleet dispatch/service-area/assignment rules"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB09",
+      "scope": "Own-fleet rider workflow and native tracking",
+      "dependencies": ["FB08"],
+      "module": "fleet",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "RiderOrders/UpdateOrderStatusRider/UpdateRiderLocation/ToggleRider missing",
+      "external_or_policy_inputs": [
+        "Rider onboarding policy",
+        "Native foreground/background location consent and devices"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB10",
+      "scope": "Lalamove verified-contract/sandbox adapter",
+      "dependencies": ["FB08"],
+      "module": "lalamove",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Provider adapter missing; do not copy or invent upstream integration",
+      "external_or_policy_inputs": [
+        "Market and verified API version",
+        "Sandbox credentials and webhook examples"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB11",
+      "scope": "Subscriptions, notifications, chat and media",
+      "dependencies": ["FB09", "FB10"],
+      "module": "communications",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Subscriptions/chat/PushToken/saveRestaurantToken/UploadImageToS3 missing",
+      "external_or_policy_inputs": [
+        "Push/email/SMS/storage credentials",
+        "Chat retention/visibility rules"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB12",
+      "scope": "History/tracking/reorder/cancellation/ratings",
+      "dependencies": ["FB11"],
+      "module": "order_experience",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Orders/OrderDetails/OrderTracking/AbortOrder/ReviewOrder missing",
+      "external_or_policy_inputs": [
+        "Cancellation and rating eligibility policy"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB13",
+      "scope": "Earnings, payables, withdrawals and reconciliation",
+      "dependencies": ["FB06", "FB07", "FB09"],
+      "module": "settlements",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Earnings/TransactionHistory/WithdrawRequests missing",
+      "external_or_policy_inputs": [
+        "Settlement schedules/fees/withdrawal approvals",
+        "Provider payout verification"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB14",
+      "scope": "Support/disputes/risk/privacy lifecycle",
+      "dependencies": ["FB12", "FB13"],
+      "module": "support_privacy",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "CreateSupportTicket/CreateMessage/DeactivateUser/audit/risk missing",
+      "external_or_policy_inputs": [
+        "Retention/deletion/legal hold policy",
+        "Support access permissions"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB15",
+      "scope": "Membership/credits/referrals/deals",
+      "dependencies": ["FB05", "FB06", "FB13"],
+      "module": "benefits",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "CreateSubscription/GetAllUserCredits/referrals/Coupon missing",
+      "external_or_policy_inputs": [
+        "Approved membership/credit/referral/deal economics"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB16",
+      "scope": "Full administrative operations and reporting",
+      "dependencies": ["FB03", "FB10", "FB13", "FB14", "FB15"],
+      "module": "administration",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Staffs/UsersPaginated/dashboard/export/provider config missing",
+      "external_or_policy_inputs": [
+        "Administrative capabilities and approval policy"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB17",
+      "scope": "Public/provider configuration, localization and observability",
+      "dependencies": ["FB11", "FB16"],
+      "module": "platform",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Configuration/GetVersions/observability missing",
+      "external_or_policy_inputs": [
+        "Hosting/SLO/retention/domain inputs",
+        "Public/private configuration boundary"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB18",
+      "scope": "Full UI/action parity and regression",
+      "dependencies": ["FB17"],
+      "module": "parity",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Full pinned UI operation/action parity missing",
+      "external_or_policy_inputs": [
+        "All preceding contracts and migrated clients"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB19",
+      "scope": "Load, resilience, retention, restore and security",
+      "dependencies": ["FB18"],
+      "module": "assurance",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Load/resilience/restore/security gates missing",
+      "external_or_policy_inputs": [
+        "Load/SLO targets",
+        "Infrastructure and backup restore environment"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    },
+    {
+      "id": "FB20",
+      "scope": "Signed devices, provider readiness and owner release decision",
+      "dependencies": ["FB19"],
+      "module": "release",
+      "current_functionality": "NOT_STARTED",
+      "coverage": "Signed native/provider/owner release evidence missing",
+      "external_or_policy_inputs": [
+        "Signing/store accounts and devices",
+        "Owner release decision"
+      ],
+      "verification_gate": "Actual unit + real PostgreSQL/Redis integration + affected real-stack Playwright workflow with negatives; native workflows additionally signed device E2E; independent QA/security/correctness review."
+    }
+  ],
+  "upstream_operation_inventory": {
+    "enatega-multivendor-web": {
+      "unique_named_operations": 101,
+      "operations": {
+        "query SingleVendorDiscovery": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorConfiguration": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorProfile": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation LoginSingleVendor": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation EmailExistSingleVendor": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation PhoneExistSingleVendor": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetRestaurantCategoriesSingleVendor": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorBanners": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetAllCategoriesWithSubCategoriesDataSeeAllSingleVendor": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetCategoryItemsSingleVendor": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetFoodDetails": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetSimilarFoods": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetLimitedTimeFoodsDeals": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetWeeklyFoodsDeals": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SearchSingleVendorFoods": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetUserCart": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation UserCartData": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation UpdateUserCartCount": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation ClearCart": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query CalculateCheckout": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetScheduleByDay": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation SingleVendorPlaceOrder": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorActiveOrders": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorRecentActiveOrder": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorPastOrders": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetFavoriteFoodsSingleVendor": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation ToggleFavoriteFoodSingleVendor": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorVouchers": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetAllUserCredits": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetAllSubscriptionPlans": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation CreateSubscription": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation UpdateSubscription": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation CancelSubscription": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query GetMyReferralCode": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "subscription SingleVendorOrderStatusChanged": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "subscription SingleVendorPaymentSuccess": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorOrderDetailsPage": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "query SingleVendorOrderTracking": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "subscription SingleVendorOrderTrackingUpdated": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts"
+        ],
+        "mutation SendChatMessage": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/chatWithRider/index.ts"
+        ],
+        "mutation MetricsGeneral": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/metrics/index.ts"
+        ],
+        "mutation AddFavourite": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation CreateSupportTicket": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/SupportTickets/index.ts"
+        ],
+        "mutation CreateMessage": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/SupportTickets/index.ts"
+        ],
+        "mutation UpdateSupportTicketStatus": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/SupportTickets/index.ts"
+        ],
+        "mutation Login": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation EmailExist": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation PhoneExist": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation SendOtpToEmail": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation SendOtpToPhoneNumber": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation ForgotPassword": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation ResetPassword": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts",
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation CreateUser": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation UpdateUser": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation DeactivateUser": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation VerifyOtp": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/auth/index.ts"
+        ],
+        "mutation SaveNotificationTokenWeb": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/Notification/index.ts"
+        ],
+        "mutation updateNotificationStatus": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/Notification/index.ts"
+        ],
+        "mutation Coupon": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/coupon/index.ts"
+        ],
+        "mutation SelectAddress": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/addresses/index.ts"
+        ],
+        "mutation CreateAddress": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/addresses/index.ts"
+        ],
+        "mutation EditAddress": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/addresses/index.ts"
+        ],
+        "mutation DeleteAddress": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/addresses/index.ts"
+        ],
+        "mutation PlaceOrder": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/orders/index.ts"
+        ],
+        "mutation ReviewOrder": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/orders/index.ts"
+        ],
+        "mutation AbortOrder": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/mutations/orders/index.ts"
+        ],
+        "query Configuration": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/config.ts"
+        ],
+        "query Chat": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/chatWithRider/index.tsx"
+        ],
+        "query TopRatedVendors": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/vendors/index.ts"
+        ],
+        "query GetSingleUserSupportTickets": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/SupportTickets/index.ts"
+        ],
+        "query GetSingleSupportTicket": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/SupportTickets/index.ts"
+        ],
+        "query GetTicketMessages": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/SupportTickets/index.ts"
+        ],
+        "query Rider": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/rider/index.ts"
+        ],
+        "query RelatedItems": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query GetRecentOrderRestaurants": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query GetMostOrderedRestaurants": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query Restaurants": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query RestaurantByIdAndSlug": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query GetReviewsByRestaurant": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query FetchCategoryDetailsByStoreId": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query PopularItems": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query subCategories": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query Zones": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/zone/index.ts"
+        ],
+        "query FetchAllShopTypes": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/shop-type/index.ts"
+        ],
+        "query Tips": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/tipping/index.ts"
+        ],
+        "query UserFavourite": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/profile/index.ts"
+        ],
+        "query OrderDetails": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/order-tracking/index.ts"
+        ],
+        "query OrderTracking": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/order-tracking/index.ts"
+        ],
+        "query Cuisines": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/cuisines/index.ts"
+        ],
+        "query RestaurantCuisines": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/cuisines/index.ts"
+        ],
+        "query Orders": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query GetUsersPastOrders": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query GetUsersActiveOrders": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query getCountries": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/Countries/index.ts"
+        ],
+        "query getCitiesByCountry": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/Countries/index.ts"
+        ],
+        "query Banners": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/queries/banner/index.ts"
+        ],
+        "subscription SubscriptionNewMessage": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/subscription/ChatWithRider/index.tsx"
+        ],
+        "subscription SubscriptionRiderLocation": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/subscription/riderLocation/index.ts"
+        ],
+        "subscription OrderStatusChanged": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/subscription/orders/index.ts"
+        ],
+        "subscription SubscriptionOrder": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/subscription/orders/index.ts"
+        ],
+        "subscription SubscriptionOrderTracking": [
+          "upstream/enatega-multivendor-web/lib/api/graphql/subscription/orders/index.ts"
+        ]
+      }
+    },
+    "enatega-multivendor-admin": {
+      "unique_named_operations": 177,
+      "operations": {
+        "mutation updateUserStatus": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/user.ts"
+        ],
+        "mutation updateUserNotes": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/user.ts"
+        ],
+        "mutation deleteUser": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/user.ts"
+        ],
+        "mutation resetUserSession": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/user.ts"
+        ],
+        "mutation MetricsGeneral": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/metrics/index.ts"
+        ],
+        "mutation CreateOptions": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/options/index.ts"
+        ],
+        "mutation DeleteOption": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/options/index.ts"
+        ],
+        "mutation EditOption": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/options/index.ts"
+        ],
+        "mutation CreateRestaurant": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation DeleteRestaurant": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation HardDeleteRestaurant": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation updateDeliveryBoundsAndLocation": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation EditRestaurant": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation DuplicateRestaurant": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation UpdateFoodOutOfStock": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation updateRestaurantDelivery": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation updateRestaurantBussinessDetails": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/restaurant/index.ts"
+        ],
+        "mutation SAVE_EMAIL_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_FORM_EMAIL_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_SENDGRID_API_KEY": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_FIREBASE_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_SENTRY_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_GOOGLE_API_KEY_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_CLOUDINARY_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_AMPLITUDE_API_KEY_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_GOOGLE_CLIENT_ID_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_WEB_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_APP_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_DELIVERY_RATE_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_PAYPAL_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_STRIPE_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_TWILIO_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_VERIFICATIONS_TOGGLE": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation SAVE_CURRENCY_CONFIGURATION": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/configuration/index.ts"
+        ],
+        "mutation createRestaurantCoupon": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/coupons-restaurant/index.tsx"
+        ],
+        "mutation EditRestaurantCoupon": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/coupons-restaurant/index.tsx"
+        ],
+        "mutation DeleteRestaurantCoupon": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/coupons-restaurant/index.tsx"
+        ],
+        "mutation CreateSupportTicket": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/supportTickets/index.ts"
+        ],
+        "mutation CreateMessage": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/supportTickets/index.ts"
+        ],
+        "mutation UpdateSupportTicketStatus": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/supportTickets/index.ts"
+        ],
+        "mutation CreateCategory": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/category/index.ts"
+        ],
+        "mutation EditCategory": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/category/index.ts"
+        ],
+        "mutation DeleteCategory": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/category/index.ts"
+        ],
+        "mutation UpdateStatus": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/dispatch/index.ts"
+        ],
+        "mutation AssignRider": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/dispatch/index.ts"
+        ],
+        "mutation CreateTaxation": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/taxations/index.ts"
+        ],
+        "mutation editTaxation": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/taxations/index.ts"
+        ],
+        "mutation CreateZone": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/zone/index.ts"
+        ],
+        "mutation EditZone": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/zone/index.ts"
+        ],
+        "mutation DeleteZone": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/zone/index.ts"
+        ],
+        "mutation CreateAddons": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/addons/index.ts"
+        ],
+        "mutation editAddon": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/addons/index.ts"
+        ],
+        "mutation DeleteAddon": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/addons/index.ts"
+        ],
+        "mutation UpdateCommission": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/commission-rate/index.ts"
+        ],
+        "mutation UpdateWithdrawRequest": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/withdraw-requests/index.ts"
+        ],
+        "mutation CreateWithdrawRequest": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/withdraw-requests/index.ts"
+        ],
+        "mutation CreateBanner": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/banners/index.ts"
+        ],
+        "mutation editBanner": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/banners/index.ts"
+        ],
+        "mutation DeleteBanner": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/banners/index.ts"
+        ],
+        "mutation UpdateDeliveryOptions": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/deliveryOptions/index.tsx"
+        ],
+        "mutation UpdateTimings": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/timing/index.tsx"
+        ],
+        "mutation CreateCoupon": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/coupons/index.ts"
+        ],
+        "mutation editCoupon": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/coupons/index.ts"
+        ],
+        "mutation DeleteCoupon": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/coupons/index.ts"
+        ],
+        "mutation CreateTipping": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/tippings/index.ts"
+        ],
+        "mutation editTipping": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/tippings/index.ts"
+        ],
+        "mutation CreateShopType": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/shop-type/index.ts"
+        ],
+        "mutation UpdateShopType": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/shop-type/index.ts"
+        ],
+        "mutation DeleteShopType": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/shop-type/index.ts"
+        ],
+        "mutation createSubCategories": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/sub-category/index.ts"
+        ],
+        "mutation deleteSubCtg": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/sub-category/index.ts"
+        ],
+        "mutation CreateCuisine": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/cuisines/index.ts"
+        ],
+        "mutation editCuisine": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/cuisines/index.ts"
+        ],
+        "mutation DeleteCuisine": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/cuisines/index.ts"
+        ],
+        "mutation CreateFood": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/food/index.ts"
+        ],
+        "mutation EditFood": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/food/index.ts"
+        ],
+        "mutation DeleteFood": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/food/index.ts"
+        ],
+        "mutation CreateRider": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/riders/index.tsx"
+        ],
+        "mutation EditRider": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/riders/index.tsx"
+        ],
+        "mutation DeleteRider": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/riders/index.tsx"
+        ],
+        "mutation ToggleRider": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/riders/index.tsx"
+        ],
+        "mutation CreateStaff": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/staff/index.ts"
+        ],
+        "mutation EditStaff": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/staff/index.ts"
+        ],
+        "mutation DeleteStaff": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/staff/index.ts"
+        ],
+        "mutation RefreshToken": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/authentication/refresh.ts"
+        ],
+        "mutation ownerLogin": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/authentication/index.ts"
+        ],
+        "mutation SetVersions": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/app-versions/index.ts"
+        ],
+        "mutation SendNotificationUser": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/notifications/index.ts"
+        ],
+        "mutation MarkWebNotificationsAsRead": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/notifications/index.ts"
+        ],
+        "mutation CreateVendor": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/vendor/index.ts"
+        ],
+        "mutation EditVendor": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/vendor/index.ts"
+        ],
+        "mutation DeleteVendor": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/vendor/index.ts"
+        ],
+        "mutation UploadImageToS3": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/mutations/upload/index.ts"
+        ],
+        "query OrdersByUser": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/order.ts"
+        ],
+        "query AuditLogs": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/audit.ts"
+        ],
+        "mutation UploadToken": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/token/index.ts"
+        ],
+        "query Restaurant": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/options/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/category/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/food/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/addon/index.ts"
+        ],
+        "query RestaurantOptionsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/options/index.ts"
+        ],
+        "query vendors": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/vendors/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/vendors/index.ts"
+        ],
+        "query GetVendor": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/vendors/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/vendors/index.ts"
+        ],
+        "query getConfiguration": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/configuration/index.ts"
+        ],
+        "query GetRestaurantCoupons": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/coupons-restaurant/index.tsx"
+        ],
+        "query RestaurantCouponsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/coupons-restaurant/index.tsx"
+        ],
+        "query GetTicketUsersWithLatest": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/supportTickets/index.ts"
+        ],
+        "query GetTicketUsers": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/supportTickets/index.ts"
+        ],
+        "query GetSingleUserSupportTickets": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/supportTickets/index.ts"
+        ],
+        "query GetSingleSupportTicket": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/supportTickets/index.ts"
+        ],
+        "query GetTicketMessages": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/supportTickets/index.ts"
+        ],
+        "query RestaurantCategoriesPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/category/index.ts"
+        ],
+        "query restaurants": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query CommissionRate": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query export": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query restaurantsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query getClonedRestaurants": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query RestaurantByOwner": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query RestaurantDeliveryZoneInfo": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query getClonedRestaurantsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/restaurants/index.ts"
+        ],
+        "query Zones": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/zone/index.ts"
+        ],
+        "query ZonesPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/zone/index.ts"
+        ],
+        "query Reviews": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/ratings/index.tsx"
+        ],
+        "query RestaurantReviewsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/ratings/index.tsx"
+        ],
+        "query WithdrawRequests": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/withdraw-requests/index.ts"
+        ],
+        "query users": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/user/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/user/index.ts"
+        ],
+        "query UsersPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/user/index.ts"
+        ],
+        "query GetUser": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/user/index.ts"
+        ],
+        "query subCategories": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/sub-categories/index.ts"
+        ],
+        "query SubCategory": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/sub-categories/index.ts"
+        ],
+        "query GetSubCategoriesByParentId": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/sub-categories/index.ts"
+        ],
+        "query Banners": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/banners/index.tsx"
+        ],
+        "query GetDashboardUsers": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetDashboardUsersByYear": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetDashboardOrdersByType": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetDashboardSalesByType": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetRestaurantDashboardOrdersSalesStats": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetRestaurantDashboardSalesOrderCountDetailsByYear": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetRestaurantDashboardOrderSalesDetailsByPaymentMethod": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetStoreDetailsByVendorId": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetStoreDetailsByVendorIdPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetVendorDashboardStatsCardDetails": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetVendorLiveMonitorData": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query GetVendorDashboardGrowthDetailsByYear": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/dashboard/index.ts"
+        ],
+        "query Coupons": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/coupons/index.ts"
+        ],
+        "query CouponsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/coupons/index.ts"
+        ],
+        "query Tips": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/tippings/index.ts"
+        ],
+        "query GetEarning": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/earnings/index.ts",
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/earnings/index.ts"
+        ],
+        "query FetchStoresAndRidersL": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/concurrent/index.tsx"
+        ],
+        "query Cuisines": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/cuisines/index.ts"
+        ],
+        "query CuisinesPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/cuisines/index.ts"
+        ],
+        "query FetchShopTypes": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/shop-types/index.ts"
+        ],
+        "query FetchUniqueShopType": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/shop-types/index.ts"
+        ],
+        "query RestaurantAddonsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/addon/index.ts"
+        ],
+        "query riders": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/riders/index.ts"
+        ],
+        "query RidersPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/riders/index.ts"
+        ],
+        "query Rider": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/riders/index.ts"
+        ],
+        "query RidersByZone": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/riders/index.ts"
+        ],
+        "query TransactionHistory": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/transaction-history/index.ts"
+        ],
+        "query staffs": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/staff/index.ts"
+        ],
+        "query StaffsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/staff/index.ts"
+        ],
+        "query GetActiveOrders": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query ordersByRestId": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query ordersByRestIdWithoutPagination": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query Orders": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query allOrdersPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query OrderFilterOptions": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query OrdersWithoutPagination": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/orders/index.ts"
+        ],
+        "query OwnerSession": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/authentication/index.ts"
+        ],
+        "query HasOwnerPermission": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/authentication/index.ts"
+        ],
+        "query GetVersions": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/app-versions/index.ts"
+        ],
+        "query GetNotifications": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/notifications/index.ts"
+        ],
+        "query NotificationsPaginated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/notifications/index.ts"
+        ],
+        "query GetWebNotifications": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/queries/notifications/index.ts"
+        ],
+        "subscription SubscribePlaceOrder": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/subscription/order-subscription/index.ts"
+        ],
+        "subscription SubscriptionDispatcher": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/subscription/order-subscription/index.ts"
+        ],
+        "subscription SubscriptionOrder": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/subscription/order-subscription/index.ts"
+        ],
+        "query OrderTracking": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/subscription/order-subscription/index.ts"
+        ],
+        "subscription SubscriptionOrderTracking": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/subscription/order-subscription/index.ts"
+        ],
+        "subscription RiderUpdated": [
+          "upstream/enatega-multivendor-admin/lib/api/graphql/subscription/rider-subscription/index.ts"
+        ]
+      }
+    },
+    "enatega-multivendor-app": {
+      "unique_named_operations": 119,
+      "operations": {
+        "subscription SubscriptionOrder": [
+          "upstream/enatega-multivendor-app/src/apollo/subscriptions.js"
+        ],
+        "subscription SubscriptionOrderTracking": [
+          "upstream/enatega-multivendor-app/src/apollo/subscriptions.js"
+        ],
+        "subscription SubscriptionRiderLocation": [
+          "upstream/enatega-multivendor-app/src/apollo/subscriptions.js"
+        ],
+        "subscription OrderStatusChanged": [
+          "upstream/enatega-multivendor-app/src/apollo/subscriptions.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/subscriptions.js"
+        ],
+        "subscription SubscriptionNewMessage": [
+          "upstream/enatega-multivendor-app/src/apollo/subscriptions.js"
+        ],
+        "mutation UploadImageToS3": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation SendChatMessage": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation PlaceOrder": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation PushToken": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation ForgotPassword": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation ResetPassword": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation Coupon": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation DeleteAddress": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation DeleteBulkAddresses": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation CreateAddress": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation EditAddress": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation ChangePassword": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation SelectAddress": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation ReviewOrder": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation AddFavourite": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation EmailExist": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation PhoneExist": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation SendOtpToEmail": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation SendOtpToPhoneNumber": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation deactivated": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation Login": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation CreateUser": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation UpdateUser": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation UpdateNotificationStatus": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation createActivity": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation CreateSupportTicket": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation CreateMessage": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation VerifyOtp": [
+          "upstream/enatega-multivendor-app/src/apollo/mutations.js"
+        ],
+        "mutation MetricsGeneral": [
+          "upstream/enatega-multivendor-app/src/apollo/publicAccess.js"
+        ],
+        "query Users": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query GetReviewsByRestaurant": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query GetSingleUserSupportTickets": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetSingleSupportTicket": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query GetTicketMessages": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetCountryByIso": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Order": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query OrderTracking": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Orders": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query GetUsersActiveOrders": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetUsersPastOrders": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query Configuration": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Restaurants": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query TopRatedVendors": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Restaurant": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Cuisines": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Rider": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Taxes": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Tips": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query UserFavourite": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query fetchCategoryDetailsByStoreIdForMobile": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query popularFoodItems": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Chat": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query GetRecentOrderRestaurants": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query GetMostOrderedRestaurants": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query RelatedItems": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query PopularItems": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query Banners": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query Zones": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query GetVersions": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query subCategories": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query subCategoriesByParentId": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query FetchAllShopTypes": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "query NearByRestaurantsCuisines": [
+          "upstream/enatega-multivendor-app/src/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/apollo/queries.js"
+        ],
+        "subscription PaymentSuccess": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/subscriptions.js"
+        ],
+        "query SingleVendorOrderTracking": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/subscriptions.js"
+        ],
+        "subscription SingleVendorOrderTrackingUpdated": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/subscriptions.js"
+        ],
+        "mutation LoginSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation EmailExistSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation PhoneExistSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation ToggleFavoriteFoodSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation UserCartData": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation EditSingleVendorCartItem": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation UpdateUserCartCount": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation CreateSubscription": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation CancelSubscription": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation UpdateSubscription": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation ClearCart": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation PushSingleVendorNotificationToken": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation CheckReferralCodeExists": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "mutation GiveFeedback": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/mutations.js"
+        ],
+        "query SingleVendorDiscovery": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query SingleVendorBanners": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query SingleVendorDealSection": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query SingleVendorVouchers": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetAllCategoriesWithSubCategoriesDataSeeAllSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetRestaurantCategoriesSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetCategoryItemsSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetFoodDetails": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js",
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetSimilarFoods": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetFavoriteFoodsStatus": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetScheduleByDay": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query SearchFood": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query SearchSingleVendorFoods": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetLimitedTimeFoodsDeals": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetWeeklyFoodsDeals": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetNewOffersFoodsDeals": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetUserCart": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetRecommendedFoods": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query CalculateCheckout": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query OrderDetailsPage": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query RecentActiveOrder": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetAllSubscriptionPlans": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetFavoriteFoodsSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetMyReferralCode": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query ScheduledOrders": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetMyFreeDeliveries": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetEstimatedDeliveryTime": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetAllUserCredits": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetUserCreditsHistory": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query TodayNotificationsByToken": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query PastNotificationsByToken": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetAllCategoriesWithSubCategoriesOnlySeeAllSingleVendor": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetCategoryProducts": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ],
+        "query GetScheduleUntilNextDayOff": [
+          "upstream/enatega-multivendor-app/src/singlevendor/apollo/queries.js"
+        ]
+      }
+    },
+    "enatega-multivendor-store": {
+      "unique_named_operations": 23,
+      "operations": {
+        "subscription SubscribePlaceOrder": [
+          "upstream/enatega-multivendor-store/lib/apollo/subscriptions.ts"
+        ],
+        "subscription SubscriptionOrder": [
+          "upstream/enatega-multivendor-store/lib/apollo/subscriptions.ts",
+          "upstream/enatega-multivendor-store/lib/apollo/subscriptions.ts"
+        ],
+        "subscription WebSocket": [
+          "upstream/enatega-multivendor-store/lib/apollo/index.ts"
+        ],
+        "mutation Mutation": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/withdraw-request.mutation.ts"
+        ],
+        "mutation ToggleStore": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/store.mutation.ts"
+        ],
+        "mutation UpdateRestaurantBussinessDetails": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/store.mutation.ts"
+        ],
+        "mutation UpdateTimings": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/work-schedule.ts"
+        ],
+        "mutation AcceptOrder": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/order.mutation.ts"
+        ],
+        "mutation CancelOrder": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/order.mutation.ts"
+        ],
+        "mutation muteRing": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/order.mutation.ts"
+        ],
+        "mutation OrderPickedUp": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/order.mutation.ts"
+        ],
+        "mutation saveRestaurantToken": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/notification.mutation.ts"
+        ],
+        "mutation RestaurantLogin": [
+          "upstream/enatega-multivendor-store/lib/apollo/mutations/login.mutation.ts"
+        ],
+        "query StoreEarningsGraph": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/earnings.query.ts"
+        ],
+        "query Earnings": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/earnings.query.ts"
+        ],
+        "query Orders": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/orders.ts"
+        ],
+        "query SingleVendorStoreOrders": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/orders.ts"
+        ],
+        "query Configuration": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/configuration.query.ts"
+        ],
+        "query Restaurant": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/store.query.ts",
+          "upstream/enatega-multivendor-store/lib/apollo/queries/store.query.ts",
+          "upstream/enatega-multivendor-store/lib/apollo/queries/store.query.ts"
+        ],
+        "query StoreEarnings": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/store.query.ts"
+        ],
+        "query TransactionHistory": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/store.query.ts"
+        ],
+        "query StoreCurrentWithdrawRequest": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/store.query.ts"
+        ],
+        "query SingleVendorStoreProfile": [
+          "upstream/enatega-multivendor-store/lib/apollo/queries/store.query.ts"
+        ]
+      }
+    },
+    "enatega-multivendor-rider": {
+      "unique_named_operations": 47,
+      "operations": {
+        "subscription SubscriptionNewMessage": [
+          "upstream/enatega-multivendor-rider/lib/apollo/subscriptions.ts"
+        ],
+        "subscription SingleVendorSubscriptionNewMessage": [
+          "upstream/enatega-multivendor-rider/lib/apollo/subscriptions.ts"
+        ],
+        "subscription SubscriptionZoneOrders": [
+          "upstream/enatega-multivendor-rider/lib/apollo/subscriptions.ts"
+        ],
+        "subscription SingleVendorSubscriptionZoneOrders": [
+          "upstream/enatega-multivendor-rider/lib/apollo/subscriptions.ts"
+        ],
+        "subscription SubscriptionAssignRider": [
+          "upstream/enatega-multivendor-rider/lib/apollo/subscriptions.ts"
+        ],
+        "subscription SingleVendorSubscriptionAssignRider": [
+          "upstream/enatega-multivendor-rider/lib/apollo/subscriptions.ts"
+        ],
+        "subscription SubscriptionOrder": [
+          "upstream/enatega-multivendor-rider/lib/apollo/subscriptions.ts"
+        ],
+        "mutation Mutation": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/withdraw-request.mutation.ts"
+        ],
+        "mutation SendChatMessage": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/chat.mutation.ts"
+        ],
+        "mutation SingleVendorSendChatMessage": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/chat.mutation.ts"
+        ],
+        "mutation EditRider": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts"
+        ],
+        "mutation UpdateRiderLocation": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts",
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts"
+        ],
+        "mutation ToggleRider": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts"
+        ],
+        "mutation UpdateRiderLicenseDetails": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts"
+        ],
+        "mutation UpdateRiderVehicleDetails": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts"
+        ],
+        "mutation UpdateRiderBussinessDetails": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts"
+        ],
+        "mutation UpdateWorkSchedule": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts"
+        ],
+        "mutation UploadImageToS3": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/rider.mutation.ts"
+        ],
+        "mutation AssignOrder": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts"
+        ],
+        "mutation UpdateOrderStatusRider": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts"
+        ],
+        "mutation ReviewOrder": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts"
+        ],
+        "mutation PlaceOrder": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts"
+        ],
+        "mutation EmailExist": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation PhoneExist": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation SendOtpToEmail": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation SendOtpToPhoneNumber": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation deactivated": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation Login": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation ForgotPassword": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation ChangePassword": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation ResetPassword": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts"
+        ],
+        "mutation MetricsGeneral": [
+          "upstream/enatega-multivendor-rider/lib/apollo/mutations/metrics/index.ts"
+        ],
+        "query Chat": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/chat.query.ts"
+        ],
+        "query SingleVendorChat": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/chat.query.ts"
+        ],
+        "query RiderEarningsGraph": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/earnings.query.ts"
+        ],
+        "query Rider": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/rider.query.ts",
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/rider.query.ts"
+        ],
+        "query TransactionHistory": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/rider.query.ts"
+        ],
+        "query RiderCurrentWithdrawRequest": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/rider.query.ts"
+        ],
+        "query rider": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/rider.query.ts"
+        ],
+        "query RiderOrders": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/rider.query.ts"
+        ],
+        "query SingleVendorRiderOrders": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/rider.query.ts"
+        ],
+        "query Order": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/order/order-1.query.ts"
+        ],
+        "query Orders": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/order/order-1.query.ts"
+        ],
+        "query GetRecentOrderRestaurants": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/order/order-2.query.ts",
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/order/order-2.query.ts"
+        ],
+        "query Configuration": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/resturant/configuration.query.ts",
+          "upstream/enatega-multivendor-rider/lib/api/graphql/query/configuration/index.ts"
+        ],
+        "query Restaurants": [
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/resturant/resturant-2.query.ts",
+          "upstream/enatega-multivendor-rider/lib/apollo/queries/resturant/resturant-2.query.ts"
+        ],
+        "mutation RiderLogin": [
+          "upstream/enatega-multivendor-rider/lib/api/graphql/mutation/login/index.ts"
+        ]
+      }
+    }
+  },
+  "next_packets": [
+    {
+      "id": "FB04-CUSTOMER-ADDRESSES-01",
+      "safe_to_freeze": true,
+      "module": "customer",
+      "requires": [
+        "IdentityService.identity(CUSTOMER,ctx)",
+        "Lead-owned schema/contract review"
+      ],
+      "checks": [
+        "Expired/revoked/wrong-app/missing bearer rejected",
+        "Two real customers cannot read/edit/delete/select other addresses",
+        "Invalid UUID, oversize text, NaN/infinite/out-of-range coordinates rejected",
+        "PostgreSQL transaction concurrency preserves one selected address",
+        "Web real-stack create/edit/select/delete persistence + negative paths",
+        "Unit/integration/lint/typecheck/build and independent QA/security"
+      ],
+      "enatega_adapter": "Rewrite Create/Edit/Delete/SelectAddress documents into typed new operations; map location.coordinates consistently [longitude,latitude], _id to id; do not silently emulate legacy profile return.",
+      "state": "FROZEN_SEPARATELY",
+      "authoritative_contract": "contracts/addresses.graphql",
+      "authoritative_packet": "docs/CUSTOMER_ADDRESSES_PACKET.json"
+    },
+    {
+      "id": "FB02-TENANT-MEMBERSHIP-01",
+      "safe_to_freeze": false,
+      "reason": "No approved membership/provisioning capability policy found; identity packet explicitly excludes provisioning.",
+      "proposed_contract": "Identity-owned requireOutletCapability(principal,outletId,capability) validates active membership and merchant-outlet relation; no downstream direct identity table reads.",
+      "needs_decision": [
+        "Who may provision merchant/outlet and issue first staff membership?",
+        "Capability matrix and invitation/revocation audit requirements",
+        "Production MFA and administrative bootstrap process"
+      ],
+      "then": "FB03 staff category/item CRUD with ownership on server, bounded validation, versioned updates, publication audit and cross-tenant negative tests."
+    },
+    {
+      "id": "FB04-CUSTOMER-FAVORITES-01",
+      "safe_to_freeze": true,
+      "requires": [
+        "Explicit catalog canViewOutlet(id) interface; no cross-module DB reads"
+      ],
+      "contract": "customerFavorites(limit,after), setCustomerFavorite(outletId,favorite:Boolean!); identity-derived owner, unique userId/outletId, idempotent set operation; publication filtering through catalog service.",
+      "difference": "Legacy AddFavourite toggle is race-prone; migrate client to explicit desired boolean."
+    }
+  ],
+  "completion": "Every phase keeps functionality, verification and release separate; no complete/perfect claim until actual acceptance, provider/device and independent review evidence exists.",
+  "launch_decisions": {
+    "country": "MY",
+    "currency": "MYR",
+    "delivery": "OWN_FLEET_FIRST",
+    "configuration": "Country, supported markets, currencies, delivery fleets/providers, payment methods, fees, tax and refund policies configurable; no invented activation defaults",
+    "payment_provider": "Not selected; provider adapters must be disabled until actual configuration/sandbox verification",
+    "external_delivery": "Optional later configuration; not required for first own-fleet path",
+    "policy_rules": "Versioned validated configuration; activated rules audited; quotes/orders retain applied version; existing orders not recalculated after a policy edit; zero core food commission invariant cannot be bypassed",
+    "initial_selections_only": true
+  },
+  "primary_operation_inventory": "docs/ENATEGA_OPERATION_COVERAGE.json (AST inventory; runtime reachability remains unverified)",
+  "market_currency_fleet_configuration": {
+    "country": "Configurable launch country and supported markets; MY is the initial selection, not a hard-coded system restriction",
+    "currency": "Configurable supported currencies and market/outlet currency; MYR is the initial selection. Validate currency codes and minor-unit precision; never silently convert or mix currencies",
+    "delivery_fleets": "Configurable multiple own fleets and external-provider fleets with per-market/outlet eligibility, availability, priority and fallback routing. Own fleet is the initial selection; unconfigured/unverified providers disabled",
+    "activation": "Versioned, validated, audited administrative configuration; preserve country/currency/fleet and rule versions on existing quotes/orders/financial records rather than rewriting history",
+    "scope": "Runtime configuration and integrations remain NOT_IMPLEMENTED; no provider or market support claimed solely from an enabled setting"
+  },
+  "owner_reference": {
+    "url": "https://deepwiki.com/enatega/food-delivery-multivendor",
+    "role": "Owner-provided secondary architecture/flow reference; reconcile against pinned upstream source, never substitute UI or assume current API compatibility",
+    "access": "Direct browser fetch unavailable; contents not verified yet",
+    "rule": "Original complete Enatega UI only; our backend and integration only"
+  }
+}

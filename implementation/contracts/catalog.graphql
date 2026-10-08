@@ -1,0 +1,35 @@
+# Public catalog visibility only; no onboarding, approval or checkout capability.
+type CatalogOutlet {
+  id: ID!
+  name: String!
+  merchantName: String!
+  currency: String!
+}
+type CatalogOutletPage {
+  nodes: [CatalogOutlet!]!
+  endCursor: ID
+  hasNextPage: Boolean!
+}
+type CatalogCategory {
+  id: ID!
+  name: String!
+}
+type CatalogItem {
+  id: ID!
+  outletId: ID!
+  name: String!
+  description: String!
+  priceMinor: Int!
+  available: Boolean!
+  category: CatalogCategory!
+}
+type CatalogItemPage {
+  nodes: [CatalogItem!]!
+  endCursor: ID
+  hasNextPage: Boolean!
+}
+extend type Query {
+  catalogOutlets(limit: Int = 20, after: ID): CatalogOutletPage!
+  catalogOutlet(id: ID!): CatalogOutlet
+  catalogItems(outletId: ID!, limit: Int = 20, after: ID): CatalogItemPage!
+}

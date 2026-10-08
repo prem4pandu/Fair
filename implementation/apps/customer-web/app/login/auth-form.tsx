@@ -4,9 +4,12 @@ import { useRouter } from "next/navigation";
 export default function AuthForm({ register = false }: { register?: boolean }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   return (
     <form
+      className="identity-form"
+      aria-label={register ? "Customer registration" : "Password sign in"}
       onSubmit={async (event) => {
         event.preventDefault();
         if (busy) return;
@@ -61,29 +64,46 @@ export default function AuthForm({ register = false }: { register?: boolean }) {
           maxLength={254}
         />
       </label>
-      <label>
-        Password
+      <label htmlFor="identity-password">Password</label>
+      <div className="identity-password">
         <input
-          type="password"
+          id="identity-password"
+          type={showPassword ? "text" : "password"}
           name="password"
           autoComplete={register ? "new-password" : "current-password"}
           required
           minLength={register ? 12 : undefined}
           maxLength={128}
         />
-      </label>
-      <button disabled={busy} type="submit">
+        <button
+          className="password-toggle"
+          type="button"
+          aria-label={showPassword ? "Hide password" : "Show password"}
+          aria-pressed={showPassword}
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? "Hide" : "Show"}
+        </button>
+      </div>
+      <button className="identity-submit" disabled={busy} type="submit">
         {busy
           ? "Please wait…"
           : register
             ? "Create customer account"
             : "Sign in"}
       </button>
-      <p role="status">{message}</p>
+      <p
+        className="identity-message"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {message}
+      </p>
       {register && (
         <p>
-          Email verification is not available in this packet. New accounts
-          remain unverified.
+          Email verification is currently unavailable. Your account will remain
+          unverified.
         </p>
       )}
     </form>
