@@ -34,6 +34,7 @@
     "rxjs": "7.8.2",
     "zod": "4.1.11",
     "express": "5.2.1",
+    "ws": "8.22.0",
     "@fairbite/identity-contracts": "workspace:*",
     "argon2": "0.44.0",
     "jose": "6.1.0"
@@ -44,6 +45,7 @@
     "testcontainers": "11.7.0",
     "@types/pg": "8.15.5",
     "@types/express": "5.0.3",
+    "@types/ws": "8.18.2",
     "@types/supertest": "6.0.3",
     "supertest": "7.1.4",
     "prisma": "7.10.0",
