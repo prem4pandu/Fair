@@ -17,10 +17,17 @@ const badge = (state) =>
 
 // Operation facts come from the shared state module so this report and the
 // traceability matrix can never disagree about the same numbers.
-const { compatibility, lanes, laneSummary, totals } = loadOperationState({
-  implementation: root,
-});
+const { compatibility, fullCompatibility, lanes, laneSummary, totals } =
+  loadOperationState({
+    implementation: root,
+  });
 const verified = totals.evidenced;
+const fullInvalidDocuments = fullCompatibility.apps.reduce(
+  (count, app) =>
+    count +
+    app.documents.filter((document) => document.status === "INVALID").length,
+  0,
+);
 // Gate results come from the recorded registry, never from hand-maintained
 // numbers: a report may only claim what a recorded command actually proved.
 const gatesFile = resolve(root, "docs/GATES.json");
@@ -39,7 +46,7 @@ const gateSummary = gateRuns.length
     `${latestRun.passed ? "PASSED" : "FAILED"} at ${escape(latestRun.finishedAt)} ` +
     `on commit <code>${escape(String(latestRun.commit ?? "unknown").slice(0, 12))}</code> ` +
     `(${latestRun.commands.filter((command) => command.exitCode === 0).length}/${latestRun.commands.length} commands exit 0). ` +
-    `Full command output: <code>docs/GATES.json</code>.`
+    `Independent gate approvals remain pending. Full command output: <code>docs/GATES.json</code>.`
   : "No gate run is recorded yet; run <code>node tools/record-gate.mjs --gate GP0</code> and commit <code>docs/GATES.json</code>.";
 const laneNames = {
   L0: "Transport foundation",
@@ -70,7 +77,7 @@ const phase = (wave, scope, state, gap) =>
 const raw = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FairBite implementation status</title><style>
 :root{color-scheme:dark;--bg:#09110f;--panel:#111d19;--line:#294038;--text:#edf7f2;--muted:#a8beb4;--green:#65d6a6;--amber:#ffc966;--red:#ff8a85;--blue:#79bfff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:32px 20px 80px}header,.card,details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}header{padding:28px;background:linear-gradient(135deg,#162b24,#0d1714)}h1{font-size:clamp(2rem,5vw,4.2rem);line-height:1}.eyebrow{color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.12em}.lead,.note,caption{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:22px 0}.value{font-size:1.8rem;font-weight:800}.badge{display:inline-block;border-radius:99px;padding:.18rem .62rem;font-size:.78rem;font-weight:800}.in-progress{color:var(--amber);background:#40351b}.blocked{color:var(--red);background:#472525}.complete{color:var(--green);background:#163c30}.table{overflow:auto;border:1px solid var(--line);border-radius:14px}table{width:100%;border-collapse:collapse;background:var(--panel)}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:12px}thead th,.eyebrow{color:var(--green)}caption{text-align:left;padding:8px}code,a{color:var(--blue)}.callout{border-left:4px solid var(--amber);padding:14px;background:#241f13}:focus-visible{outline:3px solid var(--blue)}@media(max-width:650px){main{padding:18px 12px}th,td{padding:9px;font-size:.9rem}}
 </style></head><body><main><header><div class="eyebrow">Evidence-based project report</div><h1>FairBite implementation status</h1><p class="lead">The original pinned Enatega presentation is the product UI. FairBite owns its backend and integration layer.</p><p>${badge("IN PROGRESS")} No release gate is recorded as passed.</p></header>
-<section><h2>Current snapshot</h2><div class="grid"><article class="card"><div class="value">${compatibility.summary.validDocuments}/${compatibility.summary.documents}</div><div>static GraphQL documents valid</div></article><article class="card"><div class="value">${lanes.total}</div><div>inventoried root operations</div></article><article class="card"><div class="value">${verified}/${lanes.total}</div><div>operations marked verified</div></article><article class="card"><div class="value">${passedGates}</div><div>formal gates recorded passed</div></article></div><p class="callout"><strong>Static compatibility ${compatibility.staticCompatibility}</strong> does not prove resolver behavior, authorization, runtime reachability, subscriptions, UI parity, or E2E journeys.</p><p class="note">${gateSummary} Test counts and per-command exits are recorded there rather than restated here.</p></section>
+<section><h2>Current snapshot</h2><div class="grid"><article class="card"><div class="value">${compatibility.summary.validDocuments}/${compatibility.summary.documents}</div><div>scoped multivendor documents valid</div></article><article class="card"><div class="value">${lanes.total}</div><div>inventoried root operations</div></article><article class="card"><div class="value">${verified}/${lanes.total}</div><div>operations marked verified</div></article><article class="card"><div class="value">${passedGates}</div><div>complete gate command runs passed</div></article></div><p class="callout"><strong>Scoped multivendor compatibility ${compatibility.staticCompatibility}</strong> does not prove resolver behavior, authorization, runtime reachability, subscriptions, UI parity, or E2E journeys.</p><p class="callout"><strong>Full six-app compatibility ${fullCompatibility.staticCompatibility}</strong>: ${fullCompatibility.summary.validDocuments}/${fullCompatibility.summary.documents} documents valid, ${fullInvalidDocuments} invalid, ${fullCompatibility.summary.unresolvedDocuments} unresolved. The scoped PASS does not satisfy the W2 full-mode gate.</p><p class="note">${gateSummary} Test counts and per-command exits are recorded there rather than restated here.</p></section>
 <section><h2>Phase status</h2><div class="table"><table><caption>Status requires implementation, checks, and independent approval.</caption><thead><tr><th>Wave</th><th>Scope</th><th>Status</th><th>Evidence gap</th></tr></thead><tbody>${phase("0", "Foundation", "IN PROGRESS", "Aggregate G0 evidence and approval are open.")}${phase("1", "Contract and data model", "IN PROGRESS", "Forward migrations exist; formal G1 evidence and approval remain open.")}${phase("2", "L1–L9 domains", "IN PROGRESS", "Identity, configuration, catalog, addresses, and order-domain slices exist; most operation behavior and per-operation tests remain incomplete.")}${phase("3", "Journeys and application E2E", "BLOCKED", "Depends on completed domain operations.")}${phase("4", "Hardening and release", "BLOCKED", "Providers, devices, security, load, restore, and approvals remain.")}${phase("5", "Single-vendor L12", "BLOCKED", "Separate gated product mode.")}</tbody></table></div></section>
 <section><h2>Backend lane matrix</h2><div class="table"><table><caption>Counts from OPERATION_LANES.json.</caption><thead><tr><th>Lane</th><th>Module</th><th>Roots</th><th>Implemented</th><th>Status</th><th>Assessment</th></tr></thead><tbody>${laneRows}</tbody></table></div></section>
 <section><h2>Enatega UI/backend alignment</h2><p>The complete pinned UI is <code>vendor/enatega-ui</code>. Screens, navigation, assets, and interactions remain Enatega’s; the backend must match its GraphQL, REST, WebSocket, and public-access contracts.</p><div class="grid"><article class="card"><h3>Admin web</h3><p>Original Enatega admin.</p>${badge("IN PROGRESS")}</article><article class="card"><h3>Customer web/mobile</h3><p>Original Enatega clients.</p>${badge("IN PROGRESS")}</article><article class="card"><h3>Store and rider</h3><p>Original Enatega mobile clients.</p>${badge("IN PROGRESS")}</article></div></section>
@@ -106,6 +113,15 @@ const status = {
     validDocuments: compatibility.summary.validDocuments,
     unresolvedDocuments: compatibility.summary.unresolvedDocuments,
     missingRoots: compatibility.summary.missingRoots.length,
+  },
+  fullStaticCompatibility: {
+    status: fullCompatibility.staticCompatibility,
+    apps: fullCompatibility.summary.apps,
+    documents: fullCompatibility.summary.documents,
+    validDocuments: fullCompatibility.summary.validDocuments,
+    invalidDocuments: fullInvalidDocuments,
+    unresolvedDocuments: fullCompatibility.summary.unresolvedDocuments,
+    missingRoots: fullCompatibility.summary.missingRoots.length,
   },
   lanes: Object.fromEntries(
     laneSummary.map((lane) => [

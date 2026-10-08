@@ -1,11 +1,22 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import type { GraphQLFieldResolver } from "graphql";
 import { GraphQLSchemaHost } from "@nestjs/graphql";
 import WebSocket from "ws";
 import { UserTokens } from "../../../src/kernel/auth/tokens.js";
 import { doc } from "../../support/documents.js";
-import { openFrameClient, type FrameClient } from "../../support/ws.js";
+import {
+  openFrameClient as connectFrameClient,
+  type FrameClient,
+} from "../../support/ws.js";
 import { startApi, type Api } from "../../support/app.js";
 import { startStack, type Stack } from "../../support/stack.js";
+
+const clients = new Set<FrameClient>();
+const openFrameClient: typeof connectFrameClient = async (...args) => {
+  const client = await connectFrameClient(...args);
+  clients.add(client);
+  return client;
+};
 
 const storeDocument = doc(
   "enatega-multivendor-store",
@@ -30,6 +41,7 @@ describe("WebSocket subscription transport", () => {
   const userId = "018f0000-0000-7000-8000-0000000000a1";
   const sessionId = "018f0000-0000-7000-8000-0000000000b1";
   const observed: Observed[] = [];
+  let serviceInfoResolver: GraphQLFieldResolver<unknown, unknown> | undefined;
 
   const legacyClient = (authorization: string): Promise<FrameClient> =>
     openFrameClient(api.wsUrl, "graphql-ws", {
@@ -86,23 +98,62 @@ describe("WebSocket subscription transport", () => {
       .getSubscriptionType()!
       .getFields().subscribePlaceOrder!;
     field.resolve = (event: unknown) => event;
-    field.subscribe = async function* (
+    field.subscribe = async function (
       _source: unknown,
       args: Record<string, unknown>,
       context: Observed["context"] & { auth: () => Promise<unknown> },
     ) {
       const principal = await context.auth();
       observed.push({ args, context, principal });
-      yield { origin: String(args.restaurant), userId, order: null };
-      if (args.restaurant === "complete") return;
-      await new Promise(() => {});
+      const value = { origin: String(args.restaurant), userId, order: null };
+      let first = true;
+      let done = false;
+      let finishPending:
+        | ((result: IteratorResult<typeof value>) => void)
+        | undefined;
+      const iterator: AsyncIterableIterator<typeof value> = {
+        [Symbol.asyncIterator]() {
+          return this;
+        },
+        async next() {
+          if (done) return { done: true, value: undefined };
+          if (first) {
+            first = false;
+            return { done: false, value };
+          }
+          if (args.restaurant === "complete") {
+            done = true;
+            return { done: true, value: undefined };
+          }
+          // Unlike a generator blocked on an unresolved await, this controlled
+          // source lets return() release a pending next() during stop/disposal.
+          return new Promise<IteratorResult<typeof value>>((resolve) => {
+            finishPending = resolve;
+          });
+        },
+        async return() {
+          done = true;
+          finishPending?.({ done: true, value: undefined });
+          finishPending = undefined;
+          return { done: true, value: undefined };
+        },
+      };
+      return iterator;
     };
+    serviceInfoResolver = schema.getQueryType()!.getFields().serviceInfo!
+      .resolve;
+  });
 
-    // A resolver that fails internally must never leak its raw message over
-    // either WebSocket protocol.
-    schema.getQueryType()!.getFields().serviceInfo!.resolve = () => {
-      throw new Error("internal detail: postgres://secret@host/db");
-    };
+  afterEach(async () => {
+    for (const client of clients) client.close();
+    await Promise.all([...clients].map((client) => client.closed));
+    clients.clear();
+    if (api) {
+      api.app
+        .get(GraphQLSchemaHost)
+        .schema.getQueryType()!
+        .getFields().serviceInfo!.resolve = serviceInfoResolver;
+    }
   });
 
   afterAll(async () => {
@@ -173,7 +224,29 @@ describe("WebSocket subscription transport", () => {
   });
 
   it("re-validates the session for every subscription on a live socket", async () => {
-    const client = await legacyClient(`Bearer ${userToken}`);
+    // Revocation is irreversible. Give this test its own family so the shared
+    // valid token remains usable by the other protocol tests.
+    const revocationSessionId = "018f0000-0000-7000-8000-0000000000b2";
+    await stack.pool.query(
+      `INSERT INTO "IdentitySessionFamily" (id, "userId", application, "expiresAt")
+       VALUES ($1, $2, 'CUSTOMER', now() + interval '1 hour')`,
+      [revocationSessionId, userId],
+    );
+    await stack.pool.query(
+      'INSERT INTO "IdentityRefreshSession" (id, "familyId", "userId", "tokenHash") VALUES ($1, $2, $3, $4)',
+      [revocationSessionId, revocationSessionId, userId, "b".repeat(64)],
+    );
+    const revocationToken = (
+      await new UserTokens(
+        Buffer.alloc(32, 1).toString("base64url"),
+        900,
+      ).issue({
+        sub: userId,
+        typ: "CUSTOMER",
+        sid: revocationSessionId,
+      })
+    ).token;
+    const client = await legacyClient(`Bearer ${revocationToken}`);
     start(client, "before-revocation", "complete");
     await client.take(
       (frame) => frame.type === "data" && frame.id === "before-revocation",
@@ -181,24 +254,27 @@ describe("WebSocket subscription transport", () => {
 
     await stack.pool.query(
       'UPDATE "IdentitySessionFamily" SET "revokedAt" = now() WHERE id = $1',
-      [sessionId],
+      [revocationSessionId],
     );
     start(client, "after-revocation", "complete");
     const rejected = await client.take(
-      (frame) => frame.type === "error" && frame.id === "after-revocation",
+      (frame) => frame.type === "data" && frame.id === "after-revocation",
     );
-    expect(
-      (rejected.payload as { extensions?: { code?: string } }).extensions?.code,
-    ).toBe("INVALID_TOKEN");
-    expect(dataFor(client, "after-revocation")).toBeUndefined();
+    expect(rejected.payload).toEqual({
+      data: null,
+      errors: [
+        {
+          message: "Invalid token",
+          extensions: { code: "INVALID_TOKEN" },
+        },
+      ],
+    });
+    await client.take(
+      (frame) => frame.type === "complete" && frame.id === "after-revocation",
+    );
 
     client.send({ type: "connection_terminate" });
     await client.closed;
-
-    await stack.pool.query(
-      'UPDATE "IdentitySessionFamily" SET "revokedAt" = NULL WHERE id = $1',
-      [sessionId],
-    );
   });
 
   it("serves a query needing the WS context ready() over both protocols", async () => {
@@ -238,6 +314,12 @@ describe("WebSocket subscription transport", () => {
   });
 
   it("masks internal resolver failures on both protocols", async () => {
+    api.app
+      .get(GraphQLSchemaHost)
+      .schema.getQueryType()!
+      .getFields().serviceInfo!.resolve = () => {
+      throw new Error("internal detail: postgres://secret@host/db");
+    };
     const query = "{ serviceInfo { name } }";
     const legacy = await legacyClient("");
     legacy.send({ type: "start", id: "leak", payload: { query } });

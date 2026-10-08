@@ -30,6 +30,51 @@ schema.getSubscriptionType()!.getFields().tick.subscribe = () => ticks();
 const flush = () => new Promise((resolve) => setTimeout(resolve, 20));
 
 describe("legacy subscriptions-transport-ws session", () => {
+  it.each(["query", "mutation"])(
+    "executes a named %s operation with fresh context and variables",
+    async (operation) => {
+      const executable = buildSchema(
+        "type Query { value(input: Int!): Int! } type Mutation { value(input: Int!): Int! }",
+      );
+      const resolver = (
+        _source: unknown,
+        args: { input: number },
+        context: { offset: number },
+      ) => args.input + context.offset;
+      executable.getQueryType()!.getFields().value!.resolve = resolver;
+      executable.getMutationType()!.getFields().value!.resolve = resolver;
+      const socket = new FakeSocket();
+      const session = new LegacySubscriptionSession(
+        socket as never,
+        executable,
+        {
+          onConnect: async () => ({ offset: 3 }),
+          keepAliveMs: 0,
+        },
+      );
+      socket.emit("message", JSON.stringify({ type: "connection_init" }));
+      socket.emit(
+        "message",
+        JSON.stringify({
+          type: "start",
+          id: "execute",
+          payload: {
+            query: `query Other { value(input: 100) } ${operation} Selected($input: Int!) { value(input: $input) }`,
+            operationName: "Selected",
+            variables: { input: 7 },
+          },
+        }),
+      );
+      await flush();
+      expect(socket.sent).toEqual([
+        { type: "connection_ack" },
+        { type: "data", id: "execute", payload: { data: { value: 10 } } },
+        { type: "complete", id: "execute" },
+      ]);
+      await session.disposeAsync();
+    },
+  );
+
   it("acks connection_init and passes its payload to onInit", async () => {
     const socket = new FakeSocket();
     let params: unknown;

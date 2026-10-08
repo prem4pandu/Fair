@@ -1,4 +1,6 @@
 import {
+  execute,
+  getOperationAST,
   parse,
   specifiedRules,
   subscribe,
@@ -256,7 +258,9 @@ export class LegacySubscriptionSession {
 
     let result;
     try {
-      result = await subscribe({
+      const operation = getOperationAST(document, payload.operationName);
+      const run = operation?.operation === "subscription" ? subscribe : execute;
+      result = await run({
         schema: this.schema,
         document,
         variableValues: payload.variables,

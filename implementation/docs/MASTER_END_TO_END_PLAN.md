@@ -103,6 +103,22 @@ task-level detail.
 
 ---
 
+### 1.6 Continuation checkpoint — 2026-10-09
+
+The day-0 tables above are historical. Current generated status reports 18/334 real resolver operations and 0/334 recorded operation evidence. The scoped multivendor audit passes 439/439 documents; the full six-app audit fails with 800/852 valid, 43 invalid and 9 unresolved. Status and traceability now display both scopes explicitly.
+
+The next eligible W2 packet adds the populated migration-005 fixture, exhaustive baseline inventory and preservation/fresh-deployment checks in `docs/WAVE1_MIGRATION_INVENTORY.md` and `services/api/test/integration/schema/`. Real execution exposed and corrected the L2 bootstrap aggregate guard (`WHERE` → `HAVING`); existing snapshot data and the selected SGD currency remain unchanged. Already-applied migration checksum/drift reconciliation remains a separate deployment prerequisite, documented in the inventory.
+
+W1 follow-up closes modern WebSocket exception masking and GraphQL error serialization, and routes legacy queries/mutations through execution rather than subscription setup. The real transport harness now uses the same GraphQL module instance as Nest, cancellable controlled sources, scoped resolver overrides and a separate irreversibly revoked session. Independent agent review covers these bounded changes; it does not approve G0/G1 or release.
+
+Coverage closure task **W17-WS-TRANSPORT** tracks `src/kernel/ws/server.ts` and `src/kernel/ws/legacy-protocol.ts`; final unit-only lines coverage is 68.33% and 83.33% respectively. The report does not satisfy full integration coverage or the 90/90/85 per-file gate.
+
+Final validation: 181 API unit/HTTP tests, 76 real PostgreSQL/Redis integration tests across 13 files, 52 tooling tests and 5 backend browser boundary checks pass. Lint, typecheck, build, formatting, codegen, source integrity and traceability pass. `docs/GATES.json` records the whole integration command as partial GP0 evidence with no approval; `docs/artifacts/w1-w2-2026-10-09/packet.json` records the bounded packet and prior failures. This is not original UI/native journey acceptance.
+
+Next work remains W2 full-document reconciliation, contract/data-model and ports review, schema replay, migration drift and authenticated historical-session/address continuity. Original UI smoke, per-operation evidence, strict coverage, native/provider and phase approvals remain open. No frontend files were edited in this packet.
+
+---
+
 ## 2. Definition of done
 
 ### 2.1 Owner boundary (verbatim; must appear in every frontend/mobile handoff)

@@ -662,6 +662,44 @@
           "approvals": [],
           "reviewer": null,
           "approved": false
+        },
+        {
+          "gate": "GP0",
+          "commit": "7dc9356ad8592754b52e4342c424be1aab227c19",
+          "dirty": true,
+          "startedAt": "2026-10-08T17:07:35.108Z",
+          "finishedAt": "2026-10-08T17:10:14.036Z",
+          "passed": true,
+          "partial": true,
+          "commands": [
+            {
+              "command": "pnpm test:integration",
+              "executed": "./tools/pnpm.sh test:integration",
+              "exitCode": 0,
+              "durationMs": 158927,
+              "startedAt": "2026-10-08T17:07:35.109Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ test:integration /Users/premkumarmamidi/Development/Fair/implementation\n> pnpm --filter @fairbite/api test:integration\n\n\n> @fairbite/api@0.0.0 test:integration /Users/premkumarmamidi/Development/Fair/implementation/services/api\n> vitest run --config vitest.integration.config.ts\n\n\n RUN  v4.1.11 /Users/premkumarmamidi/Development/Fair/implementation/services/api\n\n\n Test Files  13 passed (13)\n      Tests  76 passed (76)\n   Start at  01:07:35\n   Duration  158.37s (transform 197ms, setup 0ms, import 3.89s, tests 136.89s, environment 0ms)\n\n"
+            }
+          ],
+          "missingCommands": [
+            "pnpm install --frozen-lockfile",
+            "pnpm lint",
+            "pnpm format:check",
+            "pnpm typecheck",
+            "pnpm build",
+            "pnpm test",
+            "pnpm coverage:report",
+            "pnpm check:enatega-ui-source",
+            "pnpm test:enatega-contracts",
+            "pnpm test:operation-evidence",
+            "node --test tools/*.test.mjs",
+            "pnpm traceability:check",
+            "pnpm check:error-messages",
+            "pnpm e2e:backend"
+          ],
+          "approvals": [],
+          "reviewer": null,
+          "approved": false
         }
       ],
       "latest": {

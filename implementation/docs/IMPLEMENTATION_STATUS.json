@@ -22,6 +22,15 @@
     "unresolvedDocuments": 0,
     "missingRoots": 0
   },
+  "fullStaticCompatibility": {
+    "status": "FAIL",
+    "apps": 6,
+    "documents": 852,
+    "validDocuments": 800,
+    "invalidDocuments": 43,
+    "unresolvedDocuments": 9,
+    "missingRoots": 0
+  },
   "lanes": {
     "L0": {
       "name": "Platform kernel",

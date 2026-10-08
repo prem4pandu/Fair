@@ -157,7 +157,7 @@
         <div class="grid">
           <article class="card">
             <div class="value">439/439</div>
-            <div>static GraphQL documents valid</div>
+            <div>scoped multivendor documents valid</div>
           </article>
           <article class="card">
             <div class="value">334</div>
@@ -169,20 +169,25 @@
           </article>
           <article class="card">
             <div class="value">1</div>
-            <div>formal gates recorded passed</div>
+            <div>complete gate command runs passed</div>
           </article>
         </div>
         <p class="callout">
-          <strong>Static compatibility PASS</strong> does not prove resolver
-          behavior, authorization, runtime reachability, subscriptions, UI
-          parity, or E2E journeys.
+          <strong>Scoped multivendor compatibility PASS</strong> does not prove
+          resolver behavior, authorization, runtime reachability, subscriptions,
+          UI parity, or E2E journeys.
+        </p>
+        <p class="callout">
+          <strong>Full six-app compatibility FAIL</strong>: 800/852 documents
+          valid, 43 invalid, 9 unresolved. The scoped PASS does not satisfy the
+          W2 full-mode gate.
         </p>
         <p class="note">
           Latest recorded gate run: <code>GP0</code> PASSED at
           2026-10-08T15:14:41.660Z on commit <code>5a75b7ddab20</code> (15/15
-          commands exit 0). Full command output: <code>docs/GATES.json</code>.
-          Test counts and per-command exits are recorded there rather than
-          restated here.
+          commands exit 0). Independent gate approvals remain pending. Full
+          command output: <code>docs/GATES.json</code>. Test counts and
+          per-command exits are recorded there rather than restated here.
         </p>
       </section>
       <section>
@@ -459,8 +464,8 @@
             </li>
             <li>
               Latest recorded gate run: GP0 PASSED at 2026-10-08T15:14:41.660Z
-              on commit 5a75b7ddab20 (15/15 commands exit 0). Full command
-              output: docs/GATES.json.
+              on commit 5a75b7ddab20 (15/15 commands exit 0). Independent gate
+              approvals remain pending. Full command output: docs/GATES.json.
             </li>
           </ul>
         </details>

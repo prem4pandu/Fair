@@ -67,3 +67,43 @@ test("reported resolver coverage matches an independent source scan", () => {
     "the report must state that unimplemented roots are counted as unimplemented",
   );
 });
+
+test("status exposes the full audit independently of the scoped result", () => {
+  const status = JSON.parse(
+    readFileSync(resolve(root, "docs/IMPLEMENTATION_STATUS.json"), "utf8"),
+  );
+  const full = JSON.parse(
+    readFileSync(
+      resolve(root, "docs/ENATEGA_COMPATIBILITY_REPORT.full.json"),
+      "utf8",
+    ),
+  );
+  assert.equal(status.fullStaticCompatibility.status, full.staticCompatibility);
+  assert.equal(
+    status.fullStaticCompatibility.documents,
+    full.summary.documents,
+  );
+  assert.equal(
+    status.fullStaticCompatibility.validDocuments,
+    full.summary.validDocuments,
+  );
+  assert.equal(
+    status.fullStaticCompatibility.unresolvedDocuments,
+    full.summary.unresolvedDocuments,
+  );
+  assert.equal(
+    status.fullStaticCompatibility.invalidDocuments,
+    full.apps
+      .flatMap((app) => app.documents)
+      .filter((document) => document.status === "INVALID").length,
+  );
+  const html = readFileSync(
+    resolve(root, "docs/IMPLEMENTATION_STATUS.html"),
+    "utf8",
+  );
+  assert.match(html, /Full six-app compatibility/);
+  assert.match(
+    html.replace(/\s+/g, " "),
+    /scoped PASS does not satisfy the W2 full-mode gate/,
+  );
+});

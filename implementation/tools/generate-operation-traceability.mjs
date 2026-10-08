@@ -20,8 +20,15 @@ const outputs = resolve(implementation, "docs/OPERATION_TRACEABILITY.md");
 const sha = (text) => createHash("sha256").update(text).digest("hex");
 
 function build() {
-  const { lanes, compatibility, rows, laneSummary, laneDrift, totals } =
-    loadOperationState({ implementation });
+  const {
+    lanes,
+    compatibility,
+    fullCompatibility,
+    rows,
+    laneSummary,
+    laneDrift,
+    totals,
+  } = loadOperationState({ implementation });
 
   const header = [
     "# Enatega operation traceability matrix",
@@ -32,11 +39,12 @@ function build() {
     `- Source: \`${lanes.source}\` (schemaVersion ${lanes.schemaVersion})`,
     `- Operations: ${totals.operations} (${totals.query} query, ` +
       `${totals.mutation} mutation, ${totals.subscription} subscription)`,
-    `- Static document compatibility: ${compatibility.staticCompatibility} ` +
+    `- Scoped multivendor document compatibility: ${compatibility.staticCompatibility} ` +
       `(${compatibility.summary.validDocuments}/${compatibility.summary.documents} documents valid)`,
+    `- Full six-app document compatibility: ${fullCompatibility.staticCompatibility} (${fullCompatibility.summary.validDocuments}/${fullCompatibility.summary.documents} valid; ${fullCompatibility.summary.unresolvedDocuments} unresolved)`,
     `- Resolvers implemented today: ${totals.implemented}/${totals.operations}`,
     `- Recorded per-operation evidence: ${totals.evidenced}/${totals.operations}`,
-    `- Roots with no SDL declaration: ${totals.withoutSdl} (all in L12; \`contracts/enatega/L12-single-vendor.graphql\` is a placeholder scalar)`,
+    `- Roots with no SDL declaration: ${totals.withoutSdl}`,
     laneDrift.length
       ? `- Data-quality note: \`OPERATION_LANES.json\` \`perLane\` disagrees with its own \`operations\` array (${laneDrift.map((lane) => `${lane.lane} ${lanes.perLane?.[lane.lane]}/${lane.count}`).join(", ")}). Run \`node tools/operation-lanes.mjs docs/ENATEGA_OPERATION_INVENTORY.json docs/OPERATION_LANES.json\`.`
       : "- `OPERATION_LANES.json` is internally consistent (its `perLane` counts match the `operations` array).",

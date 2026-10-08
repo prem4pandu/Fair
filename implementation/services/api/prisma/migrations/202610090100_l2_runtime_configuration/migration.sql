@@ -62,7 +62,9 @@ WITH initial_snapshot AS (
       )
     )
   FROM "RuntimeConfigurationVersion"
-  WHERE NOT EXISTS (SELECT 1 FROM "RuntimeConfigurationPointer" WHERE id = 1)
+  -- An aggregate without GROUP BY emits a row even when WHERE removes all
+  -- inputs. HAVING suppresses the aggregate row itself on an existing install.
+  HAVING NOT EXISTS (SELECT 1 FROM "RuntimeConfigurationPointer" WHERE id = 1)
   RETURNING id
 )
 INSERT INTO "RuntimeConfigurationPointer" (id, "versionId")

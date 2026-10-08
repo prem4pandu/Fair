@@ -126,6 +126,7 @@ export function loadOperationState({
     JSON.parse(readFileSync(resolve(implementation, "docs", name), "utf8"));
   const lanes = load("OPERATION_LANES.json");
   const compatibility = load("ENATEGA_COMPATIBILITY_REPORT.json");
+  const fullCompatibility = load("ENATEGA_COMPATIBILITY_REPORT.full.json");
   const implemented = implementedRoots({ implementation });
   const homes = sdlHomes({ implementation });
   const evidence = evidenceIndex({ implementation });
@@ -184,5 +185,13 @@ export function loadOperationState({
     subscription: rows.filter((row) => row.kind === "subscription").length,
   };
 
-  return { lanes, compatibility, rows, laneSummary, laneDrift, totals };
+  return {
+    lanes,
+    compatibility,
+    fullCompatibility,
+    rows,
+    laneSummary,
+    laneDrift,
+    totals,
+  };
 }

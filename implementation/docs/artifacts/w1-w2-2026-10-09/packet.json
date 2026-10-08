@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "timezone": "Asia/Kuala_Lumpur",
+  "baseCommit": "7dc9356ad8592754b52e4342c424be1aab227c19",
+  "workingTree": true,
+  "scope": "W1 transport corrections and W2 populated-baseline migration preservation",
+  "phaseApproved": false,
+  "frontendModified": false,
+  "changes": [
+    "L2 bootstrap uses HAVING to preserve an existing configuration pointer and snapshots",
+    "Deterministic migration-005 fixture, all-row preservation, constraint checks, API reads and fresh deploy",
+    "Modern WebSocket exceptional hooks and execution errors retain safe GraphQL serialization",
+    "Legacy WebSocket queries and mutations execute instead of invoking subscription setup",
+    "Real integration harness aligns GraphQL module identity, cancels controlled streams and preserves irreversible revocation",
+    "Generated status distinguishes scoped PASS from full six-app FAIL"
+  ],
+  "checks": [
+    {
+      "command": "./tools/pnpm.sh --filter @fairbite/api exec vitest run --config vitest.config.ts",
+      "exitCode": 0,
+      "testsPassed": 181
+    },
+    {
+      "command": "./tools/pnpm.sh test",
+      "exitCode": 0,
+      "note": "Before final three serialization and two legacy dispatch cases: 176 API, 10 worker, 4 contract and 52 tooling tests passed; final API rerun above covers 181."
+    },
+    {
+      "command": "DOCKER_HOST=unix:///Users/premkumarmamidi/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock ./tools/pnpm.sh --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/kernel/ws.integration.spec.ts test/integration/kernel/public-access.integration.spec.ts test/integration/schema/upgrade.integration.spec.ts",
+      "exitCode": 0,
+      "testsPassed": 19,
+      "testFilesPassed": 3,
+      "durationSeconds": 44.61,
+      "unhandledErrors": 0
+    },
+    {
+      "command": "./tools/pnpm.sh typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh build",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh lint",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh format:check",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh codegen:check",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh check:enatega-ui-source",
+      "exitCode": 0,
+      "files": 4137
+    },
+    {
+      "command": "./tools/pnpm.sh e2e:backend",
+      "exitCode": 0,
+      "testsPassed": 5,
+      "note": "Backend browser boundary checks, not original UI or native acceptance."
+    },
+    {
+      "command": "./tools/pnpm.sh coverage:report",
+      "exitCode": 0,
+      "linesPercent": 71.69,
+      "note": "Final unit-only report; strict per-file thresholds remain open and are not satisfied by report generation.",
+      "testsPassed": 181
+    },
+    {
+      "command": "./tools/pnpm.sh check:enatega",
+      "exitCode": 0,
+      "validDocuments": 439
+    },
+    {
+      "command": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.full.json --check",
+      "exitCode": 1,
+      "validDocuments": 800,
+      "documents": 852,
+      "invalidDocuments": 43,
+      "unresolvedDocuments": 9
+    },
+    {
+      "command": "./tools/pnpm.sh check:operations",
+      "exitCode": 1,
+      "evidencedOperations": 0,
+      "operations": 334
+    }
+  ],
+  "independentReview": {
+    "agent": "/root/plan_audit",
+    "scope": "Read-only QA/security review of status tooling, SQL guard, migration fixture/teardown, modern masking/serialization, legacy operation dispatch and revocation fixture",
+    "result": "No blocking findings after corrections; bounded acceptance only",
+    "phaseGateApproval": false
+  },
+  "priorFailures": [
+    "Sandbox HTTP listener restriction: rerun outside sandbox passed",
+    "Populated upgrade found duplicate configuration version from aggregate WHERE guard: corrected HAVING and rerun passed",
+    "GraphQL module identity mismatch in real transport harness: exact package alias and rerun passed",
+    "Modern plain error objects lacked toJSON: GraphQLError correction and rerun passed",
+    "Uncancellable stream, global failing resolver and attempted reversal of immutable revocation in WS fixture: corrected and rerun passed",
+    "Legacy query incorrectly invoked subscribe: operation dispatch corrected and rerun passed",
+    "Forced upgrade database teardown emitted asynchronous 57P01: plain DROP and rerun passed",
+    "Two obsolete integration runs explicitly terminated with exit 143; not counted as passes",
+    "Configuration outage failure in obsolete full run passed isolated real-Docker rerun (6/6) and final complete integration suite (76/76); no quarantine or retry was added"
+  ],
+  "remaining": [
+    "Full six-app document reconciliation and ports/schema/data-model freeze",
+    "Previously applied L2 migration checksum/drift reconciliation; no automatic checksum rewrite",
+    "Authenticated historical session/address continuity and global identifier cutover",
+    "Full original UI journeys, native/provider verification and operation evidence",
+    "Strict per-file coverage and independent G0/G1/release approvals"
+  ],
+  "fullIntegrationEvidence": {
+    "registry": "docs/GATES.json",
+    "gate": "GP0",
+    "partial": true,
+    "startedAt": "2026-10-08T17:07:35.108Z",
+    "finishedAt": "2026-10-08T17:10:14.036Z",
+    "command": "pnpm test:integration",
+    "exitCode": 0,
+    "testsPassed": 76,
+    "testFilesPassed": 13,
+    "durationSeconds": 158.927,
+    "approved": false
+  },
+  "sourceSha256": {
+    "services/api/src/kernel/ws/server.ts": "6be6358e00f878d2319631d8bdcbe86e95fcc98adc60039002a802e6477c6fec",
+    "services/api/src/kernel/ws/legacy-protocol.ts": "70b25301a80fe60b5a0e35f3a42b879fb03458ecb4d864a436882b9c5f49a97c",
+    "services/api/vitest.integration.config.ts": "5071a9ca4fc2a4e09417c29e2a336052bbc4575bc89f68895ec6b0bc05324a39",
+    "services/api/prisma/migrations/202610090100_l2_runtime_configuration/migration.sql": "73217bba274383ddd5b600b2bd887ced3bd89a2632f6f6c0493402f777432636",
+    "services/api/test/integration/schema/upgrade.integration.spec.ts": "e7833ac0318957fb341a641e89917d8e06d5ef3bdff43f7543ebd621bfc4622d",
+    "services/api/test/integration/schema/migration-005.fixture.sql": "df68aa7333f21446f3861f9d5f327a958c622e914f72a4f00747b5baf605f1e6",
+    "services/api/test/integration/kernel/ws.integration.spec.ts": "09737d9b4b28f6715afa3d38adc9bf2b67b570aa656bae4dc32f2d9f9ab9c409",
+    "services/api/test/unit/kernel/ws-exceptions.spec.ts": "423cb18c6bda665106ea5b92d55c0d0d456692d7af66c8111cea723f62f11ef1",
+    "services/api/test/unit/kernel/legacy-protocol.spec.ts": "1b026935406d4dc047069f2c4134218894510cc6ab1e3e2a0b2eda4758aff6be",
+    "tools/generate-implementation-status.mjs": "b6b3cf7f9c4459d954d14f75218cff4bdc245e6d7b9a14e31d8f864a38d2ef8e",
+    "tools/lib/operation-state.mjs": "a1e42c78d7ebb70573b9327fa20d9794313c74353a421fe61ca03ff20a39aaab"
+  },
+  "coverageClosure": {
+    "task": "W17-WS-TRANSPORT",
+    "files": {
+      "services/api/src/kernel/ws/server.ts": {
+        "linesPercent": 68.33,
+        "functionsPercent": 71.42,
+        "branchesPercent": 36
+      },
+      "services/api/src/kernel/ws/legacy-protocol.ts": {
+        "linesPercent": 83.33,
+        "functionsPercent": 77.27,
+        "branchesPercent": 66.19
+      }
+    },
+    "scope": "unit-only measurement; real integration coverage and 90/90/85 per-file enforcement still required at G2/G3"
+  }
+}

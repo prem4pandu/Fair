@@ -2,6 +2,7 @@ import type { IncomingMessage, Server as HttpServer } from "node:http";
 import type { Duplex } from "node:stream";
 import {
   execute as graphqlExecute,
+  GraphQLError,
   specifiedRules,
   subscribe as graphqlSubscribe,
   validate,
@@ -43,9 +44,28 @@ const sanitizeResult = <T extends ExecutionResult>(result: T): T =>
   result.errors?.length
     ? ({
         ...result,
-        errors: result.errors.map(sanitizeSubscriptionError),
+        errors: result.errors.map((error) => {
+          const safe = sanitizeSubscriptionError(error);
+          // graphql-ws serializes execution errors by calling toJSON().
+          return new GraphQLError(safe.message, {
+            extensions: safe.extensions,
+          });
+        }),
       } as T)
     : result;
+
+// graphql-ws uses Error.message as the close reason outside production.
+// Re-throw only the public error, without retaining the original cause.
+async function sanitizedCall<T>(call: () => T | Promise<T>): Promise<T> {
+  try {
+    return await call();
+  } catch (error) {
+    const safe = sanitizeSubscriptionError(error);
+    throw Object.assign(new Error(safe.message), {
+      extensions: safe.extensions,
+    });
+  }
+}
 
 async function* sanitizeStream(
   stream: AsyncIterable<ExecutionResult>,
@@ -53,7 +73,10 @@ async function* sanitizeStream(
   try {
     for await (const result of stream) yield sanitizeResult(result);
   } catch (error) {
-    throw sanitizeSubscriptionError(error);
+    const safe = sanitizeSubscriptionError(error);
+    throw Object.assign(new Error(safe.message), {
+      extensions: safe.extensions,
+    });
   }
 }
 
@@ -86,8 +109,10 @@ export function attachSubscriptionServer(
     {
       schema,
       onConnect: async (socketContext) => {
-        await hooks.verifyConnection?.(
-          (socketContext.connectionParams ?? {}) as Record<string, unknown>,
+        await sanitizedCall(() =>
+          hooks.verifyConnection?.(
+            (socketContext.connectionParams ?? {}) as Record<string, unknown>,
+          ),
         );
         return true;
       },
@@ -102,17 +127,20 @@ export function attachSubscriptionServer(
       // graphql-ws invokes `context` once per operation, so each subscription
       // gets its own context and re-resolves the caller's identity.
       context: (socketContext) =>
-        context(
-          (socketContext.connectionParams ?? {}) as Record<string, unknown>,
-          socketContext.extra.request as unknown as IncomingMessage,
+        sanitizedCall(() =>
+          context(
+            (socketContext.connectionParams ?? {}) as Record<string, unknown>,
+            socketContext.extra.request as unknown as IncomingMessage,
+          ),
         ),
       subscribe: async (args) => {
-        const result = await graphqlSubscribe(args);
+        const result = await sanitizedCall(() => graphqlSubscribe(args));
         if (result && Symbol.asyncIterator in result)
           return sanitizeStream(result as AsyncIterable<ExecutionResult>);
         return sanitizeResult(result as ExecutionResult);
       },
-      execute: async (args) => sanitizeResult(await graphqlExecute(args)),
+      execute: async (args) =>
+        sanitizeResult(await sanitizedCall(() => graphqlExecute(args))),
     },
     modern,
   );
