@@ -15,6 +15,7 @@ export default tseslint.config(
       "**/dist-identity/**",
       "**/playwright-report/**",
       "**/test-results/**",
+      "**/coverage/**",
     ],
   },
   ...tseslint.configs.recommended,

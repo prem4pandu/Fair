@@ -4,27 +4,38 @@ import { fileURLToPath } from "node:url";
 
 const contracts = new URL("../../../../contracts/", import.meta.url);
 
-// Load Enatega contracts first, followed by the temporary legacy contracts, in
-// a stable order. Wave 1 removes the legacy roots after their services have
-// been adapted to the Enatega operation names.
+const EXCLUDED_ENATEGA_CONTRACTS = new Set([
+  // Superseded by core.graphql. Loading both defines the kernel roots twice.
+  "kernel.graphql",
+  // Single-vendor operations stay outside the multivendor runtime until Wave 5.
+  "L12-single-vendor.graphql",
+]);
+
+// These schemas back implemented roots whose names do not collide with the
+// Enatega contract. configuration.graphql is deliberately absent: its two root
+// fields are defined by L2 with the frontend's response types.
+const COMPATIBLE_LEGACY_CONTRACTS = [
+  "foundation.graphql",
+  "identity.graphql",
+  "catalog.graphql",
+  "addresses.graphql",
+];
+
+// Load the complete multivendor Enatega contract and only non-conflicting
+// implemented legacy roots in a stable order.
 export function loadTypeDefs(): string[] {
   const directory = fileURLToPath(new URL("enatega/", contracts));
   const enategaFiles = existsSync(directory)
     ? readdirSync(directory)
-        // Wave 1 generated lane contracts remain review artifacts until their
-        // shared-root conflicts are resolved and the compatibility gate passes.
-        .filter((file) => file === "kernel.graphql")
+        .filter(
+          (file) =>
+            file.endsWith(".graphql") && !EXCLUDED_ENATEGA_CONTRACTS.has(file),
+        )
         .sort()
     : [];
-  const legacyFiles = [
-    "foundation.graphql",
-    "identity.graphql",
-    "catalog.graphql",
-    "addresses.graphql",
-    "configuration.graphql",
-  ]
-    .map((file) => fileURLToPath(new URL(file, contracts)))
-    .filter(existsSync);
+  const legacyFiles = COMPATIBLE_LEGACY_CONTRACTS.map((file) =>
+    fileURLToPath(new URL(file, contracts)),
+  ).filter(existsSync);
 
   return [
     ...enategaFiles.map((file) => readFileSync(join(directory, file), "utf8")),

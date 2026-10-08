@@ -1,0 +1,4351 @@
+{
+  "schemaVersion": 1,
+  "limitations": [
+    "334 static roots only; unresolved documents and non-GraphQL capabilities remain separate gates.",
+    "Empty evidence is intentional. Populate only actual execution results; existing historical shell tests are not original UI acceptance."
+  ],
+  "records": [
+    {
+      "type": "query",
+      "name": "adminConfiguration",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "allOrders",
+      "lane": "L5",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "allOrdersPaginated",
+      "lane": "L5",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "allOrdersWithoutPagination",
+      "lane": "L5",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "appleAuthNonce",
+      "lane": "L1",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "attachedCuisines",
+      "lane": "L3",
+      "apps": ["web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "auditLogs",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "availableRiders",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "bannerRestaurant",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "bannerRestaurants",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "banners",
+      "lane": "L2",
+      "apps": ["admin", "app", "app(sv)", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "calculateCheckout",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "chat",
+      "lane": "L6",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "commissionRate",
+      "lane": "L7",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "configuration",
+      "lane": "L2",
+      "apps": ["admin", "app", "rider", "store", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "coupons",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "couponsPaginated",
+      "lane": "L3",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "couponsbyRestaurant",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "cuisines",
+      "lane": "L2",
+      "apps": ["admin", "app", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "cuisinesPaginated",
+      "lane": "L2",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "earnings",
+      "lane": "L7",
+      "apps": ["admin", "store", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "fetchAllShopTypes",
+      "lane": "L2",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "fetchCategoryDetailsByStoreId",
+      "lane": "L3",
+      "apps": ["web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "fetchCategoryDetailsByStoreIdForMobile",
+      "lane": "L3",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "fetchShopTypeByUnique",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "fetchShopTypes",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getActiveOrders",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllCategoriesWithSubCategoriesDataSeeAllSingleVendor",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllCategoriesWithSubCategoriesOnlySeeAllSingleVendor",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllCreditsRecords",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllFoodDealsAdmin",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllSubscriptionPlans",
+      "lane": "L12",
+      "apps": ["app(sv)", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllUserCredits",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllUsersDropDownSearch",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllfoods",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getAllfoodsPaginated",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getCategoryItemsSingleVendor",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getCategoryProducts",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getCitiesByCountry",
+      "lane": "L2",
+      "apps": ["web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getClonedRestaurants",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getClonedRestaurantsPaginated",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getCountries",
+      "lane": "L2",
+      "apps": ["web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getCountryByIso",
+      "lane": "L2",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getDashboardOrderSalesDetailsByPaymentMethod",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getDashboardOrdersByType",
+      "lane": "L9",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getDashboardSalesByType",
+      "lane": "L9",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getDashboardUsers",
+      "lane": "L9",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getDashboardUsersByYear",
+      "lane": "L9",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getEstimatedDeliveryTime",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getFavoriteFoodsSingleVendor",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getFavoriteFoodsStatus",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getFoodDetails",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getLimitedTimeFoodsDeals",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getLiveMonitorData",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getMyFreeDeliveries",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getMyReferralCode",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getNewOffersFoodsDeals",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getRecommendedFoods",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getRestaurantCategoriesSingleVendor",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getRestaurantDashboardOrderSalesDetailsByPaymentMethod",
+      "lane": "L9",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getRestaurantDashboardOrdersSalesStats",
+      "lane": "L9",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getRestaurantDashboardSalesOrderCountDetailsByYear",
+      "lane": "L9",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getRestaurantDeliveryZoneInfo",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getRestaurantSchedule",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getScheduleByDay",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getScheduleUntilNextDayOff",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getSimilarFoods",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getSingleSupportTicket",
+      "lane": "L4",
+      "apps": ["admin", "app", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getSingleUserSupportTickets",
+      "lane": "L4",
+      "apps": ["admin", "app", "app(sv)", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getStoreDetailsByVendorId",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getStoreDetailsByVendorIdPaginated",
+      "lane": "L3",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getTicketMessages",
+      "lane": "L4",
+      "apps": ["admin", "app", "app(sv)", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getTicketUsers",
+      "lane": "L4",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getTicketUsersWithLatest",
+      "lane": "L4",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getUserCart",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getUserCreditsHistory",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getUsersActiveOrders",
+      "lane": "L5",
+      "apps": ["app", "app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getUsersPastOrders",
+      "lane": "L5",
+      "apps": ["app", "app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getVendor",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getVendorDashboardGrowthDetailsByYear",
+      "lane": "L9",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getVendorDashboardStatsCardDetails",
+      "lane": "L9",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getVersions",
+      "lane": "L2",
+      "apps": ["admin", "app", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "getWeeklyFoodsDeals",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "hasOwnerPermission",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "mostOrderedRestaurants",
+      "lane": "L3",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "mostOrderedRestaurantsPreview",
+      "lane": "L3",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "nearByRestaurants",
+      "lane": "L3",
+      "apps": ["app", "rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "nearByRestaurantsCuisines",
+      "lane": "L3",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "nearByRestaurantsPreview",
+      "lane": "L3",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "notifications",
+      "lane": "L8",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "notificationsPaginated",
+      "lane": "L8",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "order",
+      "lane": "L5",
+      "apps": ["app", "rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "orderDetails",
+      "lane": "L5",
+      "apps": ["web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "orderDetailsPage",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "orderFilterOptions",
+      "lane": "L5",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "orderTracking",
+      "lane": "L6",
+      "apps": ["admin", "app", "app(sv)", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "orders",
+      "lane": "L5",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "ordersByRestId",
+      "lane": "L5",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "ordersByRestIdWithoutPagination",
+      "lane": "L5",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "ordersByUser",
+      "lane": "L4",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "ownerSession",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "pastNotificationsByToken",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "popularFoodItems",
+      "lane": "L3",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "popularItems",
+      "lane": "L3",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "profile",
+      "lane": "L1",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "publicConfiguration",
+      "lane": "L2",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "recentActiveOrder",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "recentOrderRestaurants",
+      "lane": "L3",
+      "apps": ["app", "rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "recentOrderRestaurantsPreview",
+      "lane": "L3",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "relatedItems",
+      "lane": "L3",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurant",
+      "lane": "L3",
+      "apps": ["admin", "app", "store", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantAddonsPaginated",
+      "lane": "L3",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantByOwner",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantCategoriesPaginated",
+      "lane": "L3",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantCoupons",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantCouponsPaginated",
+      "lane": "L3",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantOptionsPaginated",
+      "lane": "L3",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantOrders",
+      "lane": "L5",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantReviewsPaginated",
+      "lane": "L3",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurants",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "restaurantsPaginated",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "reviews",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "reviewsByRestaurant",
+      "lane": "L3",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "rider",
+      "lane": "L6",
+      "apps": ["admin", "app", "rider", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "riderCurrentWithdrawRequest",
+      "lane": "L7",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "riderEarningsGraph",
+      "lane": "L7",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "riderOrders",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "riders",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "ridersByZone",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "ridersPaginated",
+      "lane": "L6",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "scheduledOrders",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "searchFood",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "searchSingleVendorFoods",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "singleVendorBanners",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "singleVendorDeals",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "singleVendorDiscovery",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "staffs",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "staffsPaginated",
+      "lane": "L1",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "storeCurrentWithdrawRequest",
+      "lane": "L7",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "storeEarningsGraph",
+      "lane": "L7",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "subCategories",
+      "lane": "L3",
+      "apps": ["admin", "app", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "subCategoriesByParentId",
+      "lane": "L3",
+      "apps": ["admin", "app", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "subCategory",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "taxes",
+      "lane": "L2",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "tips",
+      "lane": "L2",
+      "apps": ["admin", "app", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "todayNotificationsByToken",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "topRatedVendors",
+      "lane": "L3",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "topRatedVendorsPreview",
+      "lane": "L3",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "transactionHistory",
+      "lane": "L7",
+      "apps": ["admin", "rider", "store", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "user",
+      "lane": "L4",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "userFavourite",
+      "lane": "L4",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "users",
+      "lane": "L4",
+      "apps": ["admin", "app", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "usersPaginated",
+      "lane": "L4",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "vendorCount",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "vendors",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "webNotifications",
+      "lane": "L8",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "withdrawRequests",
+      "lane": "L7",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "zones",
+      "lane": "L2",
+      "apps": ["admin", "app", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "query",
+      "name": "zonesPaginated",
+      "lane": "L2",
+      "apps": ["admin"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "Deactivate",
+      "lane": "L1",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "abortOrder",
+      "lane": "L5",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "acceptOrder",
+      "lane": "L5",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "addFavourite",
+      "lane": "L4",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "assignOrder",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "assignRider",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "cancelOrder",
+      "lane": "L5",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "cancelSubscription",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "changePassword",
+      "lane": "L1",
+      "apps": ["app", "app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "checkReferralCodeExists",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "clearCart",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "coupon",
+      "lane": "L5",
+      "apps": ["app", "app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createActivity",
+      "lane": "L2",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createAddons",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createAddress",
+      "lane": "L4",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createBanner",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createBannerRestaurant",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createCategory",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createCoupon",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createCuisine",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createFood",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createFoodDeal",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createFoodSingleVendor",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createMessage",
+      "lane": "L4",
+      "apps": ["admin", "app", "app(sv)", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createOptions",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createPriceForProduct",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createRestaurant",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createRestaurantCoupon",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createRider",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createShopType",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createStaff",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createSubCategories",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createSubscription",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createSupportTicket",
+      "lane": "L4",
+      "apps": ["admin", "app", "app(sv)", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createTaxation",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createTipping",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createUser",
+      "lane": "L1",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createVendor",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createWithdrawRequest",
+      "lane": "L7",
+      "apps": ["admin", "rider", "store", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "createZone",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deactivatePrice",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteAddon",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteAddress",
+      "lane": "L4",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteBanner",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteBannerRestaurant",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteBulkAddresses",
+      "lane": "L4",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteCategory",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteCoupon",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteCuisine",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteFood",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteFoodDeal",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteOption",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteRestaurant",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteRestaurantCoupon",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteRider",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteShopType",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteStaff",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteSubCategory",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteUser",
+      "lane": "L4",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteVendor",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "deleteZone",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "duplicateRestaurant",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editAddon",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editAddress",
+      "lane": "L4",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editBanner",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editBannerRestaurant",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editCategory",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editCoupon",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editCuisine",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editFood",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editOption",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editRestaurant",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editRestaurantCoupon",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editRider",
+      "lane": "L6",
+      "apps": ["admin", "rider", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editSingleVendorCartItem",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editStaff",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editTaxation",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editTipping",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editUserCreditsHistory",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editVendor",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "editZone",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "emailExist",
+      "lane": "L1",
+      "apps": ["app", "app(sv)", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "forgotPassword",
+      "lane": "L1",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "giveFeedback",
+      "lane": "L12",
+      "apps": ["app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "giveUserCredits",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "hardDeleteRestaurant",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "login",
+      "lane": "L1",
+      "apps": ["app", "app(sv)", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "markWebNotificationsAsRead",
+      "lane": "L8",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "metricsGeneral",
+      "lane": "L0",
+      "apps": ["admin", "app", "rider", "store", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "muteRing",
+      "lane": "L5",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "orderPickedUp",
+      "lane": "L5",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "ownerLogin",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "ownerLogout",
+      "lane": "L1",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "phoneExist",
+      "lane": "L1",
+      "apps": ["app", "app(sv)", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "placeOrder",
+      "lane": "L5",
+      "apps": ["app", "app(sv)", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "pushToken",
+      "lane": "L1",
+      "apps": ["app", "app(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "refreshToken",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "registerLiveActivitySession",
+      "lane": "L6",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "removeLiveActivitySession",
+      "lane": "L6",
+      "apps": ["app"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "resetPassword",
+      "lane": "L1",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "resetUserSession",
+      "lane": "L1",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "restaurantLogin",
+      "lane": "L1",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "reviewOrder",
+      "lane": "L5",
+      "apps": ["app", "app(sv)", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "riderLogin",
+      "lane": "L1",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveAmplitudeApiKeyConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveAppConfigurations",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveCloudinaryConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveCurrencyConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveDeliveryRateConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveEmailConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveFirebaseConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveFormEmailConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveGeneralConfiguration",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveGoogleApiKeyConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveGoogleClientIDConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveNotificationTokenWeb",
+      "lane": "L1",
+      "apps": ["web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "savePaypalConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveRestaurantToken",
+      "lane": "L1",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveSendGridConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveSentryConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveStripeConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveTwilioConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveVendorTypeToggle",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveVerificationsToggle",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "saveWebConfiguration",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "selectAddress",
+      "lane": "L4",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "sendChatMessage",
+      "lane": "L6",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "sendNotificationUser",
+      "lane": "L8",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "sendOtpToEmail",
+      "lane": "L1",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "sendOtpToPhoneNumber",
+      "lane": "L1",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "setVersions",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "toggleAvailablity",
+      "lane": "L6",
+      "apps": ["admin", "rider", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "toggleFavoriteFoodSingleVendor",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "toggleStoreAvailability",
+      "lane": "L3",
+      "apps": ["store"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateCommission",
+      "lane": "L7",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateDeliveryBoundsAndLocation",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateDeliveryOptions",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateFoodDeal",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateFoodOutOfStock",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateFoodSingleVendor",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateNotificationStatus",
+      "lane": "L1",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateOrderStatusRider",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateRestaurantBussinessDetails",
+      "lane": "L3",
+      "apps": ["admin", "store", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateRestaurantDelivery",
+      "lane": "L3",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateRiderBussinessDetails",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateRiderLicenseDetails",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateRiderLocation",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateRiderVehicleDetails",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateScheduleTimings",
+      "lane": "L12",
+      "apps": ["svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateShopType",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateStatus",
+      "lane": "L5",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateSubscription",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateSupportTicketStatus",
+      "lane": "L4",
+      "apps": ["admin", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateTimings",
+      "lane": "L3",
+      "apps": ["admin", "store", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateUser",
+      "lane": "L1",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateUserCartCount",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateUserNotes",
+      "lane": "L4",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateUserStatus",
+      "lane": "L4",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateWithdrawReqStatus",
+      "lane": "L7",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "updateWorkSchedule",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "uploadImageToS3",
+      "lane": "L2",
+      "apps": ["admin", "app", "rider", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "uploadToken",
+      "lane": "L2",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "userCartData",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "mutation",
+      "name": "verifyOtp",
+      "lane": "L1",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "orderStatusChanged",
+      "lane": "L5",
+      "apps": ["app", "app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "riderUpdated",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscribePlaceOrder",
+      "lane": "L5",
+      "apps": ["admin", "store", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscriptionAssignRider",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscriptionDispatcher",
+      "lane": "L6",
+      "apps": ["admin", "svadmin(sv)"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscriptionNewMessage",
+      "lane": "L6",
+      "apps": ["app", "rider", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscriptionOrder",
+      "lane": "L5",
+      "apps": ["admin", "app", "rider", "store", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscriptionOrderTracking",
+      "lane": "L6",
+      "apps": ["admin", "app", "app(sv)", "svadmin(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscriptionPaymentSuccess",
+      "lane": "L12",
+      "apps": ["app(sv)", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscriptionRiderLocation",
+      "lane": "L6",
+      "apps": ["app", "web"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    },
+    {
+      "type": "subscription",
+      "name": "subscriptionZoneOrders",
+      "lane": "L6",
+      "apps": ["rider"],
+      "status": "NOT_VERIFIED",
+      "tests": {
+        "unit": [],
+        "integration": [],
+        "playwright": [],
+        "device": []
+      }
+    }
+  ]
+}

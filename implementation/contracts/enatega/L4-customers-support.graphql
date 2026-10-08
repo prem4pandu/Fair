@@ -2,7 +2,7 @@
 
 type AddFavouriteAddFavourite {
   _id: ID
-  addresses: Address
+  addresses: [Address]
 }
 
 type Address {
@@ -17,7 +17,7 @@ type Address {
 
 type CreateAddressCreateAddress {
   _id: ID
-  addresses: Address
+  addresses: [Address]
 }
 
 type CreateMessageCreateMessage {
@@ -45,12 +45,12 @@ type CreateSupportTicketCreateSupportTicket {
 
 type DeleteAddressDeleteAddress {
   _id: ID
-  addresses: Address
+  addresses: [Address]
 }
 
 type DeleteBulkAddressesDeleteBulkAddresses {
   _id: ID
-  addresses: Address
+  addresses: [Address]
 }
 
 type DeleteUserDeleteUser {
@@ -59,7 +59,7 @@ type DeleteUserDeleteUser {
 
 type EditAddressEditAddress {
   _id: ID
-  addresses: Address
+  addresses: [Address]
 }
 
 type GetSingleSupportTicketGetSingleSupportTicket {
@@ -76,9 +76,9 @@ type GetSingleSupportTicketGetSingleSupportTicket {
 }
 
 type GetSingleUserSupportTicketsGetSingleUserSupportTickets {
-  currentPage: String
+  currentPage: Int
   docsCount: Int
-  tickets: GetSingleUserSupportTicketsTickets
+  tickets: [GetSingleUserSupportTicketsTickets]
   totalPages: Int
 }
 
@@ -97,7 +97,7 @@ type GetSingleUserSupportTicketsTickets {
 
 type GetTicketMessagesGetTicketMessages {
   docsCount: Int
-  messages: GetTicketMessagesMessages
+  messages: [GetTicketMessagesMessages]
   page: Int
   ticket: GetTicketMessagesTicket
   totalPages: Int
@@ -120,17 +120,17 @@ type GetTicketMessagesTicket {
 }
 
 type GetTicketUsersGetTicketUsers {
-  currentPage: String
+  currentPage: Int
   docsCount: Int
   totalPages: Int
-  users: User
+  users: [User]
 }
 
 type GetTicketUsersWithLatestGetTicketUsersWithLatest {
-  currentPage: String
+  currentPage: Int
   docsCount: Int
   totalPages: Int
-  users: User
+  users: [User]
 }
 
 type GetTicketUsersWithLatestUsersLatestTicket {
@@ -147,7 +147,7 @@ type GetTicketUsersWithLatestUsersLatestTicket {
 
 type SelectAddressSelectAddress {
   _id: ID
-  addresses: Address
+  addresses: [Address]
 }
 
 type UpdateSupportTicketStatusUpdateSupportTicketStatus {
@@ -182,8 +182,8 @@ extend type Query {
   ): GetTicketUsersWithLatestGetTicketUsersWithLatest
   ordersByUser(limit: Int, page: Int, userId: ID): OrdersByUserOrdersByUser
   user(id: ID): User
-  userFavourite(latitude: Float, longitude: Float): UserFavouriteUserFavourite
-  users: User
+  userFavourite(latitude: Float, longitude: Float): [UserFavouriteUserFavourite]
+  users: [User]
   usersPaginated(
     limit: Int
     page: Int

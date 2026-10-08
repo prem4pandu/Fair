@@ -25,7 +25,8 @@ frontend/mobile implementation handoff.
 
 # Fresh-build engineering boundaries
 
-Use multiple Codex agents; local AI is disabled by the owner decision in the source session.
+Use multiple Codex agents when available. The owner authorized local AI development
+and an end-to-end handoff on 2026-10-08, superseding the earlier local AI restriction.
 Lead owns root tooling, packages, contracts, docs and integration. Backend owns services;
 web owns three web apps; mobile owns three mobile apps. Independent QA/security/review
 follow implementation and may not self-approve. Never overwrite another lane's files.

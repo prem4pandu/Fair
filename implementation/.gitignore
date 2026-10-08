@@ -13,4 +13,5 @@ dist-native/
 services/api/src/generated/
 dist-verified/
 .toolchain/
+coverage/
 dist-identity/

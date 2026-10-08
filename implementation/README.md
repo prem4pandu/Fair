@@ -1,5 +1,9 @@
 # Fresh application workspace
 
+Current local AI handoff and end-to-end diagrams: [LOCAL_AI_HANDOFF.md](docs/LOCAL_AI_HANDOFF.md).
+Actual verification and open gates: [LOCAL_AI_HANDOFF_EVIDENCE.json](docs/LOCAL_AI_HANDOFF_EVIDENCE.json).
+The product remains in progress; backend Playwright smoke does not establish full original UI acceptance.
+
 This is the fresh application workspace and independently implemented backend foundation.
 The product UI is the unchanged Enatega multivendor source in `vendor/enatega-ui/`; each app keeps its own npm lockfile and is not part of the pnpm workspace.
 The prior FairBite application remains preserved in its original directory.

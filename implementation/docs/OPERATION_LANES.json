@@ -2027,8 +2027,8 @@
     {
       "type": "mutation",
       "name": "ownerLogout",
-      "lane": "L1",
-      "wave": 2,
+      "lane": "L12",
+      "wave": 5,
       "apps": ["svadmin(sv)"],
       "multivendorApps": []
     },

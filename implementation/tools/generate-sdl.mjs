@@ -111,6 +111,45 @@ function leafType(name, parentType, review, context) {
   return "String";
 }
 
+function typeOverride(typeMap, context, parentType, fieldName) {
+  return (
+    typeMap.typeOverrides?.[context] ??
+    (parentType && fieldName
+      ? typeMap.typeOverrides?.[`${parentType}.${fieldName}`]
+      : undefined)
+  );
+}
+
+function looksLikeCollection(name) {
+  return (
+    name === "data" ||
+    [
+      "addresses",
+      "addons",
+      "banners",
+      "categories",
+      "cities",
+      "countries",
+      "cuisines",
+      "foods",
+      "messages",
+      "offers",
+      "openingTimes",
+      "options",
+      "restaurants",
+      "reviews",
+      "sections",
+      "staffs",
+      "subCategories",
+      "tickets",
+      "users",
+      "variations",
+      "vendors",
+      "zones",
+    ].includes(name)
+  );
+}
+
 function inferredOwnership(typeName, rootLane, typeMap) {
   if (typeMap.ownership[typeName]) return typeMap.ownership[typeName];
   const patterns = [
@@ -174,27 +213,28 @@ export function generate(requirements, typeMap, lanes) {
     );
     for (const [fieldName, child] of Object.entries(node.fields)) {
       let type;
+      const context = `${rootKind}.${rootName}.${[...path, fieldName].join(".")}`;
+      const override = typeOverride(typeMap, context, typeName, fieldName);
       if (Object.keys(child.fields).length) {
         type =
-          fieldName === "addons" && typeName === "OrderItem"
+          override ??
+          (fieldName === "addons" && typeName === "OrderItem"
             ? "OrderItemAddon"
-            : objectType(rootKind, rootName, path, fieldName, child, typeMap);
+            : objectType(rootKind, rootName, path, fieldName, child, typeMap));
         const existing = fields.get(fieldName);
         addObject(
-          existing && existing !== type ? existing : type,
+          namedType(existing && existing !== type ? existing : type),
           child,
           rootKind,
           rootName,
           [...path, fieldName],
           lane,
         );
-      } else
-        type = leafType(
-          fieldName,
-          typeName,
-          review,
-          `${rootKind}.${rootName}.${[...path, fieldName].join(".")}`,
-        );
+        if (!override && looksLikeCollection(fieldName))
+          review.push(
+            `${context}: unresolved cardinality for object selection`,
+          );
+      } else type = override ?? leafType(fieldName, typeName, review, context);
       const existing = fields.get(fieldName);
       if (existing && existing !== type)
         review.push(
@@ -229,25 +269,34 @@ export function generate(requirements, typeMap, lanes) {
           declarations.scalars.add(name);
       }
       const hasSelection = Object.keys(requirement.selection.fields).length > 0;
+      const rootOverride = typeOverride(
+        typeMap,
+        `${rootKind}.${rootName}`,
+        null,
+        null,
+      );
       const returnType = hasSelection
-        ? objectType(
+        ? (rootOverride ??
+          objectType(
             rootKind,
             rootName,
             [],
             rootName,
             requirement.selection,
             typeMap,
-          )
+          ))
         : leafType(rootName, "Root", review, `${rootKind}.${rootName}`);
       if (hasSelection)
         addObject(
-          returnType,
+          namedType(returnType),
           requirement.selection,
           rootKind,
           rootName,
           [],
           lane,
         );
+      if (hasSelection && !rootOverride && looksLikeCollection(rootName))
+        review.push(`${rootKind}.${rootName}: unresolved root cardinality`);
       const byKind = roots.get(lane);
       const entries = byKind.get(rootKind) ?? [];
       entries.push(

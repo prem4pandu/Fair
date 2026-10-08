@@ -47,3 +47,67 @@ test("generates roots, fragment types and named inputs as valid SDL", () => {
   assert.match(sdl, /emailExist\(email: String\): Boolean/);
   assert.doesNotThrow(() => buildSchema(sdl));
 });
+
+test("applies exact root, object and leaf type overrides while recursing named types", () => {
+  const requirements = deriveFromDocuments([
+    {
+      app: "web",
+      text: "query Q { restaurants { categories { foods { _id } } } configuration { skipEmailVerification } }",
+    },
+  ]);
+  const generated = generate(
+    requirements,
+    {
+      fixed: {},
+      byFieldName: {
+        restaurants: "Restaurant",
+        categories: "Category",
+        foods: "Food",
+      },
+      byPath: {},
+      typeOverrides: {
+        "query.restaurants": "[Restaurant]",
+        "Restaurant.categories": "[Category]",
+        "Category.foods": "[Food]",
+        "query.configuration.skipEmailVerification": "Boolean",
+      },
+      ownership: {
+        Restaurant: "L3",
+        Category: "L3",
+        Food: "L3",
+      },
+    },
+    {
+      operations: [
+        { type: "query", name: "restaurants", lane: "L3" },
+        { type: "query", name: "configuration", lane: "L2" },
+      ],
+    },
+  );
+  const sdl = Object.values(generated.files).join("\n");
+  assert.match(sdl, /restaurants: \[Restaurant\]/);
+  assert.match(sdl, /categories: \[Category\]/);
+  assert.match(sdl, /foods: \[Food\]/);
+  assert.match(sdl, /skipEmailVerification: Boolean/);
+  assert.doesNotThrow(() => buildSchema(sdl));
+});
+
+test("reports collection-shaped selections without a cardinality override", () => {
+  const requirements = deriveFromDocuments([
+    { app: "web", text: "query Q { banners { _id } }" },
+  ]);
+  const generated = generate(
+    requirements,
+    {
+      fixed: {},
+      byFieldName: { banners: "Banner" },
+      byPath: {},
+      typeOverrides: {},
+      ownership: { Banner: "L2" },
+    },
+    { operations: [{ type: "query", name: "banners", lane: "L2" }] },
+  );
+  assert.ok(
+    generated.review.includes("query.banners: unresolved root cardinality"),
+  );
+});

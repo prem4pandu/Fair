@@ -22,4 +22,10 @@ export class CatalogResolver {
   ) {
     return this.service.items(outletId, limit, after);
   }
+  @Query("restaurants") restaurants() {
+    return this.service.enategaRestaurants();
+  }
+  @Query("restaurant") restaurant(@Args("id") id: unknown) {
+    return this.service.enategaRestaurant(id);
+  }
 }

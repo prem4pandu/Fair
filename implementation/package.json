@@ -8,7 +8,7 @@
   "scripts": {
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
+    "test": "turbo run test && node --test tools/*.test.mjs",
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "test:integration": "pnpm --filter @fairbite/api test:integration",
@@ -16,23 +16,29 @@
     "codegen:check": "node tools/check-codegen.mjs",
     "check:enatega-ui-source": "node tools/manifest-enatega-ui.mjs --check",
     "check:enatega": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check --scope multivendor",
-    "test:enatega-contracts": "node --test tools/check-enatega-compatibility.test.mjs"
+    "test:enatega-contracts": "node --test tools/check-enatega-compatibility.test.mjs",
+    "coverage:report": "pnpm --filter @fairbite/api exec vitest run --config vitest.coverage.config.ts --coverage",
+    "coverage": "pnpm --filter @fairbite/api exec vitest run --config vitest.coverage.full.config.ts --coverage",
+    "e2e:backend": "pnpm --filter @fairbite/api build && playwright test --config playwright.backend.config.ts",
+    "check:operations": "node tools/check-operation-evidence.mjs --evidence docs/OPERATION_TEST_EVIDENCE.json --require-complete",
+    "test:operation-evidence": "node --test tools/check-operation-evidence.test.mjs"
   },
   "devDependencies": {
-    "turbo": "2.11.7",
-    "typescript": "5.9.3",
-    "eslint": "10.12.0",
-    "typescript-eslint": "8.71.0",
-    "prettier": "3.8.1",
-    "vitest": "4.1.11",
-    "@playwright/test": "1.63.0",
-    "testcontainers": "11.7.0",
-    "@testcontainers/postgresql": "11.7.0",
     "@graphql-codegen/cli": "7.4.5",
     "@graphql-codegen/typescript": "6.1.1",
+    "@playwright/test": "1.63.0",
+    "@testcontainers/postgresql": "11.7.0",
+    "@types/pg": "8.15.5",
+    "@vitest/coverage-v8": "4.1.11",
+    "eslint": "10.12.0",
     "graphql": "16.11.0",
     "pg": "8.16.3",
-    "@types/pg": "8.15.5"
+    "prettier": "3.8.1",
+    "testcontainers": "11.7.0",
+    "turbo": "2.11.7",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.0",
+    "vitest": "4.1.11"
   },
   "type": "module"
 }

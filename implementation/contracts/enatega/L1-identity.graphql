@@ -12,11 +12,11 @@ type CreateStaffCreateStaff {
 
 type CreateUserCreateUser {
   email: String
-  emailIsVerified: String
+  emailIsVerified: Boolean
   isNewUser: Boolean
   name: String
   phone: String
-  phoneIsVerified: String
+  phoneIsVerified: Boolean
   picture: String
   token: String
   tokenExpiration: String
@@ -50,14 +50,14 @@ type ForgotPasswordForgotPassword {
 }
 
 type LoginLogin {
-  addresses: Address
+  addresses: [Address]
   email: String
-  emailIsVerified: String
+  emailIsVerified: Boolean
   isActive: Boolean
   isNewUser: Boolean
   name: String
   phone: String
-  phoneIsVerified: String
+  phoneIsVerified: Boolean
   picture: String
   token: String
   tokenExpiration: String
@@ -78,7 +78,7 @@ type OwnerLoginOwnerLogin {
   permissions: [String]
   refreshToken: String
   refreshTokenExpiration: String
-  restaurants: Restaurant
+  restaurants: [Restaurant]
   token: String
   tokenExpiration: String
   userId: ID
@@ -94,7 +94,7 @@ type OwnerSessionOwnerSession {
   permissions: [String]
   refreshToken: String
   refreshTokenExpiration: String
-  restaurants: Restaurant
+  restaurants: [Restaurant]
   token: String
   tokenExpiration: String
   userId: ID
@@ -104,9 +104,9 @@ type OwnerSessionOwnerSession {
 
 type ProfileProfile {
   _id: ID
-  addresses: Address
+  addresses: [Address]
   email: String
-  emailIsVerified: String
+  emailIsVerified: Boolean
   favourite: String
   isActive: Boolean
   isOfferNotification: Boolean
@@ -114,7 +114,7 @@ type ProfileProfile {
   name: String
   notificationToken: String
   phone: String
-  phoneIsVerified: String
+  phoneIsVerified: Boolean
   stripe_plan_id: String
   userType: String
 }
@@ -178,8 +178,8 @@ type StaffsPaginatedData {
 }
 
 type StaffsPaginatedStaffsPaginated {
-  currentPage: String
-  data: StaffsPaginatedData
+  currentPage: Int
+  data: [StaffsPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -195,18 +195,18 @@ type UpdateNotificationStatusUpdateNotificationStatus {
 
 type UpdateUserUpdateUser {
   _id: ID
-  emailIsVerified: String
+  emailIsVerified: Boolean
   name: String
   phone: String
-  phoneIsVerified: String
+  phoneIsVerified: Boolean
 }
 
 type User {
   _id: ID
-  addresses: Address
+  addresses: [Address]
   createdAt: String
   email: String
-  emailIsVerified: String
+  emailIsVerified: Boolean
   favourite: String
   id: ID
   isActive: Boolean
@@ -218,7 +218,7 @@ type User {
   notes: String
   notificationToken: String
   phone: String
-  phoneIsVerified: String
+  phoneIsVerified: Boolean
   status: String
   updatedAt: String
   userType: String
@@ -251,7 +251,7 @@ type UserFavouriteUserFavourite {
 
 type UsersPaginatedData {
   _id: ID
-  addresses: Address
+  addresses: [Address]
   createdAt: String
   email: String
   lastLogin: String
@@ -263,8 +263,8 @@ type UsersPaginatedData {
 }
 
 type UsersPaginatedUsersPaginated {
-  currentPage: String
-  data: UsersPaginatedData
+  currentPage: Int
+  data: [UsersPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -278,7 +278,7 @@ extend type Query {
   hasOwnerPermission(permission: String): Boolean
   ownerSession: OwnerSessionOwnerSession
   profile: ProfileProfile
-  staffs: Staff
+  staffs: [Staff]
   staffsPaginated(
     isActive: Boolean
     limit: Int

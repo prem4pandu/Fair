@@ -30,7 +30,7 @@ type BussinessDetails {
 type Category {
   _id: ID
   createdAt: String
-  foods: Food
+  foods: [Food]
   image: String
   title: String
   updatedAt: String
@@ -50,8 +50,8 @@ type Coupon {
 }
 
 type CouponsPaginatedCouponsPaginated {
-  currentPage: String
-  data: CouponsPaginatedData
+  currentPage: Int
+  data: [CouponsPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -270,7 +270,7 @@ type Food {
   subCategory: String
   title: String
   updatedAt: String
-  variations: Variation
+  variations: [Variation]
 }
 
 type GetClonedRestaurantsGetClonedRestaurants {
@@ -310,8 +310,8 @@ type GetClonedRestaurantsPaginatedData {
 }
 
 type GetClonedRestaurantsPaginatedGetClonedRestaurantsPaginated {
-  currentPage: String
-  data: GetClonedRestaurantsPaginatedData
+  currentPage: Int
+  data: [GetClonedRestaurantsPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -349,8 +349,8 @@ type GetStoreDetailsByVendorIdPaginatedData {
 }
 
 type GetStoreDetailsByVendorIdPaginatedGetStoreDetailsByVendorIdPaginated {
-  currentPage: String
-  data: GetStoreDetailsByVendorIdPaginatedData
+  currentPage: Int
+  data: [GetStoreDetailsByVendorIdPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -363,7 +363,7 @@ type GetVendorGetVendor {
   lastName: String
   name: String
   phoneNumber: String
-  restaurants: Restaurant
+  restaurants: [Restaurant]
   userType: String
 }
 
@@ -387,35 +387,35 @@ type NearByRestaurantsCuisinesNearByRestaurantsCuisines {
 }
 
 type NearByRestaurantsNearByRestaurants {
-  offers: NearByRestaurantsOffers
-  restaurants: Restaurant
-  sections: NearByRestaurantsSections
+  offers: [NearByRestaurantsOffers]
+  restaurants: [Restaurant]
+  sections: [NearByRestaurantsSections]
 }
 
 type NearByRestaurantsOffers {
   _id: ID
   name: String
-  restaurants: String
+  restaurants: [String]
   tag: String
 }
 
 type NearByRestaurantsPreviewNearByRestaurantsPreview {
-  offers: NearByRestaurantsPreviewOffers
-  restaurants: RestaurantPreview
-  sections: NearByRestaurantsPreviewSections
+  offers: [NearByRestaurantsPreviewOffers]
+  restaurants: [RestaurantPreview]
+  sections: [NearByRestaurantsPreviewSections]
 }
 
 type NearByRestaurantsPreviewOffers {
   _id: ID
   name: String
-  restaurants: String
+  restaurants: [String]
   tag: String
 }
 
 type NearByRestaurantsPreviewSections {
   _id: ID
   name: String
-  restaurants: String
+  restaurants: [String]
 }
 
 type NearByRestaurantsRestaurantsReviewDataReviewsOrder {
@@ -428,12 +428,12 @@ type NearByRestaurantsRestaurantsReviewDataReviewsOrder {
 type NearByRestaurantsSections {
   _id: ID
   name: String
-  restaurants: String
+  restaurants: [String]
 }
 
 type OpeningTimes {
   day: String
-  times: Timings
+  times: [Timings]
 }
 
 type Option {
@@ -476,10 +476,10 @@ type RecentOrderRestaurantsRecentOrderRestaurants {
 type Restaurant {
   _id: ID
   acceptVouchers: String
-  addons: Addon
+  addons: [Addon]
   address: String
   bussinessDetails: BussinessDetails
-  categories: Category
+  categories: [Category]
   commissionRate: Float
   cuisines: [String]
   currentWalletAmount: Float
@@ -498,8 +498,8 @@ type Restaurant {
   minimumOrder: Float
   name: String
   notificationToken: String
-  openingTimes: OpeningTimes
-  options: Option
+  openingTimes: [OpeningTimes]
+  options: [Option]
   orderId: String
   orderPrefix: String
   owner: Owner
@@ -529,8 +529,8 @@ type RestaurantAddonsPaginatedData {
 }
 
 type RestaurantAddonsPaginatedRestaurantAddonsPaginated {
-  currentPage: String
-  data: RestaurantAddonsPaginatedData
+  currentPage: Int
+  data: [RestaurantAddonsPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -538,7 +538,7 @@ type RestaurantAddonsPaginatedRestaurantAddonsPaginated {
 type RestaurantByOwnerRestaurantByOwner {
   _id: ID
   email: String
-  restaurants: Restaurant
+  restaurants: [Restaurant]
   userType: String
 }
 
@@ -546,9 +546,7 @@ type RestaurantCarouselPreview {
   _id: ID
   coordinates: String
   cuisines: [String]
-  day: String
   deliveryTime: String
-  endTime: String
   image: String
   isActive: Boolean
   isAvailable: Boolean
@@ -556,15 +554,13 @@ type RestaurantCarouselPreview {
   logo: String
   minimumOrder: Float
   name: String
-  openingTimes: RestaurantCarouselPreview
+  openingTimes: [OpeningTimes]
   reviewAverage: String
   reviewCount: Int
   shopType: String
   slug: String
-  startTime: String
   tags: [String]
   tax: Float
-  times: RestaurantCarouselPreview
 }
 
 type RestaurantCategoriesPaginatedData {
@@ -574,8 +570,8 @@ type RestaurantCategoriesPaginatedData {
 }
 
 type RestaurantCategoriesPaginatedRestaurantCategoriesPaginated {
-  currentPage: String
-  data: RestaurantCategoriesPaginatedData
+  currentPage: Int
+  data: [RestaurantCategoriesPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -588,8 +584,8 @@ type RestaurantCouponsPaginatedData {
 }
 
 type RestaurantCouponsPaginatedRestaurantCouponsPaginated {
-  currentPage: String
-  data: RestaurantCouponsPaginatedData
+  currentPage: Int
+  data: [RestaurantCouponsPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -620,8 +616,8 @@ type RestaurantOptionsPaginatedData {
 }
 
 type RestaurantOptionsPaginatedRestaurantOptionsPaginated {
-  currentPage: String
-  data: RestaurantOptionsPaginatedData
+  currentPage: Int
+  data: [RestaurantOptionsPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -663,10 +659,8 @@ type RestaurantPreview {
   acceptVouchers: String
   coordinates: String
   cuisines: [String]
-  day: String
   deliveryTime: String
   distanceWithCurrentLocation: String
-  endTime: String
   freeDelivery: String
   image: String
   isActive: Boolean
@@ -675,15 +669,13 @@ type RestaurantPreview {
   logo: String
   minimumOrder: Float
   name: String
-  openingTimes: RestaurantPreview
+  openingTimes: [OpeningTimes]
   reviewAverage: String
   reviewCount: Int
   shopType: String
   slug: String
-  startTime: String
   tags: [String]
   tax: Float
-  times: RestaurantPreview
 }
 
 type RestaurantReviewsPaginatedData {
@@ -704,8 +696,8 @@ type RestaurantReviewsPaginatedDataOrder {
 }
 
 type RestaurantReviewsPaginatedRestaurantReviewsPaginated {
-  currentPage: String
-  data: RestaurantReviewsPaginatedData
+  currentPage: Int
+  data: [RestaurantReviewsPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -729,8 +721,8 @@ type RestaurantsPaginatedData {
 }
 
 type RestaurantsPaginatedRestaurantsPaginated {
-  currentPage: String
-  data: RestaurantsPaginatedData
+  currentPage: Int
+  data: [RestaurantsPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -749,7 +741,7 @@ type Review {
 
 type ReviewData {
   ratings: Float
-  reviews: Review
+  reviews: [Review]
   total: String
 }
 
@@ -870,7 +862,7 @@ type UpdateTimingsUpdateTimings {
 
 type Variation {
   _id: ID
-  addons: String
+  addons: [String]
   discounted: Float
   id: ID
   isOutOfStock: Boolean
@@ -884,14 +876,14 @@ type Vendor {
   image: String
   isActive: Boolean
   name: String
-  restaurants: Restaurant
+  restaurants: [Restaurant]
   unique_id: String
   userType: String
 }
 
 extend type Query {
-  attachedCuisines: AttachedCuisinesAttachedCuisines
-  coupons: Coupon
+  attachedCuisines: [AttachedCuisinesAttachedCuisines]
+  coupons: [Coupon]
   couponsPaginated(
     enabled: Boolean
     endDate: String
@@ -902,11 +894,11 @@ extend type Query {
   ): CouponsPaginatedCouponsPaginated
   fetchCategoryDetailsByStoreId(
     storeId: String
-  ): FetchCategoryDetailsByStoreIdFetchCategoryDetailsByStoreId
+  ): [FetchCategoryDetailsByStoreIdFetchCategoryDetailsByStoreId]
   fetchCategoryDetailsByStoreIdForMobile(
     storeId: String
-  ): FetchCategoryDetailsByStoreIdForMobileFetchCategoryDetailsByStoreIdForMobile
-  getClonedRestaurants: GetClonedRestaurantsGetClonedRestaurants
+  ): [FetchCategoryDetailsByStoreIdForMobileFetchCategoryDetailsByStoreIdForMobile]
+  getClonedRestaurants: [GetClonedRestaurantsGetClonedRestaurants]
   getClonedRestaurantsPaginated(
     limit: Int
     page: Int
@@ -934,14 +926,14 @@ extend type Query {
   mostOrderedRestaurants(
     latitude: Float
     longitude: Float
-  ): MostOrderedRestaurantsMostOrderedRestaurants
+  ): [MostOrderedRestaurantsMostOrderedRestaurants]
   mostOrderedRestaurantsPreview(
     latitude: Float
     limit: Int
     longitude: Float
     page: Int
     shopType: String
-  ): RestaurantCarouselPreview
+  ): [RestaurantCarouselPreview]
   nearByRestaurants(
     latitude: Float
     longitude: Float
@@ -951,7 +943,7 @@ extend type Query {
     latitude: Float
     longitude: Float
     shopType: String
-  ): NearByRestaurantsCuisinesNearByRestaurantsCuisines
+  ): [NearByRestaurantsCuisinesNearByRestaurantsCuisines]
   nearByRestaurantsPreview(
     latitude: Float
     limit: Int
@@ -959,16 +951,16 @@ extend type Query {
     page: Int
     shopType: String
   ): NearByRestaurantsPreviewNearByRestaurantsPreview
-  popularFoodItems(restaurantId: String): PopularFoodItemsPopularFoodItems
-  popularItems(restaurantId: String): PopularItemsPopularItems
+  popularFoodItems(restaurantId: String): [PopularFoodItemsPopularFoodItems]
+  popularItems(restaurantId: String): [PopularItemsPopularItems]
   recentOrderRestaurants(
     latitude: Float
     longitude: Float
-  ): RecentOrderRestaurantsRecentOrderRestaurants
+  ): [RecentOrderRestaurantsRecentOrderRestaurants]
   recentOrderRestaurantsPreview(
     latitude: Float
     longitude: Float
-  ): RestaurantCarouselPreview
+  ): [RestaurantCarouselPreview]
   relatedItems(itemId: String, restaurantId: String): String
   restaurant(id: String, slug: String): Restaurant
   restaurantAddonsPaginated(
@@ -1006,31 +998,31 @@ extend type Query {
     restaurantId: String
     search: String
   ): RestaurantReviewsPaginatedRestaurantReviewsPaginated
-  restaurants: Restaurant
+  restaurants: [Restaurant]
   restaurantsPaginated(
     limit: Int
     page: Int
     search: String
   ): RestaurantsPaginatedRestaurantsPaginated
-  reviews(restaurant: String): Review
+  reviews(restaurant: String): [Review]
   reviewsByRestaurant(
     restaurant: String
   ): ReviewsByRestaurantReviewsByRestaurant
-  subCategories: SubCategory
+  subCategories: [SubCategory]
   subCategoriesByParentId(
     parentCategoryId: String
-  ): SubCategoriesByParentIdSubCategoriesByParentId
+  ): [SubCategoriesByParentIdSubCategoriesByParentId]
   subCategory(_id: String): SubCategory
   topRatedVendors(
     latitude: Float
     longitude: Float
-  ): TopRatedVendorsTopRatedVendors
+  ): [TopRatedVendorsTopRatedVendors]
   topRatedVendorsPreview(
     latitude: Float
     longitude: Float
-  ): RestaurantCarouselPreview
+  ): [RestaurantCarouselPreview]
   vendorCount: Int
-  vendors: Vendor
+  vendors: [Vendor]
 }
 
 extend type Mutation {

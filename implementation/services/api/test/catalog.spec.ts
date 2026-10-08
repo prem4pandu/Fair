@@ -15,6 +15,69 @@ function setup(rows: unknown[] = []) {
   };
 }
 describe("public catalog bounded reads", () => {
+  it("maps published outlets to the Enatega restaurant contract", async () => {
+    const { service, query } = setup([
+      {
+        id: a,
+        name: "Outlet",
+        currency: "MYR",
+        categoryId: b,
+        categoryName: "Meals",
+        itemId: a,
+        itemName: "Nasi lemak",
+        description: "Rice dish",
+        priceMinor: 1250,
+        available: true,
+      },
+    ]);
+
+    await expect(service.enategaRestaurants()).resolves.toEqual([
+      {
+        _id: a,
+        name: "Outlet",
+        isActive: true,
+        isAvailable: true,
+        categories: [
+          {
+            _id: b,
+            title: "Meals",
+            foods: [
+              {
+                _id: a,
+                title: "Nasi lemak",
+                description: "Rice dish",
+                isActive: true,
+                isOutOfStock: false,
+                variations: [
+                  {
+                    _id: a,
+                    id: a,
+                    title: "Nasi lemak",
+                    price: 12.5,
+                    isOutOfStock: false,
+                    addons: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        options: [],
+        addons: [],
+      },
+    ]);
+    expect(query.mock.calls[0]?.[0]).toContain("m.published");
+    expect(query.mock.calls[0]?.[0]).toContain("o.published");
+  });
+
+  it("looks up an Enatega restaurant by canonical id and hides missing outlets", async () => {
+    const { service, query } = setup();
+    await expect(service.enategaRestaurant(a)).resolves.toBeNull();
+    expect(query.mock.calls[0]?.[1]).toEqual([a]);
+    await expect(service.enategaRestaurant("bad")).rejects.toMatchObject({
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  });
   it("accepts only canonical UUID text", () => {
     expect(catalogId(a)).toBe(a);
     for (const input of [

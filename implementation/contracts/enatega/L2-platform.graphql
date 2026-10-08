@@ -50,8 +50,8 @@ type ConfigurationConfiguration {
   deliveryRate: Float
   email: String
   emailName: String
-  enableCustomerDemoMode: String
-  enableEmail: String
+  enableCustomerDemoMode: Boolean
+  enableEmail: Boolean
   expoClientID: String
   firebaseKey: String
   formEmail: String
@@ -70,9 +70,9 @@ type ConfigurationConfiguration {
   sendGridEmail: String
   sendGridEmailName: String
   sendGridEnabled: Boolean
-  skipEmailVerification: String
-  skipMobileVerification: String
-  skipWhatsAppOTP: String
+  skipEmailVerification: Boolean
+  skipMobileVerification: Boolean
+  skipWhatsAppOTP: Boolean
   storageBucket: String
   termsAndConditions: String
   testOtp: String
@@ -120,7 +120,7 @@ type CreateTaxationCreateTaxation {
 type CreateTippingCreateTipping {
   _id: ID
   enabled: Boolean
-  tipVariations: String
+  tipVariations: [Float]
 }
 
 type CreateZoneCreateZone {
@@ -140,8 +140,8 @@ type Cuisine {
 }
 
 type CuisinesPaginatedCuisinesPaginated {
-  currentPage: String
-  data: CuisinesPaginatedData
+  currentPage: Int
+  data: [CuisinesPaginatedData]
   totalCount: Int
   totalPages: Int
 }
@@ -196,7 +196,7 @@ type EditTaxationEditTaxation {
 type EditTippingEditTipping {
   _id: ID
   enabled: Boolean
-  tipVariations: String
+  tipVariations: [Float]
 }
 
 type EditZoneEditZone {
@@ -215,7 +215,7 @@ type FetchAllShopTypesData {
 }
 
 type FetchAllShopTypesFetchAllShopTypes {
-  data: FetchAllShopTypesData
+  data: [FetchAllShopTypesData]
 }
 
 type FetchShopTypeByUniqueFetchShopTypeByUnique {
@@ -233,12 +233,12 @@ type FetchShopTypesData {
 }
 
 type FetchShopTypesFetchShopTypes {
-  data: FetchShopTypesData
+  data: [FetchShopTypesData]
   hasNextPage: Boolean
   hasPrevPage: Boolean
   page: Int
-  pageSize: String
-  total: String
+  pageSize: Int
+  total: Int
   totalPages: Int
 }
 
@@ -250,7 +250,7 @@ type GetCitiesByCountryCities {
 }
 
 type GetCitiesByCountryGetCitiesByCountry {
-  cities: GetCitiesByCountryCities
+  cities: [GetCitiesByCountryCities]
   id: ID
   name: String
 }
@@ -269,7 +269,7 @@ type GetCountryByIsoCities {
 }
 
 type GetCountryByIsoGetCountryByIso {
-  cities: GetCountryByIsoCities
+  cities: [GetCountryByIsoCities]
 }
 
 type GetVersionsCustomerAppVersion {
@@ -303,8 +303,8 @@ type PublicConfigurationPublicConfiguration {
   deliveryRate: Float
   privacyPolicy: String
   publishableKey: String
-  skipEmailVerification: String
-  skipMobileVerification: String
+  skipEmailVerification: Boolean
+  skipMobileVerification: Boolean
   termsAndConditions: String
   twilioEnabled: Boolean
 }
@@ -318,7 +318,7 @@ type SaveAmplitudeApiKeyConfigurationSaveAmplitudeApiKeyConfiguration {
 type SaveAppConfigurationsSaveAppConfigurations {
   _id: ID
   customerDemoZoneId: ID
-  enableCustomerDemoMode: String
+  enableCustomerDemoMode: Boolean
   privacyPolicy: String
   termsAndConditions: String
   testOtp: String
@@ -346,7 +346,7 @@ type SaveEmailConfigurationSaveEmailConfiguration {
   _id: ID
   email: String
   emailName: String
-  enableEmail: String
+  enableEmail: Boolean
 }
 
 type SaveFirebaseConfigurationSaveFirebaseConfiguration {
@@ -416,9 +416,9 @@ type SaveTwilioConfigurationSaveTwilioConfiguration {
 }
 
 type SaveVerificationsToggleSaveVerificationsToggle {
-  skipEmailVerification: String
-  skipMobileVerification: String
-  skipWhatsAppOTP: String
+  skipEmailVerification: Boolean
+  skipMobileVerification: Boolean
+  skipWhatsAppOTP: Boolean
 }
 
 type SaveWebConfigurationSaveWebConfiguration {
@@ -436,7 +436,7 @@ type TaxesTaxes {
 type TipsTips {
   _id: ID
   enabled: Boolean
-  tipVariations: String
+  tipVariations: [Float]
 }
 
 type UpdateShopTypeUpdateShopType {
@@ -473,17 +473,17 @@ type ZonesPaginatedData {
 }
 
 type ZonesPaginatedZonesPaginated {
-  currentPage: String
-  data: ZonesPaginatedData
+  currentPage: Int
+  data: [ZonesPaginatedData]
   totalCount: Int
   totalPages: Int
 }
 
 extend type Query {
   auditLogs(limit: Int, page: Int): AuditLogsAuditLogs
-  banners: Banner
+  banners: [Banner]
   configuration: ConfigurationConfiguration
-  cuisines: Cuisine
+  cuisines: [Cuisine]
   cuisinesPaginated(
     limit: Int
     page: Int
@@ -499,13 +499,13 @@ extend type Query {
     pagination: PaginationInput
   ): FetchShopTypesFetchShopTypes
   getCitiesByCountry(id: ID): GetCitiesByCountryGetCitiesByCountry
-  getCountries: GetCountriesGetCountries
+  getCountries: [GetCountriesGetCountries]
   getCountryByIso(iso: String): GetCountryByIsoGetCountryByIso
   getVersions: GetVersionsGetVersions
   publicConfiguration: PublicConfigurationPublicConfiguration
   taxes: TaxesTaxes
   tips: TipsTips
-  zones: Zone
+  zones: [Zone]
   zonesPaginated(
     isActive: Boolean
     limit: Int

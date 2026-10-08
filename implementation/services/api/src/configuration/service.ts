@@ -80,10 +80,73 @@ export const publicConfigurationDocument = z
       }).resolvedOptions().maximumFractionDigits === value.currencyMinorUnits,
     "Currency precision must match the supported currency",
   );
+
+const capabilityState = z.enum([
+  "DISABLED",
+  "CONFIGURED",
+  "SANDBOX_VERIFIED",
+  "LIVE_VERIFIED",
+]);
+
+const deliveryFleet = z
+  .strictObject({
+    id: z.string().trim().min(1).max(64),
+    kind: z.enum(["OWN_FLEET", "EXTERNAL"]),
+    enabled: z.boolean(),
+    provider: z.string().trim().min(1).max(64).nullable(),
+    capability: capabilityState,
+  })
+  .refine(
+    (fleet) =>
+      fleet.kind === "EXTERNAL"
+        ? fleet.provider !== null
+        : fleet.provider === null,
+    "External fleets require a provider; own fleets cannot name one",
+  );
+
+const paymentMethod = z
+  .strictObject({
+    id: z.string().trim().min(1).max(64),
+    kind: z.enum(["CASH", "CARD", "WALLET"]),
+    enabled: z.boolean(),
+    provider: z.string().trim().min(1).max(64).nullable(),
+    capability: capabilityState,
+  })
+  .refine(
+    (method) =>
+      method.kind === "CASH"
+        ? method.provider === null
+        : method.provider !== null,
+    "Card and wallet methods require a provider; cash cannot name one",
+  );
+
+const policyRules = z
+  .strictObject({
+    deliveryFeeMinor: z.number().int().min(0).max(2_147_483_647),
+    serviceFeeMinor: z.number().int().min(0).max(2_147_483_647),
+    taxBasisPoints: z.number().int().min(0).max(10_000),
+    coreFoodCommissionBasisPoints: z.literal(0),
+    refundsEnabled: z.boolean(),
+    refundWindowMinutes: z.number().int().min(0).max(525_600),
+  })
+  .optional();
+
+/**
+ * Versioned runtime settings. Provider capability is recorded separately from
+ * enablement so saving a provider name can never advertise working checkout or
+ * delivery. Secrets are references owned by provider modules and are not part
+ * of this public configuration document.
+ */
+export const runtimeConfigurationDocument =
+  publicConfigurationDocument.safeExtend({
+    deliveryFleets: z.array(deliveryFleet).max(32).optional(),
+    paymentMethods: z.array(paymentMethod).max(32).optional(),
+    rules: policyRules,
+  });
 const snapshot = z.strictObject({
   id: z.uuid(),
   version: z.number().int().min(1).max(2147483647),
-  document: publicConfigurationDocument,
+  document: runtimeConfigurationDocument,
 });
 const unavailable = (code: string) =>
   new GraphQLError("Configuration unavailable", {
@@ -106,15 +169,29 @@ export class ConfigurationService {
     const parsed = snapshot.safeParse(rows[0]);
     if (!parsed.success) throw unavailable("CONFIGURATION_UNAVAILABLE");
     const { id, version, document } = parsed.data;
+    const { deliveryFleets, paymentMethods, rules, ...publicDocument } =
+      document;
+    void deliveryFleets;
+    const verifiedPayment = paymentMethods?.some(
+      (method) =>
+        method.enabled &&
+        (method.capability === "SANDBOX_VERIFIED" ||
+          method.capability === "LIVE_VERIFIED"),
+    );
+    const deliveryFeeMinor = rules?.deliveryFeeMinor;
     return {
       _id: id,
       version,
-      ...document,
-      // The corresponding capabilities are not implemented in this packet.
-      deliveryRate: null,
-      costType: null,
+      ...publicDocument,
+      // Provider-specific public flags remain disabled until their modules
+      // independently verify the configured capability.
+      deliveryRate:
+        deliveryFeeMinor === undefined
+          ? null
+          : deliveryFeeMinor / 10 ** publicDocument.currencyMinorUnits,
+      costType: deliveryFeeMinor === undefined ? null : "fixed",
       twilioEnabled: false,
-      checkoutAvailable: false,
+      checkoutAvailable: verifiedPayment ?? false,
       enableCustomerDemoMode: false,
       customerDemoZoneId: null,
     };

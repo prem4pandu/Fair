@@ -72,6 +72,22 @@ beforeAll(async () => {
       "utf8",
     ),
   );
+  await pool.query(
+    readFileSync(
+      new URL(
+        "../prisma/migrations/202610090100_l2_runtime_configuration/migration.sql",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  );
+  version = Number(
+    (
+      await pool.query(
+        'SELECT COALESCE(MAX(version), 0) AS version FROM "RuntimeConfigurationVersion"',
+      )
+    ).rows[0].version,
+  );
   service = new ConfigurationService(pool);
   redis = await new GenericContainer("redis:7-alpine")
     .withExposedPorts(6379)
@@ -90,6 +106,45 @@ afterAll(async () => {
   await redis?.stop();
   await pool?.end();
   await db?.stop();
+});
+it("boots Malaysia, MYR and own-fleet defaults without claiming an external provider", async () => {
+  await expect(service.read()).resolves.toMatchObject({
+    countryCode: "MY",
+    currency: "MYR",
+    currencySymbol: "RM",
+    currencyMinorUnits: 2,
+    deliveryRate: 0,
+    costType: "fixed",
+    checkoutAvailable: true,
+  });
+  const active = (
+    await pool.query(
+      'SELECT v.document FROM "RuntimeConfigurationPointer" p JOIN "RuntimeConfigurationVersion" v ON v.id=p."versionId" WHERE p.id=1',
+    )
+  ).rows[0].document;
+  expect(active).toMatchObject({
+    deliveryFleets: [
+      {
+        id: "own-fleet-my",
+        kind: "OWN_FLEET",
+        enabled: true,
+        provider: null,
+        capability: "LIVE_VERIFIED",
+      },
+    ],
+    paymentMethods: [
+      {
+        id: "cash",
+        kind: "CASH",
+        enabled: true,
+        provider: null,
+        capability: "LIVE_VERIFIED",
+      },
+    ],
+    rules: { coreFoodCommissionBasisPoints: 0 },
+  });
+  expect(JSON.stringify(active)).not.toMatch(/secret|stripe|twilio|sendgrid/i);
+  await pool.query('DELETE FROM "RuntimeConfigurationPointer" WHERE id=1');
 });
 it("fails closed without an active version, including when a draft exists", async () => {
   await expect(service.read()).rejects.toMatchObject({
@@ -129,13 +184,24 @@ it("reads actual active versions and retains immutable historical currency setti
     costType: null,
     twilioEnabled: false,
   });
-  const alias = await gql(
-    originalQuery.replace(
-      "configuration {",
-      "configuration: publicConfiguration {",
-    ),
-  );
-  expect(alias).toEqual(response);
+  const publicResponse = await gql(`query SingleVendorConfiguration {
+    configuration: publicConfiguration {
+      _id currency currencySymbol deliveryRate twilioEnabled
+      appAmplitudeApiKey customerAppSentryUrl termsAndConditions privacyPolicy
+      skipMobileVerification skipEmailVerification costType publishableKey
+    }
+  }`);
+  expect(publicResponse.errors).toBeUndefined();
+  expect(publicResponse.data.configuration).toMatchObject({
+    _id: id,
+    currency: "MYR",
+    currencySymbol: "RM",
+    deliveryRate: null,
+    twilioEnabled: false,
+    skipEmailVerification: false,
+    skipMobileVerification: false,
+    costType: null,
+  });
   expect(
     (await gql("query { configuration { secretKey } }")).errors,
   ).toBeDefined();
