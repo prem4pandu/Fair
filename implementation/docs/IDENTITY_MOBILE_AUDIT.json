@@ -1,0 +1,1216 @@
+{
+  "audit_date": "2026-10-08",
+  "source_commit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
+  "scope": "Bounded static mobile identity audit; not exhaustive all-app feature coverage or runtime verification. No local AI. Existing apps untouched.",
+  "evidence": [
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/screens/Login/useLogin.js",
+      "sha256": "11621157cd8e9f34dc537dceb9123a0f8c84fa37f7be4790c77037dcbd66f21e",
+      "action": "password_sign_in",
+      "line_anchors": [
+        {
+          "line": 43,
+          "anchor": "const loginDocument"
+        },
+        {
+          "line": 8,
+          "anchor": "emailExist"
+        },
+        {
+          "line": 29,
+          "anchor": "emailExist"
+        },
+        {
+          "line": 45,
+          "anchor": "emailExist"
+        },
+        {
+          "line": 64,
+          "anchor": "emailExist"
+        },
+        {
+          "line": 121,
+          "anchor": "emailExist"
+        },
+        {
+          "line": 123,
+          "anchor": "emailExist"
+        },
+        {
+          "line": 144,
+          "anchor": "isActive == false"
+        },
+        {
+          "line": 62,
+          "anchor": "setTokenAsync"
+        },
+        {
+          "line": 159,
+          "anchor": "setTokenAsync"
+        },
+        {
+          "line": 206,
+          "anchor": "type: 'default'"
+        },
+        {
+          "line": 59,
+          "anchor": "Register"
+        },
+        {
+          "line": 124,
+          "anchor": "Register"
+        },
+        {
+          "line": 126,
+          "anchor": "Register"
+        }
+      ],
+      "observed_semantics": "Mode-selected login operation; email existence precheck routes unknown email to registration; active account token persisted. Existence precheck must be redesigned to prevent enumeration; backend generic failures authoritative."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/context/Auth.js",
+      "sha256": "5a475f8e4f491fe571bea9eab531f255b569ff367d8f19c981c155b3c998aff6",
+      "action": "bootstrap",
+      "line_anchors": [
+        {
+          "line": 28,
+          "anchor": "getToken(mode)"
+        },
+        {
+          "line": 8,
+          "anchor": "invalidateUserSession"
+        },
+        {
+          "line": 36,
+          "anchor": "invalidateUserSession"
+        },
+        {
+          "line": 62,
+          "anchor": "invalidateUserSession"
+        },
+        {
+          "line": 68,
+          "anchor": "invalidateUserSession"
+        },
+        {
+          "line": 4,
+          "anchor": "getJwtExpiryTime"
+        },
+        {
+          "line": 60,
+          "anchor": "getJwtExpiryTime"
+        },
+        {
+          "line": 46,
+          "anchor": "[mode]"
+        },
+        {
+          "line": 55,
+          "anchor": "[mode]"
+        }
+      ],
+      "observed_semantics": "Mode-scoped secure token restoration and JWT expiry invalidation; local expiry is not server authorization; no refresh session contract observed here."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/context/User.js",
+      "sha256": "675d6ec5e445e8e874c2823e89582713366ecbda3f6da338250576aed337eb53",
+      "action": "logout",
+      "line_anchors": [
+        {
+          "line": 272,
+          "anchor": "const logout"
+        },
+        {
+          "line": 274,
+          "anchor": "clearStoredToken"
+        },
+        {
+          "line": 281,
+          "anchor": "clearStoredToken"
+        },
+        {
+          "line": 331,
+          "anchor": "clearStoredToken"
+        },
+        {
+          "line": 308,
+          "anchor": "client.clearStore"
+        },
+        {
+          "line": 14,
+          "anchor": "deleteToken"
+        },
+        {
+          "line": 282,
+          "anchor": "deleteToken"
+        }
+      ],
+      "observed_semantics": "Logout clears client session/cache and mode-scoped state. No server refresh-family revocation demonstrated by this source."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/utils/secureToken.js",
+      "sha256": "4a81f31bbb2fc875ef93a1813cc29d9b6d39c29e93853c97da619cb9dad4cc2c",
+      "action": "secure_storage",
+      "line_anchors": [
+        {
+          "line": 16,
+          "anchor": "getTokenKey"
+        },
+        {
+          "line": 30,
+          "anchor": "getTokenKey"
+        },
+        {
+          "line": 45,
+          "anchor": "getTokenKey"
+        },
+        {
+          "line": 71,
+          "anchor": "getTokenKey"
+        },
+        {
+          "line": 32,
+          "anchor": "setItemAsync"
+        },
+        {
+          "line": 39,
+          "anchor": "setItemAsync"
+        },
+        {
+          "line": 58,
+          "anchor": "setItemAsync"
+        },
+        {
+          "line": 47,
+          "anchor": "getItemAsync"
+        },
+        {
+          "line": 54,
+          "anchor": "getItemAsync"
+        },
+        {
+          "line": 65,
+          "anchor": "getItemAsync"
+        },
+        {
+          "line": 59,
+          "anchor": "deleteItemAsync"
+        },
+        {
+          "line": 73,
+          "anchor": "deleteItemAsync"
+        },
+        {
+          "line": 75,
+          "anchor": "deleteItemAsync"
+        },
+        {
+          "line": 2,
+          "anchor": "AsyncStorage"
+        },
+        {
+          "line": 7,
+          "anchor": "AsyncStorage"
+        },
+        {
+          "line": 9,
+          "anchor": "AsyncStorage"
+        },
+        {
+          "line": 34,
+          "anchor": "AsyncStorage"
+        },
+        {
+          "line": 36,
+          "anchor": "AsyncStorage"
+        },
+        {
+          "line": 56,
+          "anchor": "AsyncStorage"
+        },
+        {
+          "line": 60,
+          "anchor": "AsyncStorage"
+        },
+        {
+          "line": 77,
+          "anchor": "AsyncStorage"
+        },
+        {
+          "line": 78,
+          "anchor": "AsyncStorage"
+        }
+      ],
+      "observed_semantics": "Expo SecureStore plus legacy token migration; fresh build must not accept/migrate upstream server credentials."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/screens/ForgotPassword/useForgotPassword.js",
+      "sha256": "dd8be5d929a1bc9ee0ed62feffcddee319740f996ee9ed47bfecd10a3ee75d8a",
+      "action": "recovery_start",
+      "line_anchors": [
+        {
+          "line": 10,
+          "anchor": "clearResetSession"
+        },
+        {
+          "line": 49,
+          "anchor": "clearResetSession"
+        },
+        {
+          "line": 50,
+          "anchor": "mutate({ variables"
+        },
+        {
+          "line": 58,
+          "anchor": "ForgotPasswordOtp"
+        }
+      ],
+      "observed_semantics": "Normalizes email, clears previous in-memory reset session, starts recovery then navigates to recovery OTP."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/screens/ForgotPassword/useResetYourPassword.js",
+      "sha256": "5e12fda1fff78fde526568ca4f085d4f89513fa9df5ba327c62a807ab57ab473",
+      "action": "recovery_finish",
+      "line_anchors": [
+        {
+          "line": 11,
+          "anchor": "getResetSession"
+        },
+        {
+          "line": 28,
+          "anchor": "getResetSession"
+        },
+        {
+          "line": 120,
+          "anchor": "getResetSession"
+        },
+        {
+          "line": 49,
+          "anchor": "!email || !otp"
+        },
+        {
+          "line": 120,
+          "anchor": "currentOtp"
+        },
+        {
+          "line": 121,
+          "anchor": "currentOtp"
+        },
+        {
+          "line": 131,
+          "anchor": "currentOtp"
+        },
+        {
+          "line": 131,
+          "anchor": "mutate({ variables"
+        },
+        {
+          "line": 12,
+          "anchor": "clearResetSession"
+        },
+        {
+          "line": 36,
+          "anchor": "clearResetSession"
+        },
+        {
+          "line": 79,
+          "anchor": "clearResetSession"
+        }
+      ],
+      "observed_semantics": "Reset requires email and verified OTP from in-memory reset session; mutation sends password,email,otp. UI guards do not substitute server OTP expiry/replay binding."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/apollo/mutations.js",
+      "sha256": "8b2cd751ac6a5c16b8bd1b3e27581db013588af558f539794b313f28f4c8d178",
+      "action": "otp_and_session_operations",
+      "line_anchors": [
+        {
+          "line": 340,
+          "anchor": "mutation Login"
+        },
+        {
+          "line": 354,
+          "anchor": "mutation CreateUser"
+        },
+        {
+          "line": 319,
+          "anchor": "mutation SendOtpToEmail"
+        },
+        {
+          "line": 326,
+          "anchor": "mutation SendOtpToPhoneNumber"
+        },
+        {
+          "line": 457,
+          "anchor": "mutation VerifyOtp"
+        },
+        {
+          "line": 119,
+          "anchor": "mutation ResetPassword"
+        }
+      ],
+      "observed_semantics": "Customer legacy GraphQL session is token/tokenExpiration; registration accepts email verification booleans. Fresh backend must independently verify proofs and ignore privilege/verification claims from client."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/screens/CreateAccount/useCreateAccount.android.js",
+      "sha256": "a9c19deada12287aaccfb75a152f2869a432e990037ee757ca66c8313c730f75",
+      "action": "social_android",
+      "line_anchors": [
+        {
+          "line": 118,
+          "anchor": "GoogleSignin.signIn"
+        },
+        {
+          "line": 119,
+          "anchor": "GoogleSignin.signIn"
+        },
+        {
+          "line": 140,
+          "anchor": "type: 'google'"
+        },
+        {
+          "line": 14,
+          "anchor": "AppleAuthentication"
+        },
+        {
+          "line": 235,
+          "anchor": "AppleAuthentication"
+        },
+        {
+          "line": 238,
+          "anchor": "AppleAuthentication"
+        },
+        {
+          "line": 240,
+          "anchor": "AppleAuthentication"
+        },
+        {
+          "line": 61,
+          "anchor": "idToken"
+        },
+        {
+          "line": 121,
+          "anchor": "idToken"
+        },
+        {
+          "line": 123,
+          "anchor": "idToken"
+        },
+        {
+          "line": 125,
+          "anchor": "idToken"
+        },
+        {
+          "line": 126,
+          "anchor": "idToken"
+        },
+        {
+          "line": 136,
+          "anchor": "idToken"
+        },
+        {
+          "line": 154,
+          "anchor": "idToken"
+        },
+        {
+          "line": 187,
+          "anchor": "idToken"
+        },
+        {
+          "line": 188,
+          "anchor": "idToken"
+        },
+        {
+          "line": 330,
+          "anchor": "idToken"
+        },
+        {
+          "line": 47,
+          "anchor": "setTokenAsync"
+        },
+        {
+          "line": 271,
+          "anchor": "setTokenAsync"
+        }
+      ],
+      "observed_semantics": "Platform-specific social auth source exists. Google ID token exchange and Apple availability/token/nonce flows need provider configuration and pinned token-verification contracts; no sandbox/device execution proven."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-app/src/screens/CreateAccount/useCreateAccount.ios.js",
+      "sha256": "53c82acfc46e42fc0c2c7fb324b3dc91953ecbd4ca1626d906554934c0871f3f",
+      "action": "social_ios",
+      "line_anchors": [
+        {
+          "line": 149,
+          "anchor": "type: 'google'"
+        },
+        {
+          "line": 14,
+          "anchor": "AppleAuthentication"
+        },
+        {
+          "line": 272,
+          "anchor": "AppleAuthentication"
+        },
+        {
+          "line": 275,
+          "anchor": "AppleAuthentication"
+        },
+        {
+          "line": 277,
+          "anchor": "AppleAuthentication"
+        },
+        {
+          "line": 59,
+          "anchor": "idToken"
+        },
+        {
+          "line": 85,
+          "anchor": "idToken"
+        },
+        {
+          "line": 88,
+          "anchor": "idToken"
+        },
+        {
+          "line": 89,
+          "anchor": "idToken"
+        },
+        {
+          "line": 93,
+          "anchor": "idToken"
+        },
+        {
+          "line": 94,
+          "anchor": "idToken"
+        },
+        {
+          "line": 101,
+          "anchor": "idToken"
+        },
+        {
+          "line": 117,
+          "anchor": "idToken"
+        },
+        {
+          "line": 145,
+          "anchor": "idToken"
+        },
+        {
+          "line": 224,
+          "anchor": "idToken"
+        },
+        {
+          "line": 225,
+          "anchor": "idToken"
+        },
+        {
+          "line": 367,
+          "anchor": "idToken"
+        },
+        {
+          "line": 49,
+          "anchor": "setTokenAsync"
+        },
+        {
+          "line": 308,
+          "anchor": "setTokenAsync"
+        }
+      ],
+      "observed_semantics": "Platform-specific social auth source exists. Google ID token exchange and Apple availability/token/nonce flows need provider configuration and pinned token-verification contracts; no sandbox/device execution proven."
+    },
+    {
+      "app": "enatega-multivendor-rider",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-rider/lib/hooks/useLogin.ts",
+      "sha256": "5d1a3aa69ffa64434d7794a939926358b15f3c2734815e62ee0ef44b4488317a",
+      "action": "role_password_sign_in",
+      "line_anchors": [
+        {
+          "line": 21,
+          "anchor": "useMutation"
+        },
+        {
+          "line": 41,
+          "anchor": "useMutation"
+        },
+        {
+          "line": 42,
+          "anchor": "onLoginCompleted"
+        },
+        {
+          "line": 50,
+          "anchor": "onLoginCompleted"
+        },
+        {
+          "line": 42,
+          "anchor": "onCompleted"
+        },
+        {
+          "line": 46,
+          "anchor": "onCompleted"
+        },
+        {
+          "line": 36,
+          "anchor": "setTokenAsync"
+        },
+        {
+          "line": 61,
+          "anchor": "setTokenAsync"
+        },
+        {
+          "line": 83,
+          "anchor": "notificationToken"
+        },
+        {
+          "line": 90,
+          "anchor": "notificationToken"
+        },
+        {
+          "line": 79,
+          "anchor": "username:"
+        },
+        {
+          "line": 88,
+          "anchor": "username:"
+        },
+        {
+          "line": 72,
+          "anchor": "Invalid"
+        }
+      ],
+      "observed_semantics": "Rider uses riderLogin with username/password plus optional notification/timezone; merchant uses restaurantLogin with username/password plus optional notification. Token paired with rider userId or merchant restaurantId. Notification permission and provider proof must not block basic password-session path."
+    },
+    {
+      "app": "enatega-multivendor-rider",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-rider/lib/context/global/auth.context.tsx",
+      "sha256": "16c82c9d796773aeaa4800a88dd067283b788771dc6d134cef3ca764b039d648",
+      "action": "bootstrap_logout",
+      "line_anchors": [
+        {
+          "line": 5,
+          "anchor": "getSecureItem"
+        },
+        {
+          "line": 38,
+          "anchor": "getSecureItem"
+        },
+        {
+          "line": 39,
+          "anchor": "getSecureItem"
+        },
+        {
+          "line": 80,
+          "anchor": "logout"
+        },
+        {
+          "line": 90,
+          "anchor": "logout"
+        },
+        {
+          "line": 118,
+          "anchor": "logout"
+        },
+        {
+          "line": 123,
+          "anchor": "logout"
+        },
+        {
+          "line": 130,
+          "anchor": "logout"
+        },
+        {
+          "line": 133,
+          "anchor": "logout"
+        },
+        {
+          "line": 74,
+          "anchor": "clearStore"
+        },
+        {
+          "line": 87,
+          "anchor": "clearStore"
+        },
+        {
+          "line": 5,
+          "anchor": "removeSecureItem"
+        },
+        {
+          "line": 52,
+          "anchor": "removeSecureItem"
+        },
+        {
+          "line": 53,
+          "anchor": "removeSecureItem"
+        },
+        {
+          "line": 84,
+          "anchor": "removeSecureItem"
+        },
+        {
+          "line": 55,
+          "anchor": "router.replace"
+        },
+        {
+          "line": 110,
+          "anchor": "router.replace"
+        }
+      ],
+      "observed_semantics": "Restores mode-scoped identity/token; clears local identity and Apollo state on logout. Fresh build adds authoritative me/role/membership validation and server revocation."
+    },
+    {
+      "app": "enatega-multivendor-rider",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-rider/lib/ui/screens/login/index.tsx",
+      "sha256": "375ce416c5223a39db1ed9a289748c10453ff74cd8bb714a4b534fd8d6330ffd",
+      "action": "mode_role_ui",
+      "line_anchors": [
+        {
+          "line": 39,
+          "anchor": "multiVendorDemoCredentials"
+        },
+        {
+          "line": 70,
+          "anchor": "multiVendorDemoCredentials"
+        },
+        {
+          "line": 48,
+          "anchor": "singleVendorDemoCredentials"
+        },
+        {
+          "line": 71,
+          "anchor": "singleVendorDemoCredentials"
+        },
+        {
+          "line": 3,
+          "anchor": "useMemo"
+        },
+        {
+          "line": 67,
+          "anchor": "useMemo"
+        },
+        {
+          "line": 66,
+          "anchor": "selectMode"
+        },
+        {
+          "line": 97,
+          "anchor": "selectMode"
+        },
+        {
+          "line": 76,
+          "anchor": "onLoginHandler"
+        },
+        {
+          "line": 125,
+          "anchor": "onLoginHandler"
+        }
+      ],
+      "observed_semantics": "MULTI/SINGLE mode login selection and development demo prefills exist. Never transplant demo credentials or let endpoint/mode selection grant roles."
+    },
+    {
+      "app": "enatega-multivendor-rider",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-rider/lib/mode/rider-mode.ts",
+      "sha256": "fa3f2644cc6727e7f58ffcd2f51366006ad58762cb4c239719899b55892370c7",
+      "action": "mode_scoping",
+      "line_anchors": [
+        {
+          "line": 22,
+          "anchor": "EXPO_PUBLIC_VENDOR_MODE"
+        },
+        {
+          "line": 11,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 19,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 24,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 47,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 55,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 56,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 12,
+          "anchor": "SINGLE"
+        },
+        {
+          "line": 23,
+          "anchor": "SINGLE"
+        },
+        {
+          "line": 47,
+          "anchor": "SINGLE"
+        },
+        {
+          "line": 32,
+          "anchor": "getRiderTokenKey"
+        },
+        {
+          "line": 55,
+          "anchor": "getRiderTokenKey"
+        },
+        {
+          "line": 49,
+          "anchor": "migrateLegacy"
+        }
+      ],
+      "observed_semantics": "Build policy can force MULTI/SINGLE; session key namespace is per server mode with legacy migration. Fresh single platform should omit switch until product mandate and endpoint contract frozen."
+    },
+    {
+      "app": "enatega-multivendor-rider",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-rider/lib/apollo/index.ts",
+      "sha256": "1f769bc2c9033dbb087b40d69b66d347e034dfdfb117f61ae84b56e066fe7ab5",
+      "action": "graphql_session",
+      "line_anchors": [
+        {
+          "line": 12,
+          "anchor": "WebSocketLink"
+        },
+        {
+          "line": 242,
+          "anchor": "WebSocketLink"
+        },
+        {
+          "line": 21,
+          "anchor": "SubscriptionClient"
+        },
+        {
+          "line": 148,
+          "anchor": "SubscriptionClient"
+        },
+        {
+          "line": 153,
+          "anchor": "connectionParams"
+        },
+        {
+          "line": 157,
+          "anchor": "authorization"
+        },
+        {
+          "line": 190,
+          "anchor": "authorization"
+        },
+        {
+          "line": 232,
+          "anchor": "authorization"
+        },
+        {
+          "line": 122,
+          "anchor": "handleInvalidSession"
+        },
+        {
+          "line": 236,
+          "anchor": "handleInvalidSession"
+        },
+        {
+          "line": 118,
+          "anchor": "PUBLIC_ACCESS_REQUIRED"
+        },
+        {
+          "line": 163,
+          "anchor": "PUBLIC_ACCESS_REQUIRED"
+        },
+        {
+          "line": 199,
+          "anchor": "PUBLIC_ACCESS_REQUIRED"
+        }
+      ],
+      "observed_semantics": "Legacy subscriptions-transport-ws authenticated connection parameters/public proof handling; replace with graphql-ws, fresh authorization per reconnect and cache invalidation on logout/revocation."
+    },
+    {
+      "app": "enatega-multivendor-store",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-store/lib/hooks/useLogin.ts",
+      "sha256": "e6ddcf5bb37c21089874a8b869995c93dbb67ec7fb972f1e3a17a00c2c076c7b",
+      "action": "role_password_sign_in",
+      "line_anchors": [
+        {
+          "line": 1,
+          "anchor": "useMutation"
+        },
+        {
+          "line": 28,
+          "anchor": "useMutation"
+        },
+        {
+          "line": 29,
+          "anchor": "onCompleted"
+        },
+        {
+          "line": 70,
+          "anchor": "onCompleted"
+        },
+        {
+          "line": 24,
+          "anchor": "setTokenAsync"
+        },
+        {
+          "line": 75,
+          "anchor": "setTokenAsync"
+        },
+        {
+          "line": 132,
+          "anchor": "notificationToken"
+        },
+        {
+          "line": 148,
+          "anchor": "notificationToken"
+        },
+        {
+          "line": 160,
+          "anchor": "notificationToken"
+        },
+        {
+          "line": 87,
+          "anchor": "username:"
+        },
+        {
+          "line": 158,
+          "anchor": "username:"
+        },
+        {
+          "line": 63,
+          "anchor": "Invalid"
+        },
+        {
+          "line": 107,
+          "anchor": "PUBLIC_ACCESS_REQUIRED"
+        }
+      ],
+      "observed_semantics": "Rider uses riderLogin with username/password plus optional notification/timezone; merchant uses restaurantLogin with username/password plus optional notification. Token paired with rider userId or merchant restaurantId. Notification permission and provider proof must not block basic password-session path."
+    },
+    {
+      "app": "enatega-multivendor-store",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-store/lib/context/global/auth.context.tsx",
+      "sha256": "1317aa77c72461c4df89213f86d49ecda3ad2196c790d19fea9167c162c79b55",
+      "action": "bootstrap_logout",
+      "line_anchors": [
+        {
+          "line": 92,
+          "anchor": "getItemAsync"
+        },
+        {
+          "line": 75,
+          "anchor": "logout"
+        },
+        {
+          "line": 96,
+          "anchor": "logout"
+        },
+        {
+          "line": 100,
+          "anchor": "logout"
+        },
+        {
+          "line": 104,
+          "anchor": "logout"
+        },
+        {
+          "line": 126,
+          "anchor": "logout"
+        },
+        {
+          "line": 131,
+          "anchor": "logout"
+        },
+        {
+          "line": 40,
+          "anchor": "clearStore"
+        },
+        {
+          "line": 78,
+          "anchor": "clearStore"
+        },
+        {
+          "line": 79,
+          "anchor": "deleteItemAsync"
+        },
+        {
+          "line": 84,
+          "anchor": "router.replace"
+        }
+      ],
+      "observed_semantics": "Restores mode-scoped identity/token; clears local identity and Apollo state on logout. Fresh build adds authoritative me/role/membership validation and server revocation."
+    },
+    {
+      "app": "enatega-multivendor-store",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-store/lib/ui/screens/login/index.tsx",
+      "sha256": "d3f86b21b6693181cc162472d9f6092852cf3e3a7d872e0e0026ebdb02221880",
+      "action": "mode_role_ui",
+      "line_anchors": [
+        {
+          "line": 32,
+          "anchor": "multiVendorDemoCredentials"
+        },
+        {
+          "line": 63,
+          "anchor": "multiVendorDemoCredentials"
+        },
+        {
+          "line": 41,
+          "anchor": "singleVendorDemoCredentials"
+        },
+        {
+          "line": 64,
+          "anchor": "singleVendorDemoCredentials"
+        },
+        {
+          "line": 3,
+          "anchor": "useMemo"
+        },
+        {
+          "line": 60,
+          "anchor": "useMemo"
+        },
+        {
+          "line": 58,
+          "anchor": "selectMode"
+        },
+        {
+          "line": 75,
+          "anchor": "selectMode"
+        },
+        {
+          "line": 69,
+          "anchor": "onLoginHandler"
+        },
+        {
+          "line": 98,
+          "anchor": "onLoginHandler"
+        }
+      ],
+      "observed_semantics": "MULTI/SINGLE mode login selection and development demo prefills exist. Never transplant demo credentials or let endpoint/mode selection grant roles."
+    },
+    {
+      "app": "enatega-multivendor-store",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-store/lib/mode/store-mode.ts",
+      "sha256": "55c61b3fe88e1b8d9b9a160dbdafe05a2d206e091cd527c213d6561ce630f21a",
+      "action": "mode_scoping",
+      "line_anchors": [
+        {
+          "line": 17,
+          "anchor": "EXPO_PUBLIC_VENDOR_MODE"
+        },
+        {
+          "line": 7,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 14,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 19,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 29,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 43,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 44,
+          "anchor": "MULTI"
+        },
+        {
+          "line": 8,
+          "anchor": "SINGLE"
+        },
+        {
+          "line": 18,
+          "anchor": "SINGLE"
+        },
+        {
+          "line": 29,
+          "anchor": "SINGLE"
+        },
+        {
+          "line": 33,
+          "anchor": "getStoreTokenKey"
+        },
+        {
+          "line": 43,
+          "anchor": "getStoreTokenKey"
+        },
+        {
+          "line": 39,
+          "anchor": "migrateLegacy"
+        }
+      ],
+      "observed_semantics": "Build policy can force MULTI/SINGLE; session key namespace is per server mode with legacy migration. Fresh single platform should omit switch until product mandate and endpoint contract frozen."
+    },
+    {
+      "app": "enatega-multivendor-store",
+      "path": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream/enatega-multivendor-store/lib/apollo/index.ts",
+      "sha256": "bacdc73354c9897c1c2e6b4a5135d446dbcffa2122090a059b8949969d329d5c",
+      "action": "graphql_session",
+      "line_anchors": [
+        {
+          "line": 11,
+          "anchor": "WebSocketLink"
+        },
+        {
+          "line": 84,
+          "anchor": "WebSocketLink"
+        },
+        {
+          "line": 80,
+          "anchor": "connectionParams"
+        },
+        {
+          "line": 82,
+          "anchor": "connectionParams"
+        },
+        {
+          "line": 90,
+          "anchor": "connectionParams"
+        },
+        {
+          "line": 96,
+          "anchor": "authorization"
+        },
+        {
+          "line": 103,
+          "anchor": "authorization"
+        },
+        {
+          "line": 137,
+          "anchor": "authorization"
+        },
+        {
+          "line": 193,
+          "anchor": "authorization"
+        },
+        {
+          "line": 47,
+          "anchor": "handleInvalidSession"
+        },
+        {
+          "line": 94,
+          "anchor": "handleInvalidSession"
+        },
+        {
+          "line": 132,
+          "anchor": "handleInvalidSession"
+        },
+        {
+          "line": 240,
+          "anchor": "handleInvalidSession"
+        },
+        {
+          "line": 72,
+          "anchor": "PUBLIC_ACCESS_REQUIRED"
+        },
+        {
+          "line": 109,
+          "anchor": "PUBLIC_ACCESS_REQUIRED"
+        },
+        {
+          "line": 144,
+          "anchor": "PUBLIC_ACCESS_REQUIRED"
+        },
+        {
+          "line": 199,
+          "anchor": "PUBLIC_ACCESS_REQUIRED"
+        }
+      ],
+      "observed_semantics": "Legacy subscriptions-transport-ws authenticated connection parameters/public proof handling; replace with graphql-ws, fresh authorization per reconnect and cache invalidation on logout/revocation."
+    }
+  ],
+  "first_packet": {
+    "id": "FB02-MOBILE-PASSWORD-SESSION",
+    "depends_on": [
+      "Lead freezes GraphQL identity schema and error codes",
+      "Backend password login/refresh/me/logout with real persistence and role membership enforcement",
+      "Lead adds pinned expo-secure-store/generated GraphQL dependencies",
+      "Independent auth/security review"
+    ],
+    "owned_paths": [
+      "fresh apps/customer-mobile",
+      "fresh apps/merchant-mobile",
+      "fresh apps/rider-mobile"
+    ],
+    "implementation": [
+      "Branded source-inspired password forms without demo values or email-existence preflight",
+      "Customer registration only grants CUSTOMER; no public merchant/rider registration",
+      "Secure persisted refresh credential and access lifecycle; bootstrap me before authenticated views",
+      "Single-flight refresh with compare-and-set rotation and stale completion guard",
+      "Server logout revocation plus local cache/storage/socket cleanup including offline local logout semantics",
+      "Role rejection on wrong app; merchant memberships from server, no client-selected privilege",
+      "No OTP/social/recovery provider button claims until actual bounded provider packets"
+    ],
+    "technical_actions_without_external_provider": [
+      "Password login against real own API",
+      "Role/tenant/session bootstrap",
+      "Refresh concurrency/replay protection",
+      "Current-session logout and cache invalidation",
+      "Absent/invalid configuration, server outage and malformed-response behavior"
+    ]
+  },
+  "negative_acceptance": [
+    "Unknown-account and wrong-password errors indistinguishable",
+    "Customer cannot grant merchant/rider/admin roles",
+    "Wrong app role fails closed; merchant foreign membership denied server-side",
+    "Expired/revoked token bootstrap cannot expose cached private data",
+    "Refresh replay revokes family; concurrent401 requests make one refresh",
+    "Logout during login/refresh/me cancels or suppresses late state restoration",
+    "Storage unavailable/corrupt/partial write is explicit failure, no AsyncStorage secret fallback",
+    "Connection failures do not leak tokens/passwords/email or upstream raw errors",
+    "Malformed GraphQL errors/data/oversized response rejected; redirects refused",
+    "No provider credential hardcoding or Enatega production-server fallback"
+  ],
+  "external_provider_actions": {
+    "recovery_email_otp": [
+      "Select actual delivery provider and approved sender/configuration",
+      "Server-generated hashed short-lived one-use proof; attempt/resend limits and generic receipt response",
+      "Server proof binds purpose/account; reset revokes existing sessions",
+      "Actual sandbox delivery and resend/expiry/replay evidence required"
+    ],
+    "phone_otp": [
+      "SMS provider/region and abuse policy inputs",
+      "No client-generated OTP trust; actual provider delivery gate"
+    ],
+    "google_apple": [
+      "Own OAuth app/client identifiers and redirect scheme",
+      "Server validates issuer,audience,signature,expiry and Apple nonce",
+      "Account linking/duplicate identity policy requires explicit freeze",
+      "Actual cancellation/token failure/provider outage native checks"
+    ]
+  },
+  "device_gates": [
+    "Full Xcode currently unavailable through xcode-select; active CommandLineTools",
+    "adb and Maestro absent at initial audit",
+    "Own signing/provisioning/EAS identifiers must be supplied or configured by authorized owner",
+    "Verify Expo streaming fetch and SecureStore on real signed iOS/Android builds; exports are not proof",
+    "Native keyboard/password autofill/focus/readers, background/resume and process death",
+    "Google/Apple redirects, token exchange and cancellation on device only when enabled"
+  ],
+  "remaining_source_limits": [
+    "Rider authentication.mutation.ts contains general user OTP/reset declarations but actual rider login hook uses separate RIDER_LOGIN; declarations alone are not rider recovery UI evidence",
+    "Merchant login source audited; merchant recovery/social screen coverage not demonstrated",
+    "Exact recovery OTP verification-screen implementation not inspected in this bounded packet; expand before provider implementation"
+  ],
+  "approval": "Candidate planning artifact only; implementation and security gates not advanced"
+}

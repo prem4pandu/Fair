@@ -1,0 +1,209 @@
+{
+  "date": "2026-10-08",
+  "execution": "Multiple independent Codex agents; no local AI",
+  "source_session": "https://chatgpt.com/local/01a115d1-c437-7040-ba6a-47ee7d3100ac",
+  "source_commit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
+  "full_cloud_export": "Pending; partial conversation/roadmap recovered, not a faithful full file transfer",
+  "phase_sequence": [
+    {
+      "id": "FB00",
+      "scope": "Source/action/mode inventory and licensing",
+      "dependencies": [],
+      "functionality": "IN_PROGRESS",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB01",
+      "scope": "API/worker, persistence, six-app foundations and real-stack harness",
+      "dependencies": ["FB00"],
+      "functionality": "IN_PROGRESS",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB02",
+      "scope": "Identity, roles, staff scopes and secure sessions",
+      "dependencies": ["FB01"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB03",
+      "scope": "Merchant/outlet/catalog/media/hours",
+      "dependencies": ["FB02"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB04",
+      "scope": "Discovery, search, addresses and favorites",
+      "dependencies": ["FB03"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB05",
+      "scope": "Integer pricing, quotes, cart and immutable orders",
+      "dependencies": ["FB04"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB06",
+      "scope": "Payments, ledger, refunds and signed webhooks",
+      "dependencies": ["FB05"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB07",
+      "scope": "Merchant acceptance/preparation/readiness",
+      "dependencies": ["FB06"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB08",
+      "scope": "Provider-neutral dispatch/reconciliation",
+      "dependencies": ["FB07"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB09",
+      "scope": "Own-fleet rider workflow and native tracking",
+      "dependencies": ["FB08"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB10",
+      "scope": "Lalamove verified-contract/sandbox adapter",
+      "dependencies": ["FB08"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB11",
+      "scope": "Subscriptions, notifications, chat and media",
+      "dependencies": ["FB09", "FB10"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB12",
+      "scope": "History/tracking/reorder/cancellation/ratings",
+      "dependencies": ["FB11"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB13",
+      "scope": "Earnings, payables, withdrawals and reconciliation",
+      "dependencies": ["FB06", "FB07", "FB09"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB14",
+      "scope": "Support/disputes/risk/privacy lifecycle",
+      "dependencies": ["FB12", "FB13"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB15",
+      "scope": "Membership/credits/referrals/deals",
+      "dependencies": ["FB05", "FB06", "FB13"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB16",
+      "scope": "Full administrative operations and reporting",
+      "dependencies": ["FB03", "FB10", "FB13", "FB14", "FB15"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB17",
+      "scope": "Public/provider configuration, localization and observability",
+      "dependencies": ["FB11", "FB16"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB18",
+      "scope": "Full UI/action parity and regression",
+      "dependencies": ["FB17"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB19",
+      "scope": "Load, resilience, retention, restore and security",
+      "dependencies": ["FB18"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    },
+    {
+      "id": "FB20",
+      "scope": "Signed devices, provider readiness and owner release decision",
+      "dependencies": ["FB19"],
+      "functionality": "NOT_STARTED",
+      "verification": "NOT_RUN",
+      "release_gates": "PENDING"
+    }
+  ],
+  "gates": [
+    "Actual unit/integration/web E2E results",
+    "Real PostgreSQL/Redis including outages and concurrency",
+    "Accessible keyboard/responsive UI and exhaustive action traceability",
+    "Independent QA, architecture and security review after implementation",
+    "Provider sandbox evidence for dependent capabilities",
+    "Signed Android/iOS device E2E, not exports",
+    "No invented policies, success mocks, secrets or release waivers"
+  ],
+  "blockers": [
+    "Full cloud coverage/action/review artifacts not yet transferred",
+    "Payment provider/sandbox and economic/tax/refund/settlement decisions",
+    "Lalamove market/API credentials and fleet operating rules",
+    "Maps/social/push/notification provider configuration",
+    "Full Xcode, Android tools, device/signing/store accounts",
+    "Retention/SLO/hosting/budget/domain inputs and final release approval"
+  ],
+  "first_packet": {
+    "id": "FB01-FOUNDATION-01",
+    "acceptance": [
+      "Actual GraphQL serviceInfo contract",
+      "Liveness independent of dependencies; readiness probes real database and Redis",
+      "Independent worker process, fail-closed config, bounded API errors",
+      "All six apps report configured API availability honestly",
+      "No copied upstream auth/provider/account defaults"
+    ],
+    "limits": [
+      "Public connection foundation only; business/auth UI pending",
+      "Prisma migration compatibility and dependency locks require actual checks",
+      "Source-derived full UI import follows route/action audit"
+    ]
+  }
+}

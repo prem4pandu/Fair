@@ -1,0 +1,549 @@
+{
+  "upstream_commit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
+  "source_root": "/Users/premkumarmamidi/Development/FairBiteFresh/upstream",
+  "scope": "Selected customer web, shared merchant/admin web and customer mobile identity actions; partial audit, not full parity or runtime proof.",
+  "candidate_contracts_not_frozen": true,
+  "actions": [
+    {
+      "id": "CW01",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/login-with-email/index.tsx",
+        "line": 44
+      },
+      "event": "Continue email",
+      "upstream_operations": ["EmailExist"],
+      "observed_semantics": "Email existence decides password panel versus registration; exposes existence.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "Explicit login/register choice; no public existence endpoint.",
+      "negative_acceptance_tests": [
+        "same login failure for unknown email and bad password",
+        "malformed email never submits",
+        "no credentials in logs"
+      ],
+      "blocked_inputs": [],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW02",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/enter-password/index.tsx",
+        "line": 34
+      },
+      "event": "Submit password",
+      "upstream_operations": ["Login"],
+      "observed_semantics": "Password login then email/phone verification panels or close modal.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "login(email,password) issues least-privilege server-owned session only; verification status server-owned.",
+      "negative_acceptance_tests": [
+        "wrong password",
+        "disabled account",
+        "role mismatch",
+        "verification bypass",
+        "retry throttling"
+      ],
+      "blocked_inputs": [],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW03",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/signup-with-email/index.tsx",
+        "line": 64
+      },
+      "event": "Register email/password",
+      "upstream_operations": [
+        "EmailExist",
+        "PhoneExist",
+        "CreateUser",
+        "SendOtpToEmail",
+        "SendOtpToPhoneNumber"
+      ],
+      "observed_semantics": "Checks required/name/email/password then email/phone existence; prioritizes email then phone; skip-both creates account.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "registerCustomer(input) cannot accept roles or verification flags; staged verification server-owned.",
+      "negative_acceptance_tests": [
+        "concurrent duplicate normalized email",
+        "Unicode name accepted under frozen policy",
+        "forged emailIsVerified rejected",
+        "phone conflict cannot take over account"
+      ],
+      "blocked_inputs": [
+        "registration/verification eligibility policy",
+        "email/SMS providers for enabled verification"
+      ],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW04",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/email-verification/index.tsx",
+        "line": 126
+      },
+      "event": "Verify email OTP",
+      "upstream_operations": ["VerifyOtp", "CreateUser"],
+      "observed_semantics": "OTP verify followed by registration/login progression; skip/demo branch can automatically verify locally.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "verifyChallenge(challengeId,code) purpose-bound, expiring, one-use; no demo bypass production.",
+      "negative_acceptance_tests": [
+        "expired",
+        "replayed",
+        "wrong-purpose",
+        "too many attempts",
+        "client skip/test flag cannot verify"
+      ],
+      "blocked_inputs": ["email provider", "OTP expiry/resend/attempt policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW05",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/email-verification/index.tsx",
+        "line": 151
+      },
+      "event": "Resend email OTP",
+      "upstream_operations": ["SendOtpToEmail"],
+      "observed_semantics": "Resend subject to UI timer; provider backend enforcement unverified.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "resendChallenge(challengeId), server rate limiting and generic response.",
+      "negative_acceptance_tests": [
+        "UI timer bypass",
+        "concurrent resends",
+        "unknown challenge"
+      ],
+      "blocked_inputs": ["email provider", "resend policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW06",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/phone-verification/index.tsx",
+        "line": 143
+      },
+      "event": "Verify phone OTP",
+      "upstream_operations": ["VerifyOtp", "UpdateUser"],
+      "observed_semantics": "Verifies phone then updates user or advances flow; demo auto-verify exists.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "verifyChallenge binds account/session and destination; client cannot assert phone verification.",
+      "negative_acceptance_tests": [
+        "cross-account verification",
+        "destination changed after send",
+        "code replay",
+        "test bypass"
+      ],
+      "blocked_inputs": ["SMS provider", "phone ownership/change policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW07",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/phone-verification/index.tsx",
+        "line": 181
+      },
+      "event": "Resend phone OTP",
+      "upstream_operations": ["SendOtpToPhoneNumber"],
+      "observed_semantics": "Resends phone challenge.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "resendChallenge server-owned cooldown.",
+      "negative_acceptance_tests": [
+        "resend abuse",
+        "invalid phone",
+        "provider outage no success toast"
+      ],
+      "blocked_inputs": ["SMS provider"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW08",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/enter-password/index.tsx",
+        "line": 116
+      },
+      "event": "Forgot password",
+      "upstream_operations": ["ForgotPassword"],
+      "observed_semantics": "Forgot-password click sends email OTP and changes panel.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "requestPasswordRecovery(email) always generic acknowledgement, queues provider delivery.",
+      "negative_acceptance_tests": [
+        "unknown account indistinguishable",
+        "rate limiting",
+        "provider outage/retry"
+      ],
+      "blocked_inputs": ["recovery provider", "recovery policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW09",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/change-password/email-otp/index.tsx",
+        "line": 112
+      },
+      "event": "Verify recovery OTP",
+      "upstream_operations": ["VerifyOtp"],
+      "observed_semantics": "Verifies email OTP before calling parent panel progression.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "consume recovery challenge to issue purpose-bound short-lived reset grant.",
+      "negative_acceptance_tests": [
+        "registration OTP cannot reset",
+        "challenge replay",
+        "wrong destination"
+      ],
+      "blocked_inputs": ["recovery provider"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW10",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/change-password/index.tsx",
+        "line": 24
+      },
+      "event": "Submit new password",
+      "upstream_operations": [
+        "ResetPassword",
+        "ResetPassword with token optional in context"
+      ],
+      "observed_semantics": "Component passes empty token into handler; auth context supports optional token and tokenless reset variants.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "resetPassword(resetGrant,newPassword) requires grant; revoke existing sessions atomically.",
+      "negative_acceptance_tests": [
+        "tokenless reset forbidden",
+        "expired grant",
+        "two simultaneous resets only one wins",
+        "old sessions revoked"
+      ],
+      "blocked_inputs": ["password/session invalidation policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CW11",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-web/lib/ui/screen-components/un-protected/authentication/index.tsx",
+        "line": 89
+      },
+      "event": "Google/social entry",
+      "upstream_operations": [
+        "Login through shared auth context; handler delegation requires separate provider audit"
+      ],
+      "observed_semantics": "Acquires Google ID token and user info, then delegates to handleUserLogin; validate assertion server-side instead of trusting derived profile fields.",
+      "mode_branches": "Customer web auth context switches login/emailExist/phoneExist documents for SINGLE; remaining selected OTP/create/recovery document compatibility requires explicit schema audit.",
+      "proposed_fresh_contract": "provider login accepts server-verified identity assertion; never trusts client email/userId.",
+      "negative_acceptance_tests": [
+        "invalid audience",
+        "expired assertion",
+        "cross-provider account-link takeover"
+      ],
+      "blocked_inputs": [
+        "Google OAuth client IDs/consent",
+        "social account linking policy"
+      ],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "MW01",
+      "actor": "merchant",
+      "source": {
+        "path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/sign-in-email-password/index.tsx",
+        "line": 80
+      },
+      "event": "Submit owner password",
+      "upstream_operations": ["ownerLogin"],
+      "observed_semantics": "Stores owner payload/tokens in browser storage, refreshes profile and routes by verified userType.",
+      "mode_branches": "Shared multivendor owner login serves merchant/admin roles. Selected singlevendor counterpart compared: same ownerLogin, different demo initial-value and cross-admin link configuration; exclude public credential prefill.",
+      "proposed_fresh_contract": "login with server-owned role assignments; secure HttpOnly web BFF cookie; me authorization from database.",
+      "negative_acceptance_tests": [
+        "customer cannot enter merchant/admin",
+        "forged userType rejected",
+        "tenant not selectable via credentials",
+        "logout replay rejected"
+      ],
+      "blocked_inputs": ["staff/admin provisioning and MFA policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED",
+      "additional_sources": [
+        {
+          "path": "enatega-singlevendor-admin/lib/ui/screen-components/unprotected/authentication/sign-in-email-password/index.tsx",
+          "line": 84
+        }
+      ]
+    },
+    {
+      "id": "AW01",
+      "actor": "administrator",
+      "source": {
+        "path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/sign-in-email-password/index.tsx",
+        "line": 80
+      },
+      "event": "Submit owner password",
+      "upstream_operations": ["ownerLogin"],
+      "observed_semantics": "Stores owner payload/tokens in browser storage, refreshes profile and routes by verified userType.",
+      "mode_branches": "Shared multivendor owner login serves merchant/admin roles. Selected singlevendor counterpart compared: same ownerLogin, different demo initial-value and cross-admin link configuration; exclude public credential prefill.",
+      "proposed_fresh_contract": "login with server-owned role assignments; secure HttpOnly web BFF cookie; me authorization from database.",
+      "negative_acceptance_tests": [
+        "customer cannot enter merchant/admin",
+        "forged userType rejected",
+        "tenant not selectable via credentials",
+        "logout replay rejected"
+      ],
+      "blocked_inputs": ["staff/admin provisioning and MFA policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED",
+      "additional_sources": [
+        {
+          "path": "enatega-singlevendor-admin/lib/ui/screen-components/unprotected/authentication/sign-in-email-password/index.tsx",
+          "line": 84
+        }
+      ]
+    },
+    {
+      "id": "AD02",
+      "actor": "merchant/administrator",
+      "source": {
+        "path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/sign-up/index.tsx",
+        "line": 67
+      },
+      "event": "Sign-up form submit",
+      "upstream_operations": [],
+      "observed_semantics": "Formik submit is empty upstream placeholder.",
+      "mode_branches": "Shared admin branch; upstream placeholder is not a working feature.",
+      "proposed_fresh_contract": "No public administrator registration; merchant onboarding contract separately frozen.",
+      "negative_acceptance_tests": ["public role escalation forbidden"],
+      "blocked_inputs": ["merchant onboarding/admin invitation policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AD03",
+      "actor": "merchant/administrator",
+      "source": {
+        "path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/otp-verification/index.tsx",
+        "line": 35
+      },
+      "event": "Continue OTP",
+      "upstream_operations": [],
+      "observed_semantics": "Static OTP input and Continue/Resend buttons with no observed handler; hardcoded destination.",
+      "mode_branches": "Shared admin branch; placeholder only.",
+      "proposed_fresh_contract": "Implement only after privileged challenge purpose/provider contract freeze.",
+      "negative_acceptance_tests": [
+        "no static destination",
+        "unwired button not presented as working",
+        "replay/rate-limit"
+      ],
+      "blocked_inputs": ["MFA/OTP provider and privileged auth policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CM01",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-app/src/screens/Login/useLogin.js",
+        "line": 182
+      },
+      "event": "Submit mobile password",
+      "upstream_operations": ["login", "LOGIN_SINGLE_VENDOR"],
+      "observed_semantics": "Mode-selected mutation; successful auth stores token and returns selected home route.",
+      "mode_branches": "SINGLE uses LOGIN_SINGLE_VENDOR; MULTI uses login. Upstream SINGLE has prefilled demo credentials; exclude.",
+      "proposed_fresh_contract": "Same login domain; native bearer stored via secure platform storage; cancel/stale response guard.",
+      "negative_acceptance_tests": [
+        "unmount during login",
+        "mode/session isolation",
+        "wrong password",
+        "secure storage failure clears session"
+      ],
+      "blocked_inputs": [],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CM02",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-app/src/screens/Login/useLogin.js",
+        "line": 219
+      },
+      "event": "Continue mobile email",
+      "upstream_operations": ["emailExist", "EMAIL_EXIST_SINGLE_VENDOR"],
+      "observed_semantics": "Email existence mutation routes new emails to register.",
+      "mode_branches": "SINGLE uses EMAIL_EXIST_SINGLE_VENDOR; MULTI emailExist.",
+      "proposed_fresh_contract": "Explicit login/register navigation; omit existence oracle.",
+      "negative_acceptance_tests": [
+        "unknown email parity",
+        "malformed email",
+        "mode switch cancels request"
+      ],
+      "blocked_inputs": [],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CM03",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-app/src/screens/Register/useRegister.js",
+        "line": 118
+      },
+      "event": "Register mobile",
+      "upstream_operations": ["phoneExist", "PHONE_EXIST_SINGLE_VENDOR"],
+      "observed_semantics": "Checks credentials/phone existence then onCompleted routes verification flow. Existing phone prompts confirmation and isPhoneExists flag; password passed in navigation params upstream. Do not carry this plaintext secret navigation behavior.",
+      "mode_branches": "SINGLE PHONE_EXIST_SINGLE_VENDOR; MULTI phoneExist.",
+      "proposed_fresh_contract": "registerCustomer plus server challenge staging; secure transient form data.",
+      "negative_acceptance_tests": [
+        "duplicate phone takeover",
+        "background clears password",
+        "Unicode names",
+        "server reject forged verification"
+      ],
+      "blocked_inputs": ["customer verification policy", "email/SMS providers"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CM04",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-app/src/screens/Otp/Email/useEmailOtp.js",
+        "line": 172
+      },
+      "event": "Verify mobile email",
+      "upstream_operations": ["VERIFY_OTP", "CREATEUSER"],
+      "observed_semantics": "Verifies code then progresses creation/phone step; demo/skip branches exist.",
+      "mode_branches": "Observed hook uses shared mutations; SINGLE schema equivalence unverified.",
+      "proposed_fresh_contract": "Purpose-bound challenge verify; production demo disabled.",
+      "negative_acceptance_tests": [
+        "wrong code",
+        "expiry",
+        "replay",
+        "demo config cannot verify"
+      ],
+      "blocked_inputs": ["email provider"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CM05",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-app/src/screens/Otp/Phone/usePhoneOtp.js",
+        "line": 153
+      },
+      "event": "Verify mobile phone",
+      "upstream_operations": ["VERIFY_OTP"],
+      "observed_semantics": "Phone verification and flow progression.",
+      "mode_branches": "Observed shared mutation; SINGLE equivalence unverified.",
+      "proposed_fresh_contract": "Purpose-bound destination challenge.",
+      "negative_acceptance_tests": [
+        "changed destination",
+        "wrong account",
+        "code replay"
+      ],
+      "blocked_inputs": ["SMS provider"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CM06",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-app/src/screens/ForgotPassword/useForgotPassword.js",
+        "line": 46
+      },
+      "event": "Request mobile recovery",
+      "upstream_operations": ["forgotPassword"],
+      "observed_semantics": "Sends recovery request and navigates OTP.",
+      "mode_branches": "Observed shared mutation; SINGLE equivalence unverified.",
+      "proposed_fresh_contract": "Generic recovery request; no account enumeration.",
+      "negative_acceptance_tests": [
+        "unknown email parity",
+        "provider failure",
+        "rate limiting"
+      ],
+      "blocked_inputs": ["recovery provider"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CM07",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-app/src/screens/Otp/ForgotPassword/useForgotPasswordOtp.js",
+        "line": 56
+      },
+      "event": "Verify mobile recovery OTP",
+      "upstream_operations": ["VERIFY_OTP"],
+      "observed_semantics": "Stores verified OTP transiently via resetPasswordSession then reset screen.",
+      "mode_branches": "Observed shared mutation; SINGLE equivalence unverified.",
+      "proposed_fresh_contract": "Exchange OTP for opaque one-use reset grant, not raw OTP navigation.",
+      "negative_acceptance_tests": [
+        "wrong-purpose",
+        "background/TTL clear",
+        "replay"
+      ],
+      "blocked_inputs": ["recovery provider"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "CM08",
+      "actor": "customer",
+      "source": {
+        "path": "enatega-multivendor-app/src/screens/ForgotPassword/useResetYourPassword.js",
+        "line": 117
+      },
+      "event": "Set new mobile password",
+      "upstream_operations": ["resetPassword"],
+      "observed_semantics": "Re-reads ephemeral OTP before mutation; compares confirmation and sends email,password,otp.",
+      "mode_branches": "Observed shared mutation; SINGLE equivalence unverified.",
+      "proposed_fresh_contract": "Reset using opaque server grant; invalidate old sessions.",
+      "negative_acceptance_tests": [
+        "missing grant",
+        "expiry",
+        "password mismatch",
+        "concurrent reset",
+        "stale secure tokens revoked"
+      ],
+      "blocked_inputs": ["password/session policy"],
+      "status": "AUDITED_CANDIDATE_NOT_IMPLEMENTED"
+    }
+  ],
+  "next_audit": [
+    "Complete singlevendor authentication API schema/operation comparison; selected admin UI counterparts already byte-compared.",
+    "Inspect social-provider handlers and logout/session refresh actions",
+    "Inventory remaining identity actions in merchant/rider native apps",
+    "Freeze registration eligibility,password policy,session expiry/revocation,privileged provisioning/MFA,OTP purpose and delivery provider inputs"
+  ],
+  "verification": "Static selected-source inspection only; proposed tests have not been implemented/executed.",
+  "selected_single_admin_comparison": [
+    {
+      "multi_path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/sign-in-email-password/index.tsx",
+      "single_path": "enatega-singlevendor-admin/lib/ui/screen-components/unprotected/authentication/sign-in-email-password/index.tsx",
+      "byte_identical": false
+    },
+    {
+      "multi_path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/sign-up/index.tsx",
+      "single_path": "enatega-singlevendor-admin/lib/ui/screen-components/unprotected/authentication/sign-up/index.tsx",
+      "byte_identical": true
+    },
+    {
+      "multi_path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/otp-verification/index.tsx",
+      "single_path": "enatega-singlevendor-admin/lib/ui/screen-components/unprotected/authentication/otp-verification/index.tsx",
+      "byte_identical": true
+    },
+    {
+      "multi_path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/email-verification/index.tsx",
+      "single_path": "enatega-singlevendor-admin/lib/ui/screen-components/unprotected/authentication/email-verification/index.tsx",
+      "byte_identical": true
+    },
+    {
+      "multi_path": "enatega-multivendor-admin/lib/ui/screen-components/unprotected/authentication/phone-verification/index.tsx",
+      "single_path": "enatega-singlevendor-admin/lib/ui/screen-components/unprotected/authentication/phone-verification/index.tsx",
+      "byte_identical": true
+    }
+  ],
+  "hazards": [
+    "Upstream account-existence lookups enable enumeration; fresh login should return generic failures.",
+    "Selected admin registration/OTP/email/phone forms contain no working submit handlers; source presence is not functional parity.",
+    "Client-supplied verification skip/demo flags are not identity proof.",
+    "Customer web change-password submits empty token, while tokenless reset document remains defined; fresh reset must require server grant.",
+    "Native registration passes password in navigation params; fresh implementation must use transient protected state and clear lifecycle exits.",
+    "Public administrator demo/prefill variables must not be carried into fresh application."
+  ]
+}

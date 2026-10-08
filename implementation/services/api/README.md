@@ -1,0 +1,11 @@
+# API foundation
+
+Public GraphQL service-information foundation only. Identity, business workflows, subscriptions and provider integrations are pending. `/health/live` reports process availability; `/health/ready` probes actual PostgreSQL and Redis. `/graphql` exposes the root `contracts/foundation.graphql` schema and reports `ready` only when both dependencies respond.
+
+Use Node 24 and the repository-pinned pnpm. From the workspace root, install dependencies with `pnpm install --frozen-lockfile`, then `pnpm build`. The shared brand package must be built before direct API checks. Configuration is read from process environment; `.env.example` documents synthetic local values and is not automatically loaded. Inject deployment secrets through an approved secret source; keep actual environment files out of version control.
+
+Set `APP_ENV`, `DATABASE_URL`, `REDIS_URL` and optionally `PORT` (default 4100) and `CORS_ORIGINS`. Origins are exact comma-separated HTTP(S) origins; empty allows no cross-origin browser access. Production requires HTTPS origins, verified PostgreSQL TLS (`sslmode=verify-full`) and Redis TLS (`rediss:`). Database URLs require a host and database name. Redis URL query overrides and fragments are rejected. Production introspection is disabled and errors are masked.
+
+With configuration available, run `pnpm --filter @fairbite/api db:validate`, `db:generate`, and `db:migrate`. The Prisma migration requires PostgreSQL with PostGIS available; schema generation creates ignored files under `src/generated/prisma`. Migration tooling reads `DATABASE_URL`; configuration alone does not provision infrastructure. Run `pnpm --filter @fairbite/api start` after building; the API binds loopback. Production exposure requires separately reviewed deployment routing.
+
+Verify with package `typecheck`, `build`, and `test`. `test:integration` starts disposable real PostGIS/PostgreSQL and Redis containers, applies the SQL migration, checks dependency outages and proves worker separation. Docker/socket and local HTTP access are required. The selected PostGIS image uses AMD64; ARM hosts require supported container emulation. Root `test:e2e` additionally requires built web applications and installed Playwright Chromium. No foundation check demonstrates authentication, commerce or provider capability.

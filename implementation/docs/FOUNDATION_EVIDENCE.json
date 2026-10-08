@@ -1,0 +1,439 @@
+{
+  "date": "2026-10-08",
+  "packet": "FB01-FOUNDATION-01",
+  "scope": "Public connection foundation only; full Enatega UI adoption, auth, commerce and delivery are not implemented",
+  "integration_target": "/Users/premkumarmamidi/Development/FairBiteFresh/implementation",
+  "status": {
+    "functionality": "IN_PROGRESS",
+    "phase_verification": "Bounded foundation checks passed; full phase gates pending",
+    "release_gates": "BLOCKED"
+  },
+  "commands": [
+    {
+      "command": "pnpm lint",
+      "result": "PASS after generated-output ignores corrected"
+    },
+    {
+      "command": "pnpm format:check",
+      "result": "PASS after AGENTS formatting corrected"
+    },
+    {
+      "command": "pnpm typecheck",
+      "result": "PASS all nine workspace packages (ten tasks including brand prerequisite build)"
+    },
+    {
+      "command": "pnpm build",
+      "result": "PASS nine tasks; brand cache reused, API/worker/web/mobile rebuilt"
+    },
+    {
+      "command": "pnpm test",
+      "result": "PASS 38 actual cases: API10,worker4,mobile24"
+    },
+    {
+      "command": "pnpm test:integration",
+      "environment": "Colima DOCKER_HOST; PostGIS17 linux/amd64 and Redis7",
+      "result": "PASS3 cases final corrected source"
+    },
+    {
+      "command": "pnpm test:e2e",
+      "environment": "Actual migration, disposable PostGIS17/Redis7, API and six Next process variants",
+      "result": "PASS7 cases final corrected build; ready/unconfigured/outage + keyboard/layout375/1280"
+    },
+    {
+      "command": "pnpm --filter @fairbite/api db:validate; db:generate",
+      "result": "PASS Prisma7.10 after network escalation"
+    },
+    {
+      "command": "pnpm mobile platform exports",
+      "result": "PASS three web and six Android/iOS bundles after expo/fetch fix; not signed-device E2E"
+    },
+    {
+      "command": "pnpm audit --json",
+      "result": "FAIL release gate:4high4moderate; no waiver"
+    }
+  ],
+  "independent_reviews": {
+    "backend_worker_mobile_security": "Approved bounded corrected source by independent web agent; dependency/device/TLS gates remain open",
+    "web_backend_qa": "Independent mobile agent passed real-stack7browser cases and six screenshot inspections",
+    "root_web_mobile_architecture": "Independent backend agent approved corrected root and consumer source; own backend excluded"
+  },
+  "fixed_findings": [
+    "Mobile unbounded response text allocation",
+    "Mobile endpoint redirect bypass",
+    "GraphQL alias probe multiplication",
+    "Hostless infrastructure URLs/Redis query overrides",
+    "Production malformed JSON body reflection",
+    "Brand build missing from typecheck dependencies",
+    "SDL absent from Turbo global contract hash"
+  ],
+  "failed_attempts": [
+    "Default shell lacked pnpm binary; temporary Corepack shims created",
+    "Default sandbox socket/DNS/Docker access denied; retried through environment escalation",
+    "Testcontainers needed explicit Colima Docker socket",
+    "PostGIS image lacked arm64 manifest; AMD64 emulation used",
+    "Aggregate lint initially included generated dist-verified bundles; generated paths excluded",
+    "Initial formatting check found AGENTS.md; reformatted and passed"
+  ],
+  "unexecuted_or_blocked": [
+    "Full feature/action semantics and runtime parity",
+    "Signed native build/device E2E",
+    "Real payment/Lalamove/notification/maps/social providers",
+    "Real infrastructure TLS and production configuration",
+    "Hosted SAST, container scan, restore/load/SLO/release gates",
+    "Full cloud coverage/review artifact export reconciliation"
+  ],
+  "source_inventory": {
+    "files": 3495,
+    "lexical_signal_lines": 4198,
+    "route_screen_candidates": 596,
+    "AST_action_attributes": 3405,
+    "dynamic_spreads": 190,
+    "AST_parse_errors": 0
+  },
+  "source_hashes": [
+    {
+      "path": "apps/admin-web/.env.example",
+      "sha256": "7642f69e8396e2566b84b48e3caba4972e86a8e340700b0e2d39bdd01ae99d4f"
+    },
+    {
+      "path": "apps/admin-web/app/layout.tsx",
+      "sha256": "8ca61936a948a5742ec46804ffe4548bb90f8d57b0553f43864125d5a427b166"
+    },
+    {
+      "path": "apps/admin-web/app/page.tsx",
+      "sha256": "7d8108a17fe578ab2f97bd1c7f1e0b9ea20242bea6280096d8fbabe86cd92666"
+    },
+    {
+      "path": "apps/admin-web/app/status/page.tsx",
+      "sha256": "691de46c174e7d5c091e64046619e6bce391a2202e3adfceb16e7dfb08d728d1"
+    },
+    {
+      "path": "apps/admin-web/lib/service.ts",
+      "sha256": "f552dfd0b94643eb903a0ae8ebb0cd798366e3a36d4617775a63bfe6d9af9b83"
+    },
+    {
+      "path": "apps/admin-web/next-env.d.ts",
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+    },
+    {
+      "path": "apps/admin-web/package.json",
+      "sha256": "abd75a540d397a37c77dcde45c22fb6cf2aaad78e2dbd02750387948bbab11af"
+    },
+    {
+      "path": "apps/admin-web/tsconfig.json",
+      "sha256": "353dd94574ff0d7d55848f2290c3a83957179f657cb5a876c2d5e1a5ccc6cbcf"
+    },
+    {
+      "path": "apps/customer-mobile/App.tsx",
+      "sha256": "00a99163b3b5111f43c0fc1f426f5fe6f8fd222205a33d652655225b10d91b9d"
+    },
+    {
+      "path": "apps/customer-mobile/app.config.ts",
+      "sha256": "69abf56950740656628d836ee63338ca026b737fa9e2f4f82e69a6426c130650"
+    },
+    {
+      "path": "apps/customer-mobile/connection.test.ts",
+      "sha256": "2538433da9567f5b2aa015cd85231ff08224d5e7c1a1e54b1dcbf34baaa8ae49"
+    },
+    {
+      "path": "apps/customer-mobile/connection.ts",
+      "sha256": "3a7ca690030c45280a610881c9865605ddf242ebf1c3720d9ede4e9628cd97b4"
+    },
+    {
+      "path": "apps/customer-mobile/index.ts",
+      "sha256": "bd5900c3419fa39727c350ce6192b2ea699a37078d2432094cc84665d5069f06"
+    },
+    {
+      "path": "apps/customer-mobile/package.json",
+      "sha256": "3c1147f490f8b3d07183325a676df984c796d75cb67f14d4b79114ba66d482e1"
+    },
+    {
+      "path": "apps/customer-mobile/tsconfig.json",
+      "sha256": "81bc1b6a6e14c0cacbc72fa9d5d89f5dc4807d76811344045f7fb445f33d91d8"
+    },
+    {
+      "path": "apps/customer-web/.env.example",
+      "sha256": "7642f69e8396e2566b84b48e3caba4972e86a8e340700b0e2d39bdd01ae99d4f"
+    },
+    {
+      "path": "apps/customer-web/app/layout.tsx",
+      "sha256": "276e255f9974e62a9ece5df1ca12a3f1b5d6261c6c690191e4af6243c7f1271c"
+    },
+    {
+      "path": "apps/customer-web/app/page.tsx",
+      "sha256": "7a496cd657cff54fa35f1d05d03f1d7d0428e93c6d849a72dfbd7059bd67f83a"
+    },
+    {
+      "path": "apps/customer-web/app/status/page.tsx",
+      "sha256": "691de46c174e7d5c091e64046619e6bce391a2202e3adfceb16e7dfb08d728d1"
+    },
+    {
+      "path": "apps/customer-web/lib/service.ts",
+      "sha256": "f552dfd0b94643eb903a0ae8ebb0cd798366e3a36d4617775a63bfe6d9af9b83"
+    },
+    {
+      "path": "apps/customer-web/next-env.d.ts",
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+    },
+    {
+      "path": "apps/customer-web/package.json",
+      "sha256": "c829dd51b2094f9453fae53e2c8569cd645ca2cdc8e09b16207ee8b27079ae61"
+    },
+    {
+      "path": "apps/customer-web/tsconfig.json",
+      "sha256": "353dd94574ff0d7d55848f2290c3a83957179f657cb5a876c2d5e1a5ccc6cbcf"
+    },
+    {
+      "path": "apps/merchant-mobile/App.tsx",
+      "sha256": "e5a978b0521d81cbe128651d44265425c148d5e377c628649e8eed269dcf90fe"
+    },
+    {
+      "path": "apps/merchant-mobile/app.config.ts",
+      "sha256": "42b2233dcb89b17317a9292712b3392d144a82ddb2fcc091b49bdb45d228c003"
+    },
+    {
+      "path": "apps/merchant-mobile/connection.test.ts",
+      "sha256": "2538433da9567f5b2aa015cd85231ff08224d5e7c1a1e54b1dcbf34baaa8ae49"
+    },
+    {
+      "path": "apps/merchant-mobile/connection.ts",
+      "sha256": "3a7ca690030c45280a610881c9865605ddf242ebf1c3720d9ede4e9628cd97b4"
+    },
+    {
+      "path": "apps/merchant-mobile/index.ts",
+      "sha256": "bd5900c3419fa39727c350ce6192b2ea699a37078d2432094cc84665d5069f06"
+    },
+    {
+      "path": "apps/merchant-mobile/package.json",
+      "sha256": "3a49f7ee638e95ab4cecdf4a2b7b77ff4be3bcb01a28cbe7457a9291946c845a"
+    },
+    {
+      "path": "apps/merchant-mobile/tsconfig.json",
+      "sha256": "81bc1b6a6e14c0cacbc72fa9d5d89f5dc4807d76811344045f7fb445f33d91d8"
+    },
+    {
+      "path": "apps/merchant-web/.env.example",
+      "sha256": "7642f69e8396e2566b84b48e3caba4972e86a8e340700b0e2d39bdd01ae99d4f"
+    },
+    {
+      "path": "apps/merchant-web/app/layout.tsx",
+      "sha256": "b98269a7dd824f49542dc72e3643955db9ea3cbf776aadaf5df05f18be864831"
+    },
+    {
+      "path": "apps/merchant-web/app/page.tsx",
+      "sha256": "16d1049277556a8f01b0616f11863f7179148432c76075d1fa7bc0b286de2e0c"
+    },
+    {
+      "path": "apps/merchant-web/app/status/page.tsx",
+      "sha256": "691de46c174e7d5c091e64046619e6bce391a2202e3adfceb16e7dfb08d728d1"
+    },
+    {
+      "path": "apps/merchant-web/lib/service.ts",
+      "sha256": "f552dfd0b94643eb903a0ae8ebb0cd798366e3a36d4617775a63bfe6d9af9b83"
+    },
+    {
+      "path": "apps/merchant-web/next-env.d.ts",
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+    },
+    {
+      "path": "apps/merchant-web/package.json",
+      "sha256": "55481ea18e0c74b50e33b18a63397c3ced9c8c733d86977f82064107a9c17ef2"
+    },
+    {
+      "path": "apps/merchant-web/tsconfig.json",
+      "sha256": "353dd94574ff0d7d55848f2290c3a83957179f657cb5a876c2d5e1a5ccc6cbcf"
+    },
+    {
+      "path": "apps/rider-mobile/App.tsx",
+      "sha256": "e39a5d82e4d410f14b530c1de5bad1bfb2b206fa9e918223e903fcc587c7aeaa"
+    },
+    {
+      "path": "apps/rider-mobile/app.config.ts",
+      "sha256": "152cd36af476113920a165c9a98fd21623fc140ae494b88553c918192e25ae37"
+    },
+    {
+      "path": "apps/rider-mobile/connection.test.ts",
+      "sha256": "2538433da9567f5b2aa015cd85231ff08224d5e7c1a1e54b1dcbf34baaa8ae49"
+    },
+    {
+      "path": "apps/rider-mobile/connection.ts",
+      "sha256": "3a7ca690030c45280a610881c9865605ddf242ebf1c3720d9ede4e9628cd97b4"
+    },
+    {
+      "path": "apps/rider-mobile/index.ts",
+      "sha256": "bd5900c3419fa39727c350ce6192b2ea699a37078d2432094cc84665d5069f06"
+    },
+    {
+      "path": "apps/rider-mobile/package.json",
+      "sha256": "20197177a0ce45613f0fee22b0a7eb663b9731afb68d6c669e6c0dbbafeba8a2"
+    },
+    {
+      "path": "apps/rider-mobile/tsconfig.json",
+      "sha256": "81bc1b6a6e14c0cacbc72fa9d5d89f5dc4807d76811344045f7fb445f33d91d8"
+    },
+    {
+      "path": "contracts/foundation.graphql",
+      "sha256": "4d0ecc3a6470bc1677763b7403cdf96d27046fad7461e32de48a3fc7bb4d3d1c"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "0f73b11a545c8c55faee044f741ebe531bb70b1c6db7e671ac3cbf48c33ea977"
+    },
+    {
+      "path": "package.json",
+      "sha256": "c51a451d678bbb5281e8abdbe9a910394df472563bfe0a9d5b55f26cf7fdf26b"
+    },
+    {
+      "path": "packages/brand/package.json",
+      "sha256": "7fc3ca7acdc72b51787f52cd1a6a2b618f7c7c0751704be30aabceab3dc43df4"
+    },
+    {
+      "path": "packages/brand/src/index.ts",
+      "sha256": "bf5be5dfc51b2acf7cd88f47d201442178871383dbd443823bcdefe2740cfba2"
+    },
+    {
+      "path": "packages/brand/tsconfig.json",
+      "sha256": "b5ea8464f0c530ccc85514feb4c13f6d253f266d004c9195e7098627f16ffe07"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "cfe67cbf9b7f6a473a106239e754fbfe734e05035c55b6406736a33419bb39bd"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "0f11443ee1b0af468f92a5a2100d40b4cce4f677c59861f523e2d5bb93350f93"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "c9e7966531d04f6d2693a5195ece651565e8284aa36a4d0fb5810ae11dcb06d3"
+    },
+    {
+      "path": "services/api/.env.example",
+      "sha256": "2f2d85c6f64d18c9fe8b0838a8136684c18145cc2a09b027ba4054bda2b4138e"
+    },
+    {
+      "path": "services/api/package.json",
+      "sha256": "d9736142afd11b751a780d9d0adbc1b04d5ef9882d64d4d9c34ec33e77160a86"
+    },
+    {
+      "path": "services/api/prisma/migrations/202610080001_foundation/migration.sql",
+      "sha256": "3dfc0fbb0c1c79da0545651d9a37a8e14c27ff0fc7dcabf6fd92d1586242cd19"
+    },
+    {
+      "path": "services/api/prisma/migrations/migration_lock.toml",
+      "sha256": "1db17a8d051aa136110736752c5e1f8b7ed92b6ea8e803112fbbe2497047c210"
+    },
+    {
+      "path": "services/api/prisma.config.ts",
+      "sha256": "da54de59debf331c4b2d0dae0e612fae3ad7b9d16766566f11f3c680ac9e26d8"
+    },
+    {
+      "path": "services/api/src/app.ts",
+      "sha256": "553351b24f9dc3574a7c0a1bccc0fc549f58aedd2fd6bd390b77a6524a2c78e7"
+    },
+    {
+      "path": "services/api/src/config.ts",
+      "sha256": "d485c0576692c24f1559fa29b88279abc528fa10dd6f84a4e72913ed224000cb"
+    },
+    {
+      "path": "services/api/src/main.ts",
+      "sha256": "623413f2e3b6a1190dcdfe9c0c1084544164441953e780339ad945753f1def40"
+    },
+    {
+      "path": "services/api/test/config.spec.ts",
+      "sha256": "c06e2e01b314d395deed5acaa9b1effedcb785ad6d4688ed992bec21bf5fa7f6"
+    },
+    {
+      "path": "services/api/test/foundation.integration.spec.ts",
+      "sha256": "f9374ae04204465a14f33690bf659c91d02c9ec3adf91d74e590beb2ffb1462d"
+    },
+    {
+      "path": "services/api/test/http.spec.ts",
+      "sha256": "278720430a452c5490ad8d703b175ab1ae3dd48b51c240a75d5ad265ec69d95d"
+    },
+    {
+      "path": "services/api/tsconfig.build.json",
+      "sha256": "2d0d8e631cb5eb4e1e2d69d92e6f56bf2880e921cbe6cc2a7c1dd608096101d1"
+    },
+    {
+      "path": "services/api/tsconfig.json",
+      "sha256": "c172337e3ef45f5430de438d7e84cd995d6fe681d2e22cd0d420f72ea56f026f"
+    },
+    {
+      "path": "services/api/vitest.config.ts",
+      "sha256": "501f84c9c34f7cad93254453b33d96b774089152701b253ef200de1227bcee75"
+    },
+    {
+      "path": "services/api/vitest.integration.config.ts",
+      "sha256": "6f56b7462f9e42d7e25f561f969c684a3a543803a43f80e45e7b9f73586b4474"
+    },
+    {
+      "path": "services/worker/.env.example",
+      "sha256": "c8c646dee607ebe828ceac4e10d3ad6030ce468658f2d03e0425eaa1ffbb23da"
+    },
+    {
+      "path": "services/worker/package.json",
+      "sha256": "2abc14f1a01fd0dcc36db706d5814b09a12006e2c13fd11f5ee378c3d2e8cf48"
+    },
+    {
+      "path": "services/worker/src/config.ts",
+      "sha256": "dc4ed544f2a3a1ede81d02044df8bb22552195e5afa571930f5bb29a57bbc380"
+    },
+    {
+      "path": "services/worker/src/main.ts",
+      "sha256": "2ca5e6b5b85949232d55adf62dee1f76e4bbdc8b5cedf1018a958aa7f2e67248"
+    },
+    {
+      "path": "services/worker/src/worker.ts",
+      "sha256": "3b3652c4e1b8a7422a4912c4490094b3dc938ea5b4f98038cfe9587821f30941"
+    },
+    {
+      "path": "services/worker/test/worker.spec.ts",
+      "sha256": "208ea9078368efefdd525fd9efc5a946380acb1a89a61e5f926e4b4125a97fa4"
+    },
+    {
+      "path": "services/worker/tsconfig.build.json",
+      "sha256": "305bb12409ceb21b09ad0109529b02c3e267aba20b629c32d77b7126d954e576"
+    },
+    {
+      "path": "services/worker/tsconfig.json",
+      "sha256": "b540689ef51dc0319f879730b587f277e3785232b9b1881b22ba4bf0951727fc"
+    },
+    {
+      "path": "tests/e2e/foundation.spec.ts",
+      "sha256": "2bf3d3756687fc23e6abdb76d512a4d2134cf26520c1acb9f6801c3c9fd301e8"
+    },
+    {
+      "path": "tools/inventory-actions.mjs",
+      "sha256": "d933f2aac91e8764543406126f446c75e2f3cb0a13bd81be5195adfe7fa191a3"
+    },
+    {
+      "path": "tools/inventory-source.py",
+      "sha256": "acce91776ecdf14c11808c6cab6c52f7d6851f1df797e84ab505e37d30ba39ae"
+    },
+    {
+      "path": "tools/pnpm.sh",
+      "sha256": "20efd6a443b6464a1204834c2848b08cbd934ffbeadbb79e0c224626ad838bd0"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "9719bf84719bfa73724ee861286e89bf09f7f4b087e54b85512d36bf6867febe"
+    },
+    {
+      "path": "turbo.json",
+      "sha256": "1864d685d3bd57f77fad1370e3bc6f6f163ea57957f0fabe1b1ba78e27210cdc"
+    }
+  ],
+  "persistent_verification": {
+    "install": "PASS clean offline frozen lockfile install",
+    "lint": "PASS",
+    "format": "PASS after generated screenshot-report artifact ignore",
+    "typecheck": "PASS9packages including clean brand prerequisite",
+    "build": "PASS9tasks; native bundles not repeated because unchanged source hashes retained",
+    "unit_http": "PASS38",
+    "real_integration": "PASS3",
+    "real_web_e2e": "PASS7",
+    "source_hashes": "PASS83 source/tooling files match reviewed candidate",
+    "location": "/Users/premkumarmamidi/Development/FairBiteFresh/implementation"
+  }
+}

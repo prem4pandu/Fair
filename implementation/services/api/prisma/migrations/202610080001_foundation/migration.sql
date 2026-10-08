@@ -1,0 +1,3 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE TABLE "FoundationMigration" ("id" TEXT PRIMARY KEY, "appliedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP);
+INSERT INTO "FoundationMigration" ("id") VALUES ('fb01');

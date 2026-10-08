@@ -1,0 +1,147 @@
+{
+  "packet": "FB02-IDENTITY-01-CANDIDATE",
+  "status": "REVIEW_REQUIRED_NOT_FROZEN",
+  "scope": "Password identity, customer-only registration, role-aware login, rotating sessions and authorization; no source UI parity claim",
+  "architecture": {
+    "api": "NestJS12 GraphQL14 Apollo5; schema-first identity SDL; Prisma7 pg adapter",
+    "transport": "Native apps call GraphQL directly. Three Next.js apps use same-origin BFF server routes; backend bearer tokens never returned to browser JS. BFF communicates GraphQL server-to-server.",
+    "module_boundary": "Identity owns User, PasswordCredential, SystemRoleAssignment, session families/sessions and identity audit. Domain modules own merchants/riders and expose membership lookup interfaces. No resolver arbitrary Prisma access."
+  },
+  "scalar_types": {
+    "UUID": "canonical UUID string with bounded parser",
+    "DateTime": "RFC3339 UTC timestamp string",
+    "Password": "input-only string 12..128 Unicode code points; preserve exact bytes, no normalization/trimming; confirm existing policy with lead",
+    "OpaqueRefreshToken": "input-only bounded UUID.random32bytes-base64url token, validate exact grammar; never JSON object/custom arbitrary scalar",
+    "AccessToken": "output-only bounded string signed at+jwt; no custom scalar accepting objects",
+    "SessionTTL": "GraphQL Int seconds <=2147483647; timestamps DateTime; no unsafe token-number coercion",
+    "UiIdentity": "id/email/displayName/systemRoles/emailVerificationStatus; tenant memberships only through authorized identity/domain API"
+  },
+  "proposed_sdl": "enum LoginApplication { CUSTOMER MERCHANT RIDER ADMIN }\nenum IdentityRole { CUSTOMER MERCHANT_STAFF RIDER ADMIN }\nenum EmailVerificationStatus { UNVERIFIED VERIFIED }\nscalar UUID\nscalar DateTime\ninput CustomerRegistrationInput { email: String!, password: String!, displayName: String! }\ninput PasswordLoginInput { email: String!, password: String!, application: LoginApplication! }\ninput SessionRefreshInput { refreshToken: String! }\ntype IdentityUser { id: UUID!, email: String!, displayName: String!, roles: [IdentityRole!]!, emailVerificationStatus: EmailVerificationStatus! }\ntype SessionPayload { accessToken: String!, refreshToken: String!, accessTokenExpiresAt: DateTime!, refreshTokenExpiresAt: DateTime!, user: IdentityUser! }\ntype MutationAcknowledgement { accepted: Boolean! }\nextend type Query { me: IdentityUser! }\nextend type Mutation {\n registerCustomer(input: CustomerRegistrationInput!): SessionPayload!\n loginPassword(input: PasswordLoginInput!): SessionPayload!\n refreshSession(input: SessionRefreshInput!): SessionPayload!\n logoutSession(input: SessionRefreshInput!): MutationAcknowledgement!\n logoutAllSessions: MutationAcknowledgement!\n}\n",
+  "operation_semantics": {
+    "registerCustomer": "Only CUSTOMER role inserted by server transaction. Input has no role/status/tenant/scopes. Normalize email using existing trim NFKC lowercase invariant and unique normalized index. Validate displayName trimmed1..100. Duplicate outcome policy must be confirmed; old implementation exposed conflict, so do not silently assert anti-enumeration registration. Email remains UNVERIFIED until actual verified provider flow exists. Registration auth policy and restricted actions need owner approval.",
+    "loginPassword": "Dummy Argon2 verify on unknown account; generic AUTHENTICATION_FAILED for unknown email/wrong password/inactive account/disallowed app role. Application is a requested login audience; does not grant role. CUSTOMER needs CUSTOMER; MERCHANT needs MERCHANT_STAFF and current domain membership; RIDER needs RIDER and eligibility; ADMIN needs ADMIN and approved bootstrap. Check all DB status/role conditions before creating family.",
+    "refreshSession": "HMAC digest lookup only; serializable transaction consumes old token exactly once, creates replacement in same family, audits success. Replay revokes whole family including newest access authority. Bounded serialization retries fail closed with family revocation. Preserve login audience in family; recheck current account and app-role eligibility on refresh.",
+    "me": "Verify JWT algorithm/type/issuer/audience/expiry/jti/sub/sid; DB session active/not consumed/not revoked/not expired and family active; current roles override JWT embedded role cache. Return only allowlisted public identity.",
+    "logoutSession": "Idempotent revoke family associated with presented token digest; generic accepted true for unknown token; prevent user/session enumeration.",
+    "logoutAllSessions": "Requires current authenticated user; revoke all own families transactionally; supplied userId prohibited. Current access authority immediately invalid after completion.",
+    "errors": "Bounded allowlisted codes BAD_USER_INPUT/AUTHENTICATION_FAILED/FORBIDDEN/RATE_LIMITED/SERVICE_UNAVAILABLE; GraphQL field errors must distinguish UI actionable failures without exposing SQL, stack, email, token or provider detail. Foundation blanket production masking must evolve explicitly, reviewed by security."
+  },
+  "sessions": {
+    "jwt": "Short-lived HS256 with distinct cryptographically strong configured key and refresh pepper; existing TTL300seconds and refresh30days are inherited candidates awaiting explicit freeze, not invented new policy. Stable infrastructure issuer/audience identifiers are not product display names. Rotate signing keys only through reviewed migration plan.",
+    "browser": "BFF stores credentials in HttpOnly Secure SameSite=Lax host-only __Host- cookies in production; path /, no Domain; explicit development-cookie name if HTTP loopback. CSRF Origin validation and same-origin requests required for every mutation, including login/logout; no refresh/access in localStorage, query strings, browser GraphQL cache or HTML. Restrict cookie payload transport and cap JWT length. Cookie MaxAge matches server expiry; family-replay means browser refresh serialized.",
+    "native": "Refresh token in Expo SecureStore, access token in memory; no AsyncStorage or URL params; serialize concurrent refresh per device; erase on logout/revocation. Native web export requires browser BFF transport rather than persisting secure-store unavailable refresh token; decide browser preview flow before native auth UI.",
+    "logging": "No headers/cookies/password/token/email/body in logging, traces or model prompts. Audit opaque user/session IDs and fixed outcome codes only. Configure tests with ephemeral generated secrets, never ask user to paste token secrets."
+  },
+  "roles_and_bootstrap": {
+    "public_registration": ["CUSTOMER only"],
+    "merchant_rider": "No self-issued staff/rider/admin role. Approved onboarding/invite processes owned by future merchant/fleet modules; identity initially tests with explicit real-database test seeds, not production bootstrap defaults.",
+    "admin": "No public admin register or default password. One-shot audited owner-authorized CLI provisioner accepting credential via TTY/approved secret store, not command-line args; explicit current environment and prevent unintended repeat escalation. Approval policy and MFA/step-up requirements unresolved.",
+    "tenant": "Current system role never substitutes merchant membership/scope. Domain service verifies active membership and exact tenant/outlet ownership server-side each operation; membership removal invalidates capability immediately. No arbitrary tenant ID from JWT/browser accepted."
+  },
+  "reuse_review": [
+    {
+      "paths": ["services/api/src/identity/password.ts"],
+      "preserve": "Argon2id memory65536KiB/time3/parallelism1/hash32bytes; independently benchmark capacity/rate limits, exact package Node24 native build verified."
+    },
+    {
+      "paths": [
+        "services/api/src/identity/tokens.ts",
+        "services/api/src/config.ts"
+      ],
+      "preserve": "HS256 explicit claims and token type, random32byte refresh, HMAC pepper, distinct secrets, bounded config; strengthen exact token grammar/UUID claim checks; Prisma7 imported client paths differ."
+    },
+    {
+      "paths": [
+        "services/api/src/identity/repository.ts",
+        "services/api/prisma/migrations/20261004010000_identity/migration.sql"
+      ],
+      "preserve": "Customer-only transactional creation; digest-only sessions; serializable rotation/replay family revocation; audit; re-review DB foreign keys/session-user consistency; no blanket old migration copy."
+    },
+    {
+      "paths": ["services/api/src/identity/guards.ts"],
+      "preserve": "Current DB authorization each request; replace switchToHttp with GqlExecutionContext and explicit BFF/native request context. Subscription auth deferred, never advertise websocket login support."
+    },
+    {
+      "paths": [
+        "services/api/src/identity/schemas.ts",
+        "services/api/test/identity.integration.spec.ts",
+        "services/api/test/auth.service.spec.ts",
+        "services/api/test/guards.spec.ts"
+      ],
+      "preserve": "Strict input parsing, email normalization, negative tests; adapt GraphQL coercion plus Zod and test actual schema operations."
+    }
+  ],
+  "ownership_and_migrations": {
+    "lead": [
+      "contracts/identity.graphql",
+      "client codegen config/shared generated types",
+      "root dependency lock/config",
+      "authoritative identity decisions and status"
+    ],
+    "backend": [
+      "services/api/src/identity/**",
+      "services/api/test/identity*.ts",
+      "services/api/prisma/schema.prisma",
+      "services/api/prisma/migrations/new_identity_only/**"
+    ],
+    "web": [
+      "apps/customer-web/authBFF and auth UI",
+      "apps/merchant-web/authBFF and login UI",
+      "apps/admin-web/authBFF and login UI"
+    ],
+    "mobile": [
+      "apps/customer-mobile/password registration/login/session",
+      "apps/merchant-mobile/login/session",
+      "apps/rider-mobile/login/session"
+    ],
+    "sequence": [
+      "Lead freeze policy-independent SDL and storage transport after review",
+      "Backend identity schema migration with constraints and transactional repository tests",
+      "Backend resolvers/authorization and real PG+Redis distributed rate limits",
+      "Independent backend security+QA",
+      "Web/native UI generated types and transport",
+      "Real all-web role/negative flows; signed native device tests remain required"
+    ]
+  },
+  "provider_and_policy_blockers": [
+    {
+      "item": "Verification/reset delivery provider",
+      "requirements": "Actual email provider account/domain/sender credentials via approved secret injection, delivery sandbox, URL origin allowlist, privacy/retention; no mail-success fake. Until supplied disable reset/verification actions and label unavailable honestly."
+    },
+    {
+      "item": "Password reset contract",
+      "candidate": "requestPasswordReset(email): accepted generic boolean; consume one-use hashed token+new password with expiry, atomic use+all-session revocation; GET links never change state. Need owner token TTL/recovery rules/provider before freezing exact contract."
+    },
+    {
+      "item": "Email verification contract",
+      "candidate": "requestEmailVerification authenticated own account; verifyEmailToken single-use digest; expiry/replay checks. Need owner registration activation and privileged-action restrictions before freezing."
+    },
+    {
+      "item": "MFA/admin security and provisioning approvals",
+      "requirements": "Admin/staff/rider onboarding authority, bootstrap ownership, required MFA/step-up/recovery, login-session duration/reauth policy."
+    },
+    {
+      "item": "Account privacy",
+      "requirements": "Age/consent requirements, email normalization policy acceptance, retention/deletion and account suspension/reactivation policy."
+    }
+  ],
+  "acceptance_tests": [
+    "GraphQL rejects unknown input fields/role injection and malformed token grammar; registration only CUSTOMER even privileged input attempts",
+    "Normalized duplicate concurrent registration cannot create duplicate user; password not stored plaintext; display/email serialization allowlisted",
+    "Unknown user/wrong password/inactive/disallowed app role generic failure; dummy hashing exercised; credential body/logs redacted",
+    "JWT wrong alg/type/issuer/audience/expiry/session subject and malformed UUID claims rejected",
+    "Real PG refresh concurrency: at most one succeeds; replay revokes whole family; no newest token remains authorized; bounded retry exhaustion fails closed",
+    "Logout/revoke/suspension/current role removal prevents existing access JWT immediately; logoutAll cannot target another user",
+    "Merchant/rider/admin public escalation impossible; missing tenant membership denies; tenant cross-access denied by domain ownership service",
+    "Real Redis distributed limits across API replicas, account/IP keys privacy-safe, store outage fail closed, aliases/batched mutation rate-limit bypass rejected",
+    "Browser cookie attributes/no browser token exposure/CSRF Origin rejected/refresh serialization; native secure-store refresh and memory access lifecycle",
+    "All3 web real stack login invalid-role/outage/session refresh/logout keyboard responsive accessible names; native signed-device equivalents required",
+    "No advertised reset/verification provider success without actual delivered sandbox evidence; no customer auth automatically marked email verified"
+  ],
+  "review_gates": [
+    "Independent Codex identity security/high-risk correctness review",
+    "Independent QA actual commands/results",
+    "Architecture/module ownership approval",
+    "No feature complete without documented actual tests and applicable release gates"
+  ]
+}

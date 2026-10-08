@@ -1,0 +1,11 @@
+generator client {
+ provider = "prisma-client"
+ output = "../src/generated/prisma"
+}
+datasource db {
+ provider = "postgresql"
+}
+model FoundationMigration {
+ id String @id
+ appliedAt DateTime @default(now()) @db.Timestamptz(3)
+}

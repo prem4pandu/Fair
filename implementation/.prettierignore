@@ -1,0 +1,14 @@
+node_modules
+dist
+.next
+.expo
+.turbo
+pnpm-lock.yaml
+upstream
+dist-native
+**/generated
+playwright-report
+test-results
+dist-verified/
+.toolchain/
+docs/artifacts/

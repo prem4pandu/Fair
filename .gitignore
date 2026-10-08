@@ -1,0 +1,16 @@
+upstream/
+**/node_modules/
+**/.toolchain/
+**/.turbo/
+**/.next/
+**/.expo/
+**/dist/
+**/dist-native/
+**/dist-verified/
+**/generated/
+**/playwright-report/
+**/test-results/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
