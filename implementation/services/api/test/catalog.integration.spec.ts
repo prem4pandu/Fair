@@ -24,6 +24,8 @@ const itemFields =
 const outletsQuery = `query($limit:Int,$after:ID){catalogOutlets(limit:$limit,after:$after){nodes{${outletFields}} endCursor hasNextPage}}`;
 const outletQuery = `query($id:ID!){catalogOutlet(id:$id){${outletFields}}}`;
 const itemsQuery = `query($outletId:ID!,$limit:Int,$after:ID){catalogItems(outletId:$outletId,limit:$limit,after:$after){nodes{${itemFields}} endCursor hasNextPage}}`;
+const enategaRestaurantsQuery = `query { restaurants { _id name isActive isAvailable categories { _id title foods { _id title description isActive isOutOfStock variations { _id id title price isOutOfStock addons } } } options { _id } addons { _id } } }`;
+const enategaRestaurantQuery = `query($id:String){restaurant(id:$id){_id name categories{_id title foods{_id title variations{_id price}}}}}`;
 async function gql(query: string, variables: Record<string, unknown> = {}) {
   return (
     await request(app.getHttpServer())
@@ -104,6 +106,48 @@ afterAll(async () => {
   await db?.stop();
 });
 describe("real public catalog GraphQL and storage", () => {
+  it("serves persisted catalog data through the original Enatega restaurant shape", async () => {
+    const owner = await fixture();
+    const foodId = await item(owner, 1250, false);
+    const list = await gql(enategaRestaurantsQuery);
+    expect(list.errors).toBeUndefined();
+    expect(list.data.restaurants).toContainEqual({
+      _id: owner.outlet,
+      name: "Synthetic outlet",
+      isActive: true,
+      isAvailable: true,
+      categories: [
+        {
+          _id: owner.category,
+          title: "Synthetic category",
+          foods: [
+            {
+              _id: foodId,
+              title: "Synthetic item",
+              description: "Synthetic description",
+              isActive: true,
+              isOutOfStock: true,
+              variations: [
+                {
+                  _id: foodId,
+                  id: foodId,
+                  title: "Synthetic item",
+                  price: 12.5,
+                  isOutOfStock: true,
+                  addons: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      options: [],
+      addons: [],
+    });
+    expect(
+      (await gql(enategaRestaurantQuery, { id: owner.outlet })).data.restaurant,
+    ).toMatchObject({ _id: owner.outlet, name: "Synthetic outlet" });
+  });
   it("returns allowlisted public fields and exact integer boundary prices, including unavailable items", async () => {
     const owner = await fixture();
     const zero = await item(owner, 0, false);

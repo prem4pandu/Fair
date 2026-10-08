@@ -33,31 +33,31 @@
         margin: auto;
         padding: 32px 20px 80px;
       }
+      header,
+      .card,
+      details {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px;
+      }
       header {
         padding: 28px;
-        border: 1px solid var(--line);
-        border-radius: 18px;
         background: linear-gradient(135deg, #162b24, #0d1714);
       }
       h1 {
-        margin: 0.1em 0;
         font-size: clamp(2rem, 5vw, 4.2rem);
         line-height: 1;
       }
-      h2 {
-        margin-top: 42px;
-      }
-      h3 {
-        margin-bottom: 6px;
-      }
       .eyebrow {
         color: var(--green);
-        font-weight: 700;
+        font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.12em;
       }
-      .lead {
-        max-width: 75ch;
+      .lead,
+      .note,
+      caption {
         color: var(--muted);
       }
       .grid {
@@ -66,31 +66,16 @@
         gap: 14px;
         margin: 22px 0;
       }
-      .card {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 18px;
-      }
       .value {
         font-size: 1.8rem;
         font-weight: 800;
       }
-      .label,
-      .note {
-        color: var(--muted);
-      }
       .badge {
         display: inline-block;
-        border-radius: 999px;
+        border-radius: 99px;
         padding: 0.18rem 0.62rem;
         font-size: 0.78rem;
         font-weight: 800;
-        white-space: nowrap;
-      }
-      .complete {
-        color: var(--green);
-        background: #163c30;
       }
       .in-progress {
         color: var(--amber);
@@ -100,15 +85,19 @@
         color: var(--red);
         background: #472525;
       }
+      .complete {
+        color: var(--green);
+        background: #163c30;
+      }
+      .table {
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
       table {
         width: 100%;
         border-collapse: collapse;
         background: var(--panel);
-      }
-      caption {
-        text-align: left;
-        color: var(--muted);
-        padding: 0 0 10px;
       }
       th,
       td {
@@ -117,55 +106,35 @@
         border-bottom: 1px solid var(--line);
         padding: 12px;
       }
-      thead th {
+      thead th,
+      .eyebrow {
         color: var(--green);
       }
-      .table-wrap {
-        overflow: auto;
-        border: 1px solid var(--line);
-        border-radius: 14px;
+      caption {
+        text-align: left;
+        padding: 8px;
       }
-      code {
-        color: var(--blue);
-      }
+      code,
       a {
         color: var(--blue);
       }
-      details {
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 12px 16px;
-        margin: 10px 0;
-        background: var(--panel);
-      }
-      summary {
-        cursor: pointer;
-        font-weight: 700;
-      }
       .callout {
         border-left: 4px solid var(--amber);
-        padding: 12px 18px;
+        padding: 14px;
         background: #241f13;
       }
-      .blocked-list li {
-        margin: 0.5em 0;
+      :focus-visible {
+        outline: 3px solid var(--blue);
       }
       @media (max-width: 650px) {
         main {
-          padding: 18px 12px 60px;
-        }
-        header {
-          padding: 20px;
+          padding: 18px 12px;
         }
         th,
         td {
           padding: 9px;
           font-size: 0.9rem;
         }
-      }
-      :focus-visible {
-        outline: 3px solid var(--blue);
-        outline-offset: 3px;
       }
     </style>
   </head>
@@ -176,46 +145,42 @@
         <h1>FairBite implementation status</h1>
         <p class="lead">
           The original pinned Enatega presentation is the product UI. FairBite
-          owns the backend and integration layer. This report distinguishes
-          schema compatibility from implemented behavior and release readiness.
+          owns its backend and integration layer.
         </p>
         <p>
           <span class="badge in-progress">IN PROGRESS</span> No release gate is
           recorded as passed.
         </p>
       </header>
-      <section aria-labelledby="snapshot">
-        <h2 id="snapshot">Current snapshot</h2>
+      <section>
+        <h2>Current snapshot</h2>
         <div class="grid">
           <article class="card">
             <div class="value">439/439</div>
-            <div class="label">static GraphQL documents valid</div>
+            <div>static GraphQL documents valid</div>
           </article>
           <article class="card">
             <div class="value">334</div>
-            <div class="label">inventoried root operations</div>
+            <div>inventoried root operations</div>
           </article>
           <article class="card">
             <div class="value">0/334</div>
-            <div class="label">
-              operations marked verified by evidence registry
-            </div>
+            <div>operations marked verified</div>
           </article>
           <article class="card">
             <div class="value">0</div>
-            <div class="label">formal gates recorded passed</div>
+            <div>formal gates recorded passed</div>
           </article>
         </div>
-        <div class="callout">
-          <strong>Compatibility result:</strong> PASS means the client documents
-          validate against SDL. It does not prove resolver behavior,
-          authorization, runtime reachability, URLs, subscriptions, UI parity,
-          or end-to-end journeys.
-        </div>
+        <p class="callout">
+          <strong>Static compatibility PASS</strong> does not prove resolver
+          behavior, authorization, runtime reachability, subscriptions, UI
+          parity, or E2E journeys.
+        </p>
       </section>
-      <section aria-labelledby="phases">
-        <h2 id="phases">Phase status</h2>
-        <div class="table-wrap">
+      <section>
+        <h2>Phase status</h2>
+        <div class="table">
           <table>
             <caption>
               Status requires implementation, checks, and independent approval.
@@ -231,69 +196,55 @@
             <tbody>
               <tr>
                 <th scope="row">0</th>
-                <td>Kernel, transport, tooling, test harness</td>
+                <td>Foundation</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
-                <td>
-                  Implemented checkpoints exist; G0 aggregate evidence and
-                  independent approval are not recorded.
-                </td>
+                <td>Aggregate G0 evidence and approval are open.</td>
               </tr>
               <tr>
                 <th scope="row">1</th>
                 <td>Contract and data model</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
-                <td>
-                  Static contract passes; upgrade migration, operation behavior,
-                  and formal G1 record remain open.
-                </td>
+                <td>Upgrade migration and formal G1 record remain open.</td>
               </tr>
               <tr>
                 <th scope="row">2</th>
-                <td>L1–L9 domain implementation</td>
+                <td>L1–L9 domains</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL presence is ahead of resolver and per-operation
-                  integration/E2E evidence.
+                  Operation behavior and per-operation tests remain incomplete.
                 </td>
               </tr>
               <tr>
                 <th scope="row">3</th>
                 <td>Journeys and application E2E</td>
                 <td><span class="badge blocked">BLOCKED</span></td>
-                <td>
-                  Depends on domain operations and complete journey evidence.
-                </td>
+                <td>Depends on completed domain operations.</td>
               </tr>
               <tr>
                 <th scope="row">4</th>
                 <td>Hardening and release</td>
                 <td><span class="badge blocked">BLOCKED</span></td>
                 <td>
-                  Providers, native devices, security, dependency, load,
-                  restore, and approval gates remain.
+                  Providers, devices, security, load, restore, and approvals
+                  remain.
                 </td>
               </tr>
               <tr>
                 <th scope="row">5</th>
                 <td>Single-vendor L12</td>
                 <td><span class="badge blocked">BLOCKED</span></td>
-                <td>
-                  Separate gated product mode; 70 roots are not approved for
-                  runtime use.
-                </td>
+                <td>Separate gated product mode.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
-      <section aria-labelledby="lanes">
-        <h2 id="lanes">Backend lane matrix</h2>
-        <div class="table-wrap">
+      <section>
+        <h2>Backend lane matrix</h2>
+        <div class="table">
           <table>
             <caption>
-              Counts come from
-              <code>OPERATION_LANES.json</code
-              >.
+              Counts from OPERATION_LANES.json.
             </caption>
             <thead>
               <tr>
@@ -301,7 +252,7 @@
                 <th>Module</th>
                 <th>Roots</th>
                 <th>Status</th>
-                <th>Current assessment</th>
+                <th>Assessment</th>
               </tr>
             </thead>
             <tbody>
@@ -311,8 +262,8 @@
                 <td>1</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  Kernel and transports implemented; formal G0 evidence and
-                  approval remain open.
+                  Kernel checkpoints exist; formal G0 evidence and approval
+                  remain open.
                 </td>
               </tr>
               <tr>
@@ -321,8 +272,8 @@
                 <td>31</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -331,8 +282,8 @@
                 <td>54</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -341,8 +292,8 @@
                 <td>75</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -351,8 +302,8 @@
                 <td>22</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -361,8 +312,8 @@
                 <td>24</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -371,8 +322,8 @@
                 <td>32</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -381,8 +332,8 @@
                 <td>11</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -391,8 +342,8 @@
                 <td>5</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -401,8 +352,8 @@
                 <td>9</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  SDL is present; operation-level behavior and required E2E
-                  evidence are incomplete.
+                  SDL is present; behavior and required E2E evidence are
+                  incomplete.
                 </td>
               </tr>
               <tr>
@@ -411,7 +362,7 @@
                 <td>70</td>
                 <td><span class="badge blocked">BLOCKED</span></td>
                 <td>
-                  Explicitly gated until Wave 5; schema presence is not runtime
+                  Gated until Wave 5; schema presence is not runtime
                   implementation.
                 </td>
               </tr>
@@ -419,152 +370,100 @@
           </table>
         </div>
       </section>
-      <section aria-labelledby="ui">
-        <h2 id="ui">Enatega UI alignment</h2>
+      <section>
+        <h2>Enatega UI/backend alignment</h2>
         <p>
-          The tracked UI baseline is <code>vendor/enatega-ui</code>. Product
-          screens, navigation, assets, and interactions must remain Enatega’s.
-          Backend work must match its GraphQL, REST, WebSocket, and
-          public-access contracts.
+          The complete pinned UI is <code>vendor/enatega-ui</code>. Screens,
+          navigation, assets, and interactions remain Enatega’s; the backend
+          must match its GraphQL, REST, WebSocket, and public-access contracts.
         </p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Application</th>
-                <th>UI source</th>
-                <th>Backend path</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">Admin web</th>
-                <td>Enatega multivendor admin</td>
-                <td>GraphQL + WebSocket</td>
-                <td><span class="badge in-progress">IN PROGRESS</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Customer web</th>
-                <td>Enatega multivendor web</td>
-                <td>GraphQL + public handshake</td>
-                <td><span class="badge in-progress">IN PROGRESS</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Customer mobile</th>
-                <td>Enatega app</td>
-                <td>GraphQL + WebSocket</td>
-                <td><span class="badge in-progress">IN PROGRESS</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Store mobile</th>
-                <td>Enatega store</td>
-                <td>GraphQL + WebSocket</td>
-                <td><span class="badge in-progress">IN PROGRESS</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Rider mobile</th>
-                <td>Enatega rider</td>
-                <td>GraphQL + WebSocket</td>
-                <td><span class="badge in-progress">IN PROGRESS</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-      <section aria-labelledby="market">
-        <h2 id="market">Market, fleet, payment, and economic rules</h2>
         <div class="grid">
           <article class="card">
-            <h3>Launch selection</h3>
-            <p>Malaysia, MYR, own fleet first.</p>
+            <h3>Admin web</h3>
+            <p>Original Enatega admin.</p>
             <span class="badge in-progress">IN PROGRESS</span>
           </article>
           <article class="card">
-            <h3>Configuration model</h3>
+            <h3>Customer web/mobile</h3>
+            <p>Original Enatega clients.</p>
+            <span class="badge in-progress">IN PROGRESS</span>
+          </article>
+          <article class="card">
+            <h3>Store and rider</h3>
+            <p>Original Enatega mobile clients.</p>
+            <span class="badge in-progress">IN PROGRESS</span>
+          </article>
+        </div>
+      </section>
+      <section>
+        <h2>Configurable launch model</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Initial market</h3>
             <p>
-              Country, currency precision, fleets, payment methods, and rules
-              have validation/storage groundwork.
+              Malaysia, MYR, own fleet first. These are selections, not
+              hard-coded product limits.
             </p>
             <span class="badge in-progress">IN PROGRESS</span>
           </article>
           <article class="card">
-            <h3>Payments</h3>
+            <h3>Configuration</h3>
             <p>
-              Provider-independent contract work exists; real card/wallet
-              provider readiness requires configured sandbox credentials and
-              verified webhooks.
+              Country, currency precision, fleets, payments, fees, taxes, and
+              refund rules require server-owned configuration.
+            </p>
+            <span class="badge in-progress">IN PROGRESS</span>
+          </article>
+          <article class="card">
+            <h3>Providers</h3>
+            <p>
+              Real payment, maps, media, email, SMS, and push readiness depends
+              on sandbox credentials and verified adapters.
             </p>
             <span class="badge blocked">BLOCKED</span>
           </article>
-          <article class="card">
-            <h3>Fleet routing</h3>
-            <p>
-              Own-fleet-first is selected. Full dispatch behavior, tracking,
-              reconciliation, and provider adapters remain open.
-            </p>
-            <span class="badge in-progress">IN PROGRESS</span>
-          </article>
         </div>
       </section>
-      <section aria-labelledby="checks">
-        <h2 id="checks">Recorded verification</h2>
+      <section>
+        <h2>Evidence and blockers</h2>
         <details open>
-          <summary>Current machine-readable evidence</summary>
+          <summary>Current evidence</summary>
           <ul>
+            <li>439 valid static documents; 0 unresolved; 0 missing roots.</li>
             <li>
-              Static Enatega compatibility: <strong>PASS</strong>; 439 valid
-              documents, 0 unresolved, 0 missing roots.
+              0 operations marked VERIFIED in the operation evidence registry.
             </li>
             <li>
-              Operation evidence registry: 0 operations marked VERIFIED;
-              unverified entries remain release blockers.
-            </li>
-            <li>
-              Repository history contains kernel, transport, outbox, identity
-              adapter, and generated-contract checkpoints.
-            </li>
-            <li>
-              No <code>docs/GATES.json</code> approval record exists, so G0–G5
-              remain open.
+              No <code>docs/GATES.json</code> exists, so G0–G5 remain open.
             </li>
           </ul>
         </details>
-        <p class="note">
-          Historical JSON reports describe earlier replacement-shell checks and
-          are superseded where they conflict with the current Enatega-only
-          boundary. This page does not reuse those results as proof of current
-          end-to-end acceptance.
-        </p>
-      </section>
-      <section aria-labelledby="blockers">
-        <h2 id="blockers">Open blockers</h2>
-        <ul class="blocked-list">
+        <ul>
           <li>
-            Complete behavioral implementation and tagged integration evidence
-            for all multivendor roots.
+            Behavioral implementation and tagged integration evidence for all
+            multivendor roots.
           </li>
           <li>
-            Real-stack customer, store, rider, and admin journeys using the
-            original Enatega applications.
+            Real-stack customer, store, rider, and admin journeys using original
+            Enatega apps.
           </li>
           <li>
-            Stripe/payment credentials and webhook verification;
-            Twilio/SMTP/FCM/Expo push; Google Maps; object storage.
-          </li>
-          <li>
-            Android emulator and physical-device runs plus Apple developer
-            access for native release gates.
-          </li>
-          <li>
-            Independent QA, security review, load/resilience/restore evidence,
-            dependency audit closure, and release approval.
+            Provider credentials; native device runs; QA, security, load,
+            restore, dependency, and release approvals.
           </li>
         </ul>
+        <p class="note">
+          Historical replacement-shell results are not proof of current Enatega
+          E2E acceptance.
+        </p>
       </section>
-      <section aria-labelledby="history">
-        <h2 id="history">Latest committed checkpoints</h2>
+      <section>
+        <h2>Latest committed checkpoints</h2>
         <ol>
+          <li>
+            <code>463f2d5</code> feat: expand Enatega backend contracts and
+            runtime configuration
+          </li>
           <li>
             <code>abcf0f8</code> feat(W1): generate multivendor Enatega contract
           </li>
@@ -591,18 +490,13 @@
           <li>
             <code>d489fe6</code> feat(L0): add kernel codecs and error contracts
           </li>
-          <li>
-            <code>a4f3da8</code> feat(L0): correct execution plan and add
-            transport configuration
-          </li>
         </ol>
       </section>
       <footer>
         <p class="note">
-          Generated deterministically by
-          <code>node tools/generate-implementation-status.mjs</code> from
-          repository evidence and Git history. Run with <code>--check</code> to
-          detect drift.
+          Generated by
+          <code>node tools/generate-implementation-status.mjs</code>. Use
+          <code>--check</code> to detect drift.
         </p>
       </footer>
     </main>
