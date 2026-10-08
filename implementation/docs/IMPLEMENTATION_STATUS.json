@@ -8,7 +8,7 @@
     "total": 334,
     "withRealResolvers": 18,
     "withRecordedEvidence": 0,
-    "withoutSdlDeclaration": 71,
+    "withoutSdlDeclaration": 0,
     "byKind": {
       "query": 159,
       "mutation": 164,

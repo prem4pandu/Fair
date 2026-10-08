@@ -86,9 +86,9 @@ describe("gate decision", () => {
       });
   });
 
-  it("tolerates the query form the contract may expose", async () => {
-    // The pinned clients only send `mutation`; the gate is deliberately
-    // operation-kind agnostic so a Query alias cannot be blocked here.
+  it("rejects the query form: the pinned clients send MetricsGeneral as a mutation", async () => {
+    // Audit §0.2 verified all six clients send `mutation MetricsGeneral`; the
+    // SDL declares it on Mutation. A query form is not exempt from the gate.
     expect(
       await gateDecision(
         {
@@ -97,53 +97,38 @@ describe("gate decision", () => {
         { nonce: "n" },
         ok,
       ),
-    ).toEqual({ pass: true });
+    ).toEqual({ pass: false, message: "Unauthorized: token missing" });
   });
 
-  it("honours the x-skip-public-auth escape hatch without calling verify", async () => {
-    let verified = 0;
-    const verify = async () => {
-      verified += 1;
-      return { ok: true as const };
-    };
-    for (const value of ["true", "TRUE", "1"]) {
+  it("tolerates the client x-skip-public-auth header without honouring it as a bypass", async () => {
+    // reference/01 §2.5 S2: the server must tolerate the header the store and
+    // rider send on the metricsGeneral mint. It is a client-side interceptor
+    // flag, never an accepted server-side bypass (REV-1 blocker).
+    for (const value of ["true", "TRUE", "1", "", "false"]) {
+      let verified = 0;
+      const verify = async () => {
+        verified += 1;
+        return { ok: true as const };
+      };
       expect(
         await gateDecision(
           { query: "{ configuration { _id } }" },
           { "x-skip-public-auth": value },
           verify,
         ),
-      ).toEqual({ pass: true });
+      ).toEqual({ pass: false, message: "Unauthorized: token missing" });
+      expect(verified).toBe(0);
     }
-    expect(verified).toBe(0);
   });
 
-  it("does not skip public auth for empty or false values", async () => {
-    const empty = async () => ({ ok: true as const });
+  it("still verifies a token when the skip header is also present", async () => {
     expect(
       await gateDecision(
         { query: "{ configuration { _id } }" },
-        { "x-skip-public-auth": "" },
-        empty,
+        { "x-skip-public-auth": "true", nonce: "n", "bop-auth": "Bearer t" },
+        async () => ({ ok: false, message: "Unauthorized: invalid token" }),
       ),
-    ).toEqual({ pass: false, message: "Unauthorized: token missing" });
-    expect(
-      await gateDecision(
-        { query: "{ configuration { _id } }" },
-        { "x-skip-public-auth": "false" },
-        empty,
-      ),
-    ).toEqual({ pass: false, message: "Unauthorized: token missing" });
-  });
-
-  it("reads the first value of a repeated x-skip-public-auth header", async () => {
-    expect(
-      await gateDecision(
-        { query: "{ configuration { _id } }" },
-        { "x-skip-public-auth": ["true", "false"] },
-        ok,
-      ),
-    ).toEqual({ pass: true });
+    ).toEqual({ pass: false, message: "Unauthorized: invalid token" });
   });
 
   it("selects the operation that Apollo will execute", async () => {
@@ -272,7 +257,7 @@ describe("public-access middleware", () => {
     expect(res.statusCode).toBe(0);
   });
 
-  it("lets a request through when the client asks to skip public auth", async () => {
+  it("never lets the client skip header change the middleware decision", async () => {
     const res = response();
     let continued = false;
     await publicAccessMiddleware(true, async () => ({
@@ -289,7 +274,8 @@ describe("public-access middleware", () => {
         continued = true;
       }) as never,
     );
-    expect(continued).toBe(true);
+    expect(continued).toBe(false);
+    expect(res.statusCode).toBe(403);
   });
 
   it("rejects a batched body instead of leaking through the gate", async () => {

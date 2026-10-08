@@ -25,6 +25,12 @@ type LegacyMessage =
   | { type: "connection_terminate" };
 
 export type LegacyOptions = {
+  /** Runs once per connection; a rejection closes the connection. */
+  onInit?: (params: Record<string, unknown>) => Promise<void>;
+  /**
+   * Runs for every `start`, so each subscription resolves its own context and
+   * re-validates the user token instead of reusing one connection identity.
+   */
   onConnect: (params: Record<string, unknown>) => Promise<unknown>;
   keepAliveMs: number;
   rules?: ValidationRule[];
@@ -36,10 +42,32 @@ type ActiveOperation = {
   iterator: AsyncIterator<ExecutionResult>;
 };
 
+/**
+ * Masks an arbitrary failure with the same allow-list as the HTTP transport:
+ * known codes keep their documented message, everything else becomes the
+ * generic INTERNAL_SERVER_ERROR text. Raw internals must never reach a client.
+ */
+export function sanitizeSubscriptionError(error: unknown): {
+  message: string;
+  extensions: { code: string };
+} {
+  const candidate = error as {
+    message?: unknown;
+    extensions?: Record<string, unknown>;
+  };
+  return formatError({
+    message:
+      typeof candidate?.message === "string"
+        ? candidate.message
+        : "Subscription failed",
+    extensions: candidate?.extensions,
+  });
+}
+
 // Server implementation of subscriptions-transport-ws, whose `graphql-ws`
 // subprotocol is used by the pinned Enatega clients.
 export class LegacySubscriptionSession {
-  private context: unknown;
+  private connectionParams: Record<string, unknown> = {};
   private initialised = false;
   private disposed = false;
   private readonly operations = new Map<string, ActiveOperation>();
@@ -74,7 +102,10 @@ export class LegacySubscriptionSession {
   private closeWithInternalError(): void {
     this.send({
       type: "connection_error",
-      payload: { message: "Subscription failed" },
+      payload: formatError({
+        message: "Subscription failed",
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      }),
     });
     this.socket.close(1011);
     this.dispose();
@@ -125,8 +156,9 @@ export class LegacySubscriptionSession {
       });
       return;
     }
+    this.connectionParams = params;
     try {
-      this.context = await this.options.onConnect(params);
+      await this.options.onInit?.(params);
       this.initialised = true;
       this.send({ type: "connection_ack" });
       if (this.options.keepAliveMs > 0) {
@@ -139,10 +171,7 @@ export class LegacySubscriptionSession {
     } catch (error) {
       this.send({
         type: "connection_error",
-        payload: {
-          message:
-            error instanceof Error ? error.message : "Connection rejected",
-        },
+        payload: sanitizeSubscriptionError(error),
       });
       this.socket.close(1011);
       this.dispose();
@@ -207,6 +236,24 @@ export class LegacySubscriptionSession {
       return;
     }
 
+    // A fresh context per subscription means the user token, its signature and
+    // the session's liveness are re-checked for every operation on the socket.
+    let context: unknown;
+    try {
+      context = await this.options.onConnect(this.connectionParams);
+    } catch (error) {
+      if (this.pending.get(id) === generation) {
+        this.pending.delete(id);
+        this.send({
+          type: "error",
+          id,
+          payload: sanitizeSubscriptionError(error),
+        });
+      }
+      return;
+    }
+    if (this.disposed || this.pending.get(id) !== generation) return;
+
     let result;
     try {
       result = await subscribe({
@@ -214,15 +261,15 @@ export class LegacySubscriptionSession {
         document,
         variableValues: payload.variables,
         operationName: payload.operationName,
-        contextValue: this.context,
+        contextValue: context,
       });
-    } catch {
+    } catch (error) {
       if (this.pending.get(id) === generation) {
         this.pending.delete(id);
         this.send({
           type: "error",
           id,
-          payload: { message: "Subscription failed" },
+          payload: sanitizeSubscriptionError(error),
         });
       }
       return;
@@ -236,7 +283,7 @@ export class LegacySubscriptionSession {
           id,
           payload: {
             data: result.data ?? null,
-            errors: result.errors?.map(formatError),
+            errors: result.errors?.map(sanitizeSubscriptionError),
           },
         });
         this.send({ type: "complete", id });
@@ -263,7 +310,7 @@ export class LegacySubscriptionSession {
           payload: value.errors
             ? {
                 data: value.data ?? null,
-                errors: value.errors.map(formatError),
+                errors: value.errors.map(sanitizeSubscriptionError),
               }
             : { data: value.data },
         });
@@ -272,13 +319,13 @@ export class LegacySubscriptionSession {
         this.operations.delete(id);
         this.send({ type: "complete", id });
       }
-    } catch {
+    } catch (error) {
       if (this.operations.get(id) === operation) {
         this.operations.delete(id);
         this.send({
           type: "error",
           id,
-          payload: { message: "Subscription failed" },
+          payload: sanitizeSubscriptionError(error),
         });
       }
     }

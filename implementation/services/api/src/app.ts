@@ -32,7 +32,7 @@ import { KernelModule } from "./kernel/kernel.module.js";
 import { loadTypeDefs } from "./kernel/schema.js";
 import { boundedOperation } from "./kernel/limits.js";
 import { fillNotImplemented } from "./kernel/not-implemented.js";
-import { formatError } from "./kernel/errors.js";
+import { appError, formatError } from "./kernel/errors.js";
 import { httpStatusPlugin } from "./kernel/http-status.plugin.js";
 import { PublicAccessTokens } from "./kernel/public-access/token.js";
 import { publicAccessMiddleware } from "./kernel/public-access/gate.js";
@@ -249,12 +249,27 @@ export async function createApp(config: Config) {
       "x-platform",
       "accept",
       "accept-language",
-      "x-skip-public-auth",
     ],
   });
   app.enableShutdownHooks();
   await app.init();
   const schema = app.get(GraphQLSchemaHost).schema;
+  // Decision E: the public-access gate stays HTTP-only (4 of 6 pinned clients
+  // send no bop-auth in connectionParams). A token that IS supplied must still
+  // be genuine; an absent or empty value means no public-token check.
+  const verifyWsPublicAccess = async (
+    params: Record<string, unknown>,
+  ): Promise<void> => {
+    const supplied =
+      typeof params["bop-auth"] === "string" ? params["bop-auth"].trim() : "";
+    if (!supplied) return;
+    const token = supplied.toLowerCase().startsWith("bearer ")
+      ? supplied.slice(7).trim()
+      : supplied;
+    const nonce = typeof params.nonce === "string" ? params.nonce : "";
+    const result = await publicTokens.verify(token, nonce);
+    if (!result.ok) throw appError("PUBLIC_ACCESS_DENIED", result.message);
+  };
   closeWs = attachSubscriptionServer(
     app.getHttpServer(),
     schema,
@@ -276,8 +291,10 @@ export async function createApp(config: Config) {
             : "en",
         transport: "ws",
         auth: () => (auth ??= resolvePrincipal(authorization)),
-      } satisfies RequestContext;
+        ready: () => ready(),
+      } satisfies RequestContext & { ready: () => Promise<boolean> };
     },
+    { verifyConnection: verifyWsPublicAccess },
   );
   return app;
 }

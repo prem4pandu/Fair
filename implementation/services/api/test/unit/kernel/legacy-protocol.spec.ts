@@ -1,6 +1,7 @@
 import { EventEmitter } from "node:events";
 import { buildSchema, type ExecutionResult } from "graphql";
 import { describe, expect, it } from "vitest";
+import { appError } from "../../../src/kernel/errors.js";
 import { LegacySubscriptionSession } from "../../../src/kernel/ws/legacy-protocol.js";
 
 class FakeSocket extends EventEmitter {
@@ -29,12 +30,16 @@ schema.getSubscriptionType()!.getFields().tick.subscribe = () => ticks();
 const flush = () => new Promise((resolve) => setTimeout(resolve, 20));
 
 describe("legacy subscriptions-transport-ws session", () => {
-  it("acks connection_init and passes its payload to onConnect", async () => {
+  it("acks connection_init and passes its payload to onInit", async () => {
     const socket = new FakeSocket();
     let params: unknown;
+    let connected = 0;
     new LegacySubscriptionSession(socket as never, schema, {
-      onConnect: async (value) => {
+      onInit: async (value) => {
         params = value;
+      },
+      onConnect: async () => {
+        connected += 1;
         return { ok: true };
       },
       keepAliveMs: 0,
@@ -50,7 +55,75 @@ describe("legacy subscriptions-transport-ws session", () => {
     await flush();
 
     expect(params).toEqual({ authorization: "" });
+    expect(connected).toBe(0);
     expect(socket.sent).toEqual([{ type: "connection_ack" }]);
+  });
+
+  it("builds a fresh context for every subscription on the same socket", async () => {
+    const socket = new FakeSocket();
+    const contexts: unknown[] = [];
+    const session = new LegacySubscriptionSession(socket as never, schema, {
+      onConnect: async () => {
+        const context = { generation: contexts.length };
+        contexts.push(context);
+        return context;
+      },
+      keepAliveMs: 0,
+    });
+    socket.emit("message", JSON.stringify({ type: "connection_init" }));
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "1",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
+    await flush();
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "2",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
+    await flush();
+
+    expect(contexts).toEqual([{ generation: 0 }, { generation: 1 }]);
+    await session.disposeAsync();
+  });
+
+  it("masks an internal subscription failure instead of leaking its message", async () => {
+    const failing = buildSchema(
+      "type Query { a: Int } type Subscription { tick: Int }",
+    );
+    failing.getSubscriptionType()!.getFields().tick.subscribe =
+      async function* () {
+        yield { tick: 1 };
+        throw new Error("connection string postgres://secret@host/db");
+      };
+    const socket = new FakeSocket();
+    const session = new LegacySubscriptionSession(socket as never, failing, {
+      onConnect: async () => ({}),
+      keepAliveMs: 0,
+    });
+    socket.emit("message", JSON.stringify({ type: "connection_init" }));
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "leak",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
+    await flush();
+
+    const errorFrame = socket.sent[2] as { payload: { message: string } };
+    expect(errorFrame).toMatchObject({ type: "error", id: "leak" });
+    expect(errorFrame.payload.message).toBe("GraphQL request failed");
+    expect(JSON.stringify(socket.sent)).not.toContain("postgres://secret");
+    await session.disposeAsync();
   });
 
   it("streams data messages then completes a started operation", async () => {
@@ -118,12 +191,13 @@ describe("legacy subscriptions-transport-ws session", () => {
     expect(socket.sent[0]).toMatchObject({ type: "error", id: "1" });
   });
 
-  it("sends connection_error and closes when onConnect rejects", async () => {
+  it("sends connection_error and closes when onInit rejects with a raw error", async () => {
     const socket = new FakeSocket();
     new LegacySubscriptionSession(socket as never, schema, {
-      onConnect: async () => {
+      onInit: async () => {
         throw new Error("Invalid token");
       },
+      onConnect: async () => ({}),
       keepAliveMs: 0,
     });
     socket.emit("message", JSON.stringify({ type: "connection_init" }));
@@ -131,9 +205,45 @@ describe("legacy subscriptions-transport-ws session", () => {
 
     expect(socket.sent[0]).toEqual({
       type: "connection_error",
-      payload: { message: "Invalid token" },
+      payload: {
+        message: "GraphQL request failed",
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      },
     });
     expect(socket.closed).toBe(1011);
+  });
+
+  it("rejects a single subscription when its context cannot be built", async () => {
+    const socket = new FakeSocket();
+    const session = new LegacySubscriptionSession(socket as never, schema, {
+      onConnect: async () => {
+        throw appError("INVALID_TOKEN");
+      },
+      keepAliveMs: 0,
+    });
+    socket.emit("message", JSON.stringify({ type: "connection_init" }));
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "auth",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
+    await flush();
+
+    expect(socket.sent).toEqual([
+      { type: "connection_ack" },
+      {
+        type: "error",
+        id: "auth",
+        payload: {
+          message: "Invalid token",
+          extensions: { code: "INVALID_TOKEN" },
+        },
+      },
+    ]);
+    await session.disposeAsync();
   });
 
   it("sends keep-alive messages after acknowledgement", async () => {

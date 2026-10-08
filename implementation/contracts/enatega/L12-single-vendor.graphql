@@ -1,3 +1,1045 @@
-# Generated from pinned Enatega documents. Lane owners refine this schema.
+# contracts/enatega/L12-single-vendor.graphql
+# Lane L12 — single-vendor. Every root is gated by SINGLE_VENDOR_ENABLED (master D1):
+# while disabled it returns NOT_IMPLEMENTED "<operation> is not available yet".
+# Money: Float major units. Timestamps: ISO-8601 strings. Ids: UUID strings.
 
-scalar L12DeferredContract
+enum CreditRecordType {
+  credit
+  debit
+}
+
+# ---------- inputs ----------
+input CartAddonInput {
+  _id: ID!
+  options: [ID]
+}
+input CartVariationInput {
+  _id: ID!
+  addons: [CartAddonInput]
+  count: Int!
+}
+input CartFoodInput {
+  _id: ID!
+  "Ignored: web sends the restaurant id here (User.context.tsx:734). The category is read from the catalog."
+  categoryId: String
+  specialInstructions: String
+  variation: CartVariationInput!
+}
+input CartInput {
+  food: [CartFoodInput!]!
+}
+input UpdateCartCountInput {
+  "Cart line id (CartVariation._id)."
+  variation_id: ID!
+  foodId: ID!
+  categoryId: String
+  variationId: ID
+  "increase | decrease | delete"
+  action: String!
+  "New absolute quantity."
+  count: Int
+}
+input EditSingleVendorCartItemInput {
+  cartItemId: ID!
+  foodId: ID!
+  categoryId: String
+  variationId: ID!
+  addons: [CartAddonInput]
+  quantity: Int!
+  specialInstructions: String
+  expectedCartRevision: Int
+}
+input OffsetPaginationInput {
+  offset: Int
+  limit: Int
+}
+input FeedbackInput {
+  rating: Float!
+  comments: String!
+}
+input CreateDealInput {
+  title: String!
+  "PERCENTAGE | FIXED (percentage_off / fixed_amount_off accepted and normalised)"
+  discountType: String!
+  food: ID!
+  variation: ID!
+  restaurant: ID!
+  discountValue: Float!
+  startDate: String!
+  endDate: String!
+  isActive: Boolean
+}
+input UpdateDealInput {
+  title: String
+  discountType: String
+  food: ID
+  variation: ID
+  restaurant: ID
+  discountValue: Float
+  startDate: String
+  endDate: String
+  isActive: Boolean
+}
+input NutritionInput {
+  name: String!
+  quantity: String!
+}
+input OrderQuantityInput {
+  min: Int
+  max: Int
+}
+input VariationDealInput {
+  title: String
+  discountType: String
+  startDate: String
+  endDate: String
+  discountValue: Float
+  isActive: Boolean
+}
+input SingleVendorVariationInput {
+  id: ID
+  title: String!
+  price: Float!
+  discounted: Float
+  addons: [ID]
+  isOutOfStock: Boolean
+  deal: VariationDealInput
+}
+input SingleVendorFoodFieldsInput {
+  restaurant: ID
+  category: ID!
+  subCategory: ID
+  title: String!
+  description: String
+  ingredients: String
+  usage: String
+  nutritionDetail: String
+  nutritions: [NutritionInput]
+  image: String
+  isActive: Boolean
+  isOutOfStock: Boolean
+  inventory: Int
+  UOM: String
+  orderQuantity: OrderQuantityInput
+}
+input inputCreateFood {
+  food: SingleVendorFoodFieldsInput!
+  variations: [SingleVendorVariationInput!]!
+}
+input inputUpdateFood {
+  food: SingleVendorFoodFieldsInput!
+  variations: [SingleVendorVariationInput!]!
+}
+input BannerRestaurantInput {
+  "Empty string on create (banners/add-form/index.tsx:96)."
+  _id: String
+  title: String!
+  description: String
+  file: String
+  foodId: ID
+  restaurant: ID!
+}
+input ScheduleTimeInput {
+  _id: ID
+  "One element, \"HH:MM\". Empty arrays together with an _id delete the slot (view/main/index.tsx:167-176)."
+  startTime: [String]
+  endTime: [String]
+  maxOrder: Int
+}
+input ScheduleTypeInput {
+  _id: ID
+  day: String
+  isOpen: Boolean
+  times: [ScheduleTimeInput]
+}
+input CreatePriceInput {
+  amount: Float!
+  "month | year"
+  interval: String!
+  intervalCount: Int!
+}
+input DeactivatePriceInput {
+  priceId: ID!
+}
+input CreateSubscriptionInput {
+  stripePriceId: String!
+  paymentMethodId: String!
+}
+input UpdateSubscriptionInput {
+  newStripePriceId: String
+}
+input VendorTypeConfigurationInput {
+  isMultiVendor: Boolean!
+}
+input GeneralConfigurationInput {
+  isAppLaunched: Boolean!
+}
+
+# ---------- catalog ----------
+type DealSummary {
+  id: ID!
+  title: String
+  "PERCENTAGE | FIXED"
+  discountType: String
+  "percent for PERCENTAGE, major units for FIXED"
+  discountValue: Float
+  isActive: Boolean
+}
+type ProductVariation {
+  id: ID!
+  _id: ID!
+  title: String
+  "same as title (searchFood selects name)"
+  name: String
+  price: Float
+  discounted: Float
+  isOutOfStock: Boolean
+  outofstock: Boolean
+  "addon ids"
+  addons: [String]
+  deal: DealSummary
+}
+type CategoryProduct {
+  id: ID!
+  _id: ID!
+  categoryId: ID
+  "sub-category id"
+  subCategory: String
+  title: String
+  description: String
+  image: String
+  isOutOfStock: Boolean
+  isFavourite: Boolean
+  isActive: Boolean
+  createdAt: String
+  updatedAt: String
+  variations: [ProductVariation]
+}
+type HomeFoodItem {
+  id: ID!
+  _id: ID!
+  categoryId: ID
+  subCategory: String
+  title: String
+  description: String
+  image: String
+  isOutOfStock: Boolean
+  isFavourite: Boolean
+  isActive: Boolean
+  createdAt: String
+  updatedAt: String
+  variations: [ProductVariation]
+}
+type ItemsPagination {
+  currentPage: Int
+  totalPages: Int
+  totalItems: Int
+  hasMore: Boolean
+}
+type ProductPage {
+  items: [CategoryProduct]
+  totalCount: Int
+  hasMore: Boolean
+  pagination: ItemsPagination
+}
+type SingleVendorCategory {
+  id: ID!
+  name: String
+  "category image (no separate icon exists in L3)"
+  icon: String
+  image: String
+  description: String
+  itemCount: Int
+  "see-all when the category has sub-categories, list otherwise"
+  viewType: String
+  items: [HomeFoodItem]
+  pagination: ItemsPagination
+}
+type DiscoveryBanner {
+  _id: ID!
+  title: String
+  description: String
+  action: String
+  screen: String
+  file: String
+  parameters: String
+  buttonText: String
+}
+type DiscoveryDeals {
+  limitedTime: ProductPage
+  weekly: ProductPage
+  newOffers: ProductPage
+}
+type SingleVendorDiscovery {
+  catalogVersion: String
+  banners: [DiscoveryBanner]
+  categories: [SingleVendorCategory]
+  deals: DiscoveryDeals
+}
+type SubCategoryItems {
+  subCategoryId: ID
+  subCategoryName: String
+  items: [CategoryProduct]
+}
+type CategoryWithSubCategories {
+  categoryId: ID
+  categoryName: String
+  "foods of the category that have no sub-category"
+  items: [CategoryProduct]
+  subCategories: [SubCategoryItems]
+}
+type CategoryItemsResult {
+  categoryId: ID
+  categoryName: String
+  items: [CategoryProduct]
+  pagination: ItemsPagination
+}
+type AddonOptionDetail {
+  id: ID!
+  title: String
+  description: String
+  price: Float
+  isSelected: Boolean
+}
+type AddonDetail {
+  id: ID!
+  title: String
+  description: String
+  isSelected: Boolean
+  quantityMinimum: Int
+  quantityMaximum: Int
+  options: [AddonOptionDetail]
+}
+type DetailedVariation {
+  id: ID!
+  title: String
+  price: Float
+  isOutOfStock: Boolean
+  addons: [AddonDetail]
+  cartQuantity: Int
+  isSelected: Boolean
+  actualUnitPrice: Float
+  discountedUnitPrice: Float
+  deal: DealSummary
+}
+type SelectedAddon {
+  _id: ID!
+  options: [ID]
+}
+type Nutrition {
+  name: String
+  quantity: String
+}
+type FoodDetails {
+  id: ID!
+  title: String
+  description: String
+  image: String
+  isPopular: Boolean
+  isOutOfStock: Boolean
+  cartQuantity: Int
+  usage: String
+  ingredients: String
+  nutritionDetail: String
+  categoryId: ID
+  selectedAddonsId: [SelectedAddon]
+  selectedVariationsIds: [ID]
+  nutritions: [Nutrition]
+  variations: [DetailedVariation]
+}
+type Voucher {
+  _id: ID!
+  title: String
+  "percent"
+  discount: Float
+  enabled: Boolean
+  couponType: String
+}
+type FavoriteFoodsResult {
+  success: Boolean
+  message: String
+  data: [CategoryProduct]
+}
+type FavoriteResult {
+  success: Boolean
+  message: String
+  isFavorite: Boolean
+}
+
+# ---------- admin catalog ----------
+type AdminVariationDeal {
+  id: ID!
+  name: String
+  type: String
+  value: Float
+  startDate: String
+  endDate: String
+  isActive: Boolean
+}
+type AdminVariationAddon {
+  title: String
+  description: String
+  isActive: Boolean
+}
+type AdminFoodVariation {
+  id: ID!
+  title: String
+  price: Float
+  outofstock: Boolean
+  deal: AdminVariationDeal
+  addons: [AdminVariationAddon]
+}
+type OrderQuantity {
+  min: Int
+  max: Int
+}
+type AdminFood {
+  id: ID!
+  title: String
+  description: String
+  subCategory: String
+  ingredients: String
+  usage: String
+  nutritions: [Nutrition]
+  nutritionDetail: String
+  image: String
+  isActive: Boolean
+  isOutOfStock: Boolean
+  UOM: String
+  inventory: Int
+  orderQuantity: OrderQuantity
+  variations: [AdminFoodVariation]
+}
+type AdminFoodCategory {
+  id: ID!
+  title: String
+}
+type AdminFoodEntry {
+  category: AdminFoodCategory
+  food: AdminFood
+}
+type AdminFoodPage {
+  page: Int
+  limit: Int
+  hasnext: Boolean
+  hasprev: Boolean
+  totalFoods: Int
+  foods: [AdminFoodEntry]
+}
+type SavedFood {
+  _id: ID!
+  title: String
+  description: String
+  subCategory: String
+  variations: [ProductVariation]
+  image: String
+  isActive: Boolean
+}
+type SavedFoodCategory {
+  _id: ID!
+  title: String
+  foods: [SavedFood]
+  createdAt: String
+  updatedAt: String
+}
+type SavedFoodRestaurant {
+  _id: ID!
+  categories: [SavedFoodCategory]
+}
+type FoodDeal {
+  id: ID!
+  title: String
+  discountType: String
+  food: ID
+  variation: ID
+  restaurant: ID
+  startDate: String
+  endDate: String
+  discountValue: Float
+  isActive: Boolean
+  createdAt: String
+  updatedAt: String
+  foodTitle: String
+  variationTitle: String
+}
+type FoodDealPage {
+  total: Int
+  page: Int
+  limit: Int
+  deals: [FoodDeal]
+}
+type MessageResult {
+  message: String
+}
+type SimpleResult {
+  success: Boolean
+  message: String
+}
+type RestaurantBanner {
+  _id: ID!
+  title: String
+  description: String
+  file: String
+  foodId: ID
+  restaurant: ID
+  foodImage: String
+  foodTitle: String
+  "file, else the linked food's image"
+  displayImage: String
+  isActive: Boolean
+}
+
+# ---------- schedules ----------
+type ScheduleSlot {
+  _id: ID!
+  startTime: [String]
+  endTime: [String]
+  maxOrder: Int
+}
+type ScheduleDay {
+  _id: ID!
+  "MON..SUN"
+  day: String
+  isOpen: Boolean
+  times: [ScheduleSlot]
+}
+type RestaurantScheduleResult {
+  name: String
+  scheduleTimings: [ScheduleDay]
+}
+type ScheduleTimeSlot {
+  id: ID!
+  startTime: String
+  endTime: String
+  maxOrder: Int
+}
+type ScheduleTimingGroup {
+  id: ID!
+  times: [ScheduleTimeSlot]
+}
+type ScheduleByDay {
+  "YYYY-MM-DD in the store time zone"
+  date: String
+  day: String
+  dayId: ID
+  timings: [ScheduleTimingGroup]
+}
+type ScheduleSummary {
+  "e.g. \"MON-WED 09:00-17:00; FRI 10:00-16:00\" (Saturday excluded)"
+  openDaysTimes: String
+  "e.g. \"MON-WED, FRI\""
+  openDaysString: String
+  "e.g. \"10:00-14:00\"; empty when Saturday is closed"
+  saturdaySlotString: String
+}
+
+# ---------- cart and checkout ----------
+type CartAddon {
+  addonId: ID
+  optionId: ID
+  "option title"
+  title: String
+  price: Float
+}
+type CartDealInfo {
+  id: ID
+  dealId: ID
+  title: String
+  dealTitle: String
+  discountValue: Float
+  discountType: String
+}
+type CartVariation {
+  "cart line id"
+  _id: ID!
+  variationId: ID
+  variationTitle: String
+  unitPrice: Float
+  quantity: Int
+  addons: [CartAddon]
+  addonsTotal: Float
+  actualUnitPrice: Float
+  discountedUnitPrice: Float
+  actualItemTotal: Float
+  discountedItemTotal: Float
+  itemTotal: Float
+  dealId: ID
+  dealInfo: CartDealInfo
+  specialInstructions: String
+}
+type CartFood {
+  categoryId: ID
+  foodId: ID
+  foodTitle: String
+  foodImage: String
+  variations: [CartVariation]
+  actualFoodTotal: Float
+  discountedFoodTotal: Float
+  foodTotal: Float
+}
+type CartDeal {
+  variationId: ID
+  variationTitle: String
+  foodId: ID
+  foodTitle: String
+  quantity: Int
+  dealId: ID
+  dealTitle: String
+  discountType: String
+  discountValue: Float
+  originalPrice: Float
+  discountedPrice: Float
+  savingsPerUnit: Float
+  totalSavings: Float
+}
+type SingleVendorCart {
+  success: Boolean
+  message: String
+  grandTotal: Float
+  actualGrandTotal: Float
+  discountedGrandTotal: Float
+  totalDiscount: Float
+  hasDeals: Boolean
+  isBelowMinimumOrder: Boolean
+  lowOrderFees: Float
+  maxOrderAmount: Float
+  minOrderAmount: Float
+  cartId: ID
+  cartRevision: Int
+  foods: [CartFood]
+  deals: [CartDeal]
+}
+type CartCountResult {
+  success: Boolean
+  message: String
+  quantity: Int
+  itemTotal: Float
+  foodTotal: Float
+  grandTotal: Float
+  isBelowMinimumOrder: Boolean
+}
+type CheckoutAddon {
+  "option id"
+  id: ID
+  title: String
+  price: Float
+  addonId: ID
+}
+type CheckoutItem {
+  foodId: ID
+  foodTitle: String
+  categoryId: ID
+  variationId: ID
+  variationTitle: String
+  quantity: Int
+  unitPrice: Float
+  addons: [CheckoutAddon]
+  addonsTotal: Float
+  itemTotal: Float
+}
+type CheckoutDiscountDetails {
+  subscriptionDiscount: Float
+  freeDeliveryApplied: Boolean
+  couponDiscount: Float
+  dealDiscount: Float
+}
+type CheckoutSummary {
+  success: Boolean
+  message: String
+  cartId: ID
+  items: [CheckoutItem]
+  subtotal: Float
+  deliveryCharges: Float
+  originalDeliveryCharges: Float
+  deliveryDiscount: Float
+  serviceFee: Float
+  minimumOrderFee: Float
+  taxAmount: Float
+  taxPercentage: Float
+  grandTotal: Float
+  totalDiscount: Float
+  discountDetails: CheckoutDiscountDetails
+  hasActiveSubscription: Boolean
+  freeDeliveriesRemaining: Int
+  appliedFreeDelivery: Boolean
+  minimumOrderAmount: Float
+  isBelowMinimumOrder: Boolean
+  isBelowMaximumOrder: Boolean
+  couponDiscountAmount: Float
+  couponApplied: Boolean
+  priorityDeliveryFees: Float
+  creditsUsed: Float
+  maximumOrderAmount: Float
+  checkoutQuoteId: ID
+  checkoutQuoteExpiresAt: String
+  cartRevision: Int
+}
+
+# ---------- single-vendor order views ----------
+type SingleVendorOrderRider {
+  _id: ID
+  name: String
+  phone: String
+  location: Location
+}
+type SingleVendorOrderAddress {
+  _id: ID
+  id: ID
+  deliveryAddress: String
+  details: String
+  label: String
+  location: Location
+}
+type SingleVendorOrderVariation {
+  _id: ID
+  title: String
+  image: String
+  price: Float
+  discounted: Float
+  createdAt: String
+  updatedAt: String
+}
+type SingleVendorOrderOption {
+  _id: ID
+  title: String
+  description: String
+  price: Float
+  isActive: Boolean
+}
+type SingleVendorOrderAddon {
+  _id: ID
+  title: String
+  description: String
+  quantityMinimum: Int
+  quantityMaximum: Int
+  isActive: Boolean
+  options: [SingleVendorOrderOption]
+}
+type SingleVendorOrderItem {
+  _id: ID!
+  food: ID
+  title: String
+  description: String
+  image: String
+  quantity: Int
+  specialInstructions: String
+  isActive: Boolean
+  foodImage: String
+  foodTitle: String
+  variationImage: String
+  variationTitle: String
+  variationTotal: Float
+  foodQuantity: Int
+  variation: SingleVendorOrderVariation
+  addons: [SingleVendorOrderAddon]
+}
+type SingleVendorOrderData {
+  _id: ID!
+  orderId: String
+  paidAmount: Float
+  orderAmount: Float
+  orderStatus: String
+  paymentStatus: String
+  deliveryCharges: Float
+  deliveryDiscount: Float
+  couponDiscount: Float
+  tipping: Float
+  taxationAmount: Float
+  orderDate: String
+  isPriority: Boolean
+  isPickedUp: Boolean
+  completionTime: String
+  instructions: String
+  itemsSubTotal: Float
+  minimumOrderFee: Float
+  minimumOrderAmount: Float
+  isBelowMinimumOrder: Boolean
+  isBelowMaximumOrder: Boolean
+  freeDeliveriesRemaining: Int
+  priorityDeliveryFees: Float
+  deliverChargesAmount: Float
+  couponDiscountApplied: Boolean
+  creditsApplied: Float
+  rider: SingleVendorOrderRider
+  deliveryAddress: SingleVendorOrderAddress
+  items: [SingleVendorOrderItem]
+}
+type SingleVendorOrderPage {
+  success: Boolean
+  message: String
+  rawOrder: SingleVendorOrder
+  data: SingleVendorOrderData
+}
+
+# ---------- raw order view (L12-owned) ----------
+# The single-vendor documents select the shared L5 order fields plus L12-only
+# fields (`orderState` from SV13, `scheduledAt`, `deliveryType`). L5's own
+# `OrderOrder` type does not carry them, so the L12 contract owns this view.
+type SingleVendorOrder {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: SingleVendorOrderAddress
+  deliveryCharges: Float
+  deliveryType: String
+  eta: OrderEta
+  expectedTime: String
+  instructions: String
+  isPickedUp: Boolean
+  items: [SingleVendorOrderItem]
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderState: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: SingleVendorOrderRider
+  scheduledAt: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+# L12-supplied fields on L2's Configuration (the plan's `Configuration` position).
+extend type ConfigurationConfiguration {
+  googleApiKey: String
+  hasEmailPasswordConfigured: Boolean
+  hasPaypalSecretConfigured: Boolean
+  hasSendGridSecretConfigured: Boolean
+  hasStripeSecretConfigured: Boolean
+  hasTwilioSecretConfigured: Boolean
+  isAppLaunched: Boolean
+  isMultiVendor: Boolean
+  restaurantCount: Int
+}
+
+# ---------- credits, membership, notifications, dashboard, payments ----------
+type CreditUser {
+  _id: ID!
+  name: String
+  email: String
+}
+type CreditRecord {
+  _id: ID!
+  userId: CreditUser
+  amount: Float
+  "order reference entered by the admin (human order id)"
+  orderId: String
+  recordType: CreditRecordType
+  createdAt: String
+  updatedAt: String
+}
+type UserCredits {
+  credits: Float
+}
+type SubscriptionPlan {
+  id: ID!
+  amount: Float
+  interval: String
+  intervalCount: Int
+  productName: String
+  productId: String
+  discountPercent: Float
+}
+type SubscriptionPlans {
+  plans: [SubscriptionPlan]
+}
+type PriceResult {
+  success: Boolean
+  message: String
+  price: SubscriptionPlan
+}
+type FeedNotification {
+  _id: ID!
+  title: String
+  body: String
+  creator: String
+  updatedAt: String
+  createdAt: String
+}
+type NotificationFeed {
+  total: Int
+  skip: Int
+  limit: Int
+  hasMore: Boolean
+  notifications: [FeedNotification]
+}
+type SalesTotals {
+  total_orders: Int
+  total_sales: Float
+  total_sales_without_delivery: Float
+  total_delivery_fee: Float
+}
+type SalesByType {
+  "all | isPickedUp | isNotPickedUp (svadmin lib/utils/constants/dashboard.ts:7-11)"
+  _type: String
+  data: SalesTotals
+}
+type PaymentMethodSales {
+  all: [SalesByType]
+  cod: [SalesByType]
+  card: [SalesByType]
+}
+type PaymentSuccess {
+  userId: String
+  "human order id"
+  orderId: String
+  orderObjId: ID
+  orderStatus: String
+  paymentStatus: String
+  paymentMethod: String
+}
+
+extend type Query {
+  "SV. A, S(Configuration). L2 Configuration plus L12 mode flags."
+  adminConfiguration: ConfigurationConfiguration
+  "SV. A, S(Stores), V/R(own). Defined but unused by the UI."
+  bannerRestaurant(banner: String!, restaurantId: ID!): RestaurantBanner
+  "SV. A, S(Stores), V/R(own). Null restaurantId means the designated store."
+  bannerRestaurants(restaurantId: ID): [RestaurantBanner]
+  "APP, WEB. CUSTOMER."
+  calculateCheckout(
+    isPickup: Boolean
+    latDestination: Float
+    longDestination: Float
+    coupon: String
+  ): CheckoutSummary
+  "APP, WEB. Public."
+  couponsbyRestaurant: [Voucher]
+  getAllCategoriesWithSubCategoriesDataSeeAllSingleVendor: [CategoryWithSubCategories]
+  getAllCategoriesWithSubCategoriesOnlySeeAllSingleVendor: [CategoryWithSubCategories]
+  "SV. A, S(Users)."
+  getAllCreditsRecords(searchTerm: String): [CreditRecord]
+  "SV. A, S(Stores), V/R(own)."
+  getAllFoodDealsAdmin(
+    page: Int!
+    limit: Int!
+    isActive: Boolean
+    search: String
+    restaurantId: ID!
+  ): FoodDealPage
+  "APP, WEB: CUSTOMER. SV: ADMIN."
+  getAllSubscriptionPlans: SubscriptionPlans
+  "CUSTOMER."
+  getAllUserCredits: UserCredits
+  "SV. A, S(Users)."
+  getAllUsersDropDownSearch(searchTerm: String): [CreditUser]
+  getAllfoods(restaurantId: String!): [AdminFood]
+  getAllfoodsPaginated(
+    restaurantId: ID!
+    page: Int
+    limit: Int
+    search: String
+  ): AdminFoodPage
+  getCategoryItemsSingleVendor(
+    categoryId: ID!
+    skip: Int
+    limit: Int
+    search: String
+  ): CategoryItemsResult
+  getCategoryProducts(
+    categoryId: ID!
+    pagination: OffsetPaginationInput!
+  ): ProductPage
+  getDashboardOrderSalesDetailsByPaymentMethod(
+    restaurant: String!
+    starting_date: String!
+    ending_date: String!
+  ): PaymentMethodSales
+  "CUSTOMER. Minutes."
+  getEstimatedDeliveryTime(addressId: ID!): Int
+  getFavoriteFoodsSingleVendor(limit: Int, skip: Int): FavoriteFoodsResult
+  getFavoriteFoodsStatus(foodId: String): FavoriteResult
+  getFoodDetails(foodId: ID!, categoryId: ID): FoodDetails
+  getLimitedTimeFoodsDeals: ProductPage
+  getMyFreeDeliveries: Int
+  getMyReferralCode: String
+  getNewOffersFoodsDeals: ProductPage
+  getRecommendedFoods(foodId: ID!, skip: Int, limit: Int): ProductPage
+  getRestaurantCategoriesSingleVendor: [SingleVendorCategory]
+  getRestaurantSchedule(restaurantId: ID!): [ScheduleDay]
+  getScheduleByDay: [ScheduleByDay]
+  getScheduleUntilNextDayOff: ScheduleSummary
+  getSimilarFoods(foodId: ID!, skip: Int, limit: Int): ProductPage
+  getUserCart: SingleVendorCart
+  getUserCreditsHistory: [CreditRecord]
+  getWeeklyFoodsDeals: ProductPage
+  "CUSTOMER, own order. Accepts the human order id or the order _id."
+  orderDetailsPage(orderId: String!): SingleVendorOrderPage
+  pastNotificationsByToken(skip: Int, limit: Int): NotificationFeed
+  recentActiveOrder: SingleVendorOrderPage
+  scheduledOrders(offset: Int, limit: Int): [SingleVendorOrder]
+  searchFood(search: String): [CategoryProduct]
+  searchSingleVendorFoods(search: String!, skip: Int, limit: Int): ProductPage
+  singleVendorBanners(page: Int, limit: Int): [DiscoveryBanner]
+  "section: LIMITED_TIME | WEEKLY | NEW_OFFERS"
+  singleVendorDeals(section: String!, skip: Int, limit: Int): ProductPage
+  singleVendorDiscovery(
+    previewLimit: Int
+    dealLimit: Int
+  ): SingleVendorDiscovery
+  todayNotificationsByToken(skip: Int, limit: Int): NotificationFeed
+}
+
+extend type Mutation {
+  cancelSubscription: MessageResult
+  "SV. A. Leaf success flag, selected without a sub-selection."
+  ownerLogout: Boolean
+  checkReferralCodeExists(referralCode: String!): Boolean
+  clearCart: SimpleResult
+  createBannerRestaurant(bannerInput: BannerRestaurantInput!): RestaurantBanner
+  createFoodDeal(input: CreateDealInput!): FoodDeal
+  createFoodSingleVendor(foodInput: inputCreateFood!): SavedFoodRestaurant
+  createPriceForProduct(input: CreatePriceInput!): PriceResult
+  createSubscription(input: CreateSubscriptionInput!): MessageResult
+  deactivatePrice(input: DeactivatePriceInput!): SimpleResult
+  deleteBannerRestaurant(id: String!): Boolean
+  deleteFoodDeal(id: ID!): MessageResult
+  editBannerRestaurant(bannerInput: BannerRestaurantInput!): RestaurantBanner
+  editSingleVendorCartItem(
+    input: EditSingleVendorCartItemInput!
+  ): SingleVendorCart
+  editUserCreditsHistory(id: ID!, amount: Float!): CreditRecord
+  giveFeedback(feedbackInput: FeedbackInput!): SimpleResult
+  giveUserCredits(
+    userId: ID!
+    amount: Float!
+    orderId: String!
+    recordType: CreditRecordType!
+  ): CreditRecord
+  saveGeneralConfiguration(
+    configurationInput: GeneralConfigurationInput!
+  ): ConfigurationConfiguration
+  saveVendorTypeToggle(
+    configurationInput: VendorTypeConfigurationInput!
+  ): ConfigurationConfiguration
+  toggleFavoriteFoodSingleVendor(id: ID!): FavoriteResult
+  updateFoodDeal(id: ID!, input: UpdateDealInput!): FoodDeal
+  updateFoodSingleVendor(
+    foodId: ID!
+    foodInput: inputUpdateFood!
+  ): SavedFoodRestaurant
+  updateScheduleTimings(
+    id: ID!
+    scheduleTimings: [ScheduleTypeInput]
+  ): RestaurantScheduleResult
+  updateSubscription(input: UpdateSubscriptionInput!): MessageResult
+  updateUserCartCount(input: UpdateCartCountInput!): CartCountResult
+  userCartData(input: CartInput!): SingleVendorCart
+}
+
+extend type Subscription {
+  "APP, WEB. The socket user must be userId. Fires when a single-vendor card order is paid."
+  subscriptionPaymentSuccess(userId: String!): PaymentSuccess
+}
+
+# ---------- shared order view (L12-owned; the plan's `Order` position) ----------

@@ -203,13 +203,16 @@ describe("public-access handshake over HTTP", () => {
     });
   });
 
-  it("honours the x-skip-public-auth escape hatch the store and rider send", async () => {
-    const response = await api.http.raw(
-      { query: serviceInfo },
-      { "x-skip-public-auth": "true" },
+  it("rejects the x-skip-public-auth header the store and rider send on the mint", async () => {
+    // The header is a client-side interceptor flag the server must tolerate,
+    // never a server-side bypass (REV-1 blocker; reference/01 §2.5 S2).
+    expectDenied(
+      await api.http.raw(
+        { query: serviceInfo },
+        { "x-skip-public-auth": "true" },
+      ),
+      "Unauthorized: token missing",
     );
-    expect(response.status).toBe(200);
-    expect(response.body.errors).toBeUndefined();
   });
 
   it("rejects GET and batched GraphQL bodies without reaching the resolvers", async () => {
@@ -221,7 +224,7 @@ describe("public-access handshake over HTTP", () => {
 
     const batched = await api.http.raw(
       [{ query: serviceInfo }] as unknown as object,
-      { "x-skip-public-auth": "true" },
+      {},
     );
     expect(batched.status).toBe(400);
     expect(batched.body.errors[0].extensions.code).toBe("BAD_USER_INPUT");

@@ -9,18 +9,6 @@ const header = (headers: Headers, name: string) => {
   return (Array.isArray(value) ? value[0] : value)?.trim() ?? "";
 };
 
-// The store and rider clients set `x-skip-public-auth: "true"` on the
-// metricsGeneral mint so their request interceptor does not attach a public
-// token. The gate tolerates that header and, for compatibility, treats the two
-// documented opt-in literals as an explicit request to skip public auth. This
-// only relaxes the anti-abuse public token: it never grants a user identity.
-const SKIP_PUBLIC_AUTH = "x-skip-public-auth";
-
-function skipsPublicAuth(headers: Headers): boolean {
-  const value = header(headers, SKIP_PUBLIC_AUTH).toLowerCase();
-  return value === "true" || value === "1";
-}
-
 // Only metricsGeneral is exempt, and only when it is the sole root operation
 // selected by operationName or by GraphQL's single-operation rule.
 function isHandshakeOnly(body: {
@@ -51,7 +39,7 @@ function isHandshakeOnly(body: {
 
   if (!selected) return false;
   return (
-    (selected.operation === "mutation" || selected.operation === "query") &&
+    selected.operation === "mutation" &&
     selected.selectionSet.selections.length > 0 &&
     selected.selectionSet.selections.every(
       (selection) =>
@@ -68,8 +56,6 @@ export async function gateDecision(
   headers: Headers,
   verify: (token: string, nonce: string) => Promise<Verification>,
 ): Promise<GateResult> {
-  if (skipsPublicAuth(headers)) return { pass: true };
-
   const handshake = isHandshakeOnly(body);
   if (handshake === null) return { pass: true };
 

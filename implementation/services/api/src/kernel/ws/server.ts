@@ -1,10 +1,20 @@
 import type { IncomingMessage, Server as HttpServer } from "node:http";
 import type { Duplex } from "node:stream";
-import { specifiedRules, validate, type GraphQLSchema } from "graphql";
+import {
+  execute as graphqlExecute,
+  specifiedRules,
+  subscribe as graphqlSubscribe,
+  validate,
+  type ExecutionResult,
+  type GraphQLSchema,
+} from "graphql";
 import { useServer } from "graphql-ws/use/ws";
 import { WebSocketServer } from "ws";
 import { boundedOperation } from "../limits.js";
-import { LegacySubscriptionSession } from "./legacy-protocol.js";
+import {
+  LegacySubscriptionSession,
+  sanitizeSubscriptionError,
+} from "./legacy-protocol.js";
 
 export const WS_MAX_PAYLOAD_BYTES = 1024 * 1024;
 
@@ -21,12 +31,39 @@ export type WsContextFactory = (
   request: IncomingMessage,
 ) => Promise<unknown>;
 
+export type SubscriptionServerHooks = {
+  /**
+   * Runs before a socket is acknowledged. A rejection closes the connection:
+   * this is where a supplied public-access token is verified.
+   */
+  verifyConnection?: (params: Record<string, unknown>) => Promise<void>;
+};
+
+const sanitizeResult = <T extends ExecutionResult>(result: T): T =>
+  result.errors?.length
+    ? ({
+        ...result,
+        errors: result.errors.map(sanitizeSubscriptionError),
+      } as T)
+    : result;
+
+async function* sanitizeStream(
+  stream: AsyncIterable<ExecutionResult>,
+): AsyncGenerator<ExecutionResult> {
+  try {
+    for await (const result of stream) yield sanitizeResult(result);
+  } catch (error) {
+    throw sanitizeSubscriptionError(error);
+  }
+}
+
 // Both generations share /graphql. Protocol negotiation routes each upgraded
 // socket to the implementation matching Sec-WebSocket-Protocol.
 export function attachSubscriptionServer(
   http: HttpServer,
   schema: GraphQLSchema,
   context: WsContextFactory,
+  hooks: SubscriptionServerHooks = {},
 ): () => Promise<void> {
   const legacy = new WebSocketServer(subscriptionServerOptions("graphql-ws"));
   const modern = new WebSocketServer(
@@ -36,6 +73,7 @@ export function attachSubscriptionServer(
   const legacySessions = new Set<LegacySubscriptionSession>();
   legacy.on("connection", (socket, request: IncomingMessage) => {
     const session = new LegacySubscriptionSession(socket, schema, {
+      onInit: hooks.verifyConnection,
       onConnect: (params) => context(params, request),
       keepAliveMs: 15_000,
       rules: [boundedOperation],
@@ -47,6 +85,12 @@ export function attachSubscriptionServer(
   const modernCleanup = useServer(
     {
       schema,
+      onConnect: async (socketContext) => {
+        await hooks.verifyConnection?.(
+          (socketContext.connectionParams ?? {}) as Record<string, unknown>,
+        );
+        return true;
+      },
       validate: (activeSchema, document, rules, options, typeInfo) =>
         validate(
           activeSchema,
@@ -55,11 +99,20 @@ export function attachSubscriptionServer(
           options,
           typeInfo,
         ),
+      // graphql-ws invokes `context` once per operation, so each subscription
+      // gets its own context and re-resolves the caller's identity.
       context: (socketContext) =>
         context(
           (socketContext.connectionParams ?? {}) as Record<string, unknown>,
           socketContext.extra.request as unknown as IncomingMessage,
         ),
+      subscribe: async (args) => {
+        const result = await graphqlSubscribe(args);
+        if (result && Symbol.asyncIterator in result)
+          return sanitizeStream(result as AsyncIterable<ExecutionResult>);
+        return sanitizeResult(result as ExecutionResult);
+      },
+      execute: async (args) => sanitizeResult(await graphqlExecute(args)),
     },
     modern,
   );
