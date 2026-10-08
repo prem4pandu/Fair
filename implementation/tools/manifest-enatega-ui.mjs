@@ -14,69 +14,93 @@ const excludedPaths = new Set([
   "enatega-multivendor-store/google-services.json",
 ]);
 
-function files(directory) {
-  return readdirSync(directory, { withFileTypes: true })
-    .sort((left, right) => left.name.localeCompare(right.name, "en"))
-    .flatMap((entry) => {
-      const path = resolve(directory, entry.name);
-      if (entry.isDirectory()) return files(path);
-      if (
-        !entry.isFile() ||
-        ignored.has(entry.name) ||
-        excludedPaths.has(relative(source, path).split(sep).join("/"))
-      )
-        return [];
-      return [path];
-    });
-}
-
-const entries = files(source).map((path) => {
-  const data = readFileSync(path);
-  return {
-    path: relative(source, path).split(sep).join("/"),
-    bytes: statSync(path).size,
-    sha256: createHash("sha256").update(data).digest("hex"),
-  };
-});
-const entriesJson = JSON.stringify(entries);
-
-const manifest = {
-  schemaVersion: 1,
-  claimedUpstreamCommit: "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
-  commitIndependentlyVerified: false,
-  source: "repository-local pinned upstream snapshot",
-  exclusions: [
+export function listFiles(root) {
+  const skipDirs = new Set([
     ".git",
     "node_modules",
     ".next",
     ".expo",
     "dist",
     ".turbo",
-    ".DS_Store",
-    ".env",
-    ".env.*",
-    "upstream Firebase application-binding files",
-  ],
-  fileCount: entries.length,
-  totalBytes: entries.reduce((total, entry) => total + entry.bytes, 0),
-  entriesSha256: createHash("sha256").update(entriesJson).digest("hex"),
-  files: entries,
-};
-
-const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
-if (process.argv.includes("--check")) {
-  if (readFileSync(output, "utf8") !== serialized)
-    throw new Error(
-      "Stale Enatega UI manifest; run node tools/manifest-enatega-ui.mjs",
-    );
-} else {
-  writeFileSync(output, serialized);
+  ]);
+  const skipFile = (name) =>
+    name === ".DS_Store" ||
+    name === ".env" ||
+    (/^\.env\..+/.test(name) && name !== ".env.example");
+  const walk = (directory) =>
+    readdirSync(directory, { withFileTypes: true })
+      .sort((left, right) => left.name.localeCompare(right.name, "en"))
+      .flatMap((entry) => {
+        const path = resolve(directory, entry.name);
+        if (entry.isDirectory())
+          return skipDirs.has(entry.name) ? [] : walk(path);
+        const rel = relative(root, path).split(sep).join("/");
+        if (
+          !entry.isFile() ||
+          ignored.has(entry.name) ||
+          skipFile(entry.name) ||
+          excludedPaths.has(rel)
+        )
+          return [];
+        return [rel];
+      });
+  return walk(root);
 }
-console.log(
-  JSON.stringify({
-    status: process.argv.includes("--check") ? "verified" : "written",
-    files: manifest.fileCount,
-    bytes: manifest.totalBytes,
-    entriesSha256: manifest.entriesSha256,
-  }),
-);
+
+const isMain =
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isMain) {
+  const entries = listFiles(source).map((relativePath) => {
+    const path = resolve(source, relativePath);
+    const data = readFileSync(path);
+    return {
+      path: relativePath,
+      bytes: statSync(path).size,
+      sha256: createHash("sha256").update(data).digest("hex"),
+    };
+  });
+  const entriesJson = JSON.stringify(entries);
+
+  const manifest = {
+    schemaVersion: 1,
+    claimedUpstreamCommit: "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
+    commitIndependentlyVerified: false,
+    source: "repository-local pinned upstream snapshot",
+    exclusions: [
+      ".git",
+      "node_modules",
+      ".next",
+      ".expo",
+      "dist",
+      ".turbo",
+      ".DS_Store",
+      ".env",
+      ".env.*",
+      "upstream Firebase application-binding files",
+    ],
+    fileCount: entries.length,
+    totalBytes: entries.reduce((total, entry) => total + entry.bytes, 0),
+    entriesSha256: createHash("sha256").update(entriesJson).digest("hex"),
+    files: entries,
+  };
+
+  const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
+  if (process.argv.includes("--check")) {
+    if (readFileSync(output, "utf8") !== serialized)
+      throw new Error(
+        "Stale Enatega UI manifest; run node tools/manifest-enatega-ui.mjs",
+      );
+  } else {
+    writeFileSync(output, serialized);
+  }
+  console.log(
+    JSON.stringify({
+      status: process.argv.includes("--check") ? "verified" : "written",
+      files: manifest.fileCount,
+      bytes: manifest.totalBytes,
+      entriesSha256: manifest.entriesSha256,
+    }),
+  );
+}
