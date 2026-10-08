@@ -82,9 +82,9 @@
   "gates": [
     {
       "id": "GP0",
-      "passed": true,
-      "finishedAt": "2026-10-08T15:07:41.842Z",
-      "commit": "c814670ecbb2ae9fb9eeaf0f6356c2802c5d83bf",
+      "passed": false,
+      "finishedAt": "2026-10-08T15:11:19.655Z",
+      "commit": "cabd63f111d69f7cf9f35d71395861a8229c1f80",
       "approvals": [],
       "commands": [
         {
@@ -109,7 +109,7 @@
         },
         {
           "command": "pnpm test",
-          "exitCode": 0
+          "exitCode": 1
         },
         {
           "command": "pnpm test:integration",
@@ -133,7 +133,7 @@
         },
         {
           "command": "node --test tools/*.test.mjs",
-          "exitCode": 0
+          "exitCode": 1
         },
         {
           "command": "pnpm traceability:check",
