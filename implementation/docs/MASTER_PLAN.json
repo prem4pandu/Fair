@@ -1075,6 +1075,11 @@
       "id": "R16",
       "risk": "27 files fail the per-file coverage thresholds (44 failed checks) at day 0",
       "mitigation": "GP0 records the report only; W1 (kernel) and W7 (orders) close their own files at G2 and W17 closes the rest by G3"
+    },
+    {
+      "id": "R17",
+      "risk": "observed integration flake: test/catalog.integration.spec.ts failed once in three full runs (an assertion saw a response with no errors), while passing in isolation and in the other full runs",
+      "mitigation": "assertion now prints the limit, query and response body so the next occurrence is diagnosable; W20 owns flake elimination before G4, and a quarantine is a blocker rather than a pass"
     }
   ],
   "artifacts": [
