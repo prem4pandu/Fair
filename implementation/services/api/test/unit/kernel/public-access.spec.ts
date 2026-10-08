@@ -86,6 +86,66 @@ describe("gate decision", () => {
       });
   });
 
+  it("tolerates the query form the contract may expose", async () => {
+    // The pinned clients only send `mutation`; the gate is deliberately
+    // operation-kind agnostic so a Query alias cannot be blocked here.
+    expect(
+      await gateDecision(
+        {
+          query: "query MetricsGeneral { metricsGeneral { experience hehe } }",
+        },
+        { nonce: "n" },
+        ok,
+      ),
+    ).toEqual({ pass: true });
+  });
+
+  it("honours the x-skip-public-auth escape hatch without calling verify", async () => {
+    let verified = 0;
+    const verify = async () => {
+      verified += 1;
+      return { ok: true as const };
+    };
+    for (const value of ["true", "TRUE", "1"]) {
+      expect(
+        await gateDecision(
+          { query: "{ configuration { _id } }" },
+          { "x-skip-public-auth": value },
+          verify,
+        ),
+      ).toEqual({ pass: true });
+    }
+    expect(verified).toBe(0);
+  });
+
+  it("does not skip public auth for empty or false values", async () => {
+    const empty = async () => ({ ok: true as const });
+    expect(
+      await gateDecision(
+        { query: "{ configuration { _id } }" },
+        { "x-skip-public-auth": "" },
+        empty,
+      ),
+    ).toEqual({ pass: false, message: "Unauthorized: token missing" });
+    expect(
+      await gateDecision(
+        { query: "{ configuration { _id } }" },
+        { "x-skip-public-auth": "false" },
+        empty,
+      ),
+    ).toEqual({ pass: false, message: "Unauthorized: token missing" });
+  });
+
+  it("reads the first value of a repeated x-skip-public-auth header", async () => {
+    expect(
+      await gateDecision(
+        { query: "{ configuration { _id } }" },
+        { "x-skip-public-auth": ["true", "false"] },
+        ok,
+      ),
+    ).toEqual({ pass: true });
+  });
+
   it("selects the operation that Apollo will execute", async () => {
     const query = `
       mutation Mint { metricsGeneral { experience } }
@@ -165,31 +225,117 @@ describe("gate decision", () => {
 });
 
 describe("public-access middleware", () => {
+  const response = () => ({
+    statusCode: 0,
+    body: undefined as unknown,
+    status(code: number) {
+      this.statusCode = code;
+      return this;
+    },
+    json(body: unknown) {
+      this.body = body;
+      return this;
+    },
+  });
+
   it("rejects GraphQL GET requests instead of bypassing the public gate", async () => {
-    const response = {
-      statusCode: 0,
-      body: undefined as unknown,
-      status(code: number) {
-        this.statusCode = code;
-        return this;
-      },
-      json(body: unknown) {
-        this.body = body;
-        return this;
-      },
-    };
+    const res = response();
     let continued = false;
     await publicAccessMiddleware(true, async () => ({ ok: true }))(
       { method: "GET" } as never,
-      response as never,
+      res as never,
       (() => {
         continued = true;
       }) as never,
     );
     expect(continued).toBe(false);
-    expect(response.statusCode).toBe(405);
-    expect(response.body).toMatchObject({
+    expect(res.statusCode).toBe(405);
+    expect(res.body).toMatchObject({
       errors: [{ extensions: { code: "BAD_USER_INPUT" } }],
+    });
+  });
+
+  it("bypasses the gate entirely when enforcement is off", async () => {
+    const res = response();
+    let continued = false;
+    await publicAccessMiddleware(false, async () => ({
+      ok: false,
+      message: "Unauthorized: invalid token",
+    }))(
+      { method: "POST", body: { query: "{ a }" }, headers: {} } as never,
+      res as never,
+      (() => {
+        continued = true;
+      }) as never,
+    );
+    expect(continued).toBe(true);
+    expect(res.statusCode).toBe(0);
+  });
+
+  it("lets a request through when the client asks to skip public auth", async () => {
+    const res = response();
+    let continued = false;
+    await publicAccessMiddleware(true, async () => ({
+      ok: false,
+      message: "Unauthorized: invalid token",
+    }))(
+      {
+        method: "POST",
+        body: { query: "{ configuration { _id } }" },
+        headers: { "x-skip-public-auth": "true" },
+      } as never,
+      res as never,
+      (() => {
+        continued = true;
+      }) as never,
+    );
+    expect(continued).toBe(true);
+  });
+
+  it("rejects a batched body instead of leaking through the gate", async () => {
+    const res = response();
+    let continued = false;
+    await publicAccessMiddleware(true, async () => ({ ok: true }))(
+      { method: "POST", body: [{ query: "{ a }" }], headers: {} } as never,
+      res as never,
+      (() => {
+        continued = true;
+      }) as never,
+    );
+    expect(continued).toBe(false);
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toMatchObject({
+      errors: [{ extensions: { code: "BAD_USER_INPUT" } }],
+    });
+  });
+
+  it("answers a denied request with the exact client-recognised envelope", async () => {
+    const res = response();
+    let continued = false;
+    await publicAccessMiddleware(true, async () => ({
+      ok: false,
+      message: "Unauthorized: fingerprint mismatch",
+    }))(
+      {
+        method: "POST",
+        body: { query: "{ configuration { _id } }" },
+        headers: { nonce: "n", "bop-auth": "Bearer t" },
+      } as never,
+      res as never,
+      (() => {
+        continued = true;
+      }) as never,
+    );
+    expect(continued).toBe(false);
+    expect(res.statusCode).toBe(403);
+    expect(res.body).toEqual({
+      data: null,
+      errors: [
+        {
+          message: "Unauthorized: fingerprint mismatch",
+          extensions: { code: "PUBLIC_ACCESS_DENIED" },
+        },
+      ],
     });
   });
 });
