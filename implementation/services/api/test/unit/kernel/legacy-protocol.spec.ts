@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { buildSchema } from "graphql";
+import { buildSchema, type ExecutionResult } from "graphql";
 import { describe, expect, it } from "vitest";
 import { LegacySubscriptionSession } from "../../../src/kernel/ws/legacy-protocol.js";
 
@@ -147,5 +147,167 @@ describe("legacy subscriptions-transport-ws session", () => {
 
     expect(socket.sent).toContainEqual({ type: "ka" });
     session.dispose();
+  });
+
+  it("cancels an operation stopped while subscription setup is pending", async () => {
+    let release!: () => void;
+    const setup = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let returned = 0;
+    const delayedSchema = buildSchema(
+      "type Query { a: Int } type Subscription { tick: Int }",
+    );
+    delayedSchema.getSubscriptionType()!.getFields().tick.subscribe =
+      async () => {
+        await setup;
+        return {
+          next: () => new Promise<IteratorResult<ExecutionResult>>(() => {}),
+          return: async () => {
+            returned += 1;
+            return { value: undefined, done: true };
+          },
+          [Symbol.asyncIterator]() {
+            return this;
+          },
+        };
+      };
+    const socket = new FakeSocket();
+    const session = new LegacySubscriptionSession(
+      socket as never,
+      delayedSchema,
+      { onConnect: async () => ({}), keepAliveMs: 0 },
+    );
+    socket.emit("message", JSON.stringify({ type: "connection_init" }));
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "pending",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
+    await flush();
+    socket.emit("message", JSON.stringify({ type: "stop", id: "pending" }));
+    release();
+    await flush();
+
+    expect(returned).toBe(1);
+    expect(socket.sent).toEqual([{ type: "connection_ack" }]);
+    await session.disposeAsync();
+  });
+
+  it("cancels a pending operation when the session is disposed", async () => {
+    let release!: () => void;
+    const setup = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let returned = 0;
+    const delayedSchema = buildSchema(
+      "type Query { a: Int } type Subscription { tick: Int }",
+    );
+    delayedSchema.getSubscriptionType()!.getFields().tick.subscribe =
+      async () => {
+        await setup;
+        return {
+          next: () => new Promise<IteratorResult<ExecutionResult>>(() => {}),
+          return: async () => {
+            returned += 1;
+            return { value: undefined, done: true };
+          },
+          [Symbol.asyncIterator]() {
+            return this;
+          },
+        };
+      };
+    const socket = new FakeSocket();
+    const session = new LegacySubscriptionSession(
+      socket as never,
+      delayedSchema,
+      { onConnect: async () => ({}), keepAliveMs: 0 },
+    );
+    socket.emit("message", JSON.stringify({ type: "connection_init" }));
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "pending",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
+    await flush();
+    const disposed = session.disposeAsync();
+    release();
+    await disposed;
+    await flush();
+
+    expect(returned).toBe(1);
+    expect(socket.sent).toEqual([{ type: "connection_ack" }]);
+  });
+
+  it("keeps only the newest operation when an id is started twice", async () => {
+    let release!: () => void;
+    const firstSetup = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let calls = 0;
+    let firstReturned = 0;
+    const duplicateSchema = buildSchema(
+      "type Query { a: Int } type Subscription { tick: Int }",
+    );
+    duplicateSchema.getSubscriptionType()!.getFields().tick.subscribe =
+      async () => {
+        calls += 1;
+        if (calls === 1) {
+          await firstSetup;
+          return {
+            next: () => new Promise<IteratorResult<ExecutionResult>>(() => {}),
+            return: async () => {
+              firstReturned += 1;
+              return { value: undefined, done: true };
+            },
+            [Symbol.asyncIterator]() {
+              return this;
+            },
+          };
+        }
+        return ticks();
+      };
+    const socket = new FakeSocket();
+    const session = new LegacySubscriptionSession(
+      socket as never,
+      duplicateSchema,
+      { onConnect: async () => ({}), keepAliveMs: 0 },
+    );
+    socket.emit("message", JSON.stringify({ type: "connection_init" }));
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "same",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
+    await flush();
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "same",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
+    await flush();
+    release();
+    await flush();
+
+    expect(firstReturned).toBe(1);
+    expect(socket.sent).toEqual([
+      { type: "connection_ack" },
+      { type: "data", id: "same", payload: { data: { tick: 1 } } },
+      { type: "data", id: "same", payload: { data: { tick: 2 } } },
+      { type: "complete", id: "same" },
+    ]);
+    await session.disposeAsync();
   });
 });

@@ -6,6 +6,16 @@ import { WebSocketServer } from "ws";
 import { boundedOperation } from "../limits.js";
 import { LegacySubscriptionSession } from "./legacy-protocol.js";
 
+export const WS_MAX_PAYLOAD_BYTES = 1024 * 1024;
+
+export const subscriptionServerOptions = (
+  protocol: "graphql-ws" | "graphql-transport-ws",
+) => ({
+  noServer: true as const,
+  maxPayload: WS_MAX_PAYLOAD_BYTES,
+  handleProtocols: () => protocol,
+});
+
 export type WsContextFactory = (
   params: Record<string, unknown>,
   request: IncomingMessage,
@@ -18,21 +28,20 @@ export function attachSubscriptionServer(
   schema: GraphQLSchema,
   context: WsContextFactory,
 ): () => Promise<void> {
-  const legacy = new WebSocketServer({
-    noServer: true,
-    handleProtocols: () => "graphql-ws",
-  });
-  const modern = new WebSocketServer({
-    noServer: true,
-    handleProtocols: () => "graphql-transport-ws",
-  });
+  const legacy = new WebSocketServer(subscriptionServerOptions("graphql-ws"));
+  const modern = new WebSocketServer(
+    subscriptionServerOptions("graphql-transport-ws"),
+  );
 
+  const legacySessions = new Set<LegacySubscriptionSession>();
   legacy.on("connection", (socket, request: IncomingMessage) => {
-    new LegacySubscriptionSession(socket, schema, {
+    const session = new LegacySubscriptionSession(socket, schema, {
       onConnect: (params) => context(params, request),
       keepAliveMs: 15_000,
       rules: [boundedOperation],
+      onDispose: () => legacySessions.delete(session),
     });
+    legacySessions.add(session);
   });
 
   const modernCleanup = useServer(
@@ -86,6 +95,9 @@ export function attachSubscriptionServer(
   return async () => {
     http.off("upgrade", onUpgrade);
     await modernCleanup.dispose();
+    await Promise.allSettled(
+      [...legacySessions].map((session) => session.disposeAsync()),
+    );
     for (const client of legacy.clients) client.terminate();
     for (const client of modern.clients) client.terminate();
     await Promise.all([

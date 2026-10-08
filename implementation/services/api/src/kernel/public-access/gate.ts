@@ -82,7 +82,18 @@ export function publicAccessMiddleware(
   verify: (token: string, nonce: string) => Promise<Verification>,
 ) {
   return async (request: Request, response: Response, next: NextFunction) => {
-    if (!enforced || request.method !== "POST") return next();
+    if (!enforced) return next();
+    if (request.method !== "POST") {
+      response.status(405).json({
+        errors: [
+          {
+            message: "GraphQL requests must use POST",
+            extensions: { code: "BAD_USER_INPUT" },
+          },
+        ],
+      });
+      return;
+    }
     if (Array.isArray(request.body)) {
       response.status(400).json({
         errors: [

@@ -19,7 +19,11 @@ function fixture(
 ) {
   const root = mkdtempSync(join(tmpdir(), "fair-compatibility-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  for (const directory of ["source/app", "contracts", "services/api/src"])
+  for (const directory of [
+    "source/app",
+    "contracts",
+    "services/api/src/kernel",
+  ])
     mkdirSync(join(root, directory), { recursive: true });
   writeFileSync(join(root, "source/app/operations.ts"), source);
   writeFileSync(join(root, "contracts/schema.graphql"), schema);
@@ -29,6 +33,17 @@ function fixture(
       new URL("../services/api/src/app.ts", import.meta.url),
       "utf8",
     ),
+  );
+  writeFileSync(
+    join(root, "services/api/src/kernel/limits.ts"),
+    readFileSync(
+      new URL("../services/api/src/kernel/limits.ts", import.meta.url),
+      "utf8",
+    ),
+  );
+  writeFileSync(
+    join(root, "services/api/src/config.ts"),
+    'const schema = z.object({ GRAPHQL_BODY_LIMIT: z.string().default("1mb") });',
   );
   const run = (auditOptions = options.audit) =>
     audit(join(root, "source"), join(root, "contracts"), ["app"], auditOptions);
@@ -171,9 +186,13 @@ test("actual backend rule rejects multiple mutation roots and excessive field co
 
 test("actual backend rule checks depth and total definitions", (t) => {
   const deep =
-    "query { viewer { " + "child { ".repeat(8) + "id" + " }".repeat(8) + " } }";
+    "query { viewer { " +
+    "child { ".repeat(15) +
+    "id" +
+    " }".repeat(15) +
+    " } }";
   const definitions = Array.from(
-    { length: 11 },
+    { length: 61 },
     (_, i) => `query Q${i} { viewer { id } }`,
   ).join("\n");
   const result = fixture(
@@ -186,12 +205,14 @@ test("actual backend rule checks depth and total definitions", (t) => {
     ]);
 });
 
-test("16KB query-only JSON is a minimum bound and oversized source fails", (t) => {
+test("configured query-only JSON limit is a minimum bound and oversized source fails", (t) => {
   const result = fixture(
     t,
-    "const a = gql`query { viewer { " + "x".repeat(17000) + ": id } }`;",
+    "const a = gql`query { viewer { " +
+      "x".repeat(1024 * 1024 + 1) +
+      ": id } }`;",
   )();
-  assert.equal(result.serverLimits.httpBodyBytes, 16384);
+  assert.equal(result.serverLimits.httpBodyBytes, 1024 * 1024);
   assert.equal(result.apps[0].documents[0].minimumHttpBodyExceedsLimit, true);
   assert.equal(result.staticCompatibility, "FAIL");
 });
@@ -215,10 +236,11 @@ test("empty source and TypeScript parse errors fail closed", (t) => {
 test("absent server source, unknown body limit and empty app sets cannot pass", (t) => {
   const run = fixture(t, "const doc = gql`query { viewer { id } }`;");
   const serverPath = join(run.root, "services/api/src/app.ts");
-  const original = readFileSync(serverPath, "utf8");
-  writeFileSync(serverPath, original.replace('limit: "16kb"', 'limit: "8kb"'));
+  const configPath = join(run.root, "services/api/src/config.ts");
+  rmSync(configPath);
   assert.equal(run().staticCompatibility, "FAIL");
   rmSync(serverPath);
+  rmSync(join(run.root, "services/api/src/kernel/limits.ts"));
   assert.equal(run().staticCompatibility, "FAIL");
   assert.equal(
     audit(join(run.root, "source"), join(run.root, "contracts"), [])

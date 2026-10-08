@@ -20,6 +20,13 @@ export type TokenClaims = {
   sid: string;
 };
 
+const legacyApplicationType = {
+  CUSTOMER: "CUSTOMER",
+  MERCHANT: "RESTAURANT",
+  RIDER: "RIDER",
+  ADMIN: "ADMIN",
+} as const satisfies Record<string, UserType>;
+
 export class UserTokens {
   private readonly key: Uint8Array;
 
@@ -66,16 +73,24 @@ export class UserTokens {
         algorithms: ["HS256"],
         currentDate: this.clock.now(),
       });
+      const type = USER_TYPES.includes(payload.typ as UserType)
+        ? (payload.typ as UserType)
+        : typeof payload.app === "string" &&
+            Object.hasOwn(legacyApplicationType, payload.app)
+          ? legacyApplicationType[
+              payload.app as keyof typeof legacyApplicationType
+            ]
+          : null;
       if (
         typeof payload.sub !== "string" ||
         typeof payload.sid !== "string" ||
-        !USER_TYPES.includes(payload.typ as UserType)
+        !type
       ) {
         throw appError("INVALID_TOKEN");
       }
       return {
         sub: payload.sub,
-        typ: payload.typ as UserType,
+        typ: type,
         sid: payload.sid,
       };
     } catch (error) {

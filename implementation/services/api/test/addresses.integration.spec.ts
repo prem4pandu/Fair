@@ -92,6 +92,7 @@ beforeAll(async () => {
   app = await createApp(
     readConfig({
       APP_ENV: "test",
+      PUBLIC_ACCESS_ENFORCED: "false",
       PASSWORD_AUTH_ENABLED: "true",
       DATABASE_URL: db.getConnectionUri(),
       REDIS_URL: `redis://${redis.getHost()}:${redis.getMappedPort(6379)}`,

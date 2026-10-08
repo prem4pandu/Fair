@@ -46,4 +46,18 @@ describe("redis pub/sub", () => {
     await iterator.return?.();
     expect(subscriber.listenerCount("zone:z")).toBe(0);
   });
+
+  it("finishes pending iterator reads when the instance closes", async () => {
+    const closing = new RedisPubSub(stack.redisUrl);
+    const iterator = closing
+      .subscribe<{ n: number }>("closing")
+      [Symbol.asyncIterator]();
+    await closing.ready("closing");
+    const pending = iterator.next();
+
+    await closing.close();
+
+    await expect(pending).resolves.toEqual({ value: undefined, done: true });
+    expect(closing.listenerCount("closing")).toBe(0);
+  });
 });

@@ -3,6 +3,20 @@ import { GraphQLError } from "graphql";
 const defaults = {
   BAD_USER_INPUT: { status: 200, message: "Invalid request" },
   NOT_FOUND: { status: 200, message: "Resource not found" },
+  ADDRESS_LIMIT_REACHED: {
+    status: 200,
+    message: "Saved address limit reached",
+  },
+  AUTHENTICATION_FAILED: { status: 200, message: "Authentication required" },
+  AUTH_DISABLED: {
+    status: 200,
+    message: "Password authentication is unavailable",
+  },
+  ACCOUNT_EXISTS: { status: 200, message: "Account already exists" },
+  CONFIGURATION_UNAVAILABLE: {
+    status: 200,
+    message: "Configuration unavailable",
+  },
   UNAUTHENTICATED: { status: 401, message: "Unauthenticated" },
   TOKEN_EXPIRED: { status: 401, message: "Access token expired" },
   INVALID_TOKEN: { status: 401, message: "Invalid token" },

@@ -19,6 +19,7 @@ export class RedisPubSub implements PubSub {
   private readonly subscriber: Redis;
   private readonly listeners = new Map<string, Set<Listener>>();
   private readonly subscriptions = new Map<string, Promise<unknown>>();
+  private readonly activeIterators = new Set<() => Promise<unknown>>();
   private closed = false;
 
   constructor(url: string) {
@@ -55,7 +56,7 @@ export class RedisPubSub implements PubSub {
     filter?: (payload: T) => boolean,
   ): AsyncIterable<T> {
     if (this.closed) throw new Error("Redis pub/sub is closed");
-    const { listeners, subscriptions, subscriber } = this;
+    const { activeIterators, listeners, subscriptions, subscriber } = this;
 
     return {
       [Symbol.asyncIterator](): AsyncIterator<T> {
@@ -81,17 +82,18 @@ export class RedisPubSub implements PubSub {
         const finish = async (): Promise<IteratorResult<T>> => {
           if (done) return { value: undefined, done: true };
           done = true;
+          activeIterators.delete(finish);
           topicListeners.delete(listener);
           if (topicListeners.size === 0) {
             const subscription = subscriptions.get(topic);
-            await subscription;
+            await subscription?.catch(() => undefined);
             if (
               listeners.get(topic) === topicListeners &&
               topicListeners.size === 0
             ) {
               listeners.delete(topic);
               subscriptions.delete(topic);
-              await subscriber.unsubscribe(topic);
+              await subscriber.unsubscribe(topic).catch(() => undefined);
             }
           }
           for (const resolve of waiting.splice(0)) {
@@ -99,6 +101,7 @@ export class RedisPubSub implements PubSub {
           }
           return { value: undefined, done: true };
         };
+        activeIterators.add(finish);
 
         return {
           next: () => {
@@ -121,6 +124,10 @@ export class RedisPubSub implements PubSub {
   async close(): Promise<void> {
     if (this.closed) return;
     this.closed = true;
+    await Promise.allSettled(
+      [...this.activeIterators].map((finish) => finish()),
+    );
+    this.activeIterators.clear();
     this.listeners.clear();
     this.subscriptions.clear();
     this.publisher.disconnect();

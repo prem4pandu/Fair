@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { PublicAccessTokens } from "../../../src/kernel/public-access/token.js";
-import { gateDecision } from "../../../src/kernel/public-access/gate.js";
+import {
+  gateDecision,
+  publicAccessMiddleware,
+} from "../../../src/kernel/public-access/gate.js";
 
 const secret = Buffer.alloc(32, 9).toString("base64url");
 const at = (iso: string) => ({ now: () => new Date(iso) });
@@ -157,6 +160,36 @@ describe("gate decision", () => {
   it("leaves unparsable bodies to Apollo", async () => {
     expect(await gateDecision({ query: "{{{" }, {}, ok)).toEqual({
       pass: true,
+    });
+  });
+});
+
+describe("public-access middleware", () => {
+  it("rejects GraphQL GET requests instead of bypassing the public gate", async () => {
+    const response = {
+      statusCode: 0,
+      body: undefined as unknown,
+      status(code: number) {
+        this.statusCode = code;
+        return this;
+      },
+      json(body: unknown) {
+        this.body = body;
+        return this;
+      },
+    };
+    let continued = false;
+    await publicAccessMiddleware(true, async () => ({ ok: true }))(
+      { method: "GET" } as never,
+      response as never,
+      (() => {
+        continued = true;
+      }) as never,
+    );
+    expect(continued).toBe(false);
+    expect(response.statusCode).toBe(405);
+    expect(response.body).toMatchObject({
+      errors: [{ extensions: { code: "BAD_USER_INPUT" } }],
     });
   });
 });

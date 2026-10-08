@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { SignJWT } from "jose";
 import {
   requireAuth,
   requireOwnership,
@@ -33,6 +34,25 @@ describe("user tokens", () => {
     const tokens = new UserTokens(secret, 900, clock("2026-10-08T00:00:00Z"));
     await expect(tokens.verify("not-a-jwt")).rejects.toMatchObject({
       extensions: { code: "INVALID_TOKEN" },
+    });
+  });
+
+  it("accepts legacy identity tokens during the Wave 1 cutover", async () => {
+    const token = await new SignJWT({ sid: "session-1", app: "MERCHANT" })
+      .setProtectedHeader({ alg: "HS256", typ: "at+jwt" })
+      .setSubject("restaurant-user")
+      .setIssuedAt(
+        Math.floor(new Date("2026-10-08T00:00:00Z").getTime() / 1000),
+      )
+      .setExpirationTime(
+        Math.floor(new Date("2026-10-08T00:15:00Z").getTime() / 1000),
+      )
+      .sign(Buffer.from(secret, "base64url"));
+    const tokens = new UserTokens(secret, 900, clock("2026-10-08T00:01:00Z"));
+    await expect(tokens.verify(token)).resolves.toEqual({
+      sub: "restaurant-user",
+      typ: "RESTAURANT",
+      sid: "session-1",
     });
   });
 });

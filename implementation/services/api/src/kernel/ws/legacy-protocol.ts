@@ -28,6 +28,12 @@ export type LegacyOptions = {
   onConnect: (params: Record<string, unknown>) => Promise<unknown>;
   keepAliveMs: number;
   rules?: ValidationRule[];
+  onDispose?: () => void;
+};
+
+type ActiveOperation = {
+  generation: symbol;
+  iterator: AsyncIterator<ExecutionResult>;
 };
 
 // Server implementation of subscriptions-transport-ws, whose `graphql-ws`
@@ -36,12 +42,12 @@ export class LegacySubscriptionSession {
   private context: unknown;
   private initialised = false;
   private disposed = false;
-  private readonly operations = new Map<
-    string,
-    AsyncIterator<ExecutionResult>
-  >();
+  private readonly operations = new Map<string, ActiveOperation>();
+  private readonly pending = new Map<string, symbol>();
+  private readonly startTasks = new Set<Promise<void>>();
   private keepAlive: NodeJS.Timeout | undefined;
   private messageQueue: Promise<void> = Promise.resolve();
+  private disposal: Promise<void> | undefined;
 
   constructor(
     private readonly socket: Pick<
@@ -88,7 +94,13 @@ export class LegacySubscriptionSession {
         await this.initialise(message.payload ?? {});
         return;
       case "start":
-        void this.start(message.id, message.payload);
+        {
+          const task = this.start(message.id, message.payload).catch(() =>
+            this.closeWithInternalError(),
+          );
+          this.startTasks.add(task);
+          void task.finally(() => this.startTasks.delete(task));
+        }
         return;
       case "stop":
         await this.stop(message.id);
@@ -154,9 +166,15 @@ export class LegacySubscriptionSession {
       return;
     }
     await this.stop(id);
+    if (this.disposed) return;
+    const generation = Symbol(id);
+    this.pending.set(id, generation);
 
     let document;
     try {
+      if (!payload || typeof payload.query !== "string") {
+        throw new Error("Invalid operation");
+      }
       document = parse(payload.query);
     } catch (error) {
       this.send({
@@ -166,6 +184,7 @@ export class LegacySubscriptionSession {
           message: error instanceof Error ? error.message : "Invalid operation",
         },
       });
+      if (this.pending.get(id) === generation) this.pending.delete(id);
       return;
     }
 
@@ -184,6 +203,7 @@ export class LegacySubscriptionSession {
           }),
         ),
       });
+      if (this.pending.get(id) === generation) this.pending.delete(id);
       return;
     }
 
@@ -197,33 +217,45 @@ export class LegacySubscriptionSession {
         contextValue: this.context,
       });
     } catch {
-      this.send({
-        type: "error",
-        id,
-        payload: { message: "Subscription failed" },
-      });
+      if (this.pending.get(id) === generation) {
+        this.pending.delete(id);
+        this.send({
+          type: "error",
+          id,
+          payload: { message: "Subscription failed" },
+        });
+      }
       return;
     }
 
     if (!(Symbol.asyncIterator in result)) {
-      this.send({
-        type: "data",
-        id,
-        payload: {
-          data: result.data ?? null,
-          errors: result.errors?.map(formatError),
-        },
-      });
-      this.send({ type: "complete", id });
+      if (this.pending.get(id) === generation) {
+        this.pending.delete(id);
+        this.send({
+          type: "data",
+          id,
+          payload: {
+            data: result.data ?? null,
+            errors: result.errors?.map(formatError),
+          },
+        });
+        this.send({ type: "complete", id });
+      }
       return;
     }
 
     const iterator = result[Symbol.asyncIterator]();
-    this.operations.set(id, iterator);
+    if (this.disposed || this.pending.get(id) !== generation) {
+      await iterator.return?.();
+      return;
+    }
+    this.pending.delete(id);
+    const operation = { generation, iterator };
+    this.operations.set(id, operation);
     try {
       for (;;) {
         const next = await iterator.next();
-        if (next.done || !this.operations.has(id)) break;
+        if (next.done || this.operations.get(id) !== operation) break;
         const value = next.value;
         this.send({
           type: "data",
@@ -236,28 +268,46 @@ export class LegacySubscriptionSession {
             : { data: value.data },
         });
       }
-      if (this.operations.delete(id)) this.send({ type: "complete", id });
+      if (this.operations.get(id) === operation) {
+        this.operations.delete(id);
+        this.send({ type: "complete", id });
+      }
     } catch {
-      this.operations.delete(id);
-      this.send({
-        type: "error",
-        id,
-        payload: { message: "Subscription failed" },
-      });
+      if (this.operations.get(id) === operation) {
+        this.operations.delete(id);
+        this.send({
+          type: "error",
+          id,
+          payload: { message: "Subscription failed" },
+        });
+      }
     }
   }
 
   private async stop(id: string): Promise<void> {
-    const iterator = this.operations.get(id);
+    this.pending.delete(id);
+    const operation = this.operations.get(id);
     this.operations.delete(id);
-    await iterator?.return?.();
+    await operation?.iterator.return?.();
   }
 
   dispose(): void {
-    if (this.disposed) return;
+    void this.disposeAsync();
+  }
+
+  disposeAsync(): Promise<void> {
+    if (this.disposal) return this.disposal;
     this.disposed = true;
     if (this.keepAlive) clearInterval(this.keepAlive);
-    for (const iterator of this.operations.values()) void iterator.return?.();
+    this.pending.clear();
+    const operations = [...this.operations.values()];
     this.operations.clear();
+    this.disposal = Promise.allSettled(
+      operations.map((operation) => operation.iterator.return?.()),
+    )
+      .then(() => Promise.allSettled([...this.startTasks]))
+      .then(() => undefined)
+      .finally(() => this.options.onDispose?.());
+    return this.disposal;
   }
 }

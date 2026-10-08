@@ -19,13 +19,26 @@ const productionTransport = {
   PUBLIC_BASE_URL: "https://api.example.com",
   PUBLIC_ACCESS_SECRET: Buffer.alloc(32, 4).toString("base64url"),
 };
+async function handshake(server: Parameters<typeof request>[0]) {
+  const minted = await request(server)
+    .post("/graphql")
+    .set("nonce", "unit-test")
+    .send({ query: "mutation { metricsGeneral { experience } }" });
+  return {
+    nonce: "unit-test",
+    "bop-auth": `Bearer ${minted.body.data.metricsGeneral.experience}`,
+  };
+}
 describe("foundation HTTP boundaries", () => {
   it("keeps password operations disabled by default while serving foundation", async () => {
     app = await createApp(readConfig(env));
-    const response = await request(app.getHttpServer()).post("/graphql").send({
-      query:
-        'mutation { registerCustomer(input:{email:"disabled@example.com",password:"valid-test-password",displayName:"Disabled"}) {user{id}} }',
-    });
+    const response = await request(app.getHttpServer())
+      .post("/graphql")
+      .set(await handshake(app.getHttpServer()))
+      .send({
+        query:
+          'mutation { registerCustomer(input:{email:"disabled@example.com",password:"valid-test-password",displayName:"Disabled"}) {user{id}} }',
+      });
     expect(response.body.errors[0].extensions.code).toBe("AUTH_DISABLED");
     await request(app.getHttpServer()).get("/health/live").expect(200);
   });
@@ -34,6 +47,7 @@ describe("foundation HTTP boundaries", () => {
     await request(app.getHttpServer()).get("/health/live").expect(200);
     const result = await request(app.getHttpServer())
       .post("/graphql")
+      .set(await handshake(app.getHttpServer()))
       .send({ query: "{serviceInfo{name status}}" })
       .expect(200);
     expect(result.body.data.serviceInfo.status).toBe("unavailable");
@@ -46,6 +60,7 @@ describe("foundation HTTP boundaries", () => {
     try {
       const result = await request(app.getHttpServer())
         .post("/graphql")
+        .set(await handshake(app.getHttpServer()))
         .send({
           query: `{${Array.from({ length: 25 }, (_, i) => `a${i}:serviceInfo{name status}`).join(" ")}}`,
         })
@@ -67,12 +82,14 @@ describe("foundation HTTP boundaries", () => {
     ]) {
       const result = await request(app.getHttpServer())
         .post("/graphql")
+        .set(await handshake(app.getHttpServer()))
         .send({ query });
       expect(result.body.errors).toBeDefined();
     }
     await request(app.getHttpServer())
       .post("/graphql")
-      .send({ query: " ".repeat(17000) })
+      .set(await handshake(app.getHttpServer()))
+      .send({ query: " ".repeat(2 * 1024 * 1024) })
       .expect(413);
   });
   it("masks production errors and disables introspection", async () => {
@@ -87,6 +104,7 @@ describe("foundation HTTP boundaries", () => {
     );
     const result = await request(app.getHttpServer())
       .post("/graphql")
+      .set(await handshake(app.getHttpServer()))
       .send({ query: "{__schema {types{name}}}" });
     expect(result.body.errors[0].message).toBe("GraphQL request failed");
     expect(result.body.data).toBeUndefined();
@@ -101,13 +119,25 @@ describe("foundation HTTP boundaries", () => {
         REDIS_URL: "rediss://localhost:1",
       }),
     );
+    const headers = await handshake(app.getHttpServer());
     const response = await request(app.getHttpServer())
       .post("/graphql")
+      .set(headers)
       .set("Content-Type", "application/json")
       .send('{"secret-marker":bad}')
       .expect(400);
     expect(response.body).toEqual({ message: "Invalid JSON request" });
     expect(response.text).not.toContain("secret-marker");
+  });
+  it("rejects GraphQL GET requests", async () => {
+    app = await createApp(readConfig(env));
+    const response = await request(app.getHttpServer())
+      .get("/graphql")
+      .expect(405);
+    expect(response.body.errors[0]).toEqual({
+      message: "GraphQL requests must use POST",
+      extensions: { code: "BAD_USER_INPUT" },
+    });
   });
   it("does not grant unknown cross origin access", async () => {
     app = await createApp(

@@ -52,7 +52,7 @@ type MutationAcknowledgement {
 extend type Query {
   me(application: LoginApplication!): IdentityUser!
 }
-type Mutation {
+extend type Mutation {
   registerCustomer(input: CustomerRegistrationInput!): SessionPayload!
   loginPassword(input: PasswordLoginInput!): SessionPayload!
   refreshSession(input: SessionRefreshInput!): SessionPayload!

@@ -2,6 +2,6 @@ type ServiceInfo {
   name: String!
   status: String!
 }
-type Query {
+extend type Query {
   serviceInfo: ServiceInfo!
 }
