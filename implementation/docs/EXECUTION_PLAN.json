@@ -3,6 +3,7 @@
   "execution": "Multiple independent Codex agents; no local AI",
   "source_session": "https://chatgpt.com/local/01a115d1-c437-7040-ba6a-47ee7d3100ac",
   "source_commit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
+  "frontend_strategy": "Use the complete pinned Enatega multivendor customer web, customer mobile, merchant store, rider and admin UI code as the product presentation baseline. Preserve its routes, screens, components and interaction model; replace remote Enatega API dependencies with the new FairBite NestJS modular backend domain by domain. Lightweight implementation shells are verification harnesses only and are not the product UI.",
   "full_cloud_export": "Pending; partial conversation/roadmap recovered, not a faithful full file transfer",
   "phase_sequence": [
     {
