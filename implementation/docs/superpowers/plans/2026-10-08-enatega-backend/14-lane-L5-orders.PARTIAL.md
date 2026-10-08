@@ -24,32 +24,32 @@ Authority: `implementation/docs/OPERATION_LANES.json`, filter `lane == "L5"` →
 
 Legend for "Who may call": **C** = CUSTOMER (exact type; ADMIN does not pass customer-only checks), **R/V** = RESTAURANT/VENDOR user whose `RestaurantsPort.ownedBy(userId)` contains the restaurant, **Rd** = RIDER whose `AuthContext.riderId` equals `order.riderId`, **A** = ADMIN, **S(x)** = STAFF holding permission `x`.
 
-| # | Type | Name | Apps (multivendor) | Who may call | Documents used in tests (`app`, `file`, `exportName`) | Reference |
-|---|---|---|---|---|---|---|
-| 1 | mutation | `coupon` | app, web | C | `enatega-multivendor-app`, `src/apollo/mutations.js`, `applyCoupon`; `enatega-multivendor-web`, `lib/api/graphql/mutations/coupon/index.ts`, `VERIFY_COUPON` | ref/02 §5.5 |
-| 2 | mutation | `placeOrder` | app, web, rider (unused copy) | C (Rd, A → FORBIDDEN) | app `src/apollo/mutations.js` `placeOrder`; web `lib/api/graphql/mutations/orders/index.ts` `PLACE_ORDER`; `enatega-multivendor-rider`, `lib/apollo/mutations/order.mutation.ts`, `placeOrder` | ref/02 §5.2–§5.6, §11, §14; ref/03 §2.11 |
-| 3 | query | `orders` | app, web, rider (copy) | C (own orders) | app `src/apollo/queries.js` `myOrders`; web `lib/api/graphql/queries/orders/index.ts` `ORDERS`; rider `lib/apollo/queries/order/order-1.query.ts` `myOrders` | ref/02 §6.1, §5.7 |
-| 4 | query | `order` | app, rider | C (own), R/V (own restaurant), Rd (assigned), A, S(Orders\|Dispatch) | app `src/apollo/queries.js` `order`; rider `lib/apollo/queries/order/order-1.query.ts` `order` | ref/02 §6.1 |
-| 5 | query | `orderDetails` | web | as `order` | web `lib/api/graphql/queries/order-tracking/index.ts` `ORDER_TRACKING` | ref/02 §6.1 |
-| 6 | query | `getUsersActiveOrders` | app, web | C (own) | app `src/apollo/queries.js` `getUsersActiveOrders`; web `lib/api/graphql/queries/orders/index.ts` `GET_USERS_ACTIVE_ORDERS` | ref/02 §6.2 |
-| 7 | query | `getUsersPastOrders` | app, web | C (own) | app `src/apollo/queries.js` `getUsersPastOrders`; web `lib/api/graphql/queries/orders/index.ts` `GET_USERS_PAST_ORDERS` | ref/02 §6.2 |
-| 8 | mutation | `abortOrder` | app, web, rider (copy) | C (own, PENDING only) | app `src/apollo/mutations.js` `cancelOrder` (anonymous operation); web `lib/api/graphql/mutations/orders/index.ts` `ABORT_ORDER`; rider `lib/apollo/mutations/order.mutation.ts` `cancelOrder` | ref/02 §6.5; ref/03 §2.11 |
-| 9 | mutation | `reviewOrder` | app, web, rider (copy) | C (own, DELIVERED only) | app `src/apollo/mutations.js` `reviewOrder`; web `lib/api/graphql/mutations/orders/index.ts` `ADD_REVIEW_ORDER`; rider `lib/apollo/mutations/order.mutation.ts` `reviewOrder` | ref/02 §6.6 |
-| 10 | query | `restaurantOrders` | store | R/V (own restaurants); A gets `[]` | `enatega-multivendor-store`, `lib/apollo/queries/orders.ts`, `GET_ORDERS` | ref/03 §1.4 |
-| 11 | mutation | `acceptOrder` | store | R/V (own), A | store `lib/apollo/mutations/order.mutation.ts` `ACCEPT_ORDER` | ref/03 §1.8, §B |
-| 12 | mutation | `cancelOrder` | store | R/V (own, PENDING), A (any non-terminal) | store `lib/apollo/mutations/order.mutation.ts` `CANCEL_ORDER` | ref/03 §1.9, §B |
-| 13 | mutation | `orderPickedUp` | store | R/V (own), A | store `lib/apollo/mutations/order.mutation.ts` `PICK_UP_ORDER` | ref/03 §1.10, §B |
-| 14 | mutation | `muteRing` | store | R/V (own), A | store `lib/apollo/mutations/order.mutation.ts` `MUTATE_ORDER_RING` | ref/03 §1.7 |
-| 15 | query | `allOrders` | admin | A, S(Orders) | `enatega-multivendor-admin`, `lib/api/graphql/queries/orders/index.ts`, `GET_ORDERS` | ref/04 §2.12, §B |
-| 16 | query | `allOrdersPaginated` | admin | A, S(Orders) | admin `lib/api/graphql/queries/orders/index.ts` `GET_ALL_ORDERS_PAGINATED` | ref/04 §2.12, §2.1 (`dateKeyword`), §4 (P2) |
-| 17 | query | `allOrdersWithoutPagination` | admin | A, S(Orders) | admin `lib/api/graphql/queries/orders/index.ts` `GET_ORDERS_WITHOUT_PAGINATION` | ref/04 §2.12 |
-| 18 | query | `ordersByRestId` | admin | A, S(Orders\|Stores), R/V (own) | admin `lib/api/graphql/queries/orders/index.ts` `GET_ORDER_BY_RESTAURANT` | ref/04 §2.12, §B |
-| 19 | query | `ordersByRestIdWithoutPagination` | admin | A, S(Orders\|Stores), R/V (own) | admin `lib/api/graphql/queries/orders/index.ts` `GET_ORDER_BY_RESTAURANT_WITHOUT_PAGINATION` | ref/04 §2.12, §B |
-| 20 | query | `orderFilterOptions` | admin | A, S(Orders) | admin `lib/api/graphql/queries/orders/index.ts` `GET_ORDER_FILTER_OPTIONS` | ref/04 §2.12 |
-| 21 | mutation | `updateStatus` | admin | A, S(Dispatch\|Orders) | admin `lib/api/graphql/mutations/dispatch/index.ts` `UPDATE_STATUS` | ref/04 §2.1 (Dispatch), §B; ref/03 §B |
-| 22 | subscription | `subscribePlaceOrder` | store, admin (unused) | R/V (own), A, S(Orders\|Stores) | store `lib/apollo/subscriptions.ts` `SUBSCRIBE_PLACE_ORDER`; admin `lib/api/graphql/subscription/order-subscription/index.ts` `SUBSCRIPTION_PLACE_ORDER` | ref/03 §1.5 |
-| 23 | subscription | `subscriptionOrder` | app, web, store, rider, admin | as `order` | app `src/apollo/subscriptions.js` `subscriptionOrder`; web `lib/api/graphql/subscription/orders/index.ts` `SUBSCRIPTION_ORDER`; store `lib/apollo/subscriptions.ts` `SUBSCRIPTION_ORDER_MULTI_VENDOR`; admin `lib/api/graphql/subscription/order-subscription/index.ts` `SUBSCRIPTION_ORDER`; rider `lib/apollo/subscriptions.ts` `SUBSCRIPTION_ORDERS` | ref/02 §6.4; ref/03 §1.6 |
-| 24 | subscription | `orderStatusChanged` | app, web | C (`userId` must equal the socket user) | app `src/apollo/subscriptions.js` `orderStatusChanged`; web `lib/api/graphql/subscription/orders/index.ts` `orderStatusChanged` (untagged string export) | ref/02 §6.4, §10 |
+| #   | Type         | Name                              | Apps (multivendor)            | Who may call                                                         | Documents used in tests (`app`, `file`, `exportName`)                                                                                                                                                                                                                                                                                                   | Reference                                   |
+| --- | ------------ | --------------------------------- | ----------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| 1   | mutation     | `coupon`                          | app, web                      | C                                                                    | `enatega-multivendor-app`, `src/apollo/mutations.js`, `applyCoupon`; `enatega-multivendor-web`, `lib/api/graphql/mutations/coupon/index.ts`, `VERIFY_COUPON`                                                                                                                                                                                            | ref/02 §5.5                                 |
+| 2   | mutation     | `placeOrder`                      | app, web, rider (unused copy) | C (Rd, A → FORBIDDEN)                                                | app `src/apollo/mutations.js` `placeOrder`; web `lib/api/graphql/mutations/orders/index.ts` `PLACE_ORDER`; `enatega-multivendor-rider`, `lib/apollo/mutations/order.mutation.ts`, `placeOrder`                                                                                                                                                          | ref/02 §5.2–§5.6, §11, §14; ref/03 §2.11    |
+| 3   | query        | `orders`                          | app, web, rider (copy)        | C (own orders)                                                       | app `src/apollo/queries.js` `myOrders`; web `lib/api/graphql/queries/orders/index.ts` `ORDERS`; rider `lib/apollo/queries/order/order-1.query.ts` `myOrders`                                                                                                                                                                                            | ref/02 §6.1, §5.7                           |
+| 4   | query        | `order`                           | app, rider                    | C (own), R/V (own restaurant), Rd (assigned), A, S(Orders\|Dispatch) | app `src/apollo/queries.js` `order`; rider `lib/apollo/queries/order/order-1.query.ts` `order`                                                                                                                                                                                                                                                          | ref/02 §6.1                                 |
+| 5   | query        | `orderDetails`                    | web                           | as `order`                                                           | web `lib/api/graphql/queries/order-tracking/index.ts` `ORDER_TRACKING`                                                                                                                                                                                                                                                                                  | ref/02 §6.1                                 |
+| 6   | query        | `getUsersActiveOrders`            | app, web                      | C (own)                                                              | app `src/apollo/queries.js` `getUsersActiveOrders`; web `lib/api/graphql/queries/orders/index.ts` `GET_USERS_ACTIVE_ORDERS`                                                                                                                                                                                                                             | ref/02 §6.2                                 |
+| 7   | query        | `getUsersPastOrders`              | app, web                      | C (own)                                                              | app `src/apollo/queries.js` `getUsersPastOrders`; web `lib/api/graphql/queries/orders/index.ts` `GET_USERS_PAST_ORDERS`                                                                                                                                                                                                                                 | ref/02 §6.2                                 |
+| 8   | mutation     | `abortOrder`                      | app, web, rider (copy)        | C (own, PENDING only)                                                | app `src/apollo/mutations.js` `cancelOrder` (anonymous operation); web `lib/api/graphql/mutations/orders/index.ts` `ABORT_ORDER`; rider `lib/apollo/mutations/order.mutation.ts` `cancelOrder`                                                                                                                                                          | ref/02 §6.5; ref/03 §2.11                   |
+| 9   | mutation     | `reviewOrder`                     | app, web, rider (copy)        | C (own, DELIVERED only)                                              | app `src/apollo/mutations.js` `reviewOrder`; web `lib/api/graphql/mutations/orders/index.ts` `ADD_REVIEW_ORDER`; rider `lib/apollo/mutations/order.mutation.ts` `reviewOrder`                                                                                                                                                                           | ref/02 §6.6                                 |
+| 10  | query        | `restaurantOrders`                | store                         | R/V (own restaurants); A gets `[]`                                   | `enatega-multivendor-store`, `lib/apollo/queries/orders.ts`, `GET_ORDERS`                                                                                                                                                                                                                                                                               | ref/03 §1.4                                 |
+| 11  | mutation     | `acceptOrder`                     | store                         | R/V (own), A                                                         | store `lib/apollo/mutations/order.mutation.ts` `ACCEPT_ORDER`                                                                                                                                                                                                                                                                                           | ref/03 §1.8, §B                             |
+| 12  | mutation     | `cancelOrder`                     | store                         | R/V (own, PENDING), A (any non-terminal)                             | store `lib/apollo/mutations/order.mutation.ts` `CANCEL_ORDER`                                                                                                                                                                                                                                                                                           | ref/03 §1.9, §B                             |
+| 13  | mutation     | `orderPickedUp`                   | store                         | R/V (own), A                                                         | store `lib/apollo/mutations/order.mutation.ts` `PICK_UP_ORDER`                                                                                                                                                                                                                                                                                          | ref/03 §1.10, §B                            |
+| 14  | mutation     | `muteRing`                        | store                         | R/V (own), A                                                         | store `lib/apollo/mutations/order.mutation.ts` `MUTATE_ORDER_RING`                                                                                                                                                                                                                                                                                      | ref/03 §1.7                                 |
+| 15  | query        | `allOrders`                       | admin                         | A, S(Orders)                                                         | `enatega-multivendor-admin`, `lib/api/graphql/queries/orders/index.ts`, `GET_ORDERS`                                                                                                                                                                                                                                                                    | ref/04 §2.12, §B                            |
+| 16  | query        | `allOrdersPaginated`              | admin                         | A, S(Orders)                                                         | admin `lib/api/graphql/queries/orders/index.ts` `GET_ALL_ORDERS_PAGINATED`                                                                                                                                                                                                                                                                              | ref/04 §2.12, §2.1 (`dateKeyword`), §4 (P2) |
+| 17  | query        | `allOrdersWithoutPagination`      | admin                         | A, S(Orders)                                                         | admin `lib/api/graphql/queries/orders/index.ts` `GET_ORDERS_WITHOUT_PAGINATION`                                                                                                                                                                                                                                                                         | ref/04 §2.12                                |
+| 18  | query        | `ordersByRestId`                  | admin                         | A, S(Orders\|Stores), R/V (own)                                      | admin `lib/api/graphql/queries/orders/index.ts` `GET_ORDER_BY_RESTAURANT`                                                                                                                                                                                                                                                                               | ref/04 §2.12, §B                            |
+| 19  | query        | `ordersByRestIdWithoutPagination` | admin                         | A, S(Orders\|Stores), R/V (own)                                      | admin `lib/api/graphql/queries/orders/index.ts` `GET_ORDER_BY_RESTAURANT_WITHOUT_PAGINATION`                                                                                                                                                                                                                                                            | ref/04 §2.12, §B                            |
+| 20  | query        | `orderFilterOptions`              | admin                         | A, S(Orders)                                                         | admin `lib/api/graphql/queries/orders/index.ts` `GET_ORDER_FILTER_OPTIONS`                                                                                                                                                                                                                                                                              | ref/04 §2.12                                |
+| 21  | mutation     | `updateStatus`                    | admin                         | A, S(Dispatch\|Orders)                                               | admin `lib/api/graphql/mutations/dispatch/index.ts` `UPDATE_STATUS`                                                                                                                                                                                                                                                                                     | ref/04 §2.1 (Dispatch), §B; ref/03 §B       |
+| 22  | subscription | `subscribePlaceOrder`             | store, admin (unused)         | R/V (own), A, S(Orders\|Stores)                                      | store `lib/apollo/subscriptions.ts` `SUBSCRIBE_PLACE_ORDER`; admin `lib/api/graphql/subscription/order-subscription/index.ts` `SUBSCRIPTION_PLACE_ORDER`                                                                                                                                                                                                | ref/03 §1.5                                 |
+| 23  | subscription | `subscriptionOrder`               | app, web, store, rider, admin | as `order`                                                           | app `src/apollo/subscriptions.js` `subscriptionOrder`; web `lib/api/graphql/subscription/orders/index.ts` `SUBSCRIPTION_ORDER`; store `lib/apollo/subscriptions.ts` `SUBSCRIPTION_ORDER_MULTI_VENDOR`; admin `lib/api/graphql/subscription/order-subscription/index.ts` `SUBSCRIPTION_ORDER`; rider `lib/apollo/subscriptions.ts` `SUBSCRIPTION_ORDERS` | ref/02 §6.4; ref/03 §1.6                    |
+| 24  | subscription | `orderStatusChanged`              | app, web                      | C (`userId` must equal the socket user)                              | app `src/apollo/subscriptions.js` `orderStatusChanged`; web `lib/api/graphql/subscription/orders/index.ts` `orderStatusChanged` (untagged string export)                                                                                                                                                                                                | ref/02 §6.4, §10                            |
 
 **Count check:** 24 rows = 24 entries with `"lane": "L5"` in `OPERATION_LANES.json` (verified with `node -e "…filter(o=>o.lane==='L5').length"` → `24`).
 
@@ -309,11 +309,24 @@ extend type Query {
     riderId: ID
   ): PaginatedOrders!
   # admin. Auth: ADMIN, STAFF(Orders).
-  allOrdersWithoutPagination(dateKeyword: String, starting_date: String, ending_date: String): [Order!]!
+  allOrdersWithoutPagination(
+    dateKeyword: String
+    starting_date: String
+    ending_date: String
+  ): [Order!]!
   # admin store/vendor area. Auth: ADMIN, STAFF(Orders|Stores), RESTAURANT/VENDOR own.
-  ordersByRestId(restaurant: String!, page: Int, rows: Int, search: String, orderStatus: [String]): PaginatedOrders!
+  ordersByRestId(
+    restaurant: String!
+    page: Int
+    rows: Int
+    search: String
+    orderStatus: [String]
+  ): PaginatedOrders!
   # admin store/vendor area. Auth: ADMIN, STAFF(Orders|Stores), RESTAURANT/VENDOR own.
-  ordersByRestIdWithoutPagination(restaurant: String!, search: String): [Order!]!
+  ordersByRestIdWithoutPagination(
+    restaurant: String!
+    search: String
+  ): [Order!]!
   # admin /management/orders filters. Auth: ADMIN, STAFF(Orders).
   orderFilterOptions: OrderFilterOptions!
 }
@@ -688,14 +701,14 @@ Consumers must filter `"orderStatus"` themselves (e.g. popularity counts only `D
 
 ### 4.3 Cross-lane foreign keys (`docs/CROSS_LANE_FKS.md`, lead applies in W1-Z.1)
 
-| Column | References | On delete |
-|---|---|---|
-| `Order.userId` | L1 customer user table (`IdentityUser.id` today; the table behind `UsersPort.customer`) | RESTRICT |
-| `Order.restaurantId` | L3 `Restaurant.id` | RESTRICT |
-| `Order.vendorId` | L3 `Vendor.id` | SET NULL |
-| `Order.zoneId` | L2 `Zone.id` | SET NULL |
-| `Order.riderId` | L6 `Rider.id` | RESTRICT |
-| `OrderStatusHistory.riderId` | L6 `Rider.id` | RESTRICT |
+| Column                       | References                                                                              | On delete |
+| ---------------------------- | --------------------------------------------------------------------------------------- | --------- |
+| `Order.userId`               | L1 customer user table (`IdentityUser.id` today; the table behind `UsersPort.customer`) | RESTRICT  |
+| `Order.restaurantId`         | L3 `Restaurant.id`                                                                      | RESTRICT  |
+| `Order.vendorId`             | L3 `Vendor.id`                                                                          | SET NULL  |
+| `Order.zoneId`               | L2 `Zone.id`                                                                            | SET NULL  |
+| `Order.riderId`              | L6 `Rider.id`                                                                           | RESTRICT  |
+| `OrderStatusHistory.riderId` | L6 `Rider.id`                                                                           | RESTRICT  |
 
 Deliberately **no** FK: `Order.couponId` (snapshot; coupons may be deleted, title and percent are copied), `OrderItem.foodId`, `variationId`, `OrderItemAddon.addonId`, `OrderItemOption.optionId` (snapshots; catalog rows may be deleted after ordering).
 
@@ -710,7 +723,13 @@ export type L5OrderSeed = {
   restaurantId: string;
   zoneId: string | null;
   riderId: string | null;
-  status: "PENDING" | "ACCEPTED" | "ASSIGNED" | "PICKED" | "DELIVERED" | "CANCELLED";
+  status:
+    | "PENDING"
+    | "ACCEPTED"
+    | "ASSIGNED"
+    | "PICKED"
+    | "DELIVERED"
+    | "CANCELLED";
   isPickedUp: boolean;
   paymentMethod: "COD" | "STRIPE" | "PAYPAL";
   paymentStatus: "PENDING" | "PAID" | "REFUNDED";
@@ -720,7 +739,10 @@ export type L5OrderSeed = {
   riderName: string | null;
 };
 export function l5OrderFactory(pool: Pick<Pool, "query">) {
-  return async (overrides: Partial<L5OrderSeed> & Pick<L5OrderSeed, "userId" | "restaurantId">) => {
+  return async (
+    overrides: Partial<L5OrderSeed> &
+      Pick<L5OrderSeed, "userId" | "restaurantId">,
+  ) => {
     const now = overrides.createdAt ?? new Date();
     const seed: L5OrderSeed = {
       id: randomUUID(),
@@ -736,7 +758,9 @@ export function l5OrderFactory(pool: Pick<Pool, "query">) {
       riderName: null,
       ...overrides,
     };
-    const { rows } = await pool.query<{ n: string }>(`SELECT nextval('"OrderNumberSeq"')::text AS n`);
+    const { rows } = await pool.query<{ n: string }>(
+      `SELECT nextval('"OrderNumberSeq"')::text AS n`,
+    );
     const orderId = `SEED-${BigInt(rows[0].n).toString(36).toUpperCase().padStart(6, "0")}`;
     const at = (status: string) => (seed.status === status ? now : null);
     await pool.query(
@@ -749,10 +773,26 @@ export function l5OrderFactory(pool: Pick<Pool, "query">) {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'MYR','RM',2,1000,0,$12,80,0,$13,0,8,'Home','1 Seed Street',
          101.7,3.15,$14,101.6869,3.139,$15,$16,$17,$17,NULL,$18,$19,$20,$21,$22,$17,$17)`,
       [
-        seed.id, orderId, rows[0].n, seed.userId, seed.restaurantId, seed.zoneId, seed.riderId, seed.status,
-        seed.isPickedUp, seed.paymentMethod, seed.paymentStatus, seed.isPickedUp ? 0 : 200,
-        seed.isPickedUp ? 1080 : 1280, seed.restaurantName, seed.customerName, seed.riderName, now,
-        ["ACCEPTED", "ASSIGNED", "PICKED", "DELIVERED"].includes(seed.status) ? now : null,
+        seed.id,
+        orderId,
+        rows[0].n,
+        seed.userId,
+        seed.restaurantId,
+        seed.zoneId,
+        seed.riderId,
+        seed.status,
+        seed.isPickedUp,
+        seed.paymentMethod,
+        seed.paymentStatus,
+        seed.isPickedUp ? 0 : 200,
+        seed.isPickedUp ? 1080 : 1280,
+        seed.restaurantName,
+        seed.customerName,
+        seed.riderName,
+        now,
+        ["ACCEPTED", "ASSIGNED", "PICKED", "DELIVERED"].includes(seed.status)
+          ? now
+          : null,
         ["ASSIGNED", "PICKED", "DELIVERED"].includes(seed.status) ? now : null,
         ["PICKED", "DELIVERED"].includes(seed.status) ? now : null,
         at("DELIVERED"),
@@ -789,11 +829,32 @@ These are prerequisites. Each is small and exact; the tasks below assume them. R
 
 ```ts
 export type PricedLine = {
-  foodId: string; foodTitle: string; foodDescription: string | null; foodImage: string | null;
-  variationId: string; variationTitle: string; unitPriceMinor: number; variationDiscountedMinor: number;
+  foodId: string;
+  foodTitle: string;
+  foodDescription: string | null;
+  foodImage: string | null;
+  variationId: string;
+  variationTitle: string;
+  unitPriceMinor: number;
+  variationDiscountedMinor: number;
   // every addon attached to the variation (selected or not), for min/max validation and snapshots
-  variationAddons: { addonId: string; title: string; description: string | null; quantityMinimum: number; quantityMaximum: number }[];
-  addons: { addonId: string; title: string; options: { optionId: string; title: string; description: string | null; priceMinor: number }[] }[];
+  variationAddons: {
+    addonId: string;
+    title: string;
+    description: string | null;
+    quantityMinimum: number;
+    quantityMaximum: number;
+  }[];
+  addons: {
+    addonId: string;
+    title: string;
+    options: {
+      optionId: string;
+      title: string;
+      description: string | null;
+      priceMinor: number;
+    }[];
+  }[];
   isOutOfStock: boolean;
 };
 ```
@@ -808,11 +869,26 @@ Contract for `priceLines`: returns one `PricedLine` per requested line, in order
 
 ```ts
 export const REVIEWS_PORT = Symbol("REVIEWS_PORT");
-export interface ReviewsPort {                       // L3
-  forOrders(orderIds: string[]): Promise<{ orderId: string; id: string; rating: number; description: string | null }[]>;
+export interface ReviewsPort {
+  // L3
+  forOrders(orderIds: string[]): Promise<
+    {
+      orderId: string;
+      id: string;
+      rating: number;
+      description: string | null;
+    }[]
+  >;
   // Creates the review and updates restaurant aggregates; throws BAD_USER_INPUT
   // "This order has already been reviewed" when one exists for orderId.
-  create(input: { orderId: string; restaurantId: string; userId: string; rating: number; description: string | null; comments: string | null }): Promise<{ id: string; rating: number; description: string | null }>;
+  create(input: {
+    orderId: string;
+    restaurantId: string;
+    userId: string;
+    rating: number;
+    description: string | null;
+    comments: string | null;
+  }): Promise<{ id: string; rating: number; description: string | null }>;
 }
 ```
 
@@ -867,18 +943,19 @@ Numbers are referenced from tests (`R<n>` in test names). UNVERIFIED = not prova
 
 - **R26 Transition table** (the only allowed moves; `fulfilment` PICKUP = `isPickedUp`):
 
-  | From → To | Actor classes | Fulfilment |
-  |---|---|---|
-  | PENDING → ACCEPTED | RESTAURANT, ADMIN | any |
-  | PENDING → CANCELLED | CUSTOMER, RESTAURANT, ADMIN, SYSTEM | any |
-  | ACCEPTED → ASSIGNED | RIDER, ADMIN | DELIVERY |
-  | ASSIGNED → ASSIGNED (re-assign) | ADMIN | DELIVERY |
-  | ASSIGNED → PICKED | RIDER, ADMIN | DELIVERY |
-  | PICKED → DELIVERED | RIDER, ADMIN | DELIVERY |
-  | ACCEPTED → DELIVERED | RESTAURANT, ADMIN | PICKUP |
-  | ACCEPTED/ASSIGNED/PICKED → CANCELLED | ADMIN | any |
+  | From → To                            | Actor classes                       | Fulfilment |
+  | ------------------------------------ | ----------------------------------- | ---------- |
+  | PENDING → ACCEPTED                   | RESTAURANT, ADMIN                   | any        |
+  | PENDING → CANCELLED                  | CUSTOMER, RESTAURANT, ADMIN, SYSTEM | any        |
+  | ACCEPTED → ASSIGNED                  | RIDER, ADMIN                        | DELIVERY   |
+  | ASSIGNED → ASSIGNED (re-assign)      | ADMIN                               | DELIVERY   |
+  | ASSIGNED → PICKED                    | RIDER, ADMIN                        | DELIVERY   |
+  | PICKED → DELIVERED                   | RIDER, ADMIN                        | DELIVERY   |
+  | ACCEPTED → DELIVERED                 | RESTAURANT, ADMIN                   | PICKUP     |
+  | ACCEPTED/ASSIGNED/PICKED → CANCELLED | ADMIN                               | any        |
 
   Actor class: CUSTOMER; RESTAURANT and VENDOR → RESTAURANT; RIDER; ADMIN and STAFF → ADMIN; SYSTEM (worker). The server never emits `COMPLETED`, `ON_ROUTE` or `CANCELLEDBYREST`; store rejection is `CANCELLED` + `reason`; never backwards (the app's status-rank merge drops regressions).
+
 - **R27 Function semantics** (`l5_transition_order`, Task 6): row lock; **idempotent** per (order, target) — current status = target (and, for ASSIGNED, same or no rider given) returns `NOOP` with no writes; else `expectedVersion` mismatch → `L5_VERSION_CONFLICT`; rule missing → `L5_TRANSITION_NOT_ALLOWED`; ASSIGNED without any rider → `L5_RIDER_REQUIRED`; ACCEPTED without 1..180 prep minutes → `L5_PREP_TIME_REQUIRED`. On apply: `version + 1`, `updatedAt`, timestamps (`acceptedAt`+`preparationTime = now + prep`+`selectedPrepTime`; `assignedAt`+rider snapshot+`isRiderRinged false`; `pickedAt`; `deliveredAt`+`completionTime`; `cancelledAt`+`reason`), `isRinged false` on ACCEPTED/CANCELLED, `acceptDeadlineAt null` once not PENDING, COD `DELIVERED` → `paymentStatus PAID`, `paidMinor = totalMinor`, `paidAt` (cash collected; UNVERIFIED for pickup), history row, outbox `order.transitioned {from, to, actor, reason, order: OrderSnapshot}` — all in the caller's transaction. `riderId` is kept on cancellation (L6/L7 need it).
 - **R28 TransitionService** maps function errors: NOT_FOUND → `NOT_FOUND` `"Order not found"`; RIDER_REQUIRED → `"Assign a rider before marking the order as assigned"`; PREP_TIME → `"Preparation time must be between 1 and 180 minutes"`; NOT_ALLOWED or VERSION_CONFLICT → re-read; if the move is not allowed from the fresh status → `BAD_USER_INPUT` `"Order status cannot move from <fresh> to <to>"`, else `CONFLICT` `"The order changed, refresh and try again"`. After commit, when applied: publish `subscriptionOrder`, `orderStatusChanged` origin `"update"`, and (when visible) `subscribePlaceOrder` origin `"update"`. ETA: ACCEPTED writes the initial estimate (R36) and sets `completionTime` = estimated arrival; later transitions advance phase/version of an existing ETA.
 - **R29 `abortOrder`.** C own; only `PENDING` (`"Order can only be cancelled while it is pending"`); reason `"Cancelled by customer"`. A paid card order's refund is L7's reaction to `order.transitioned` (provider blocker).
@@ -904,36 +981,38 @@ Numbers are referenced from tests (`R<n>` in test names). UNVERIFIED = not prova
 - **R43 Error wording.** No L5 message contains `unauthorized`, `unauthenticated`, `jwt expired`, `invalid token` or `forbidden` (enforced by `appError` and `pnpm check:errors`).
 
 ---
+
 ## 7. Tasks
 
 Paths are relative to `implementation/`. Branch: `wave2/L5-orders` from `enatega-ui-backend`. Unit tests: `pnpm --filter @fairbite/api exec vitest run <file>`. Integration tests: `pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts <file>` (Docker required; master §10).
 
-| # | Task | Rules |
-|---|---|---|
-| 1 | Pricing engine (pure) | R2–R8 |
-| 2 | Menu-selection validation (pure) | R13 |
-| 3 | Transition rules mirror, human ids, deadlines (pure) | R17, R26, R38 |
-| 4 | ETA estimate (pure) | R36 |
-| 5 | Admin filters and translated date keywords (pure) | R23–R24 |
-| 6 | Central transition SQL function + parity and view tests | R26–R27, R38, §4.2 views |
-| 7 | Inputs (zod) and mappers (pure) | R12–R16, R21, R30, R34–R35 |
-| 8 | Integration harness and fakes (lane-local) | — |
-| 9 | Repository, publisher, transition service, read model, `OrdersPort`, module wiring | R27–R28, R37, R39 |
-| 10 | `placeOrder` and `coupon` | R1–R19 |
-| 11 | Customer reads: `orders`, `order`, `orderDetails`, `getUsersActiveOrders`, `getUsersPastOrders` | R20–R21 |
-| 12 | Customer actions: `abortOrder`, `reviewOrder` | R29, R35 |
-| 13 | Store: `restaurantOrders`, `acceptOrder`, `cancelOrder`, `orderPickedUp`, `muteRing` | R22, R30–R33, R37 |
-| 14 | Admin reads: `allOrders`, `allOrdersPaginated`, `allOrdersWithoutPagination`, `ordersByRestId`, `ordersByRestIdWithoutPagination`, `orderFilterOptions` | R23–R25 |
-| 15 | Admin `updateStatus` | R34 |
-| 16 | Subscriptions: `subscriptionOrder`, `orderStatusChanged`, `subscribePlaceOrder` | R39–R42 |
-| 17 | Worker accept-timeout job (exactly once, race-safe) | R38 |
-| 18 | Lane gate G2 | — |
+| #   | Task                                                                                                                                                    | Rules                      |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| 1   | Pricing engine (pure)                                                                                                                                   | R2–R8                      |
+| 2   | Menu-selection validation (pure)                                                                                                                        | R13                        |
+| 3   | Transition rules mirror, human ids, deadlines (pure)                                                                                                    | R17, R26, R38              |
+| 4   | ETA estimate (pure)                                                                                                                                     | R36                        |
+| 5   | Admin filters and translated date keywords (pure)                                                                                                       | R23–R24                    |
+| 6   | Central transition SQL function + parity and view tests                                                                                                 | R26–R27, R38, §4.2 views   |
+| 7   | Inputs (zod) and mappers (pure)                                                                                                                         | R12–R16, R21, R30, R34–R35 |
+| 8   | Integration harness and fakes (lane-local)                                                                                                              | —                          |
+| 9   | Repository, publisher, transition service, read model, `OrdersPort`, module wiring                                                                      | R27–R28, R37, R39          |
+| 10  | `placeOrder` and `coupon`                                                                                                                               | R1–R19                     |
+| 11  | Customer reads: `orders`, `order`, `orderDetails`, `getUsersActiveOrders`, `getUsersPastOrders`                                                         | R20–R21                    |
+| 12  | Customer actions: `abortOrder`, `reviewOrder`                                                                                                           | R29, R35                   |
+| 13  | Store: `restaurantOrders`, `acceptOrder`, `cancelOrder`, `orderPickedUp`, `muteRing`                                                                    | R22, R30–R33, R37          |
+| 14  | Admin reads: `allOrders`, `allOrdersPaginated`, `allOrdersWithoutPagination`, `ordersByRestId`, `ordersByRestIdWithoutPagination`, `orderFilterOptions` | R23–R25                    |
+| 15  | Admin `updateStatus`                                                                                                                                    | R34                        |
+| 16  | Subscriptions: `subscriptionOrder`, `orderStatusChanged`, `subscribePlaceOrder`                                                                         | R39–R42                    |
+| 17  | Worker accept-timeout job (exactly once, race-safe)                                                                                                     | R38                        |
+| 18  | Lane gate G2                                                                                                                                            | —                          |
 
 ---
 
 ### Task 1: Pricing engine (pure)
 
 **Files:**
+
 - Create: `services/api/src/modules/pricing/engine.ts`
 - Test: `services/api/test/unit/pricing/engine.spec.ts`
 
@@ -983,7 +1062,13 @@ describe("priceOrder — the worked example (R2–R8)", () => {
   });
   it("balances: total = items - discount + delivery + tax + tip", () => {
     const r = priceOrder(base());
-    expect(r.totalMinor).toBe(r.itemsMinor - r.discountMinor + r.deliveryMinor + r.taxMinor + r.tipMinor);
+    expect(r.totalMinor).toBe(
+      r.itemsMinor -
+        r.discountMinor +
+        r.deliveryMinor +
+        r.taxMinor +
+        r.tipMinor,
+    );
   });
 });
 
@@ -993,45 +1078,69 @@ describe("coupon (R3)", () => {
   });
   it("takes a half-up percentage of the items subtotal only", () => {
     const r = priceOrder(
-      base({ lines: [{ quantity: 1, variationPriceMinor: 999, optionPricesMinor: [] }], couponPercent: 12.5, minimumOrderMinor: 0 }),
+      base({
+        lines: [
+          { quantity: 1, variationPriceMinor: 999, optionPricesMinor: [] },
+        ],
+        couponPercent: 12.5,
+        minimumOrderMinor: 0,
+      }),
     );
     expect(r.discountMinor).toBe(125);
   });
   it("caps a 100 % coupon at the subtotal and still charges delivery and tax", () => {
-    const r = priceOrder(base({ couponPercent: 100, minimumOrderMinor: 0, tip: 0 }));
+    const r = priceOrder(
+      base({ couponPercent: 100, minimumOrderMinor: 0, tip: 0 }),
+    );
     expect(r.discountMinor).toBe(2900);
     expect(r.deliveryMinor).toBe(600);
     expect(r.taxMinor).toBe(48);
     expect(r.totalMinor).toBe(648);
   });
   it("rejects an out-of-range coupon percent coming from the coupons port", () => {
-    expect(() => priceOrder(base({ couponPercent: 101 }))).toThrow(/Invalid coupon percent/);
+    expect(() => priceOrder(base({ couponPercent: 101 }))).toThrow(
+      /Invalid coupon percent/,
+    );
   });
 });
 
 describe("delivery fee (R4)", () => {
   it("charges the fixed rate regardless of distance", () => {
-    expect(deliveryFeeMinor({ costType: "fixed", rateMinor: 300 }, false, null)).toBe(300);
+    expect(
+      deliveryFeeMinor({ costType: "fixed", rateMinor: 300 }, false, null),
+    ).toBe(300);
   });
   it("charges ceil(km) × rate for perKm", () => {
-    expect(deliveryFeeMinor({ costType: "perKm", rateMinor: 200 }, false, 2.3)).toBe(600);
-    expect(deliveryFeeMinor({ costType: "perKm", rateMinor: 200 }, false, 3)).toBe(600);
+    expect(
+      deliveryFeeMinor({ costType: "perKm", rateMinor: 200 }, false, 2.3),
+    ).toBe(600);
+    expect(
+      deliveryFeeMinor({ costType: "perKm", rateMinor: 200 }, false, 3),
+    ).toBe(600);
   });
   it("ignores float noise below six decimals but bills a real excess", () => {
     expect(roundedDistanceKm(2.0000000001)).toBe(2);
     expect(roundedDistanceKm(2.000001)).toBe(3);
   });
   it("falls back to one rate when the distance is zero (app Checkout.js:304)", () => {
-    expect(deliveryFeeMinor({ costType: "perKm", rateMinor: 200 }, false, 0)).toBe(200);
+    expect(
+      deliveryFeeMinor({ costType: "perKm", rateMinor: 200 }, false, 0),
+    ).toBe(200);
   });
   it("is free for pickup", () => {
-    expect(deliveryFeeMinor({ costType: "fixed", rateMinor: 300 }, true, null)).toBe(0);
+    expect(
+      deliveryFeeMinor({ costType: "fixed", rateMinor: 300 }, true, null),
+    ).toBe(0);
   });
   it("refuses a perKm quote without a distance", () => {
-    expect(() => deliveryFeeMinor({ costType: "perKm", rateMinor: 200 }, false, null)).toThrow(/Invalid delivery distance/);
+    expect(() =>
+      deliveryFeeMinor({ costType: "perKm", rateMinor: 200 }, false, null),
+    ).toThrow(/Invalid delivery distance/);
   });
   it("refuses a negative rate", () => {
-    expect(() => deliveryFeeMinor({ costType: "fixed", rateMinor: -1 }, false, null)).toThrow(/Invalid delivery rate/);
+    expect(() =>
+      deliveryFeeMinor({ costType: "fixed", rateMinor: -1 }, false, null),
+    ).toThrow(/Invalid delivery rate/);
   });
 });
 
@@ -1039,7 +1148,9 @@ describe("tax (R5)", () => {
   const taxAt = (subtotal: number) =>
     priceOrder(
       base({
-        lines: [{ quantity: 1, variationPriceMinor: subtotal, optionPricesMinor: [] }],
+        lines: [
+          { quantity: 1, variationPriceMinor: subtotal, optionPricesMinor: [] },
+        ],
         couponPercent: null,
         delivery: { costType: "fixed", rateMinor: 0 },
         taxPercent: 5,
@@ -1053,7 +1164,9 @@ describe("tax (R5)", () => {
   });
   it("supports a zero tax rate and rejects > 100 %", () => {
     expect(priceOrder(base({ taxPercent: 0 })).taxMinor).toBe(0);
-    expect(() => priceOrder(base({ taxPercent: 101 }))).toThrow(/Invalid tax percent/);
+    expect(() => priceOrder(base({ taxPercent: 101 }))).toThrow(
+      /Invalid tax percent/,
+    );
   });
 });
 
@@ -1064,11 +1177,17 @@ describe("tip (R6)", () => {
     expect(tipMinor(100, 0, false, 10_000)).toBe(100);
   });
   it("rejects NaN and infinity (web 'Other' sends NaN)", () => {
-    expect(() => tipMinor(Number.NaN, 2, false, 10_000)).toThrow("Invalid tip amount");
-    expect(() => tipMinor(Number.POSITIVE_INFINITY, 2, false, 10_000)).toThrow("Invalid tip amount");
+    expect(() => tipMinor(Number.NaN, 2, false, 10_000)).toThrow(
+      "Invalid tip amount",
+    );
+    expect(() => tipMinor(Number.POSITIVE_INFINITY, 2, false, 10_000)).toThrow(
+      "Invalid tip amount",
+    );
   });
   it("rejects negative tips even for pickup", () => {
-    expect(() => tipMinor(-1, 2, true, 10_000)).toThrow("Tip must not be negative");
+    expect(() => tipMinor(-1, 2, true, 10_000)).toThrow(
+      "Tip must not be negative",
+    );
   });
   it("stores zero for pickup whatever the client sent", () => {
     expect(tipMinor(5, 2, true, 10_000)).toBe(0);
@@ -1082,29 +1201,57 @@ describe("tip (R6)", () => {
 
 describe("minimum order (R7) and line validation (R13)", () => {
   it("rejects below the minimum and accepts exactly the minimum", () => {
-    expect(() => priceOrder(base({ minimumOrderMinor: 3211 }))).toThrow("Minimum order not met");
+    expect(() => priceOrder(base({ minimumOrderMinor: 3211 }))).toThrow(
+      "Minimum order not met",
+    );
     expect(priceOrder(base({ minimumOrderMinor: 3210 })).totalMinor).toBe(3717);
   });
   it("counts delivery towards the minimum and ignores it for pickup", () => {
-    expect(() => priceOrder(base({ isPickedUp: true, tip: 0, minimumOrderMinor: 2611 }))).toThrow("Minimum order not met");
+    expect(() =>
+      priceOrder(base({ isPickedUp: true, tip: 0, minimumOrderMinor: 2611 })),
+    ).toThrow("Minimum order not met");
   });
   it("rejects empty carts and more than 50 lines", () => {
     expect(() => priceOrder(base({ lines: [] }))).toThrow("Your cart is empty");
-    const line = { quantity: 1, variationPriceMinor: 100, optionPricesMinor: [] };
-    expect(() => priceOrder(base({ lines: Array.from({ length: 51 }, () => line) }))).toThrow("Too many items in one order");
+    const line = {
+      quantity: 1,
+      variationPriceMinor: 100,
+      optionPricesMinor: [],
+    };
+    expect(() =>
+      priceOrder(base({ lines: Array.from({ length: 51 }, () => line) })),
+    ).toThrow("Too many items in one order");
   });
   it.each([0, -1, 1.5, 100])("rejects quantity %s", (quantity) => {
-    expect(() => priceOrder(base({ lines: [{ quantity, variationPriceMinor: 100, optionPricesMinor: [] }] }))).toThrow(
-      "Invalid quantity",
-    );
+    expect(() =>
+      priceOrder(
+        base({
+          lines: [
+            { quantity, variationPriceMinor: 100, optionPricesMinor: [] },
+          ],
+        }),
+      ),
+    ).toThrow("Invalid quantity");
   });
   it("treats negative catalogue prices as an internal error, not a user error", () => {
-    expect(() => priceOrder(base({ lines: [{ quantity: 1, variationPriceMinor: -5, optionPricesMinor: [] }] }))).toThrow(
-      /Invalid variation price/,
-    );
-    expect(() => priceOrder(base({ lines: [{ quantity: 1, variationPriceMinor: 5, optionPricesMinor: [-1] }] }))).toThrow(
-      /Invalid option price/,
-    );
+    expect(() =>
+      priceOrder(
+        base({
+          lines: [
+            { quantity: 1, variationPriceMinor: -5, optionPricesMinor: [] },
+          ],
+        }),
+      ),
+    ).toThrow(/Invalid variation price/);
+    expect(() =>
+      priceOrder(
+        base({
+          lines: [
+            { quantity: 1, variationPriceMinor: 5, optionPricesMinor: [-1] },
+          ],
+        }),
+      ),
+    ).toThrow(/Invalid option price/);
   });
 });
 
@@ -1125,7 +1272,10 @@ describe("invariants over generated carts", () => {
         base({
           lines,
           couponPercent: next(3) === 0 ? null : next(101),
-          delivery: { costType: next(2) === 0 ? "fixed" : "perKm", rateMinor: next(500) },
+          delivery: {
+            costType: next(2) === 0 ? "fixed" : "perKm",
+            rateMinor: next(500),
+          },
           isPickedUp: next(4) === 0,
           distanceKm: next(20000) / 1000,
           taxPercent: next(2500) / 100,
@@ -1133,9 +1283,22 @@ describe("invariants over generated carts", () => {
           minimumOrderMinor: 0,
         }),
       );
-      for (const value of [r.itemsMinor, r.discountMinor, r.deliveryMinor, r.taxMinor, r.tipMinor, r.totalMinor])
+      for (const value of [
+        r.itemsMinor,
+        r.discountMinor,
+        r.deliveryMinor,
+        r.taxMinor,
+        r.tipMinor,
+        r.totalMinor,
+      ])
         expect(Number.isSafeInteger(value) && value >= 0).toBe(true);
-      expect(r.totalMinor).toBe(r.itemsMinor - r.discountMinor + r.deliveryMinor + r.taxMinor + r.tipMinor);
+      expect(r.totalMinor).toBe(
+        r.itemsMinor -
+          r.discountMinor +
+          r.deliveryMinor +
+          r.taxMinor +
+          r.tipMinor,
+      );
       expect(r.discountMinor).toBeLessThanOrEqual(r.itemsMinor);
     }
   });
@@ -1161,7 +1324,10 @@ import { percentOf, toMinor } from "../../kernel/money.js";
 export const MAX_LINES = 50;
 export const MAX_QUANTITY = 99;
 
-export type DeliveryPricing = { costType: "fixed" | "perKm"; rateMinor: number };
+export type DeliveryPricing = {
+  costType: "fixed" | "perKm";
+  rateMinor: number;
+};
 export type PricingLine = {
   quantity: number;
   variationPriceMinor: number;
@@ -1191,11 +1357,13 @@ export type PricedTotals = {
 // Catalogue/config values come from other lanes; a bad one is a server defect (masked as
 // INTERNAL_SERVER_ERROR by formatError), never a user error.
 function assertMinor(value: number, label: string): number {
-  if (!Number.isSafeInteger(value) || value < 0) throw new Error(`Invalid ${label}`);
+  if (!Number.isSafeInteger(value) || value < 0)
+    throw new Error(`Invalid ${label}`);
   return value;
 }
 function assertPercent(value: number, label: string): number {
-  if (!Number.isFinite(value) || value < 0 || value > 100) throw new Error(`Invalid ${label}`);
+  if (!Number.isFinite(value) || value < 0 || value > 100)
+    throw new Error(`Invalid ${label}`);
   return value;
 }
 
@@ -1219,8 +1387,14 @@ export function deliveryFeeMinor(
   return fee > 0 ? fee : rate;
 }
 
-export function tipMinor(tip: number, exponent: number, isPickedUp: boolean, capMinor: number): number {
-  if (typeof tip !== "number" || !Number.isFinite(tip)) throw appError("BAD_USER_INPUT", "Invalid tip amount");
+export function tipMinor(
+  tip: number,
+  exponent: number,
+  isPickedUp: boolean,
+  capMinor: number,
+): number {
+  if (typeof tip !== "number" || !Number.isFinite(tip))
+    throw appError("BAD_USER_INPUT", "Invalid tip amount");
   if (tip < 0) throw appError("BAD_USER_INPUT", "Tip must not be negative");
   if (isPickedUp) return 0;
   const minor = toMinor(tip, exponent);
@@ -1230,16 +1404,25 @@ export function tipMinor(tip: number, exponent: number, isPickedUp: boolean, cap
 }
 
 export function priceOrder(input: PricingInput): PricedTotals {
-  if (input.lines.length === 0) throw appError("BAD_USER_INPUT", "Your cart is empty");
-  if (input.lines.length > MAX_LINES) throw appError("BAD_USER_INPUT", "Too many items in one order");
+  if (input.lines.length === 0)
+    throw appError("BAD_USER_INPUT", "Your cart is empty");
+  if (input.lines.length > MAX_LINES)
+    throw appError("BAD_USER_INPUT", "Too many items in one order");
   const lines = input.lines.map((line) => {
-    if (!Number.isInteger(line.quantity) || line.quantity < 1 || line.quantity > MAX_QUANTITY)
+    if (
+      !Number.isInteger(line.quantity) ||
+      line.quantity < 1 ||
+      line.quantity > MAX_QUANTITY
+    )
       throw appError("BAD_USER_INPUT", "Invalid quantity");
     const unitPriceMinor = line.optionPricesMinor.reduce(
       (sum, price) => sum + assertMinor(price, "option price"),
       assertMinor(line.variationPriceMinor, "variation price"),
     );
-    return { unitPriceMinor, lineTotalMinor: assertMinor(unitPriceMinor * line.quantity, "line total") };
+    return {
+      unitPriceMinor,
+      lineTotalMinor: assertMinor(unitPriceMinor * line.quantity, "line total"),
+    };
   });
   const itemsMinor = assertMinor(
     lines.reduce((sum, line) => sum + line.lineTotalMinor, 0),
@@ -1248,12 +1431,33 @@ export function priceOrder(input: PricingInput): PricedTotals {
   const discountMinor =
     input.couponPercent === null
       ? 0
-      : Math.min(itemsMinor, percentOf(itemsMinor, assertPercent(input.couponPercent, "coupon percent")));
+      : Math.min(
+          itemsMinor,
+          percentOf(
+            itemsMinor,
+            assertPercent(input.couponPercent, "coupon percent"),
+          ),
+        );
   const discountedMinor = itemsMinor - discountMinor;
-  const deliveryMinor = deliveryFeeMinor(input.delivery, input.isPickedUp, input.distanceKm);
-  const taxMinor = percentOf(discountedMinor + deliveryMinor, assertPercent(input.taxPercent, "tax percent"));
-  const tip = tipMinor(input.tip, input.exponent, input.isPickedUp, discountedMinor + deliveryMinor);
-  if (discountedMinor + deliveryMinor < assertMinor(input.minimumOrderMinor, "minimum order"))
+  const deliveryMinor = deliveryFeeMinor(
+    input.delivery,
+    input.isPickedUp,
+    input.distanceKm,
+  );
+  const taxMinor = percentOf(
+    discountedMinor + deliveryMinor,
+    assertPercent(input.taxPercent, "tax percent"),
+  );
+  const tip = tipMinor(
+    input.tip,
+    input.exponent,
+    input.isPickedUp,
+    discountedMinor + deliveryMinor,
+  );
+  if (
+    discountedMinor + deliveryMinor <
+    assertMinor(input.minimumOrderMinor, "minimum order")
+  )
     throw appError("BAD_USER_INPUT", "Minimum order not met");
   return {
     lines,
@@ -1262,7 +1466,10 @@ export function priceOrder(input: PricingInput): PricedTotals {
     deliveryMinor,
     taxMinor,
     tipMinor: tip,
-    totalMinor: assertMinor(discountedMinor + deliveryMinor + taxMinor + tip, "total"),
+    totalMinor: assertMinor(
+      discountedMinor + deliveryMinor + taxMinor + tip,
+      "total",
+    ),
   };
 }
 ```
@@ -1284,6 +1491,7 @@ git commit -m "feat(L5): add pure server-side pricing engine in minor units"
 ### Task 2: Menu-selection validation (pure)
 
 **Files:**
+
 - Create: `services/api/src/modules/pricing/selection.ts`
 - Test: `services/api/test/unit/pricing/selection.spec.ts`
 
@@ -1295,7 +1503,10 @@ Depends on PCR-L5-2 (`PricedLine` fields).
 // services/api/test/unit/pricing/selection.spec.ts
 import { describe, expect, it } from "vitest";
 import type { PricedLine } from "../../../src/kernel/ports.js";
-import { optionPricesFor, validateSelection } from "../../../src/modules/pricing/selection.js";
+import {
+  optionPricesFor,
+  validateSelection,
+} from "../../../src/modules/pricing/selection.js";
 
 const line = (overrides: Partial<PricedLine> = {}): PricedLine => ({
   foodId: "f1",
@@ -1307,12 +1518,36 @@ const line = (overrides: Partial<PricedLine> = {}): PricedLine => ({
   unitPriceMinor: 1000,
   variationDiscountedMinor: 200,
   variationAddons: [
-    { addonId: "a1", title: "Toppings", description: null, quantityMinimum: 0, quantityMaximum: 2 },
-    { addonId: "a2", title: "Crust", description: null, quantityMinimum: 1, quantityMaximum: 1 },
+    {
+      addonId: "a1",
+      title: "Toppings",
+      description: null,
+      quantityMinimum: 0,
+      quantityMaximum: 2,
+    },
+    {
+      addonId: "a2",
+      title: "Crust",
+      description: null,
+      quantityMinimum: 1,
+      quantityMaximum: 1,
+    },
   ],
   addons: [
-    { addonId: "a1", title: "Toppings", options: [{ optionId: "o1", title: "Olives", description: null, priceMinor: 150 }] },
-    { addonId: "a2", title: "Crust", options: [{ optionId: "o4", title: "Thick", description: null, priceMinor: 100 }] },
+    {
+      addonId: "a1",
+      title: "Toppings",
+      options: [
+        { optionId: "o1", title: "Olives", description: null, priceMinor: 150 },
+      ],
+    },
+    {
+      addonId: "a2",
+      title: "Crust",
+      options: [
+        { optionId: "o4", title: "Thick", description: null, priceMinor: 100 },
+      ],
+    },
   ],
   isOutOfStock: false,
   ...overrides,
@@ -1327,12 +1562,14 @@ describe("validateSelection (R13)", () => {
     expect(() => validateSelection(line(), requested)).not.toThrow();
   });
   it("rejects out-of-stock food with its title", () => {
-    expect(() => validateSelection(line({ isOutOfStock: true }), requested)).toThrow("Margherita is out of stock");
+    expect(() =>
+      validateSelection(line({ isOutOfStock: true }), requested),
+    ).toThrow("Margherita is out of stock");
   });
   it("rejects a missing required addon", () => {
-    expect(() => validateSelection(line(), [{ addonId: "a1", optionIds: ["o1"] }])).toThrow(
-      "Select between 1 and 1 options for Crust",
-    );
+    expect(() =>
+      validateSelection(line(), [{ addonId: "a1", optionIds: ["o1"] }]),
+    ).toThrow("Select between 1 and 1 options for Crust");
   });
   it("rejects too many options", () => {
     expect(() =>
@@ -1343,8 +1580,18 @@ describe("validateSelection (R13)", () => {
     ).toThrow("Select between 0 and 2 options for Toppings");
   });
   it("rejects an addon not attached to the variation and duplicate addons", () => {
-    expect(() => validateSelection(line(), [...requested, { addonId: "zz", optionIds: [] }])).toThrow("Invalid menu selection");
-    expect(() => validateSelection(line(), [...requested, { addonId: "a1", optionIds: [] }])).toThrow("Invalid menu selection");
+    expect(() =>
+      validateSelection(line(), [
+        ...requested,
+        { addonId: "zz", optionIds: [] },
+      ]),
+    ).toThrow("Invalid menu selection");
+    expect(() =>
+      validateSelection(line(), [
+        ...requested,
+        { addonId: "a1", optionIds: [] },
+      ]),
+    ).toThrow("Invalid menu selection");
   });
 });
 
@@ -1353,7 +1600,9 @@ describe("optionPricesFor", () => {
     expect(optionPricesFor(line(), requested)).toEqual([150, 100]);
   });
   it("fails when the port did not price a requested option", () => {
-    expect(() => optionPricesFor(line(), [{ addonId: "a1", optionIds: ["o9"] }])).toThrow("Invalid menu selection");
+    expect(() =>
+      optionPricesFor(line(), [{ addonId: "a1", optionIds: ["o9"] }]),
+    ).toThrow("Invalid menu selection");
   });
 });
 ```
@@ -1376,16 +1625,27 @@ const invalid = () => appError("BAD_USER_INPUT", "Invalid menu selection");
 
 // Server-side mirror of the item-detail rules (reference/02 §4.2). L3's priceLines has
 // already proved every id belongs to the restaurant/food/variation/addon (PCR-L5-2 contract).
-export function validateSelection(line: PricedLine, requested: RequestedAddon[]): void {
-  if (line.isOutOfStock) throw appError("BAD_USER_INPUT", `${line.foodTitle} is out of stock`);
+export function validateSelection(
+  line: PricedLine,
+  requested: RequestedAddon[],
+): void {
+  if (line.isOutOfStock)
+    throw appError("BAD_USER_INPUT", `${line.foodTitle} is out of stock`);
   const seen = new Set<string>();
   for (const addon of requested) {
     if (seen.has(addon.addonId)) throw invalid();
     seen.add(addon.addonId);
-    if (!line.variationAddons.some((candidate) => candidate.addonId === addon.addonId)) throw invalid();
+    if (
+      !line.variationAddons.some(
+        (candidate) => candidate.addonId === addon.addonId,
+      )
+    )
+      throw invalid();
   }
   for (const addon of line.variationAddons) {
-    const count = requested.find((entry) => entry.addonId === addon.addonId)?.optionIds.length ?? 0;
+    const count =
+      requested.find((entry) => entry.addonId === addon.addonId)?.optionIds
+        .length ?? 0;
     if (count < addon.quantityMinimum || count > addon.quantityMaximum)
       throw appError(
         "BAD_USER_INPUT",
@@ -1394,7 +1654,10 @@ export function validateSelection(line: PricedLine, requested: RequestedAddon[])
   }
 }
 
-export function optionPricesFor(line: PricedLine, requested: RequestedAddon[]): number[] {
+export function optionPricesFor(
+  line: PricedLine,
+  requested: RequestedAddon[],
+): number[] {
   return requested.flatMap((addon) =>
     addon.optionIds.map((optionId) => {
       const option = line.addons
@@ -1424,6 +1687,7 @@ git commit -m "feat(L5): validate addon selections against variation bounds"
 ### Task 3: Transition rules mirror, human order ids, accept deadlines (pure)
 
 **Files:**
+
 - Create: `services/api/src/modules/orders/tokens.ts`
 - Create: `services/api/src/modules/orders/rules.ts`
 - Test: `services/api/test/unit/orders/rules.spec.ts`
@@ -1460,8 +1724,16 @@ describe("actor classes (R26)", () => {
 
 describe("transition table (R26)", () => {
   it("never emits COMPLETED, ON_ROUTE or CANCELLEDBYREST", () => {
-    expect(ORDER_STATUSES).toEqual(["PENDING", "ACCEPTED", "ASSIGNED", "PICKED", "DELIVERED", "CANCELLED"]);
-    for (const rule of TRANSITION_RULES) expect(ORDER_STATUSES).toContain(rule.to);
+    expect(ORDER_STATUSES).toEqual([
+      "PENDING",
+      "ACCEPTED",
+      "ASSIGNED",
+      "PICKED",
+      "DELIVERED",
+      "CANCELLED",
+    ]);
+    for (const rule of TRANSITION_RULES)
+      expect(ORDER_STATUSES).toContain(rule.to);
   });
   it.each([
     ["PENDING", "ACCEPTED", "RESTAURANT", false, true],
@@ -1482,21 +1754,38 @@ describe("transition table (R26)", () => {
     ["DELIVERED", "PENDING", "ADMIN", false, false],
     ["CANCELLED", "ACCEPTED", "ADMIN", false, false],
     ["PICKED", "ASSIGNED", "ADMIN", false, false],
-  ] as const)("%s → %s by %s (pickup %s) allowed = %s", (from, to, actor, pickup, allowed) => {
-    expect(isAllowed(from, to, actor, pickup)).toBe(allowed);
-  });
+  ] as const)(
+    "%s → %s by %s (pickup %s) allowed = %s",
+    (from, to, actor, pickup, allowed) => {
+      expect(isAllowed(from, to, actor, pickup)).toBe(allowed);
+    },
+  );
   it("has no move out of a terminal status", () => {
-    expect(TRANSITION_RULES.filter((rule) => rule.from === "DELIVERED" || rule.from === "CANCELLED")).toEqual([]);
+    expect(
+      TRANSITION_RULES.filter(
+        (rule) => rule.from === "DELIVERED" || rule.from === "CANCELLED",
+      ),
+    ).toEqual([]);
   });
 });
 
 describe("idempotency (R27)", () => {
   it("treats the current status as a no-op, except a different rider for ASSIGNED", () => {
-    expect(isNoop({ status: "ACCEPTED", riderId: null }, "ACCEPTED", null)).toBe(true);
-    expect(isNoop({ status: "ASSIGNED", riderId: "r1" }, "ASSIGNED", null)).toBe(true);
-    expect(isNoop({ status: "ASSIGNED", riderId: "r1" }, "ASSIGNED", "r1")).toBe(true);
-    expect(isNoop({ status: "ASSIGNED", riderId: "r1" }, "ASSIGNED", "r2")).toBe(false);
-    expect(isNoop({ status: "PENDING", riderId: null }, "ACCEPTED", null)).toBe(false);
+    expect(
+      isNoop({ status: "ACCEPTED", riderId: null }, "ACCEPTED", null),
+    ).toBe(true);
+    expect(
+      isNoop({ status: "ASSIGNED", riderId: "r1" }, "ASSIGNED", null),
+    ).toBe(true);
+    expect(
+      isNoop({ status: "ASSIGNED", riderId: "r1" }, "ASSIGNED", "r1"),
+    ).toBe(true);
+    expect(
+      isNoop({ status: "ASSIGNED", riderId: "r1" }, "ASSIGNED", "r2"),
+    ).toBe(false);
+    expect(isNoop({ status: "PENDING", riderId: null }, "ACCEPTED", null)).toBe(
+      false,
+    );
   });
 });
 
@@ -1513,12 +1802,18 @@ describe("human order ids (R17)", () => {
 describe("accept deadline (R17, R38)", () => {
   const visible = new Date("2026-10-08T12:00:00.000Z");
   it("is visibleAt + timeout for an immediate order", () => {
-    expect(acceptDeadline(visible, visible, 120).toISOString()).toBe("2026-10-08T12:02:00.000Z");
+    expect(acceptDeadline(visible, visible, 120).toISOString()).toBe(
+      "2026-10-08T12:02:00.000Z",
+    );
   });
   it("starts 5 minutes before a scheduled orderDate", () => {
-    expect(acceptDeadline(visible, new Date("2026-10-08T14:00:00.000Z"), 120).toISOString()).toBe(
-      "2026-10-08T13:57:00.000Z",
-    );
+    expect(
+      acceptDeadline(
+        visible,
+        new Date("2026-10-08T14:00:00.000Z"),
+        120,
+      ).toISOString(),
+    ).toBe("2026-10-08T13:57:00.000Z");
   });
 });
 ```
@@ -1544,7 +1839,8 @@ export const SCHEDULE_LEAD_MS = 5 * 60_000;
 // Exact strings the customer app matches to open its wrong-address modal (Checkout.js:454-458).
 export const DELIVERY_REFUSED = "Sorry! we can't deliver to your address.";
 export const ZONE_NOT_FOUND = "Delivery zone not found";
-export const PREP_TIME_MESSAGE = "Preparation time must be between 1 and 180 minutes";
+export const PREP_TIME_MESSAGE =
+  "Preparation time must be between 1 and 180 minutes";
 export const ACCEPT_TIMEOUT_REASON = "Not accepted in time";
 ```
 
@@ -1553,13 +1849,35 @@ export const ACCEPT_TIMEOUT_REASON = "Not accepted in time";
 import type { OrderStatus } from "../../kernel/ports.js";
 import { SCHEDULE_LEAD_MS } from "./tokens.js";
 
-export const ORDER_STATUSES = ["PENDING", "ACCEPTED", "ASSIGNED", "PICKED", "DELIVERED", "CANCELLED"] as const;
-export const ACTIVE_STATUSES: readonly OrderStatus[] = ["PENDING", "ACCEPTED", "ASSIGNED", "PICKED"];
+export const ORDER_STATUSES = [
+  "PENDING",
+  "ACCEPTED",
+  "ASSIGNED",
+  "PICKED",
+  "DELIVERED",
+  "CANCELLED",
+] as const;
+export const ACTIVE_STATUSES: readonly OrderStatus[] = [
+  "PENDING",
+  "ACCEPTED",
+  "ASSIGNED",
+  "PICKED",
+];
 export const PAST_STATUSES: readonly OrderStatus[] = ["DELIVERED", "CANCELLED"];
 
-export type ActorClass = "CUSTOMER" | "RESTAURANT" | "RIDER" | "ADMIN" | "SYSTEM";
+export type ActorClass =
+  | "CUSTOMER"
+  | "RESTAURANT"
+  | "RIDER"
+  | "ADMIN"
+  | "SYSTEM";
 export type Fulfilment = "ANY" | "PICKUP" | "DELIVERY";
-export type TransitionRule = { from: OrderStatus; to: OrderStatus; actor: ActorClass; fulfilment: Fulfilment };
+export type TransitionRule = {
+  from: OrderStatus;
+  to: OrderStatus;
+  actor: ActorClass;
+  fulfilment: Fulfilment;
+};
 
 // Mirror of l5_order_transition_rules() (Task 6). Equality is proved by
 // test/integration/orders/transition-fn.integration.spec.ts.
@@ -1577,7 +1895,12 @@ export const TRANSITION_RULES: readonly TransitionRule[] = [
   { from: "ASSIGNED", to: "PICKED", actor: "ADMIN", fulfilment: "DELIVERY" },
   { from: "PICKED", to: "DELIVERED", actor: "RIDER", fulfilment: "DELIVERY" },
   { from: "PICKED", to: "DELIVERED", actor: "ADMIN", fulfilment: "DELIVERY" },
-  { from: "ACCEPTED", to: "DELIVERED", actor: "RESTAURANT", fulfilment: "PICKUP" },
+  {
+    from: "ACCEPTED",
+    to: "DELIVERED",
+    actor: "RESTAURANT",
+    fulfilment: "PICKUP",
+  },
   { from: "ACCEPTED", to: "DELIVERED", actor: "ADMIN", fulfilment: "PICKUP" },
   { from: "ACCEPTED", to: "CANCELLED", actor: "ADMIN", fulfilment: "ANY" },
   { from: "ASSIGNED", to: "CANCELLED", actor: "ADMIN", fulfilment: "ANY" },
@@ -1603,7 +1926,12 @@ export function actorClass(type: string): ActorClass {
   }
 }
 
-export function isAllowed(from: OrderStatus, to: OrderStatus, actor: ActorClass, isPickedUp: boolean): boolean {
+export function isAllowed(
+  from: OrderStatus,
+  to: OrderStatus,
+  actor: ActorClass,
+  isPickedUp: boolean,
+): boolean {
   const fulfilment: Fulfilment = isPickedUp ? "PICKUP" : "DELIVERY";
   return TRANSITION_RULES.some(
     (rule) =>
@@ -1619,18 +1947,35 @@ export function isNoop(
   to: OrderStatus,
   riderId: string | null,
 ): boolean {
-  return current.status === to && (to !== "ASSIGNED" || riderId === null || current.riderId === riderId);
+  return (
+    current.status === to &&
+    (to !== "ASSIGNED" || riderId === null || current.riderId === riderId)
+  );
 }
 
-export function humanOrderId(prefix: string, sequence: bigint | string | number): string {
-  const clean = prefix.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10) || "ORD";
+export function humanOrderId(
+  prefix: string,
+  sequence: bigint | string | number,
+): string {
+  const clean =
+    prefix
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "")
+      .slice(0, 10) || "ORD";
   return `${clean}-${BigInt(sequence).toString(36).toUpperCase().padStart(6, "0")}`;
 }
 
 // The store may accept from orderDate - 5 min (store getIsAcceptButtonVisible), so the window
 // for scheduled orders starts there (UNVERIFIED, R17).
-export function acceptDeadline(visibleAt: Date, orderDate: Date, timeoutSeconds: number): Date {
-  return new Date(Math.max(visibleAt.getTime(), orderDate.getTime() - SCHEDULE_LEAD_MS) + timeoutSeconds * 1000);
+export function acceptDeadline(
+  visibleAt: Date,
+  orderDate: Date,
+  timeoutSeconds: number,
+): Date {
+  return new Date(
+    Math.max(visibleAt.getTime(), orderDate.getTime() - SCHEDULE_LEAD_MS) +
+      timeoutSeconds * 1000,
+  );
 }
 ```
 
@@ -1651,6 +1996,7 @@ git commit -m "feat(L5): add order transition rules mirror, human ids and accept
 ### Task 4: ETA estimate (pure)
 
 **Files:**
+
 - Create: `services/api/src/modules/orders/eta.ts`
 - Test: `services/api/test/unit/orders/eta.spec.ts`
 
@@ -1678,7 +2024,9 @@ describe("initialEta (R36)", () => {
     expect(eta.phase).toBe("PREPARING");
     expect(eta.source).toBe("STORE_ESTIMATE");
     expect(eta.readyAt?.toISOString()).toBe("2026-10-08T12:20:00.000Z");
-    expect(eta.estimatedArrivalAt?.toISOString()).toBe("2026-10-08T12:50:00.000Z");
+    expect(eta.estimatedArrivalAt?.toISOString()).toBe(
+      "2026-10-08T12:50:00.000Z",
+    );
     expect(eta.baseArrivalAt?.toISOString()).toBe("2026-10-08T12:50:00.000Z");
     expect(eta.windowStartAt?.toISOString()).toBe("2026-10-08T12:45:00.000Z");
     expect(eta.windowEndAt?.toISOString()).toBe("2026-10-08T13:00:00.000Z");
@@ -1690,7 +2038,9 @@ describe("initialEta (R36)", () => {
   });
   it("uses ready time as arrival for pickup and the restaurant as destination", () => {
     const eta = initialEta({ ...common, isPickedUp: true, destination: null });
-    expect(eta.estimatedArrivalAt?.toISOString()).toBe("2026-10-08T12:20:00.000Z");
+    expect(eta.estimatedArrivalAt?.toISOString()).toBe(
+      "2026-10-08T12:20:00.000Z",
+    );
     expect(eta.windowStartAt?.toISOString()).toBe("2026-10-08T12:20:00.000Z");
     expect(eta.windowEndAt?.toISOString()).toBe("2026-10-08T12:30:00.000Z");
     expect(eta.distanceMeters).toBe(0);
@@ -1763,7 +2113,8 @@ export const ETA_PHASES: Record<OrderStatus, string> = {
   DELIVERED: "DELIVERED",
   CANCELLED: "CANCELLED",
 };
-const secondsUntil = (target: Date, now: Date) => Math.max(0, Math.round((target.getTime() - now.getTime()) / 1000));
+const secondsUntil = (target: Date, now: Date) =>
+  Math.max(0, Math.round((target.getTime() - now.getTime()) / 1000));
 
 export function initialEta(input: {
   orderId: string;
@@ -1776,7 +2127,9 @@ export function initialEta(input: {
   destination: LatLng | null;
 }): EtaRecord {
   const readyAt = new Date(input.now.getTime() + input.prepMinutes * MINUTE);
-  const travel = input.isPickedUp ? 0 : Math.max(1, Math.round(input.deliveryTimeMinutes)) * MINUTE;
+  const travel = input.isPickedUp
+    ? 0
+    : Math.max(1, Math.round(input.deliveryTimeMinutes)) * MINUTE;
   const arrival = new Date(readyAt.getTime() + travel);
   const destination = input.destination ?? input.origin;
   return {
@@ -1786,7 +2139,9 @@ export function initialEta(input: {
     readyAt,
     baseArrivalAt: arrival,
     estimatedArrivalAt: arrival,
-    windowStartAt: input.isPickedUp ? readyAt : new Date(arrival.getTime() - 5 * MINUTE),
+    windowStartAt: input.isPickedUp
+      ? readyAt
+      : new Date(arrival.getTime() - 5 * MINUTE),
     windowEndAt: new Date(arrival.getTime() + 10 * MINUTE),
     durationSeconds: secondsUntil(arrival, input.now),
     distanceMeters: input.isPickedUp ? 0 : input.distanceMeters,
@@ -1801,12 +2156,32 @@ export function initialEta(input: {
   };
 }
 
-export function advanceEta(eta: EtaRecord, to: OrderStatus, now: Date): EtaRecord {
-  const next: EtaRecord = { ...eta, phase: ETA_PHASES[to], calculatedAt: now, version: eta.version + 1 };
+export function advanceEta(
+  eta: EtaRecord,
+  to: OrderStatus,
+  now: Date,
+): EtaRecord {
+  const next: EtaRecord = {
+    ...eta,
+    phase: ETA_PHASES[to],
+    calculatedAt: now,
+    version: eta.version + 1,
+  };
   if (to === "DELIVERED")
-    return { ...next, estimatedArrivalAt: now, windowStartAt: now, windowEndAt: now, durationSeconds: 0 };
+    return {
+      ...next,
+      estimatedArrivalAt: now,
+      windowStartAt: now,
+      windowEndAt: now,
+      durationSeconds: 0,
+    };
   if (to === "CANCELLED") return { ...next, durationSeconds: null };
-  return { ...next, durationSeconds: next.estimatedArrivalAt ? secondsUntil(next.estimatedArrivalAt, now) : null };
+  return {
+    ...next,
+    durationSeconds: next.estimatedArrivalAt
+      ? secondsUntil(next.estimatedArrivalAt, now)
+      : null,
+  };
 }
 ```
 
@@ -1827,6 +2202,7 @@ git commit -m "feat(L5): add initial order ETA estimate"
 ### Task 5: Admin filters and translated date keywords (pure)
 
 **Files:**
+
 - Create: `services/api/src/modules/orders/date-keywords.ts`
 - Create: `services/api/src/modules/orders/filters.ts`
 - Test: `services/api/test/unit/orders/filters.spec.ts`
@@ -1847,7 +2223,10 @@ import {
 } from "../../../src/modules/orders/filters.js";
 
 const locales = fileURLToPath(
-  new URL("../../../../../vendor/enatega-ui/enatega-multivendor-admin/locales/", import.meta.url),
+  new URL(
+    "../../../../../vendor/enatega-ui/enatega-multivendor-admin/locales/",
+    import.meta.url,
+  ),
 );
 const now = new Date("2026-10-08T15:30:00.000Z"); // a Thursday
 
@@ -1856,9 +2235,15 @@ describe("canonicalDateKeyword (R24)", () => {
     const files = readdirSync(locales).filter((file) => file.endsWith(".json"));
     expect(files.length).toBeGreaterThanOrEqual(33);
     for (const file of files) {
-      const strings = JSON.parse(readFileSync(`${locales}${file}`, "utf8")) as Record<string, string>;
+      const strings = JSON.parse(
+        readFileSync(`${locales}${file}`, "utf8"),
+      ) as Record<string, string>;
       for (const key of ["All", "Today", "Week", "Month", "Year"] as const)
-        expect([file, key, canonicalDateKeyword(strings[key])]).toEqual([file, key, key]);
+        expect([file, key, canonicalDateKeyword(strings[key])]).toEqual([
+          file,
+          key,
+          key,
+        ]);
     }
   });
   it("keeps Custom literal and treats unknown or empty values as All", () => {
@@ -1873,16 +2258,29 @@ describe("canonicalDateKeyword (R24)", () => {
 describe("dateRange (R24)", () => {
   it("computes calendar ranges in UTC", () => {
     expect(dateRange("All", null, null, now)).toEqual({ from: null, to: null });
-    expect(dateRange("Today", null, null, now).from?.toISOString()).toBe("2026-10-08T00:00:00.000Z");
-    expect(dateRange("Week", null, null, now).from?.toISOString()).toBe("2026-10-02T00:00:00.000Z");
-    expect(dateRange("Month", null, null, now).from?.toISOString()).toBe("2026-10-01T00:00:00.000Z");
-    expect(dateRange("Year", null, null, now).from?.toISOString()).toBe("2026-01-01T00:00:00.000Z");
+    expect(dateRange("Today", null, null, now).from?.toISOString()).toBe(
+      "2026-10-08T00:00:00.000Z",
+    );
+    expect(dateRange("Week", null, null, now).from?.toISOString()).toBe(
+      "2026-10-02T00:00:00.000Z",
+    );
+    expect(dateRange("Month", null, null, now).from?.toISOString()).toBe(
+      "2026-10-01T00:00:00.000Z",
+    );
+    expect(dateRange("Year", null, null, now).from?.toISOString()).toBe(
+      "2026-01-01T00:00:00.000Z",
+    );
   });
   it("makes YYYY-MM-DD custom ends inclusive and ISO ends inclusive to the millisecond", () => {
     const day = dateRange("Custom", "2026-10-01", "2026-10-07", now);
     expect(day.from?.toISOString()).toBe("2026-10-01T00:00:00.000Z");
     expect(day.to?.toISOString()).toBe("2026-10-08T00:00:00.000Z");
-    const iso = dateRange("Custom", "2026-10-07T18:30:00.000Z", "2026-10-08T18:29:59.999Z", now);
+    const iso = dateRange(
+      "Custom",
+      "2026-10-07T18:30:00.000Z",
+      "2026-10-08T18:29:59.999Z",
+      now,
+    );
     expect(iso.from?.toISOString()).toBe("2026-10-07T18:30:00.000Z");
     expect(iso.to?.toISOString()).toBe("2026-10-08T18:30:00.000Z");
   });
@@ -1891,11 +2289,18 @@ describe("dateRange (R24)", () => {
       from: new Date("2026-10-01T00:00:00.000Z"),
       to: null,
     });
-    expect(dateRange("All", "2026-10-01", "2026-10-02", now)).toEqual({ from: null, to: null });
+    expect(dateRange("All", "2026-10-01", "2026-10-02", now)).toEqual({
+      from: null,
+      to: null,
+    });
   });
   it("rejects unparsable and reversed custom ranges", () => {
-    expect(() => dateRange("Custom", "nonsense", null, now)).toThrow("Invalid date range");
-    expect(() => dateRange("Custom", "2026-10-07", "2026-10-01", now)).toThrow("Invalid date range");
+    expect(() => dateRange("Custom", "nonsense", null, now)).toThrow(
+      "Invalid date range",
+    );
+    expect(() => dateRange("Custom", "2026-10-07", "2026-10-01", now)).toThrow(
+      "Invalid date range",
+    );
   });
 });
 
@@ -1903,7 +2308,10 @@ describe("statusFilter, searchPattern, optionalId (R23)", () => {
   it("drops unknown statuses and treats an empty list as no filter", () => {
     expect(statusFilter(undefined)).toBeNull();
     expect(statusFilter([])).toBeNull();
-    expect(statusFilter(["PENDING", "COMPLETED", "DELIVERED"])).toEqual(["PENDING", "DELIVERED"]);
+    expect(statusFilter(["PENDING", "COMPLETED", "DELIVERED"])).toEqual([
+      "PENDING",
+      "DELIVERED",
+    ]);
     expect(statusFilter(["COMPLETED"])).toEqual([]);
     expect(() => statusFilter("PENDING")).toThrow("Invalid status filter");
   });
@@ -1916,7 +2324,9 @@ describe("statusFilter, searchPattern, optionalId (R23)", () => {
   it("treats empty ids as 'all' and validates others", () => {
     expect(optionalId("", "restaurant")).toBeNull();
     expect(optionalId(null, "restaurant")).toBeNull();
-    expect(() => optionalId("abc", "restaurant")).toThrow("Invalid restaurant id");
+    expect(() => optionalId("abc", "restaurant")).toThrow(
+      "Invalid restaurant id",
+    );
   });
 });
 ```
@@ -1935,15 +2345,165 @@ Expected: FAIL — module `filters.js` not found.
 // test/unit/orders/filters.spec.ts fails if a locale gains a label that is missing here.
 export type DateKeyword = "All" | "Today" | "Week" | "Month" | "Year";
 const labels: Record<DateKeyword, string[]> = {
-  All: ["All", "الكل", "Hamısı", "সব", "Alle", "Todos", "همه", "બધા", "הכל", "सभी", "Semua", "Tutti", "すべて", "Барлығы", "ទាំងអស់", "모두", "Hemû", "सर्व", "Alles", "Wszystko", "ټول", "Toate", "Все", "అన్నీ", "ทั้งหมด", "Tümü", "سب", "Hammasi", "Tất cả", "所有"],
-  Today: ["Today", "اليوم", "Bu gün", "আজ", "Heute", "Hoy", "امروز", "આજે", "היום", "आज", "Hari Ini", "Oggi", "今日", "Бүгін", "ថ្ងៃនេះ", "오늘", "Îro", "Vandaag", "Dzisiaj", "نن", "Hoje", "Astăzi", "Сегодня", "ఈరోజు", "วันนี้", "Bugün", "آج", "Bugun", "Hôm nay", "今天"],
-  Week: ["Week", "الأسبوع", "Həftə", "সপ্তাহ", "Woche", "Semana", "هفته", "અઠવાડિયું", "שבוע", "सप्ताह", "Minggu", "Settimana", "週", "Апта", "សប្តាហ៍", "주", "Hefte", "आठवडा", "Tydzień", "اونۍ", "Săptămână", "Неделя", "వారం", "สัปดาห์", "Hafta", "ہفتہ", "Tuần", "周"],
-  Month: ["Month", "الشهر", "Ay", "মাস", "Monat", "Mes", "ماه", "મહિનો", "חודש", "महीना", "Bulan", "Mese", "月", "Ай", "ខែ", "월", "Meh", "महिना", "Maand", "Miesiąc", "میاشت", "Mês", "Lună", "Месяц", "నెల", "เดือน", "مہینہ", "Oy", "Tháng"],
-  Year: ["Year", "السنة", "İl", "বছর", "Jahr", "Año", "سال", "વર્ષ", "שנה", "वर्ष", "Tahun", "Anno", "年", "Жыл", "ឆ្នាំ", "년", "Sal", "Jaar", "Rok", "کال", "Ano", "An", "Год", "సంవత్సరం", "ปี", "Yıl", "Yil", "Năm"],
+  All: [
+    "All",
+    "الكل",
+    "Hamısı",
+    "সব",
+    "Alle",
+    "Todos",
+    "همه",
+    "બધા",
+    "הכל",
+    "सभी",
+    "Semua",
+    "Tutti",
+    "すべて",
+    "Барлығы",
+    "ទាំងអស់",
+    "모두",
+    "Hemû",
+    "सर्व",
+    "Alles",
+    "Wszystko",
+    "ټول",
+    "Toate",
+    "Все",
+    "అన్నీ",
+    "ทั้งหมด",
+    "Tümü",
+    "سب",
+    "Hammasi",
+    "Tất cả",
+    "所有",
+  ],
+  Today: [
+    "Today",
+    "اليوم",
+    "Bu gün",
+    "আজ",
+    "Heute",
+    "Hoy",
+    "امروز",
+    "આજે",
+    "היום",
+    "आज",
+    "Hari Ini",
+    "Oggi",
+    "今日",
+    "Бүгін",
+    "ថ្ងៃនេះ",
+    "오늘",
+    "Îro",
+    "Vandaag",
+    "Dzisiaj",
+    "نن",
+    "Hoje",
+    "Astăzi",
+    "Сегодня",
+    "ఈరోజు",
+    "วันนี้",
+    "Bugün",
+    "آج",
+    "Bugun",
+    "Hôm nay",
+    "今天",
+  ],
+  Week: [
+    "Week",
+    "الأسبوع",
+    "Həftə",
+    "সপ্তাহ",
+    "Woche",
+    "Semana",
+    "هفته",
+    "અઠવાડિયું",
+    "שבוע",
+    "सप्ताह",
+    "Minggu",
+    "Settimana",
+    "週",
+    "Апта",
+    "សប្តាហ៍",
+    "주",
+    "Hefte",
+    "आठवडा",
+    "Tydzień",
+    "اونۍ",
+    "Săptămână",
+    "Неделя",
+    "వారం",
+    "สัปดาห์",
+    "Hafta",
+    "ہفتہ",
+    "Tuần",
+    "周",
+  ],
+  Month: [
+    "Month",
+    "الشهر",
+    "Ay",
+    "মাস",
+    "Monat",
+    "Mes",
+    "ماه",
+    "મહિનો",
+    "חודש",
+    "महीना",
+    "Bulan",
+    "Mese",
+    "月",
+    "Ай",
+    "ខែ",
+    "월",
+    "Meh",
+    "महिना",
+    "Maand",
+    "Miesiąc",
+    "میاشت",
+    "Mês",
+    "Lună",
+    "Месяц",
+    "నెల",
+    "เดือน",
+    "مہینہ",
+    "Oy",
+    "Tháng",
+  ],
+  Year: [
+    "Year",
+    "السنة",
+    "İl",
+    "বছর",
+    "Jahr",
+    "Año",
+    "سال",
+    "વર્ષ",
+    "שנה",
+    "वर्ष",
+    "Tahun",
+    "Anno",
+    "年",
+    "Жыл",
+    "ឆ្នាំ",
+    "년",
+    "Sal",
+    "Jaar",
+    "Rok",
+    "کال",
+    "Ano",
+    "An",
+    "Год",
+    "సంవత్సరం",
+    "ปี",
+    "Yıl",
+    "Yil",
+    "Năm",
+  ],
 };
 export const DATE_KEYWORD_LABELS: ReadonlyMap<string, DateKeyword> = new Map(
-  (Object.entries(labels) as [DateKeyword, string[]][]).flatMap(([keyword, values]) =>
-    values.map((value) => [value, keyword] as const),
+  (Object.entries(labels) as [DateKeyword, string[]][]).flatMap(
+    ([keyword, values]) => values.map((value) => [value, keyword] as const),
   ),
 );
 ```
@@ -1977,11 +2537,23 @@ function bound(value: unknown, end: boolean): Date | null {
   if (!date) throw invalidRange();
   if (!end) return date;
   // Inclusive end: next midnight for a day, one millisecond later for an instant.
-  return new Date(date.getTime() + (typeof value === "string" && dayOnly.test(value) ? DAY : 1));
+  return new Date(
+    date.getTime() +
+      (typeof value === "string" && dayOnly.test(value) ? DAY : 1),
+  );
 }
 
-export function dateRange(keyword: DateKeyword | "Custom", starting: unknown, ending: unknown, now: Date): DateRange {
-  const midnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+export function dateRange(
+  keyword: DateKeyword | "Custom",
+  starting: unknown,
+  ending: unknown,
+  now: Date,
+): DateRange {
+  const midnight = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+  );
   switch (keyword) {
     case "All":
       return { from: null, to: null };
@@ -1990,7 +2562,10 @@ export function dateRange(keyword: DateKeyword | "Custom", starting: unknown, en
     case "Week":
       return { from: new Date(midnight - 6 * DAY), to: null };
     case "Month":
-      return { from: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)), to: null };
+      return {
+        from: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)),
+        to: null,
+      };
     case "Year":
       return { from: new Date(Date.UTC(now.getUTCFullYear(), 0, 1)), to: null };
     case "Custom": {
@@ -2004,9 +2579,12 @@ export function dateRange(keyword: DateKeyword | "Custom", starting: unknown, en
 
 export function statusFilter(values: unknown): OrderStatus[] | null {
   if (values === null || values === undefined) return null;
-  if (!Array.isArray(values)) throw appError("BAD_USER_INPUT", "Invalid status filter");
+  if (!Array.isArray(values))
+    throw appError("BAD_USER_INPUT", "Invalid status filter");
   if (values.length === 0) return null;
-  return values.filter((value): value is OrderStatus => (ORDER_STATUSES as readonly unknown[]).includes(value));
+  return values.filter((value): value is OrderStatus =>
+    (ORDER_STATUSES as readonly unknown[]).includes(value),
+  );
 }
 
 export function searchPattern(value: unknown): string | null {
@@ -2017,7 +2595,9 @@ export function searchPattern(value: unknown): string | null {
 }
 
 export function optionalId(value: unknown, field: string): string | null {
-  return value === null || value === undefined || value === "" ? null : parseId(value, field);
+  return value === null || value === undefined || value === ""
+    ? null
+    : parseId(value, field);
 }
 ```
 

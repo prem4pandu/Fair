@@ -15,6 +15,7 @@ You are writing ONE implementation plan file for one lane of the Enatega-compati
 ## What the plan must contain, in this order
 
 1. Header exactly:
+
    ```
    # Lane <Lx> — <name>
 
@@ -24,6 +25,7 @@ You are writing ONE implementation plan file for one lane of the Enatega-compati
    **Architecture:** … (2–3 sentences)
    **Tech stack:** …
    ```
+
 2. **Frontend boundary** — paste master §1 verbatim.
 3. **Operations** — a table with EVERY operation of your lane from `OPERATION_LANES.json`: type, name, apps that call it, who may call it (role/permission/ownership, from reference/04 §B and the other references), the exact vendored document location(s) to use in tests (`app`, `file`, `exportName` — verify each export name exists by reading the file), and the reference section. No operation may be missing. State the total count and check it against the JSON.
 4. **Contract notes** — for each type your lane owns: fields, types, nullability, timestamp convention, money fields, misspellings that must be kept, and any field-level restriction. Include the SDL for anything the generator in W1-0.3 cannot infer correctly (enums, inputs). This guides W1-L.1.
@@ -36,7 +38,7 @@ You are writing ONE implementation plan file for one lane of the Enatega-compati
    - Step 3: the implementation — COMPLETE code for services, repositories, resolvers, mappers and jobs. Resolvers stay thin (parse with zod, auth, call service). Use the kernel helpers; never `new GraphQLError` directly.
    - Step 4: the exact command and expected pass.
    - Step 5: commit with message `<type>(<lane>): …`.
-   Where many operations share a pattern (CRUD lists, paginated lists, config saves), you may implement them in one task with a shared helper, but every operation still gets its own test case and its own resolver method, and the code must be complete — no "repeat for the others", no "similar to Task N", no TBD/TODO.
+     Where many operations share a pattern (CRUD lists, paginated lists, config saves), you may implement them in one task with a shared helper, but every operation still gets its own test case and its own resolver method, and the code must be complete — no "repeat for the others", no "similar to Task N", no TBD/TODO.
 8. **Worker jobs and event handlers** the lane owns (outbox consumers, timeouts), with tests.
 9. **Playwright and journey specs to hand to L10** — for each user-visible flow your operations power in the admin or customer web apps: spec file path under `implementation/e2e/specs/<admin|web>/`, the route, the user actions (use the real Enatega UI — selectors by role/label/text found in the vendored source, with file:line), the assertions, and the `@op:` tags. For mobile-only flows: the journey test under `services/api/test/journeys/` replaying the mobile app's documents in order.
 10. **Coverage and gate checklist** — commands for G2 for this lane (from master §8), and the exact list of operations that must show `implemented: true` and `integrationTested: true` in `docs/OPERATION_COVERAGE.json`.

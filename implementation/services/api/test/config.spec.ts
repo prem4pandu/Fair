@@ -4,6 +4,10 @@ const env = {
   DATABASE_URL: "postgres://user:secret@localhost/db",
   REDIS_URL: "redis://localhost:6379",
 };
+const productionTransport = {
+  PUBLIC_BASE_URL: "https://api.example.com",
+  PUBLIC_ACCESS_SECRET: Buffer.alloc(32, 3).toString("base64url"),
+};
 describe("configuration", () => {
   it("rejects missing infrastructure without exposing secrets", () => {
     expect(() => readConfig({ ...env, REDIS_URL: "secret-data" })).toThrow(
@@ -36,6 +40,7 @@ describe("configuration", () => {
     expect(() =>
       readConfig({
         ...env,
+        ...productionTransport,
         APP_ENV: "production",
         DATABASE_URL:
           "postgres://localhost/db?sslmode=verify-full&sslmode=require",
@@ -45,6 +50,7 @@ describe("configuration", () => {
     expect(
       readConfig({
         ...env,
+        ...productionTransport,
         APP_ENV: "production",
         DATABASE_URL: "postgres://localhost/db?sslmode=verify-full",
         REDIS_URL: "rediss://localhost",

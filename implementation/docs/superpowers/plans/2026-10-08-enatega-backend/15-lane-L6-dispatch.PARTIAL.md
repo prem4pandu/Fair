@@ -24,40 +24,40 @@ Authority: `docs/OPERATION_LANES.json`, filter `lane == "L6"` → **32 operation
 
 App keys: `A` = `enatega-multivendor-admin`, `R` = `enatega-multivendor-rider`, `C` = `enatega-multivendor-app`, `W` = `enatega-multivendor-web`. "Doc" = `doc(app, file, exportName)` arguments (every export name verified by reading the file). Roles: `A`=ADMIN, `S(x)`=STAFF with permission `x`, `RID(self)`=rider acting on itself, `CUS(own)`=customer owning the order, `RID(assigned)`=the order's rider, `V/R(own)`=vendor/restaurant owning the order's restaurant.
 
-| # | Type | Name | Apps | Who may call | Vendored document(s) used in tests | Ref |
-|---|---|---|---|---|---|---|
-| 1 | query | `riders` | A | A, S(Riders), S(Dispatch) | `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_RIDERS`; `A`, `lib/api/graphql/queries/concurrent/index.tsx`, `GET_STORE_RIDER` | 04 §2.10, §2.1 dispatch, §B |
-| 2 | query | `ridersPaginated` | A | A, S(Riders) | `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_RIDERS_PAGINATED` | 04 §2.10, §4 P1 |
-| 3 | query | `rider` | A, R, C, W | RID(self) (other id → `FORBIDDEN`, forces rider logout); A, S(Riders), S(Dispatch); CUS whose active order is assigned to that rider (public fields + location) | `R`, `lib/apollo/queries/rider.query.ts`, `RIDER_PROFILE` and `RIDER_BY_ID`; `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_RIDER`; `W`, `lib/api/graphql/queries/rider/index.ts`, `RIDER`; `C`, `src/apollo/queries.js`, `rider` | 03 §2.3, §0.4; 04 §2.10; 02 §6.1 |
-| 4 | query | `ridersByZone` | A | A, S(Riders), S(Dispatch) | `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_RIDERS_BY_ZONE` | 04 §2.10 |
-| 5 | query | `availableRiders` | A | A, S(Riders), S(Dispatch) | `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_AVAILABLE_RIDERS` | 04 §2.10 |
-| 6 | mutation | `createRider` | A | A, S(Riders) | `A`, `lib/api/graphql/mutations/riders/index.tsx`, `CREATE_RIDER` | 04 §2.10, §2.20 `RiderInput` |
-| 7 | mutation | `editRider` | A, R | A, S(Riders) (all fields); RID(self) (only `vehicleType`) | `A`, `lib/api/graphql/mutations/riders/index.tsx`, `EDIT_RIDER`; `R`, `lib/apollo/mutations/rider.mutation.ts`, `EDIT_RIDER` | 03 §2.14; 04 §2.20 |
-| 8 | mutation | `deleteRider` | A | A, S(Riders) | `A`, `lib/api/graphql/mutations/riders/index.tsx`, `DELETE_RIDER` | 04 §2.10 |
-| 9 | mutation | `toggleAvailablity` (misspelling kept) | A, R | RID(self); A, S(Riders) | `A`, `lib/api/graphql/mutations/riders/index.tsx`, `TOGGLE_RIDER`; `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_AVAILABILITY` | 03 §2.4; 04 §2.10 |
-| 10 | mutation | `updateRiderLocation` | R | RID(self) only (no id argument) | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_LOCATION_MULTI_VENDOR` and `UPDATE_LOCATION`; background raw `fetch` document `mutation BackgroundRiderLocation(...)` extracted verbatim from `R/lib/services/background-location.ts:69` | 03 §2.5 |
-| 11 | mutation | `updateRiderBussinessDetails` (misspelling kept) | R | RID(self); A, S(Riders) | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_BUSINESS_DETAILS` | 03 §2.14 |
-| 12 | mutation | `updateRiderLicenseDetails` | R | RID(self); A, S(Riders) | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_LICENSE` | 03 §2.14 |
-| 13 | mutation | `updateRiderVehicleDetails` | R | RID(self); A, S(Riders) | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_VEHICLE` | 03 §2.14 |
-| 14 | mutation | `updateWorkSchedule` | R | RID(self); A, S(Riders) | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_WORK_SCHEDULE` | 03 §2.14 |
-| 15 | query | `riderOrders` | R | RID(self) | `R`, `lib/apollo/queries/rider.query.ts`, `RIDER_ORDERS` | 03 §2.6 |
-| 16 | mutation | `assignOrder` | R | RID(self), available, active, same zone as the order | `R`, `lib/apollo/mutations/order.mutation.ts`, `ASSIGN_ORDER` | 03 §2.8, §C |
-| 17 | mutation | `assignRider` | A | A, S(Dispatch) | `A`, `lib/api/graphql/mutations/dispatch/index.ts`, `ASSIGN_RIDER` | 04 §2.1 dispatch, §B |
-| 18 | mutation | `updateOrderStatusRider` | R | RID(assigned) | `R`, `lib/apollo/mutations/order.mutation.ts`, `UPDATE_ORDER_STATUS_RIDER` | 03 §2.10 |
-| 19 | query | `orderTracking` | A, C, W | CUS(own), RID(assigned), A, S(Dispatch), S(Orders), V/R(own) | `A`, `lib/api/graphql/subscription/order-subscription/index.ts`, `ORDER_TRACKING`; `C`, `src/apollo/queries.js`, `orderTracking`; `W`, `lib/api/graphql/queries/order-tracking/index.ts`, `ORDER_LIVE_TRACKING` | 02 §6.1; 04 §2.1 |
-| 20 | query | `getActiveOrders` | A | A, S(Dispatch) | `A`, `lib/api/graphql/queries/orders/index.ts`, `GET_ACTIVE_ORDERS` | 04 §2.1 dispatch, §4 P3 |
-| 21 | query | `getLiveMonitorData` | A | A, S(Vendors), VENDOR(id = own vendor id) | `A`, `lib/api/graphql/queries/dashboard/index.ts`, `GET_VENDOR_LIVE_MONITOR` | 04 §2.1 vendor dashboard, §B |
-| 22 | subscription | `subscriptionZoneOrders` | R | RID(self) whose zone = `zoneId` and `available` | `R`, `lib/apollo/subscriptions.ts`, `SUBSCRIPTION_ZONE_ORDERS` | 03 §2.7 |
-| 23 | subscription | `subscriptionAssignRider` | R | RID(self) (`riderId` = caller) | `R`, `lib/apollo/subscriptions.ts`, `SUBSCRIPTION_ASSIGNED_RIDER` | 03 §2.9 |
-| 24 | subscription | `subscriptionDispatcher` | A | A, S(Dispatch) | `A`, `lib/api/graphql/subscription/order-subscription/index.ts`, `SUBSCRIPTION_DISPATCH_ORDER` | 04 §2.1 dispatch |
-| 25 | subscription | `subscriptionOrderTracking` | A, C, W | same as `orderTracking` | `A`, `lib/api/graphql/subscription/order-subscription/index.ts`, `SUBSCRIPTION_ORDER_TRACKING`; `C`, `src/apollo/subscriptions.js`, `subscriptionOrderTracking`; `W`, `lib/api/graphql/subscription/orders/index.ts`, `SUBSCRIPTION_ORDER_TRACKING` | 02 §6.4 |
-| 26 | subscription | `subscriptionRiderLocation` | C, W | RID(self); A, S(Dispatch), S(Riders); CUS whose active order is assigned to that rider | `C`, `src/apollo/subscriptions.js`, `subscriptionRiderLocation`; `W`, `lib/api/graphql/subscription/riderLocation/index.ts`, `SUBSCRIPTION_RIDER_LOCATION` | 02 §6.4; 03 §2.5 |
-| 27 | subscription | `riderUpdated` | A | A, any STAFF | `A`, `lib/api/graphql/subscription/rider-subscription/index.ts`, `RIDER_UPDATED_SUBSCRIPTION` | 04 §2.1, §B |
-| 28 | query | `chat` | C, R, W | CUS(own), RID(assigned) | `R`, `lib/apollo/queries/chat.query.ts`, `CHAT`; `C`, `src/apollo/queries.js`, `chat`; `W`, `lib/api/graphql/queries/chatWithRider/index.tsx`, `CHAT_QUERY` | 02 §6.7; 03 §2.12 |
-| 29 | mutation | `sendChatMessage` | C, R, W | CUS(own), RID(assigned), order `ASSIGNED`/`PICKED` | `R`, `lib/apollo/mutations/chat.mutation.ts`, `SEND_CHAT_MESSAGE`; `C`, `src/apollo/mutations.js`, `sendChatMessage`; `W`, `lib/api/graphql/mutations/chatWithRider/index.ts`, `SEND_CHAT_MESSAGE` | 02 §6.7; 03 §2.12 |
-| 30 | subscription | `subscriptionNewMessage` | C, R, W | CUS(own), RID(assigned) | `R`, `lib/apollo/subscriptions.ts`, `SUBSCRIPTION_NEW_MESSAGE`; `C`, `src/apollo/subscriptions.js`, `subscriptionNewMessage`; `W`, `lib/api/graphql/subscription/ChatWithRider/index.tsx`, `SUBSCRIPTION_NEW_MESSAGE` | 02 §6.4, §6.7 |
-| 31 | mutation | `registerLiveActivitySession` | C | CUS(own), order active | `C`, `src/utils/liveActivityService.js`, module-level `const REGISTER_SESSION` (not exported; extracted verbatim by `extractDocument`, Task 2) | 02 §8 |
-| 32 | mutation | `removeLiveActivitySession` | C | CUS(own) | `C`, `src/utils/liveActivityService.js`, module-level `const REMOVE_SESSION` (extracted verbatim) | 02 §8 |
+| #   | Type         | Name                                             | Apps       | Who may call                                                                                                                                                    | Vendored document(s) used in tests                                                                                                                                                                                                                  | Ref                              |
+| --- | ------------ | ------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| 1   | query        | `riders`                                         | A          | A, S(Riders), S(Dispatch)                                                                                                                                       | `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_RIDERS`; `A`, `lib/api/graphql/queries/concurrent/index.tsx`, `GET_STORE_RIDER`                                                                                                                | 04 §2.10, §2.1 dispatch, §B      |
+| 2   | query        | `ridersPaginated`                                | A          | A, S(Riders)                                                                                                                                                    | `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_RIDERS_PAGINATED`                                                                                                                                                                              | 04 §2.10, §4 P1                  |
+| 3   | query        | `rider`                                          | A, R, C, W | RID(self) (other id → `FORBIDDEN`, forces rider logout); A, S(Riders), S(Dispatch); CUS whose active order is assigned to that rider (public fields + location) | `R`, `lib/apollo/queries/rider.query.ts`, `RIDER_PROFILE` and `RIDER_BY_ID`; `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_RIDER`; `W`, `lib/api/graphql/queries/rider/index.ts`, `RIDER`; `C`, `src/apollo/queries.js`, `rider`             | 03 §2.3, §0.4; 04 §2.10; 02 §6.1 |
+| 4   | query        | `ridersByZone`                                   | A          | A, S(Riders), S(Dispatch)                                                                                                                                       | `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_RIDERS_BY_ZONE`                                                                                                                                                                                | 04 §2.10                         |
+| 5   | query        | `availableRiders`                                | A          | A, S(Riders), S(Dispatch)                                                                                                                                       | `A`, `lib/api/graphql/queries/riders/index.ts`, `GET_AVAILABLE_RIDERS`                                                                                                                                                                              | 04 §2.10                         |
+| 6   | mutation     | `createRider`                                    | A          | A, S(Riders)                                                                                                                                                    | `A`, `lib/api/graphql/mutations/riders/index.tsx`, `CREATE_RIDER`                                                                                                                                                                                   | 04 §2.10, §2.20 `RiderInput`     |
+| 7   | mutation     | `editRider`                                      | A, R       | A, S(Riders) (all fields); RID(self) (only `vehicleType`)                                                                                                       | `A`, `lib/api/graphql/mutations/riders/index.tsx`, `EDIT_RIDER`; `R`, `lib/apollo/mutations/rider.mutation.ts`, `EDIT_RIDER`                                                                                                                        | 03 §2.14; 04 §2.20               |
+| 8   | mutation     | `deleteRider`                                    | A          | A, S(Riders)                                                                                                                                                    | `A`, `lib/api/graphql/mutations/riders/index.tsx`, `DELETE_RIDER`                                                                                                                                                                                   | 04 §2.10                         |
+| 9   | mutation     | `toggleAvailablity` (misspelling kept)           | A, R       | RID(self); A, S(Riders)                                                                                                                                         | `A`, `lib/api/graphql/mutations/riders/index.tsx`, `TOGGLE_RIDER`; `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_AVAILABILITY`                                                                                                             | 03 §2.4; 04 §2.10                |
+| 10  | mutation     | `updateRiderLocation`                            | R          | RID(self) only (no id argument)                                                                                                                                 | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_LOCATION_MULTI_VENDOR` and `UPDATE_LOCATION`; background raw `fetch` document `mutation BackgroundRiderLocation(...)` extracted verbatim from `R/lib/services/background-location.ts:69`     | 03 §2.5                          |
+| 11  | mutation     | `updateRiderBussinessDetails` (misspelling kept) | R          | RID(self); A, S(Riders)                                                                                                                                         | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_BUSINESS_DETAILS`                                                                                                                                                                            | 03 §2.14                         |
+| 12  | mutation     | `updateRiderLicenseDetails`                      | R          | RID(self); A, S(Riders)                                                                                                                                         | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_LICENSE`                                                                                                                                                                                     | 03 §2.14                         |
+| 13  | mutation     | `updateRiderVehicleDetails`                      | R          | RID(self); A, S(Riders)                                                                                                                                         | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_VEHICLE`                                                                                                                                                                                     | 03 §2.14                         |
+| 14  | mutation     | `updateWorkSchedule`                             | R          | RID(self); A, S(Riders)                                                                                                                                         | `R`, `lib/apollo/mutations/rider.mutation.ts`, `UPDATE_WORK_SCHEDULE`                                                                                                                                                                               | 03 §2.14                         |
+| 15  | query        | `riderOrders`                                    | R          | RID(self)                                                                                                                                                       | `R`, `lib/apollo/queries/rider.query.ts`, `RIDER_ORDERS`                                                                                                                                                                                            | 03 §2.6                          |
+| 16  | mutation     | `assignOrder`                                    | R          | RID(self), available, active, same zone as the order                                                                                                            | `R`, `lib/apollo/mutations/order.mutation.ts`, `ASSIGN_ORDER`                                                                                                                                                                                       | 03 §2.8, §C                      |
+| 17  | mutation     | `assignRider`                                    | A          | A, S(Dispatch)                                                                                                                                                  | `A`, `lib/api/graphql/mutations/dispatch/index.ts`, `ASSIGN_RIDER`                                                                                                                                                                                  | 04 §2.1 dispatch, §B             |
+| 18  | mutation     | `updateOrderStatusRider`                         | R          | RID(assigned)                                                                                                                                                   | `R`, `lib/apollo/mutations/order.mutation.ts`, `UPDATE_ORDER_STATUS_RIDER`                                                                                                                                                                          | 03 §2.10                         |
+| 19  | query        | `orderTracking`                                  | A, C, W    | CUS(own), RID(assigned), A, S(Dispatch), S(Orders), V/R(own)                                                                                                    | `A`, `lib/api/graphql/subscription/order-subscription/index.ts`, `ORDER_TRACKING`; `C`, `src/apollo/queries.js`, `orderTracking`; `W`, `lib/api/graphql/queries/order-tracking/index.ts`, `ORDER_LIVE_TRACKING`                                     | 02 §6.1; 04 §2.1                 |
+| 20  | query        | `getActiveOrders`                                | A          | A, S(Dispatch)                                                                                                                                                  | `A`, `lib/api/graphql/queries/orders/index.ts`, `GET_ACTIVE_ORDERS`                                                                                                                                                                                 | 04 §2.1 dispatch, §4 P3          |
+| 21  | query        | `getLiveMonitorData`                             | A          | A, S(Vendors), VENDOR(id = own vendor id)                                                                                                                       | `A`, `lib/api/graphql/queries/dashboard/index.ts`, `GET_VENDOR_LIVE_MONITOR`                                                                                                                                                                        | 04 §2.1 vendor dashboard, §B     |
+| 22  | subscription | `subscriptionZoneOrders`                         | R          | RID(self) whose zone = `zoneId` and `available`                                                                                                                 | `R`, `lib/apollo/subscriptions.ts`, `SUBSCRIPTION_ZONE_ORDERS`                                                                                                                                                                                      | 03 §2.7                          |
+| 23  | subscription | `subscriptionAssignRider`                        | R          | RID(self) (`riderId` = caller)                                                                                                                                  | `R`, `lib/apollo/subscriptions.ts`, `SUBSCRIPTION_ASSIGNED_RIDER`                                                                                                                                                                                   | 03 §2.9                          |
+| 24  | subscription | `subscriptionDispatcher`                         | A          | A, S(Dispatch)                                                                                                                                                  | `A`, `lib/api/graphql/subscription/order-subscription/index.ts`, `SUBSCRIPTION_DISPATCH_ORDER`                                                                                                                                                      | 04 §2.1 dispatch                 |
+| 25  | subscription | `subscriptionOrderTracking`                      | A, C, W    | same as `orderTracking`                                                                                                                                         | `A`, `lib/api/graphql/subscription/order-subscription/index.ts`, `SUBSCRIPTION_ORDER_TRACKING`; `C`, `src/apollo/subscriptions.js`, `subscriptionOrderTracking`; `W`, `lib/api/graphql/subscription/orders/index.ts`, `SUBSCRIPTION_ORDER_TRACKING` | 02 §6.4                          |
+| 26  | subscription | `subscriptionRiderLocation`                      | C, W       | RID(self); A, S(Dispatch), S(Riders); CUS whose active order is assigned to that rider                                                                          | `C`, `src/apollo/subscriptions.js`, `subscriptionRiderLocation`; `W`, `lib/api/graphql/subscription/riderLocation/index.ts`, `SUBSCRIPTION_RIDER_LOCATION`                                                                                          | 02 §6.4; 03 §2.5                 |
+| 27  | subscription | `riderUpdated`                                   | A          | A, any STAFF                                                                                                                                                    | `A`, `lib/api/graphql/subscription/rider-subscription/index.ts`, `RIDER_UPDATED_SUBSCRIPTION`                                                                                                                                                       | 04 §2.1, §B                      |
+| 28  | query        | `chat`                                           | C, R, W    | CUS(own), RID(assigned)                                                                                                                                         | `R`, `lib/apollo/queries/chat.query.ts`, `CHAT`; `C`, `src/apollo/queries.js`, `chat`; `W`, `lib/api/graphql/queries/chatWithRider/index.tsx`, `CHAT_QUERY`                                                                                         | 02 §6.7; 03 §2.12                |
+| 29  | mutation     | `sendChatMessage`                                | C, R, W    | CUS(own), RID(assigned), order `ASSIGNED`/`PICKED`                                                                                                              | `R`, `lib/apollo/mutations/chat.mutation.ts`, `SEND_CHAT_MESSAGE`; `C`, `src/apollo/mutations.js`, `sendChatMessage`; `W`, `lib/api/graphql/mutations/chatWithRider/index.ts`, `SEND_CHAT_MESSAGE`                                                  | 02 §6.7; 03 §2.12                |
+| 30  | subscription | `subscriptionNewMessage`                         | C, R, W    | CUS(own), RID(assigned)                                                                                                                                         | `R`, `lib/apollo/subscriptions.ts`, `SUBSCRIPTION_NEW_MESSAGE`; `C`, `src/apollo/subscriptions.js`, `subscriptionNewMessage`; `W`, `lib/api/graphql/subscription/ChatWithRider/index.tsx`, `SUBSCRIPTION_NEW_MESSAGE`                               | 02 §6.4, §6.7                    |
+| 31  | mutation     | `registerLiveActivitySession`                    | C          | CUS(own), order active                                                                                                                                          | `C`, `src/utils/liveActivityService.js`, module-level `const REGISTER_SESSION` (not exported; extracted verbatim by `extractDocument`, Task 2)                                                                                                      | 02 §8                            |
+| 32  | mutation     | `removeLiveActivitySession`                      | C          | CUS(own)                                                                                                                                                        | `C`, `src/utils/liveActivityService.js`, module-level `const REMOVE_SESSION` (extracted verbatim)                                                                                                                                                   | 02 §8                            |
 
 Total: **32**, equal to the JSON count. Single-vendor variants of the same roots (`SINGLE_VENDOR_*` in `R`) are L12's concern; the SDL below declares their extra arguments (`riderOrders(limit, offset)`) as nullable so those documents validate, and L6 ignores them in MULTI mode.
 
@@ -279,7 +279,14 @@ extend type Query {
   # A, S(Riders|Dispatch)
   riders: [Rider!]!
   # A, S(Riders); P1 pagination
-  ridersPaginated(page: Int, limit: Int, search: String, zone: String, available: Boolean, isActive: Boolean): PaginatedRiders!
+  ridersPaginated(
+    page: Int
+    limit: Int
+    search: String
+    zone: String
+    available: Boolean
+    isActive: Boolean
+  ): PaginatedRiders!
   # rider self | A, S(Riders|Dispatch) | customer of an active order with this rider. id nullable (C sends String).
   rider(id: String): Rider
   # A, S(Riders|Dispatch)
@@ -291,9 +298,20 @@ extend type Query {
   # CUS(own), RID(assigned), A, S(Dispatch|Orders), V/R(own)
   orderTracking(id: ID!): OrderTracking
   # A, S(Dispatch); P3 pagination; restaurantId "" means all
-  getActiveOrders(restaurantId: ID, page: Int, rowsPerPage: Int, actions: [String], search: String): ActiveOrdersPage!
+  getActiveOrders(
+    restaurantId: ID
+    page: Int
+    rowsPerPage: Int
+    actions: [String]
+    search: String
+  ): ActiveOrdersPage!
   # A, S(Vendors), VENDOR(own)
-  getLiveMonitorData(id: String!, dateKeyword: String, starting_date: String, ending_date: String): LiveMonitorData!
+  getLiveMonitorData(
+    id: String!
+    dateKeyword: String
+    starting_date: String
+    ending_date: String
+  ): LiveMonitorData!
   # CUS(own), RID(assigned); newest first
   chat(order: ID!): [ChatMessage!]!
 }
@@ -302,18 +320,48 @@ extend type Mutation {
   editRider(riderInput: RiderInput!): Rider!
   deleteRider(id: String!): Rider!
   toggleAvailablity(id: String!): Rider!
-  updateRiderLocation(latitude: String!, longitude: String!, accuracy: Float, heading: Float, speed: Float, deviceTimestamp: String): Rider!
-  updateRiderBussinessDetails(bussinessDetails: BussinessDetailsInput, id: String!): Rider!
-  updateRiderLicenseDetails(id: String!, licenseDetails: LicenseDetailsInput): Rider!
-  updateRiderVehicleDetails(id: String!, vehicleDetails: VehicleDetailsInput): Rider!
-  updateWorkSchedule(riderId: String!, workSchedule: [DayScheduleInput!]!, timeZone: String!): Rider!
+  updateRiderLocation(
+    latitude: String!
+    longitude: String!
+    accuracy: Float
+    heading: Float
+    speed: Float
+    deviceTimestamp: String
+  ): Rider!
+  updateRiderBussinessDetails(
+    bussinessDetails: BussinessDetailsInput
+    id: String!
+  ): Rider!
+  updateRiderLicenseDetails(
+    id: String!
+    licenseDetails: LicenseDetailsInput
+  ): Rider!
+  updateRiderVehicleDetails(
+    id: String!
+    vehicleDetails: VehicleDetailsInput
+  ): Rider!
+  updateWorkSchedule(
+    riderId: String!
+    workSchedule: [DayScheduleInput!]!
+    timeZone: String!
+  ): Rider!
   assignOrder(id: String!): Order!
   assignRider(id: String!, riderId: String!): Order!
   # status: PICKED | DELIVERED only
   updateOrderStatusRider(id: String!, status: String!): Order!
   sendChatMessage(message: ChatMessageInput!, orderId: ID!): ChatMessageResult!
-  registerLiveActivitySession(orderId: ID!, activityId: String!, platform: String!, pushToken: String!, schemaVersion: Int, language: String): LiveActivityResult!
-  removeLiveActivitySession(orderId: ID!, activityId: String!): LiveActivityResult!
+  registerLiveActivitySession(
+    orderId: ID!
+    activityId: String!
+    platform: String!
+    pushToken: String!
+    schemaVersion: Int
+    language: String
+  ): LiveActivityResult!
+  removeLiveActivitySession(
+    orderId: ID!
+    activityId: String!
+  ): LiveActivityResult!
 }
 extend type Subscription {
   subscriptionZoneOrders(zoneId: String!): ZoneOrderEvent!
@@ -363,49 +411,119 @@ export interface OrdersPort {
   // existing: get, transition, markPaid
   getMany(ids: string[]): Promise<OrderSnapshot[]>;
   // newest first
-  search(filter: OrderSearch, window: { skip: number; limit: number }): Promise<{ ids: string[]; total: number }>;
+  search(
+    filter: OrderSearch,
+    window: { skip: number; limit: number },
+  ): Promise<{ ids: string[]; total: number }>;
   // The parent objects L5's Order resolvers expect, in the order of `ids`; missing ids omitted.
   graph(ids: string[]): Promise<Record<string, unknown>[]>;
   // delayed = DELIVERED after expectedTime, or not terminal and expectedTime < now
-  liveStats(input: { restaurantIds: string[]; from: Date | null; to: Date | null; now: Date }): Promise<{ cancelled: number; delayed: number }>;
+  liveStats(input: {
+    restaurantIds: string[];
+    from: Date | null;
+    to: Date | null;
+    now: Date;
+  }): Promise<{ cancelled: number; delayed: number }>;
 }
 export interface RestaurantsPort {
   // existing: forOrdering, priceLines, ownedBy
-  byVendor(vendorId: string): Promise<{ id: string; isActive: boolean; isAvailable: boolean; reviewAverage: number }[]>;
+  byVendor(vendorId: string): Promise<
+    {
+      id: string;
+      isActive: boolean;
+      isAvailable: boolean;
+      reviewAverage: number;
+    }[]
+  >;
 }
 export interface RidersPort {
   // existing: rider, availableInZone — implemented by L6 (Task 13)
   recordLogin(riderId: string, input: { timeZone: string }): Promise<void>; // L1 riderLogin persists timeZone
 }
 export const ACCOUNTS_PORT = Symbol("ACCOUNTS_PORT");
-export interface AccountsPort { // L1 — identity owns credentials
+export interface AccountsPort {
+  // L1 — identity owns credentials
   // Creates IdentityUser + credential with role RIDER inside the caller's transaction; returns the new user id.
   // Duplicate username → CONFLICT "Username is already taken"; weak password → BAD_USER_INPUT (L1 message).
-  create(tx: Queryable, input: { type: "RIDER"; username: string; password: string; name: string; phone: string | null }): Promise<{ userId: string }>;
-  update(tx: Queryable, userId: string, input: { username?: string; password?: string; name?: string; phone?: string | null }): Promise<void>;
+  create(
+    tx: Queryable,
+    input: {
+      type: "RIDER";
+      username: string;
+      password: string;
+      name: string;
+      phone: string | null;
+    },
+  ): Promise<{ userId: string }>;
+  update(
+    tx: Queryable,
+    userId: string,
+    input: {
+      username?: string;
+      password?: string;
+      name?: string;
+      phone?: string | null;
+    },
+  ): Promise<void>;
   // Disables login and revokes every session family of the user.
   deactivate(tx: Queryable, userId: string): Promise<void>;
 }
 export const MAPS_PORT = Symbol("MAPS_PORT");
-export interface MapsPort { // L2 — Google Directions behind the D11 key; returns null when no key is configured
-  directions(input: { origin: LatLng; destination: LatLng; waypoints?: LatLng[] }): Promise<{ distanceMeters: number; durationSeconds: number; encodedPolyline: string } | null>;
+export interface MapsPort {
+  // L2 — Google Directions behind the D11 key; returns null when no key is configured
+  directions(input: {
+    origin: LatLng;
+    destination: LatLng;
+    waypoints?: LatLng[];
+  }): Promise<{
+    distanceMeters: number;
+    durationSeconds: number;
+    encodedPolyline: string;
+  } | null>;
 }
 export type LatLng = { latitude: number; longitude: number };
 export type LiveActivityContent = {
-  schemaVersion: number; status: string; estimatedArrivalEpoch: number | null; etaUpdatedAtEpoch: number | null;
-  riderName: string | null; riderPhone: string | null; language: string;
+  schemaVersion: number;
+  status: string;
+  estimatedArrivalEpoch: number | null;
+  etaUpdatedAtEpoch: number | null;
+  riderName: string | null;
+  riderPhone: string | null;
+  language: string;
 };
 export const LIVE_ACTIVITY_PORT = Symbol("LIVE_ACTIVITY_PORT");
-export interface LiveActivityPort { // L8 — APNs liveactivity / FCM; throws PROVIDER_UNAVAILABLE when credentials are absent
-  send(session: { platform: "IOS" | "ANDROID"; pushToken: string; activityId: string }, content: LiveActivityContent, event: "update" | "end"): Promise<void>;
+export interface LiveActivityPort {
+  // L8 — APNs liveactivity / FCM; throws PROVIDER_UNAVAILABLE when credentials are absent
+  send(
+    session: {
+      platform: "IOS" | "ANDROID";
+      pushToken: string;
+      activityId: string;
+    },
+    content: LiveActivityContent,
+    event: "update" | "end",
+  ): Promise<void>;
 }
 export type OrderEtaView = {
-  phase: string; source: string; readyAt: string | null; baseArrivalAt: string | null; estimatedArrivalAt: string | null;
-  windowStartAt: string | null; windowEndAt: string | null; durationSeconds: number | null; distanceMeters: number | null;
-  encodedPolyline: string | null; origin: LatLng | null; destination: LatLng | null; calculatedAt: string; lastLocationAt: string | null; version: number;
+  phase: string;
+  source: string;
+  readyAt: string | null;
+  baseArrivalAt: string | null;
+  estimatedArrivalAt: string | null;
+  windowStartAt: string | null;
+  windowEndAt: string | null;
+  durationSeconds: number | null;
+  distanceMeters: number | null;
+  encodedPolyline: string | null;
+  origin: LatLng | null;
+  destination: LatLng | null;
+  calculatedAt: string;
+  lastLocationAt: string | null;
+  version: number;
 };
 export const TRACKING_PORT = Symbol("TRACKING_PORT");
-export interface TrackingPort { // L6 — L5's Order.eta field resolver calls this
+export interface TrackingPort {
+  // L6 — L5's Order.eta field resolver calls this
   eta(orderIds: string[]): Promise<Map<string, OrderEtaView>>;
 }
 ```
@@ -675,24 +793,24 @@ ALTER TABLE "LiveActivitySession" ADD CONSTRAINT "LiveActivitySession_platform_c
 
 ### 4.3 Cross-lane foreign keys (append to `docs/CROSS_LANE_FKS.md`)
 
-| Column | References | On delete |
-|---|---|---|
-| `Rider.userId` | `IdentityUser.id` (L1) | RESTRICT |
-| `Rider.zoneId` | `Zone.id` (L2) | RESTRICT |
-| `DispatchOffer.orderId` | `Order.id` (L5) | RESTRICT |
-| `DispatchOffer.zoneId` | `Zone.id` (L2) | RESTRICT |
-| `DispatchOffer.restaurantId` | `Restaurant.id` (L3) | RESTRICT |
-| `DispatchAssignment.orderId` | `Order.id` (L5) | RESTRICT |
-| `DispatchAssignment.customerId` | `IdentityUser.id` (L1) | RESTRICT |
-| `DispatchAssignmentLog.orderId` | `Order.id` (L5) | RESTRICT |
-| `DispatchAnnouncement.orderId` | `Order.id` (L5) | RESTRICT |
-| `TrackingEta.orderId` | `Order.id` (L5) | RESTRICT |
-| `TrackingEta.customerId` | `IdentityUser.id` (L1) | RESTRICT |
-| `TrackingEta.riderId` | `Rider.id` (L6, same lane; added in L6 migration as a normal FK) | RESTRICT |
-| `ChatMessage.orderId` | `Order.id` (L5) | RESTRICT |
-| `ChatMessage.senderId` | `IdentityUser.id` (L1) | RESTRICT |
-| `LiveActivitySession.orderId` | `Order.id` (L5) | RESTRICT |
-| `LiveActivitySession.userId` | `IdentityUser.id` (L1) | RESTRICT |
+| Column                          | References                                                       | On delete |
+| ------------------------------- | ---------------------------------------------------------------- | --------- |
+| `Rider.userId`                  | `IdentityUser.id` (L1)                                           | RESTRICT  |
+| `Rider.zoneId`                  | `Zone.id` (L2)                                                   | RESTRICT  |
+| `DispatchOffer.orderId`         | `Order.id` (L5)                                                  | RESTRICT  |
+| `DispatchOffer.zoneId`          | `Zone.id` (L2)                                                   | RESTRICT  |
+| `DispatchOffer.restaurantId`    | `Restaurant.id` (L3)                                             | RESTRICT  |
+| `DispatchAssignment.orderId`    | `Order.id` (L5)                                                  | RESTRICT  |
+| `DispatchAssignment.customerId` | `IdentityUser.id` (L1)                                           | RESTRICT  |
+| `DispatchAssignmentLog.orderId` | `Order.id` (L5)                                                  | RESTRICT  |
+| `DispatchAnnouncement.orderId`  | `Order.id` (L5)                                                  | RESTRICT  |
+| `TrackingEta.orderId`           | `Order.id` (L5)                                                  | RESTRICT  |
+| `TrackingEta.customerId`        | `IdentityUser.id` (L1)                                           | RESTRICT  |
+| `TrackingEta.riderId`           | `Rider.id` (L6, same lane; added in L6 migration as a normal FK) | RESTRICT  |
+| `ChatMessage.orderId`           | `Order.id` (L5)                                                  | RESTRICT  |
+| `ChatMessage.senderId`          | `IdentityUser.id` (L1)                                           | RESTRICT  |
+| `LiveActivitySession.orderId`   | `Order.id` (L5)                                                  | RESTRICT  |
+| `LiveActivitySession.userId`    | `IdentityUser.id` (L1)                                           | RESTRICT  |
 
 Table names `IdentityUser`, `Zone`, `Order`, `Restaurant` are the owning lanes' W1 names; if a lane renames a table, only this list changes.
 
@@ -705,7 +823,7 @@ Exact strings in quotes are returned verbatim; codes are master §4.3 codes. Rid
 **Riders and identity**
 
 - R1. A rider's id is its identity user id (`Rider.id = Rider.userId`); `createRider` creates the login through `AccountsPort.create` inside the same database transaction as the `Rider` insert; nothing is written if either fails.
-- R2. `RiderInput` validation (server re-checks the admin Yup rules, `A/lib/utils/schema/rider.ts`): name 1–35 chars "Name must be at most 35 characters"; username lower-cased, 2–35 chars, `[a-z0-9._@+-]` "Username may contain letters, digits and . _ @ + - only"; phone 5–32 chars `^\+?[0-9 ()-]+$` "Invalid phone number"; zone required "Zone is required" and must exist and be active "Zone not found"; vehicleType ∈ `bicycle motorbike car pickup_truck` "Invalid vehicle type"; on create `_id` must be empty "A new rider must not have an id" and password present "Password is required"; on edit `_id` required "Rider id is required", password optional (blank keeps the current one, reference/04 §2.20). Password policy is L1's.
+- R2. `RiderInput` validation (server re-checks the admin Yup rules, `A/lib/utils/schema/rider.ts`): name 1–35 chars "Name must be at most 35 characters"; username lower-cased, 2–35 chars, `[a-z0-9._@+-]` "Username may contain letters, digits and . \_ @ + - only"; phone 5–32 chars `^\+?[0-9 ()-]+$` "Invalid phone number"; zone required "Zone is required" and must exist and be active "Zone not found"; vehicleType ∈ `bicycle motorbike car pickup_truck` "Invalid vehicle type"; on create `_id` must be empty "A new rider must not have an id" and password present "Password is required"; on edit `_id` required "Rider id is required", password optional (blank keeps the current one, reference/04 §2.20). Password policy is L1's.
 - R3. A rider session calling `editRider` may change only `vehicleType`; `_id` must equal the caller (else `FORBIDDEN`); every other field it sends (name, username, phone, zone, available) is ignored (reference/03 §2.14, §C.5).
 - R4. `deleteRider` is a soft delete (`deletedAt`, `isActive=false`, `available=false`) plus `AccountsPort.deactivate` (sessions revoked) in one transaction; refused with "Rider has active orders and cannot be deleted" while the rider has an ACTIVE assignment.
 - R5. `toggleAvailablity(id)` flips `available` atomically (`SET available = NOT available`); caller is the rider itself or A/S(Riders). Toggling while holding orders is allowed (UNVERIFIED, reference/03 §2.4).

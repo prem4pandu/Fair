@@ -8,6 +8,7 @@ import {
 } from "../src/identity/service.js";
 import { SignJWT } from "jose";
 const env = {
+  APP_ENV: "test",
   DATABASE_URL: "postgres://localhost/test",
   REDIS_URL: "redis://localhost",
 };

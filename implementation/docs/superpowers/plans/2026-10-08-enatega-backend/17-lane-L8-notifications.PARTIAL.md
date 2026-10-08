@@ -22,13 +22,13 @@ L8 makes **no** edits under `vendor/enatega-ui/`. Customer-visible product namin
 
 Authoritative source: `implementation/docs/OPERATION_LANES.json` filtered by `"lane": "L8"` → **5 operations** (`perLane.L8 = 5`). All five are listed below; the count matches.
 
-| # | Type | Name | Apps that call it (multivendor) | Who may call it | Vendored documents to use in tests (`app`, `file`, `exportName`) | Reference |
-|---|---|---|---|---|---|---|
-| 1 | query | `notifications` | admin (also svadmin, L12 app; root owned by L8) | `ADMIN`; `STAFF` with permission `Notification` | `enatega-multivendor-admin`, `lib/api/graphql/queries/notifications/index.ts`, `GET_NOTIFICATIONS` (line 3); svadmin variant selecting `recipientType`: `enatega-singlevendor-admin`, `lib/api/graphql/queries/notifications/index.ts`, `GET_NOTIFICATIONS` (line 3) | reference/04 §2.15, §B `S(Notification)` |
-| 2 | query | `notificationsPaginated` | admin | `ADMIN`; `STAFF` with `Notification` | `enatega-multivendor-admin`, `lib/api/graphql/queries/notifications/index.ts`, `GET_NOTIFICATIONS_PAGINATED` (line 14) | reference/04 §2.15, §4 shape P1 |
-| 3 | query | `webNotifications` | admin (super-admin app bar) | `ADMIN`, `STAFF` (rows filtered by permission), `VENDOR` (own vendor rows), `RESTAURANT` (own restaurant rows); `CUSTOMER`/`RIDER` → `FORBIDDEN` | `enatega-multivendor-admin`, `lib/api/graphql/queries/notifications/index.ts`, `GET_WEB_NOTIFICATIONS` (line 30) | reference/04 §2.15 (app bar) |
-| 4 | mutation | `markWebNotificationsAsRead` | admin (super-admin app bar) | same as `webNotifications` | `enatega-multivendor-admin`, `lib/api/graphql/mutations/notifications/index.ts`, `MARK_WEB_NOTIFICATIONS_AS_READ` (line 15) | reference/04 §2.15 |
-| 5 | mutation | `sendNotificationUser` | admin (also svadmin) | `ADMIN`; `STAFF` with `Notification` | `enatega-multivendor-admin`, `lib/api/graphql/mutations/notifications/index.ts`, `SEND_NOTIFICATION_USER` (line 3; no segment argument); `enatega-singlevendor-admin`, `lib/api/graphql/mutations/notifications/index.ts`, `SEND_NOTIFICATION_USER` (line 3; adds `$recipientType: NotificationRecipientType`) | reference/04 §2.15, §B, §C |
+| #   | Type     | Name                         | Apps that call it (multivendor)                 | Who may call it                                                                                                                                  | Vendored documents to use in tests (`app`, `file`, `exportName`)                                                                                                                                                                                                                                               | Reference                                |
+| --- | -------- | ---------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| 1   | query    | `notifications`              | admin (also svadmin, L12 app; root owned by L8) | `ADMIN`; `STAFF` with permission `Notification`                                                                                                  | `enatega-multivendor-admin`, `lib/api/graphql/queries/notifications/index.ts`, `GET_NOTIFICATIONS` (line 3); svadmin variant selecting `recipientType`: `enatega-singlevendor-admin`, `lib/api/graphql/queries/notifications/index.ts`, `GET_NOTIFICATIONS` (line 3)                                           | reference/04 §2.15, §B `S(Notification)` |
+| 2   | query    | `notificationsPaginated`     | admin                                           | `ADMIN`; `STAFF` with `Notification`                                                                                                             | `enatega-multivendor-admin`, `lib/api/graphql/queries/notifications/index.ts`, `GET_NOTIFICATIONS_PAGINATED` (line 14)                                                                                                                                                                                         | reference/04 §2.15, §4 shape P1          |
+| 3   | query    | `webNotifications`           | admin (super-admin app bar)                     | `ADMIN`, `STAFF` (rows filtered by permission), `VENDOR` (own vendor rows), `RESTAURANT` (own restaurant rows); `CUSTOMER`/`RIDER` → `FORBIDDEN` | `enatega-multivendor-admin`, `lib/api/graphql/queries/notifications/index.ts`, `GET_WEB_NOTIFICATIONS` (line 30)                                                                                                                                                                                               | reference/04 §2.15 (app bar)             |
+| 4   | mutation | `markWebNotificationsAsRead` | admin (super-admin app bar)                     | same as `webNotifications`                                                                                                                       | `enatega-multivendor-admin`, `lib/api/graphql/mutations/notifications/index.ts`, `MARK_WEB_NOTIFICATIONS_AS_READ` (line 15)                                                                                                                                                                                    | reference/04 §2.15                       |
+| 5   | mutation | `sendNotificationUser`       | admin (also svadmin)                            | `ADMIN`; `STAFF` with `Notification`                                                                                                             | `enatega-multivendor-admin`, `lib/api/graphql/mutations/notifications/index.ts`, `SEND_NOTIFICATION_USER` (line 3; no segment argument); `enatega-singlevendor-admin`, `lib/api/graphql/mutations/notifications/index.ts`, `SEND_NOTIFICATION_USER` (line 3; adds `$recipientType: NotificationRecipientType`) | reference/04 §2.15, §B, §C               |
 
 Total: **5 / 5**.
 
@@ -40,24 +40,24 @@ Plus the non-GraphQL surface this lane owns:
 
 Client facts verified in the vendored source (cited by later rules):
 
-| Fact | Source |
-|---|---|
-| Multivendor broadcast form sends only `notificationTitle` (Formik `title`) and `notificationBody`; toast "Notification has been sent successfully" on completion; `refetchQueries: 'active'` | `enatega-multivendor-admin/lib/ui/screen-components/protected/super-admin/notifications/form/index.tsx:40-59,73-78` |
-| Resend button re-sends title/body; toast "The notification has been resent successfully"; refetches `GET_NOTIFICATIONS` | `enatega-multivendor-admin/lib/ui/useable-components/table/columns/notification-columns.tsx:22-50,74-80` |
-| Client validation: title ≤ 25 ("You have reached the MAX limit of 25 characters", required "Title is required"), body ≤ 1500 ("You have reached the MAX limit of 1500 characters", required "Description is Required"), non-blank ("Name cannot be only spaces") | `enatega-multivendor-admin/lib/utils/schema/notification.ts:2-13` |
-| Single-vendor admin segment values `CUSTOMER`, `STORE`, `RIDER`, default `CUSTOMER`; shows the returned string as the toast message | `enatega-singlevendor-admin/lib/ui/screen-components/protected/super-admin/notifications/form/index.tsx:35-48,99-111`, `lib/utils/schema/notification.ts:3-5`, `lib/utils/interfaces/notification.interface.ts:9` |
-| History table renders `createdAt` raw (multivendor) / parses ISO or epoch (single-vendor) | `notification-columns.tsx:67-71` (mv); `enatega-singlevendor-admin/lib/ui/useable-components/table/columns/notification-columns.tsx:62-69` |
-| Paginated history sends `page`, `limit` (10 default), `search` (debounced, `undefined` when empty); reads `data`, `totalCount`, `currentPage` | `enatega-multivendor-admin/lib/ui/screen-components/protected/super-admin/notifications/view/main/index.tsx:25-40,50-63` |
-| App bar loads `webNotifications` network-only on mount, refetches on `RIDER_UPDATED_SUBSCRIPTION`, calls `markWebNotificationsAsRead` on every bell click and on item click, counts `!read`, renders `body`, links to `navigateTo`, renders `timeAgo(+createdAt)` (epoch milliseconds) | `enatega-multivendor-admin/lib/ui/screen-components/protected/layout/super-admin-layout/app-bar/index.tsx:117-145,291-359`; `lib/utils/methods/timeAgo.ts:1-8` |
-| Web notifications are rendered only by the super-admin layout | `enatega-multivendor-admin/lib/ui/layouts/protected/super-admin/index.tsx:114-117` (only importer of `GET_WEB_NOTIFICATIONS`) |
-| Staff permission strings include `Notification`, `Orders`, `Withdraw Request` | `enatega-multivendor-admin/lib/utils/constants/permissions.ts:1-20` |
-| Customer app push taps: `data.type === 'REVIEW_ORDER'` with `data._id` opens the review modal; `data.type === 'order'` uses `data._id \|\| data.orderId` and `data.appMode`/`mode`/`vendorMode` | `enatega-multivendor-app/App.js:314-366`; `src/mode/orderOrigin.js:71-79`; `src/utils/enums.js:12-14` |
-| Store app push tap reads `data._id` (string) | `enatega-multivendor-store/lib/hooks/useNotification.ts:78-97` |
-| Rider app push tap: needs `data._id` or `data.orderId`, otherwise ignores; `type === "chat"` opens chat, anything else navigates to `/order-detail?itemId=<_id>` | `enatega-multivendor-rider/lib/context/global/chat-notification.context.tsx:270-312` |
-| Android channels: store `"default"` (MAX importance, sound), rider `"default"` (HIGH, sound) | `enatega-multivendor-store/lib/hooks/useNotification.ts:42-48`; `enatega-multivendor-rider/lib/context/global/chat-notification.context.tsx:329-333` |
-| All three mobile apps register **Expo** push tokens (`getExpoPushTokenAsync`); admin web registers an FCM web token through `uploadToken` (L2) | `enatega-multivendor-app/src/screens/Settings/Settings.js:158`, `enatega-multivendor-store/lib/hooks/useLogin.ts:145`, `enatega-multivendor-rider/lib/utils/methods/permission.ts:43`; `enatega-multivendor-admin/lib/ui/layouts/protected/super-admin/index.tsx:73-87` |
-| Customer preferences `isOrderNotification`/`isOfferNotification` (`updateNotificationStatus`, L1); restaurant `enableNotification` (`saveRestaurantToken`, L1) | `enatega-multivendor-app/src/apollo/mutations.js:385-391`; `enatega-multivendor-store/lib/apollo/mutations/notification.mutation.ts:3-11` |
-| Admin messaging configuration fields (owned by L2): `twilioAccountSid`, `twilioPhoneNumber`, `twilioEnabled`, write-only `twilioAuthToken`; `sendGridEnabled`, `sendGridEmail`, `sendGridEmailName`; nodemailer `email`, `emailName`, `enableEmail`, write-only `password`; Firebase **web client** config only (no server credentials) | `enatega-multivendor-admin/lib/api/graphql/queries/configuration/index.ts:3-57`; `lib/ui/screen-components/protected/super-admin/configuration/add-form/twilio/index.tsx:60-70`, `nodemailer/index.tsx:49-54`, `firebase-admin/index.tsx:65-74` |
+| Fact                                                                                                                                                                                                                                                                                                                                    | Source                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Multivendor broadcast form sends only `notificationTitle` (Formik `title`) and `notificationBody`; toast "Notification has been sent successfully" on completion; `refetchQueries: 'active'`                                                                                                                                            | `enatega-multivendor-admin/lib/ui/screen-components/protected/super-admin/notifications/form/index.tsx:40-59,73-78`                                                                                                                                                     |
+| Resend button re-sends title/body; toast "The notification has been resent successfully"; refetches `GET_NOTIFICATIONS`                                                                                                                                                                                                                 | `enatega-multivendor-admin/lib/ui/useable-components/table/columns/notification-columns.tsx:22-50,74-80`                                                                                                                                                                |
+| Client validation: title ≤ 25 ("You have reached the MAX limit of 25 characters", required "Title is required"), body ≤ 1500 ("You have reached the MAX limit of 1500 characters", required "Description is Required"), non-blank ("Name cannot be only spaces")                                                                        | `enatega-multivendor-admin/lib/utils/schema/notification.ts:2-13`                                                                                                                                                                                                       |
+| Single-vendor admin segment values `CUSTOMER`, `STORE`, `RIDER`, default `CUSTOMER`; shows the returned string as the toast message                                                                                                                                                                                                     | `enatega-singlevendor-admin/lib/ui/screen-components/protected/super-admin/notifications/form/index.tsx:35-48,99-111`, `lib/utils/schema/notification.ts:3-5`, `lib/utils/interfaces/notification.interface.ts:9`                                                       |
+| History table renders `createdAt` raw (multivendor) / parses ISO or epoch (single-vendor)                                                                                                                                                                                                                                               | `notification-columns.tsx:67-71` (mv); `enatega-singlevendor-admin/lib/ui/useable-components/table/columns/notification-columns.tsx:62-69`                                                                                                                              |
+| Paginated history sends `page`, `limit` (10 default), `search` (debounced, `undefined` when empty); reads `data`, `totalCount`, `currentPage`                                                                                                                                                                                           | `enatega-multivendor-admin/lib/ui/screen-components/protected/super-admin/notifications/view/main/index.tsx:25-40,50-63`                                                                                                                                                |
+| App bar loads `webNotifications` network-only on mount, refetches on `RIDER_UPDATED_SUBSCRIPTION`, calls `markWebNotificationsAsRead` on every bell click and on item click, counts `!read`, renders `body`, links to `navigateTo`, renders `timeAgo(+createdAt)` (epoch milliseconds)                                                  | `enatega-multivendor-admin/lib/ui/screen-components/protected/layout/super-admin-layout/app-bar/index.tsx:117-145,291-359`; `lib/utils/methods/timeAgo.ts:1-8`                                                                                                          |
+| Web notifications are rendered only by the super-admin layout                                                                                                                                                                                                                                                                           | `enatega-multivendor-admin/lib/ui/layouts/protected/super-admin/index.tsx:114-117` (only importer of `GET_WEB_NOTIFICATIONS`)                                                                                                                                           |
+| Staff permission strings include `Notification`, `Orders`, `Withdraw Request`                                                                                                                                                                                                                                                           | `enatega-multivendor-admin/lib/utils/constants/permissions.ts:1-20`                                                                                                                                                                                                     |
+| Customer app push taps: `data.type === 'REVIEW_ORDER'` with `data._id` opens the review modal; `data.type === 'order'` uses `data._id \|\| data.orderId` and `data.appMode`/`mode`/`vendorMode`                                                                                                                                         | `enatega-multivendor-app/App.js:314-366`; `src/mode/orderOrigin.js:71-79`; `src/utils/enums.js:12-14`                                                                                                                                                                   |
+| Store app push tap reads `data._id` (string)                                                                                                                                                                                                                                                                                            | `enatega-multivendor-store/lib/hooks/useNotification.ts:78-97`                                                                                                                                                                                                          |
+| Rider app push tap: needs `data._id` or `data.orderId`, otherwise ignores; `type === "chat"` opens chat, anything else navigates to `/order-detail?itemId=<_id>`                                                                                                                                                                        | `enatega-multivendor-rider/lib/context/global/chat-notification.context.tsx:270-312`                                                                                                                                                                                    |
+| Android channels: store `"default"` (MAX importance, sound), rider `"default"` (HIGH, sound)                                                                                                                                                                                                                                            | `enatega-multivendor-store/lib/hooks/useNotification.ts:42-48`; `enatega-multivendor-rider/lib/context/global/chat-notification.context.tsx:329-333`                                                                                                                    |
+| All three mobile apps register **Expo** push tokens (`getExpoPushTokenAsync`); admin web registers an FCM web token through `uploadToken` (L2)                                                                                                                                                                                          | `enatega-multivendor-app/src/screens/Settings/Settings.js:158`, `enatega-multivendor-store/lib/hooks/useLogin.ts:145`, `enatega-multivendor-rider/lib/utils/methods/permission.ts:43`; `enatega-multivendor-admin/lib/ui/layouts/protected/super-admin/index.tsx:73-87` |
+| Customer preferences `isOrderNotification`/`isOfferNotification` (`updateNotificationStatus`, L1); restaurant `enableNotification` (`saveRestaurantToken`, L1)                                                                                                                                                                          | `enatega-multivendor-app/src/apollo/mutations.js:385-391`; `enatega-multivendor-store/lib/apollo/mutations/notification.mutation.ts:3-11`                                                                                                                               |
+| Admin messaging configuration fields (owned by L2): `twilioAccountSid`, `twilioPhoneNumber`, `twilioEnabled`, write-only `twilioAuthToken`; `sendGridEnabled`, `sendGridEmail`, `sendGridEmailName`; nodemailer `email`, `emailName`, `enableEmail`, write-only `password`; Firebase **web client** config only (no server credentials) | `enatega-multivendor-admin/lib/api/graphql/queries/configuration/index.ts:3-57`; `lib/ui/screen-components/protected/super-admin/configuration/add-form/twilio/index.tsx:60-70`, `nodemailer/index.tsx:49-54`, `firebase-admin/index.tsx:65-74`                         |
 
 ---
 
@@ -117,7 +117,11 @@ extend type Query {
   notifications: [Notification!]!
   # admin. ADMIN, or STAFF with "Notification". page default 1, limit default 10 (max 100),
   # search matches title or body, case-insensitive, at most 100 characters.
-  notificationsPaginated(page: Int, limit: Int, search: String): PaginatedNotifications!
+  notificationsPaginated(
+    page: Int
+    limit: Int
+    search: String
+  ): PaginatedNotifications!
   # admin, svadmin. ADMIN, STAFF (permission-filtered), VENDOR, RESTAURANT. Newest 50 for the caller's scope.
   webNotifications: [WebNotification!]!
 }
@@ -347,10 +351,10 @@ No PostGIS columns, sequences or money columns in this lane.
 
 Cross-lane foreign keys for `docs/CROSS_LANE_FKS.md` (added by the lead in W1-Z.1):
 
-| Column | References | On delete |
-|---|---|---|
-| `Notification.createdById` | L1 user table (`User.id`; if L1 stores ADMIN/STAFF elsewhere, that table's `id`) | `RESTRICT` (users are soft-deleted; broadcast authorship is audit data) |
-| `WebNotificationReadMark.userId` | L1 user table `id` | `CASCADE` |
+| Column                           | References                                                                       | On delete                                                               |
+| -------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `Notification.createdById`       | L1 user table (`User.id`; if L1 stores ADMIN/STAFF elsewhere, that table's `id`) | `RESTRICT` (users are soft-deleted; broadcast authorship is audit data) |
+| `WebNotificationReadMark.userId` | L1 user table `id`                                                               | `CASCADE`                                                               |
 
 `NotificationDelivery.recipientId` and `WebNotification.scopeId` are polymorphic (user, restaurant, vendor, email, phone) and deliberately have **no** foreign key.
 
@@ -424,48 +428,48 @@ Configuration and providers (D13)
 
 Exact strings emitted by L8 (no forbidden words; master §4.3):
 
-| Code | Message |
-|---|---|
-| `BAD_USER_INPUT` | "You have reached the MAX limit of 25 characters" · "Description is Required" · "You have reached the MAX limit of 1500 characters" · "Search is too long" |
-| `RATE_LIMITED` | "Too many attempts, try again later" (default) |
-| `PROVIDER_UNAVAILABLE` | "Push notifications are not available" · "Email delivery is not available" · "SMS delivery is not available" |
-| `FORBIDDEN` / `UNAUTHENTICATED` | kernel defaults |
+| Code                            | Message                                                                                                                                                    |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BAD_USER_INPUT`                | "You have reached the MAX limit of 25 characters" · "Description is Required" · "You have reached the MAX limit of 1500 characters" · "Search is too long" |
+| `RATE_LIMITED`                  | "Too many attempts, try again later" (default)                                                                                                             |
+| `PROVIDER_UNAVAILABLE`          | "Push notifications are not available" · "Email delivery is not available" · "SMS delivery is not available"                                               |
+| `FORBIDDEN` / `UNAUTHENTICATED` | kernel defaults                                                                                                                                            |
 
 Subscriptions: L8 publishes none. The app bar refetches `webNotifications` on mount and whenever L6's `riderUpdated` subscription fires (`RIDER_UPDATED_SUBSCRIPTION`, `enatega-multivendor-admin/lib/api/graphql/subscription/rider-subscription/index.ts:3`); no new subscription is introduced because the UI has none to consume.
 
 Message templates (exact texts, `en`; `{x}` = variable; `brand.name` from `@fairbite/brand`, today "FairBite"):
 
-| Template id | Channel | TTL | Title / subject | Body |
-|---|---|---|---|---|
-| `otp.email.signup` | EMAIL | 600 s | `Your FairBite verification code` | `Your FairBite verification code is {code}. Do not share this code with anyone.` |
-| `otp.email.login` | EMAIL | 600 s | `Your FairBite sign-in code` | `Your FairBite sign-in code is {code}. Do not share this code with anyone.` |
-| `otp.email.reset` | EMAIL | 600 s | `Reset your FairBite password` | `Your FairBite password reset code is {code}. If you did not ask to reset your password, ignore this email.` |
-| `otp.sms.signup` | SMS | 600 s | — | `Your FairBite verification code is {code}.` |
-| `otp.sms.login` | SMS | 600 s | — | `Your FairBite sign-in code is {code}.` |
-| `otp.sms.reset` | SMS | 600 s | — | `Your FairBite password reset code is {code}.` |
-| `order.placed.restaurant` | PUSH | 7200 s | `New order` | `You have a new order {orderId}.` |
-| `order.accepted.customer` | PUSH | 3600 s | `Order accepted` | `{restaurant} accepted your order {orderId}.` |
-| `order.accepted.customer.pickup` | PUSH | 3600 s | `Order accepted` | `{restaurant} accepted your pickup order {orderId}.` |
-| `order.accepted.rider` | PUSH | 3600 s | `New order available` | `Order {orderId} from {restaurant} is waiting for a rider.` |
-| `order.assigned.customer` | PUSH | 3600 s | `Rider assigned` | `A rider is on the way to collect your order {orderId}.` |
-| `order.assigned.restaurant` | PUSH | 3600 s | `Rider assigned` | `A rider has been assigned to order {orderId}.` |
-| `order.assigned.rider` | PUSH | 3600 s | `New order assigned` | `Order {orderId} from {restaurant} has been assigned to you.` |
-| `order.picked.customer` | PUSH | 3600 s | `Order on the way` | `Your order {orderId} has been picked up and is on its way.` |
-| `order.delivered.customer` | PUSH | 86400 s | `Order delivered` | `Your order {orderId} has been delivered. Enjoy your meal!` |
-| `order.delivered.customer.pickup` | PUSH | 86400 s | `Order collected` | `Your order {orderId} has been collected. Enjoy your meal!` |
-| `order.cancelled.customer` | PUSH | 86400 s | `Order cancelled` | `Your order {orderId} was cancelled.` |
-| `order.cancelled.restaurant` | PUSH | 86400 s | `Order cancelled` | `Order {orderId} was cancelled.` |
-| `order.cancelled.rider` | PUSH | 86400 s | `Order cancelled` | `Order {orderId} was cancelled.` |
-| `order.paid.customer` | PUSH | 86400 s | `Payment received` | `We received your payment of {amount} for order {orderId}.` |
-| `withdraw.transferred` | PUSH | 86400 s | `Withdrawal transferred` | `Your withdrawal request of {amount} has been transferred.` |
-| `withdraw.cancelled` | PUSH | 86400 s | `Withdrawal cancelled` | `Your withdrawal request of {amount} was cancelled.` |
-| `ticket.reply.customer` | PUSH | 86400 s | `New reply from support` | `You have a new reply on your support ticket "{ticket}".` |
-| `broadcast` | PUSH | 86400 s | `{title}` (none when empty) | `{body}` |
-| `direct.push` | PUSH | 86400 s | `{title}` | `{body}` |
-| `direct.sms` | SMS | 86400 s | — | `{body}` |
-| `web.order.placed` | WEB | — | — | `New order {orderId} received` |
-| `web.withdraw.requested` | WEB | — | — | `New withdrawal request of {amount}` |
-| `web.ticket.message` | WEB | — | — | `New message on support ticket "{ticket}"` |
+| Template id                       | Channel | TTL     | Title / subject                   | Body                                                                                                         |
+| --------------------------------- | ------- | ------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `otp.email.signup`                | EMAIL   | 600 s   | `Your FairBite verification code` | `Your FairBite verification code is {code}. Do not share this code with anyone.`                             |
+| `otp.email.login`                 | EMAIL   | 600 s   | `Your FairBite sign-in code`      | `Your FairBite sign-in code is {code}. Do not share this code with anyone.`                                  |
+| `otp.email.reset`                 | EMAIL   | 600 s   | `Reset your FairBite password`    | `Your FairBite password reset code is {code}. If you did not ask to reset your password, ignore this email.` |
+| `otp.sms.signup`                  | SMS     | 600 s   | —                                 | `Your FairBite verification code is {code}.`                                                                 |
+| `otp.sms.login`                   | SMS     | 600 s   | —                                 | `Your FairBite sign-in code is {code}.`                                                                      |
+| `otp.sms.reset`                   | SMS     | 600 s   | —                                 | `Your FairBite password reset code is {code}.`                                                               |
+| `order.placed.restaurant`         | PUSH    | 7200 s  | `New order`                       | `You have a new order {orderId}.`                                                                            |
+| `order.accepted.customer`         | PUSH    | 3600 s  | `Order accepted`                  | `{restaurant} accepted your order {orderId}.`                                                                |
+| `order.accepted.customer.pickup`  | PUSH    | 3600 s  | `Order accepted`                  | `{restaurant} accepted your pickup order {orderId}.`                                                         |
+| `order.accepted.rider`            | PUSH    | 3600 s  | `New order available`             | `Order {orderId} from {restaurant} is waiting for a rider.`                                                  |
+| `order.assigned.customer`         | PUSH    | 3600 s  | `Rider assigned`                  | `A rider is on the way to collect your order {orderId}.`                                                     |
+| `order.assigned.restaurant`       | PUSH    | 3600 s  | `Rider assigned`                  | `A rider has been assigned to order {orderId}.`                                                              |
+| `order.assigned.rider`            | PUSH    | 3600 s  | `New order assigned`              | `Order {orderId} from {restaurant} has been assigned to you.`                                                |
+| `order.picked.customer`           | PUSH    | 3600 s  | `Order on the way`                | `Your order {orderId} has been picked up and is on its way.`                                                 |
+| `order.delivered.customer`        | PUSH    | 86400 s | `Order delivered`                 | `Your order {orderId} has been delivered. Enjoy your meal!`                                                  |
+| `order.delivered.customer.pickup` | PUSH    | 86400 s | `Order collected`                 | `Your order {orderId} has been collected. Enjoy your meal!`                                                  |
+| `order.cancelled.customer`        | PUSH    | 86400 s | `Order cancelled`                 | `Your order {orderId} was cancelled.`                                                                        |
+| `order.cancelled.restaurant`      | PUSH    | 86400 s | `Order cancelled`                 | `Order {orderId} was cancelled.`                                                                             |
+| `order.cancelled.rider`           | PUSH    | 86400 s | `Order cancelled`                 | `Order {orderId} was cancelled.`                                                                             |
+| `order.paid.customer`             | PUSH    | 86400 s | `Payment received`                | `We received your payment of {amount} for order {orderId}.`                                                  |
+| `withdraw.transferred`            | PUSH    | 86400 s | `Withdrawal transferred`          | `Your withdrawal request of {amount} has been transferred.`                                                  |
+| `withdraw.cancelled`              | PUSH    | 86400 s | `Withdrawal cancelled`            | `Your withdrawal request of {amount} was cancelled.`                                                         |
+| `ticket.reply.customer`           | PUSH    | 86400 s | `New reply from support`          | `You have a new reply on your support ticket "{ticket}".`                                                    |
+| `broadcast`                       | PUSH    | 86400 s | `{title}` (none when empty)       | `{body}`                                                                                                     |
+| `direct.push`                     | PUSH    | 86400 s | `{title}`                         | `{body}`                                                                                                     |
+| `direct.sms`                      | SMS     | 86400 s | —                                 | `{body}`                                                                                                     |
+| `web.order.placed`                | WEB     | —       | —                                 | `New order {orderId} received`                                                                               |
+| `web.withdraw.requested`          | WEB     | —       | —                                 | `New withdrawal request of {amount}`                                                                         |
+| `web.ticket.message`              | WEB     | —       | —                                 | `New message on support ticket "{ticket}"`                                                                   |
 
 i18n: each template stores texts per locale; lookup tries the exact locale (`pt-br`), then the language (`pt`), then `en`. Only `en` texts exist today; recipients' locales come from `PushTarget.locale` (L1, nullable). Adding a language means adding entries, never changing code. Substitution is single-pass, so admin text containing `{...}` is sent literally; a missing variable throws (never sends a half-filled message).
 
@@ -504,20 +508,43 @@ export type PushTarget = {
   locale: string | null;
 };
 export interface UsersPort {
-  customer(id: string): Promise<{ id: string; name: string; email: string | null; phone: string | null; isActive: boolean } | null>;
+  customer(id: string): Promise<{
+    id: string;
+    name: string;
+    email: string | null;
+    phone: string | null;
+    isActive: boolean;
+  } | null>;
   pushTokens(userId: string): Promise<string[]>;
-  pushTargets(audience: PushAudience, recipientIds: string[]): Promise<PushTarget[]>;
+  pushTargets(
+    audience: PushAudience,
+    recipientIds: string[],
+  ): Promise<PushTarget[]>;
   // Active recipients of the segment that have a token, ordered by recipientId ascending,
   // strictly after `afterRecipientId` (null = from the start), at most `limit` rows.
-  segmentPushTargets(segment: PushSegment, afterRecipientId: string | null, limit: number): Promise<PushTarget[]>;
+  segmentPushTargets(
+    segment: PushSegment,
+    afterRecipientId: string | null,
+    limit: number,
+  ): Promise<PushTarget[]>;
   // Removes a token a provider reported as invalid from every place it is stored; returns rows changed.
   clearPushToken(token: string): Promise<number>;
 }
 
 // Server-side only; never exposed through GraphQL.
 export type MessagingConfig = {
-  twilio: { enabled: boolean; accountSid: string | null; authToken: string | null; fromNumber: string | null };
-  sendGrid: { enabled: boolean; apiKey: string | null; fromEmail: string | null; fromName: string | null };
+  twilio: {
+    enabled: boolean;
+    accountSid: string | null;
+    authToken: string | null;
+    fromNumber: string | null;
+  };
+  sendGrid: {
+    enabled: boolean;
+    apiKey: string | null;
+    fromEmail: string | null;
+    fromName: string | null;
+  };
 };
 export interface ConfigPort {
   currency(): Promise<Currency>;
@@ -528,7 +555,12 @@ export interface ConfigPort {
 }
 
 export interface NotifyPort {
-  push(userIds: string[], title: string, body: string, data?: Record<string, string>): Promise<void>;
+  push(
+    userIds: string[],
+    title: string,
+    body: string,
+    data?: Record<string, string>,
+  ): Promise<void>;
   email(to: string, message: Message): Promise<void>;
   sms(to: string, text: string): Promise<void>;
   // L1 calls this before answering sendOtpToEmail/sendOtpToPhoneNumber so the app is never told
@@ -547,7 +579,7 @@ export type EventMeta = { id: string; attempt: number };
 export type EventHandler<T extends DomainEvent["type"]> = (event: Extract<DomainEvent, { type: T }>, meta: EventMeta) => Promise<void>;
 ```
 
-  The outbox worker (`services/worker/src/jobs/outbox.ts`) calls `handler(event, { id: row.id, attempt: row.attempts + 1 })` and exposes `registry.on(type, handler)`. L7 (`withdraw.updated`) and L4 (`ticket.message`) fill the new fields.
+The outbox worker (`services/worker/src/jobs/outbox.ts`) calls `handler(event, { id: row.id, attempt: row.attempts + 1 })` and exposes `registry.on(type, handler)`. L7 (`withdraw.updated`) and L4 (`ticket.message`) fill the new fields.
 
 - [ ] **LR-3 `services/api/src/config.ts`** — accept the L8 keys and validate them at startup (D13: `readConfig` refuses the OutboxSender in production):
 
@@ -559,7 +591,7 @@ import { notifyConfigShape, readNotifyConfig } from "./modules/notifications/con
   readNotifyConfig(parsed.data);
 ```
 
-  and append to `services/api/.env.example`:
+and append to `services/api/.env.example`:
 
 ```dotenv
 # Notifications (lane L8). Defaults: outbox in development/test, none in production.
@@ -571,7 +603,7 @@ import { notifyConfigShape, readNotifyConfig } from "./modules/notifications/con
 NOTIFY_BROADCAST_INTERVAL_SECONDS=60
 ```
 
-  Without LR-3, `startApi(stack, { NOTIFY_PUSH_PROVIDER: "none" })` cannot reach the module (zod strips unknown keys); the one HTTP test that needs it (Task 12, "without a push provider") stays red until LR-3 lands.
+Without LR-3, `startApi(stack, { NOTIFY_PUSH_PROVIDER: "none" })` cannot reach the module (zod strips unknown keys); the one HTTP test that needs it (Task 12, "without a push provider") stays red until LR-3 lands.
 
 - [ ] **LR-4 `services/api/src/app.ts`** — add `NotificationsModule.register(config)` (Task 12) to `imports` and drop the Wave 1 `NOT_IMPLEMENTED` provider for `NOTIFY_PORT` (the module is `global` and exports `NOTIFY_PORT`).
 - [ ] **LR-5 packages and worker bootstrap** — `services/api/package.json` adds `"exports": { ".": "./dist/main.js", "./notifications-worker": "./dist/modules/notifications/worker.js" }`; `services/worker/package.json` adds `"@fairbite/api": "workspace:*"` and `"@nestjs/common": "12.1.2"`; the worker boots the API module graph headlessly (`NestFactory.createApplicationContext`) and calls `registerNotificationJobs(registry, app)` (Task 15) at startup and `close()` on shutdown.
@@ -581,6 +613,7 @@ NOTIFY_BROADCAST_INTERVAL_SECONDS=60
 ### Task 1: Lane schema — SDL, Prisma, migration, row types, mappers, factories (W1-L.1–L.3)
 
 **Files:**
+
 - Create/replace: `contracts/enatega/L8-notifications.graphql` (exact text in "Contract notes")
 - Create: `services/api/prisma/schema/L8-notifications.prisma` (exact text in "Data model")
 - Create: `services/api/prisma/migrations/202610090180_L8_init/migration.sql` (exact text in "Data model")
@@ -594,14 +627,23 @@ NOTIFY_BROADCAST_INTERVAL_SECONDS=60
 ```ts
 // services/api/test/unit/notifications/mappers.spec.ts
 import { describe, expect, it } from "vitest";
-import { toNotification, toWebNotification } from "../../../src/modules/notifications/mappers.js";
+import {
+  toNotification,
+  toWebNotification,
+} from "../../../src/modules/notifications/mappers.js";
 
 const at = new Date("2026-10-08T10:15:30.123Z");
 
 describe("notification mappers", () => {
   it("maps a broadcast row with an ISO createdAt and keeps a null title", () => {
     expect(
-      toNotification({ id: "0199c3c4-0000-7000-8000-000000000001", title: null, body: "Free delivery", recipientType: "STORE", createdAt: at }),
+      toNotification({
+        id: "0199c3c4-0000-7000-8000-000000000001",
+        title: null,
+        body: "Free delivery",
+        recipientType: "STORE",
+        createdAt: at,
+      }),
     ).toEqual({
       _id: "0199c3c4-0000-7000-8000-000000000001",
       title: null,
@@ -611,12 +653,32 @@ describe("notification mappers", () => {
     });
   });
   it("maps a web notification with an epoch-millisecond createdAt the app bar parses with +value", () => {
-    const mapped = toWebNotification({ id: "w1", body: "New order PAS-1 received", navigateTo: "/management/orders", createdAt: at, read: false });
-    expect(mapped).toEqual({ _id: "w1", body: "New order PAS-1 received", navigateTo: "/management/orders", read: false, createdAt: String(at.getTime()) });
+    const mapped = toWebNotification({
+      id: "w1",
+      body: "New order PAS-1 received",
+      navigateTo: "/management/orders",
+      createdAt: at,
+      read: false,
+    });
+    expect(mapped).toEqual({
+      _id: "w1",
+      body: "New order PAS-1 received",
+      navigateTo: "/management/orders",
+      read: false,
+      createdAt: String(at.getTime()),
+    });
     expect(Number.isNaN(+mapped.createdAt)).toBe(false);
   });
   it("preserves a null navigateTo and coerces read to a boolean", () => {
-    expect(toWebNotification({ id: "w2", body: "x", navigateTo: null, createdAt: at, read: null as unknown as boolean })).toMatchObject({
+    expect(
+      toWebNotification({
+        id: "w2",
+        body: "x",
+        navigateTo: null,
+        createdAt: at,
+        read: null as unknown as boolean,
+      }),
+    ).toMatchObject({
       navigateTo: null,
       read: false,
     });
@@ -636,7 +698,12 @@ Write the SDL, Prisma file and migration exactly as given in "Contract notes" an
 ```ts
 // services/api/src/modules/notifications/types.ts
 export type Channel = "PUSH" | "EMAIL" | "SMS";
-export type DeliveryStatus = "QUEUED" | "SENDING" | "SENT" | "FAILED" | "SKIPPED";
+export type DeliveryStatus =
+  | "QUEUED"
+  | "SENDING"
+  | "SENT"
+  | "FAILED"
+  | "SKIPPED";
 export type SourceType = "EVENT" | "BROADCAST" | "DIRECT";
 export type Source = { type: SourceType; id: string };
 export type RecipientType = "USER" | "RESTAURANT" | "EMAIL" | "PHONE";
@@ -704,7 +771,13 @@ export type NewDelivery = {
   lastError?: string | null;
 };
 
-export type WebRow = { id: string; body: string; navigateTo: string | null; createdAt: Date; read: boolean };
+export type WebRow = {
+  id: string;
+  body: string;
+  navigateTo: string | null;
+  createdAt: Date;
+  read: boolean;
+};
 export type NewWebNotification = {
   audience: WebAudience;
   scopeId: string;
@@ -713,7 +786,10 @@ export type NewWebNotification = {
   navigateTo: string | null;
   sourceId: string;
 };
-export type WebScope = { pairs: [WebAudience, string][]; permissions: string[] | null };
+export type WebScope = {
+  pairs: [WebAudience, string][];
+  permissions: string[] | null;
+};
 ```
 
 ```ts
@@ -722,7 +798,12 @@ import { epochMillisString, isoString } from "../../kernel/time.js";
 import type { NotificationRow, WebRow } from "./types.js";
 
 // Notification.createdAt is ISO-8601 (master §4.5); both admin tables accept it.
-export function toNotification(row: Pick<NotificationRow, "id" | "title" | "body" | "recipientType" | "createdAt">) {
+export function toNotification(
+  row: Pick<
+    NotificationRow,
+    "id" | "title" | "body" | "recipientType" | "createdAt"
+  >,
+) {
   return {
     _id: row.id,
     title: row.title,
@@ -819,6 +900,7 @@ git commit -m "feat(L8): add notification contract, tables, mappers and factorie
 ### Task 2: Notification configuration (D13)
 
 **Files:**
+
 - Create: `services/api/src/modules/notifications/config.ts`
 - Test: `services/api/test/unit/notifications/config.spec.ts`
 
@@ -843,38 +925,67 @@ describe("notification configuration", () => {
   it("uses the DevOutbox for every channel in test and development", () => {
     for (const APP_ENV of ["test", "development"]) {
       const config = readNotifyConfig({ APP_ENV });
-      expect([config.push, config.email, config.sms]).toEqual(["outbox", "outbox", "outbox"]);
+      expect([config.push, config.email, config.sms]).toEqual([
+        "outbox",
+        "outbox",
+        "outbox",
+      ]);
     }
   });
   it("defaults to no provider in production and refuses the DevOutbox there", () => {
     const config = readNotifyConfig({ APP_ENV: "production" });
-    expect([config.push, config.email, config.sms]).toEqual(["none", "none", "none"]);
-    expect(() => readNotifyConfig({ APP_ENV: "production", NOTIFY_EMAIL_PROVIDER: "outbox" })).toThrow(
+    expect([config.push, config.email, config.sms]).toEqual([
+      "none",
+      "none",
+      "none",
+    ]);
+    expect(() =>
+      readNotifyConfig({
+        APP_ENV: "production",
+        NOTIFY_EMAIL_PROVIDER: "outbox",
+      }),
+    ).toThrow(
       /NOTIFY_EMAIL_PROVIDER: OutboxSender is not allowed in production/,
     );
   });
   it("requires https provider endpoints in production but allows loopback fakes in test", () => {
-    expect(() => readNotifyConfig({ APP_ENV: "production", TWILIO_API_BASE_URL: "http://127.0.0.1:9999" })).toThrow(
-      /TWILIO_API_BASE_URL: https required/,
-    );
-    expect(readNotifyConfig({ APP_ENV: "test", TWILIO_API_BASE_URL: "http://127.0.0.1:9999/" }).twilio.baseUrl).toBe(
-      "http://127.0.0.1:9999",
-    );
+    expect(() =>
+      readNotifyConfig({
+        APP_ENV: "production",
+        TWILIO_API_BASE_URL: "http://127.0.0.1:9999",
+      }),
+    ).toThrow(/TWILIO_API_BASE_URL: https required/);
+    expect(
+      readNotifyConfig({
+        APP_ENV: "test",
+        TWILIO_API_BASE_URL: "http://127.0.0.1:9999/",
+      }).twilio.baseUrl,
+    ).toBe("http://127.0.0.1:9999");
   });
   it("parses an FCM service account given as JSON or base64 and never echoes its contents", () => {
     const json = serviceAccountJson();
-    expect(readNotifyConfig({ APP_ENV: "test", FCM_SERVICE_ACCOUNT_JSON: json }).fcm.serviceAccount?.projectId).toBe("fairbite-test");
     expect(
-      readNotifyConfig({ APP_ENV: "test", FCM_SERVICE_ACCOUNT_JSON: Buffer.from(json).toString("base64") }).fcm.serviceAccount
-        ?.clientEmail,
+      readNotifyConfig({ APP_ENV: "test", FCM_SERVICE_ACCOUNT_JSON: json }).fcm
+        .serviceAccount?.projectId,
+    ).toBe("fairbite-test");
+    expect(
+      readNotifyConfig({
+        APP_ENV: "test",
+        FCM_SERVICE_ACCOUNT_JSON: Buffer.from(json).toString("base64"),
+      }).fcm.serviceAccount?.clientEmail,
     ).toBe("push@fairbite-test.iam.gserviceaccount.com");
     let message = "";
     try {
-      readNotifyConfig({ APP_ENV: "test", FCM_SERVICE_ACCOUNT_JSON: '{"private_key":"secret-value"}' });
+      readNotifyConfig({
+        APP_ENV: "test",
+        FCM_SERVICE_ACCOUNT_JSON: '{"private_key":"secret-value"}',
+      });
     } catch (error) {
       message = (error as Error).message;
     }
-    expect(message).toMatch(/FCM_SERVICE_ACCOUNT_JSON: invalid service account/);
+    expect(message).toMatch(
+      /FCM_SERVICE_ACCOUNT_JSON: invalid service account/,
+    );
     expect(message).not.toContain("secret-value");
   });
   it("applies defaults and rejects out-of-range or unknown values by key name", () => {
@@ -885,15 +996,29 @@ describe("notification configuration", () => {
       broadcastIntervalSeconds: 60,
       httpTimeoutMs: 5000,
       expo: { baseUrl: "https://exp.host", accessToken: null },
-      fcm: { apiBaseUrl: "https://fcm.googleapis.com", tokenUrl: "https://oauth2.googleapis.com/token", serviceAccount: null },
+      fcm: {
+        apiBaseUrl: "https://fcm.googleapis.com",
+        tokenUrl: "https://oauth2.googleapis.com/token",
+        serviceAccount: null,
+      },
       twilio: { baseUrl: "https://api.twilio.com" },
       sendGrid: { baseUrl: "https://api.sendgrid.com" },
     });
-    expect(() => readNotifyConfig({ APP_ENV: "test", NOTIFY_MAX_ATTEMPTS: "0" })).toThrow(/NOTIFY_MAX_ATTEMPTS/);
-    expect(() => readNotifyConfig({ APP_ENV: "test", NOTIFY_EMAIL_PROVIDER: "smtp" })).toThrow(/NOTIFY_EMAIL_PROVIDER/);
+    expect(() =>
+      readNotifyConfig({ APP_ENV: "test", NOTIFY_MAX_ATTEMPTS: "0" }),
+    ).toThrow(/NOTIFY_MAX_ATTEMPTS/);
+    expect(() =>
+      readNotifyConfig({ APP_ENV: "test", NOTIFY_EMAIL_PROVIDER: "smtp" }),
+    ).toThrow(/NOTIFY_EMAIL_PROVIDER/);
   });
   it("accepts already-parsed values from readConfig", () => {
-    expect(readNotifyConfig({ APP_ENV: "test", NOTIFY_BATCH_SIZE: 10, NOTIFY_BROADCAST_INTERVAL_SECONDS: 0 })).toMatchObject({
+    expect(
+      readNotifyConfig({
+        APP_ENV: "test",
+        NOTIFY_BATCH_SIZE: 10,
+        NOTIFY_BROADCAST_INTERVAL_SECONDS: 0,
+      }),
+    ).toMatchObject({
       batchSize: 10,
       broadcastIntervalSeconds: 0,
     });
@@ -926,9 +1051,24 @@ export const notifyConfigShape = {
   SENDGRID_API_BASE_URL: z.url().default("https://api.sendgrid.com"),
   NOTIFY_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(20).default(6),
   NOTIFY_BATCH_SIZE: z.coerce.number().int().min(1).max(500).default(50),
-  NOTIFY_PROVIDER_RATE_PER_SECOND: z.coerce.number().int().min(1).max(1000).default(20),
-  NOTIFY_BROADCAST_INTERVAL_SECONDS: z.coerce.number().int().min(0).max(86400).default(60),
-  NOTIFY_HTTP_TIMEOUT_MS: z.coerce.number().int().min(100).max(30000).default(5000),
+  NOTIFY_PROVIDER_RATE_PER_SECOND: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(1000)
+    .default(20),
+  NOTIFY_BROADCAST_INTERVAL_SECONDS: z.coerce
+    .number()
+    .int()
+    .min(0)
+    .max(86400)
+    .default(60),
+  NOTIFY_HTTP_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .min(100)
+    .max(30000)
+    .default(5000),
 };
 
 const URL_KEYS = [
@@ -940,14 +1080,22 @@ const URL_KEYS = [
 ] as const;
 
 export type AppEnv = "development" | "test" | "production";
-export type ServiceAccount = { projectId: string; clientEmail: string; privateKey: string };
+export type ServiceAccount = {
+  projectId: string;
+  clientEmail: string;
+  privateKey: string;
+};
 export type NotifyConfig = {
   appEnv: AppEnv;
   push: "native" | "outbox" | "none";
   email: "sendgrid" | "outbox" | "none";
   sms: "twilio" | "outbox" | "none";
   expo: { baseUrl: string; accessToken: string | null };
-  fcm: { apiBaseUrl: string; tokenUrl: string; serviceAccount: ServiceAccount | null };
+  fcm: {
+    apiBaseUrl: string;
+    tokenUrl: string;
+    serviceAccount: ServiceAccount | null;
+  };
   twilio: { baseUrl: string };
   sendGrid: { baseUrl: string };
   maxAttempts: number;
@@ -965,18 +1113,33 @@ function parseServiceAccount(value: string): ServiceAccount | null {
       return null;
     }
   };
-  const json = attempt(value) ?? attempt(Buffer.from(value, "base64").toString("utf8"));
+  const json =
+    attempt(value) ?? attempt(Buffer.from(value, "base64").toString("utf8"));
   if (!json || typeof json !== "object") return null;
   const { project_id, client_email, private_key } = json;
-  if (typeof project_id !== "string" || typeof client_email !== "string" || typeof private_key !== "string") return null;
+  if (
+    typeof project_id !== "string" ||
+    typeof client_email !== "string" ||
+    typeof private_key !== "string"
+  )
+    return null;
   if (!private_key.includes("BEGIN PRIVATE KEY")) return null;
-  return { projectId: project_id, clientEmail: client_email, privateKey: private_key };
+  return {
+    projectId: project_id,
+    clientEmail: client_email,
+    privateKey: private_key,
+  };
 }
 
 // Accepts process.env-style strings or the already-parsed object from readConfig.
 // Error messages name keys only, never values (secrets).
-export function readNotifyConfig(source: Record<string, unknown>): NotifyConfig {
-  const appEnv = z.enum(["development", "test", "production"]).default("development").parse(source.APP_ENV);
+export function readNotifyConfig(
+  source: Record<string, unknown>,
+): NotifyConfig {
+  const appEnv = z
+    .enum(["development", "test", "production"])
+    .default("development")
+    .parse(source.APP_ENV);
   const parsed = z.object(notifyConfigShape).safeParse(source);
   if (!parsed.success)
     throw new Error(
@@ -995,23 +1158,37 @@ export function readNotifyConfig(source: Record<string, unknown>): NotifyConfig 
       ["NOTIFY_SMS_PROVIDER", sms],
     ];
     for (const [key, provider] of providers)
-      if (provider === "outbox") problems.push(`${key}: OutboxSender is not allowed in production`);
-    for (const key of URL_KEYS) if (new URL(value[key]).protocol !== "https:") problems.push(`${key}: https required`);
+      if (provider === "outbox")
+        problems.push(`${key}: OutboxSender is not allowed in production`);
+    for (const key of URL_KEYS)
+      if (new URL(value[key]).protocol !== "https:")
+        problems.push(`${key}: https required`);
   }
   let serviceAccount: ServiceAccount | null = null;
   if (value.FCM_SERVICE_ACCOUNT_JSON) {
     serviceAccount = parseServiceAccount(value.FCM_SERVICE_ACCOUNT_JSON);
-    if (!serviceAccount) problems.push("FCM_SERVICE_ACCOUNT_JSON: invalid service account");
+    if (!serviceAccount)
+      problems.push("FCM_SERVICE_ACCOUNT_JSON: invalid service account");
   }
-  if (problems.length) throw new Error(`Invalid notification configuration: ${problems.join("; ")}`);
+  if (problems.length)
+    throw new Error(
+      `Invalid notification configuration: ${problems.join("; ")}`,
+    );
   const trim = (url: string) => url.replace(/\/+$/, "");
   return {
     appEnv,
     push,
     email,
     sms,
-    expo: { baseUrl: trim(value.EXPO_PUSH_BASE_URL), accessToken: value.EXPO_ACCESS_TOKEN ?? null },
-    fcm: { apiBaseUrl: trim(value.FCM_API_BASE_URL), tokenUrl: value.FCM_TOKEN_URL, serviceAccount },
+    expo: {
+      baseUrl: trim(value.EXPO_PUSH_BASE_URL),
+      accessToken: value.EXPO_ACCESS_TOKEN ?? null,
+    },
+    fcm: {
+      apiBaseUrl: trim(value.FCM_API_BASE_URL),
+      tokenUrl: value.FCM_TOKEN_URL,
+      serviceAccount,
+    },
     twilio: { baseUrl: trim(value.TWILIO_API_BASE_URL) },
     sendGrid: { baseUrl: trim(value.SENDGRID_API_BASE_URL) },
     maxAttempts: value.NOTIFY_MAX_ATTEMPTS,
@@ -1038,6 +1215,7 @@ git commit -m "feat(L8): validate notification provider configuration and refuse
 ### Task 3: Templates, token classification, amount formatting, rate limiter
 
 **Files:**
+
 - Create: `services/api/src/modules/notifications/templates.ts`
 - Create: `services/api/src/modules/notifications/tokens.ts`
 - Create: `services/api/src/modules/notifications/format.ts`
@@ -1050,7 +1228,12 @@ git commit -m "feat(L8): validate notification provider configuration and refuse
 // services/api/test/unit/notifications/templates.spec.ts
 import { describe, expect, it } from "vitest";
 import { brand } from "@fairbite/brand";
-import { TEMPLATES, isTemplateId, renderTemplate, type TemplateId } from "../../../src/modules/notifications/templates.js";
+import {
+  TEMPLATES,
+  isTemplateId,
+  renderTemplate,
+  type TemplateId,
+} from "../../../src/modules/notifications/templates.js";
 
 const vars = {
   code: "482913",
@@ -1072,7 +1255,9 @@ describe("notification templates", () => {
     }
   });
   it("uses the exact OTP texts with the central brand name, marked sensitive and short-lived", () => {
-    expect(renderTemplate("otp.email.signup", null, { code: "482913" })).toEqual({
+    expect(
+      renderTemplate("otp.email.signup", null, { code: "482913" }),
+    ).toEqual({
       locale: "en",
       channel: "EMAIL",
       title: `Your ${brand.name} verification code`,
@@ -1080,52 +1265,152 @@ describe("notification templates", () => {
       sensitive: true,
       ttlSeconds: 600,
     });
-    expect(renderTemplate("otp.email.login", null, { code: "1" })).toMatchObject({
+    expect(
+      renderTemplate("otp.email.login", null, { code: "1" }),
+    ).toMatchObject({
       title: `Your ${brand.name} sign-in code`,
       body: `Your ${brand.name} sign-in code is 1. Do not share this code with anyone.`,
     });
-    expect(renderTemplate("otp.email.reset", null, { code: "1" })).toMatchObject({
+    expect(
+      renderTemplate("otp.email.reset", null, { code: "1" }),
+    ).toMatchObject({
       title: `Reset your ${brand.name} password`,
       body: `Your ${brand.name} password reset code is 1. If you did not ask to reset your password, ignore this email.`,
     });
-    expect(renderTemplate("otp.sms.signup", null, { code: "77" }).body).toBe(`Your ${brand.name} verification code is 77.`);
-    expect(renderTemplate("otp.sms.login", null, { code: "77" })).toMatchObject({ channel: "SMS", title: null, body: `Your ${brand.name} sign-in code is 77.` });
-    expect(renderTemplate("otp.sms.reset", null, { code: "77" }).body).toBe(`Your ${brand.name} password reset code is 77.`);
+    expect(renderTemplate("otp.sms.signup", null, { code: "77" }).body).toBe(
+      `Your ${brand.name} verification code is 77.`,
+    );
+    expect(renderTemplate("otp.sms.login", null, { code: "77" })).toMatchObject(
+      {
+        channel: "SMS",
+        title: null,
+        body: `Your ${brand.name} sign-in code is 77.`,
+      },
+    );
+    expect(renderTemplate("otp.sms.reset", null, { code: "77" }).body).toBe(
+      `Your ${brand.name} password reset code is 77.`,
+    );
   });
   it("uses the exact order, withdrawal, ticket and web texts", () => {
-    expect(renderTemplate("order.placed.restaurant", "en", vars)).toMatchObject({ title: "New order", body: "You have a new order PAS-1001.", ttlSeconds: 7200 });
-    expect(renderTemplate("order.accepted.customer", "en", vars)).toMatchObject({ title: "Order accepted", body: "Pasta Place accepted your order PAS-1001." });
-    expect(renderTemplate("order.accepted.customer.pickup", "en", vars).body).toBe("Pasta Place accepted your pickup order PAS-1001.");
-    expect(renderTemplate("order.accepted.rider", "en", vars)).toMatchObject({ title: "New order available", body: "Order PAS-1001 from Pasta Place is waiting for a rider." });
-    expect(renderTemplate("order.assigned.customer", "en", vars)).toMatchObject({ title: "Rider assigned", body: "A rider is on the way to collect your order PAS-1001." });
-    expect(renderTemplate("order.assigned.restaurant", "en", vars)).toMatchObject({ title: "Rider assigned", body: "A rider has been assigned to order PAS-1001." });
-    expect(renderTemplate("order.assigned.rider", "en", vars)).toMatchObject({ title: "New order assigned", body: "Order PAS-1001 from Pasta Place has been assigned to you." });
-    expect(renderTemplate("order.picked.customer", "en", vars)).toMatchObject({ title: "Order on the way", body: "Your order PAS-1001 has been picked up and is on its way." });
-    expect(renderTemplate("order.delivered.customer", "en", vars)).toMatchObject({ title: "Order delivered", body: "Your order PAS-1001 has been delivered. Enjoy your meal!" });
-    expect(renderTemplate("order.delivered.customer.pickup", "en", vars)).toMatchObject({ title: "Order collected", body: "Your order PAS-1001 has been collected. Enjoy your meal!" });
-    expect(renderTemplate("order.cancelled.customer", "en", vars)).toMatchObject({ title: "Order cancelled", body: "Your order PAS-1001 was cancelled." });
-    expect(renderTemplate("order.cancelled.restaurant", "en", vars).body).toBe("Order PAS-1001 was cancelled.");
-    expect(renderTemplate("order.cancelled.rider", "en", vars).body).toBe("Order PAS-1001 was cancelled.");
-    expect(renderTemplate("order.paid.customer", "en", vars)).toMatchObject({ title: "Payment received", body: "We received your payment of $12.50 for order PAS-1001." });
-    expect(renderTemplate("withdraw.transferred", "en", vars)).toMatchObject({ title: "Withdrawal transferred", body: "Your withdrawal request of $12.50 has been transferred." });
-    expect(renderTemplate("withdraw.cancelled", "en", vars)).toMatchObject({ title: "Withdrawal cancelled", body: "Your withdrawal request of $12.50 was cancelled." });
-    expect(renderTemplate("ticket.reply.customer", "en", vars)).toMatchObject({ title: "New reply from support", body: 'You have a new reply on your support ticket "Late order".' });
-    expect(renderTemplate("web.order.placed", null, vars)).toMatchObject({ channel: "WEB", title: null, body: "New order PAS-1001 received" });
-    expect(renderTemplate("web.withdraw.requested", null, vars).body).toBe("New withdrawal request of $12.50");
-    expect(renderTemplate("web.ticket.message", null, vars).body).toBe('New message on support ticket "Late order"');
+    expect(renderTemplate("order.placed.restaurant", "en", vars)).toMatchObject(
+      {
+        title: "New order",
+        body: "You have a new order PAS-1001.",
+        ttlSeconds: 7200,
+      },
+    );
+    expect(renderTemplate("order.accepted.customer", "en", vars)).toMatchObject(
+      {
+        title: "Order accepted",
+        body: "Pasta Place accepted your order PAS-1001.",
+      },
+    );
+    expect(
+      renderTemplate("order.accepted.customer.pickup", "en", vars).body,
+    ).toBe("Pasta Place accepted your pickup order PAS-1001.");
+    expect(renderTemplate("order.accepted.rider", "en", vars)).toMatchObject({
+      title: "New order available",
+      body: "Order PAS-1001 from Pasta Place is waiting for a rider.",
+    });
+    expect(renderTemplate("order.assigned.customer", "en", vars)).toMatchObject(
+      {
+        title: "Rider assigned",
+        body: "A rider is on the way to collect your order PAS-1001.",
+      },
+    );
+    expect(
+      renderTemplate("order.assigned.restaurant", "en", vars),
+    ).toMatchObject({
+      title: "Rider assigned",
+      body: "A rider has been assigned to order PAS-1001.",
+    });
+    expect(renderTemplate("order.assigned.rider", "en", vars)).toMatchObject({
+      title: "New order assigned",
+      body: "Order PAS-1001 from Pasta Place has been assigned to you.",
+    });
+    expect(renderTemplate("order.picked.customer", "en", vars)).toMatchObject({
+      title: "Order on the way",
+      body: "Your order PAS-1001 has been picked up and is on its way.",
+    });
+    expect(
+      renderTemplate("order.delivered.customer", "en", vars),
+    ).toMatchObject({
+      title: "Order delivered",
+      body: "Your order PAS-1001 has been delivered. Enjoy your meal!",
+    });
+    expect(
+      renderTemplate("order.delivered.customer.pickup", "en", vars),
+    ).toMatchObject({
+      title: "Order collected",
+      body: "Your order PAS-1001 has been collected. Enjoy your meal!",
+    });
+    expect(
+      renderTemplate("order.cancelled.customer", "en", vars),
+    ).toMatchObject({
+      title: "Order cancelled",
+      body: "Your order PAS-1001 was cancelled.",
+    });
+    expect(renderTemplate("order.cancelled.restaurant", "en", vars).body).toBe(
+      "Order PAS-1001 was cancelled.",
+    );
+    expect(renderTemplate("order.cancelled.rider", "en", vars).body).toBe(
+      "Order PAS-1001 was cancelled.",
+    );
+    expect(renderTemplate("order.paid.customer", "en", vars)).toMatchObject({
+      title: "Payment received",
+      body: "We received your payment of $12.50 for order PAS-1001.",
+    });
+    expect(renderTemplate("withdraw.transferred", "en", vars)).toMatchObject({
+      title: "Withdrawal transferred",
+      body: "Your withdrawal request of $12.50 has been transferred.",
+    });
+    expect(renderTemplate("withdraw.cancelled", "en", vars)).toMatchObject({
+      title: "Withdrawal cancelled",
+      body: "Your withdrawal request of $12.50 was cancelled.",
+    });
+    expect(renderTemplate("ticket.reply.customer", "en", vars)).toMatchObject({
+      title: "New reply from support",
+      body: 'You have a new reply on your support ticket "Late order".',
+    });
+    expect(renderTemplate("web.order.placed", null, vars)).toMatchObject({
+      channel: "WEB",
+      title: null,
+      body: "New order PAS-1001 received",
+    });
+    expect(renderTemplate("web.withdraw.requested", null, vars).body).toBe(
+      "New withdrawal request of $12.50",
+    );
+    expect(renderTemplate("web.ticket.message", null, vars).body).toBe(
+      'New message on support ticket "Late order"',
+    );
   });
   it("falls back from regional, malformed or unknown locales to English", () => {
-    expect(renderTemplate("order.picked.customer", "fr-FR", vars).locale).toBe("en");
-    expect(renderTemplate("order.picked.customer", "EN_us", vars).locale).toBe("en");
+    expect(renderTemplate("order.picked.customer", "fr-FR", vars).locale).toBe(
+      "en",
+    );
+    expect(renderTemplate("order.picked.customer", "EN_us", vars).locale).toBe(
+      "en",
+    );
     expect(renderTemplate("order.picked.customer", "", vars).locale).toBe("en");
-    expect(renderTemplate("order.picked.customer", undefined, vars).locale).toBe("en");
+    expect(
+      renderTemplate("order.picked.customer", undefined, vars).locale,
+    ).toBe("en");
   });
   it("throws on a missing variable instead of sending a half-filled message", () => {
-    expect(() => renderTemplate("order.picked.customer", "en", {})).toThrow("Missing template variable orderId for order.picked.customer");
+    expect(() => renderTemplate("order.picked.customer", "en", {})).toThrow(
+      "Missing template variable orderId for order.picked.customer",
+    );
   });
   it("substitutes once so admin text containing braces is sent literally, and an empty title becomes no title", () => {
-    expect(renderTemplate("broadcast", "en", { title: "{code}", body: "Use {orderId}" })).toMatchObject({ title: "{code}", body: "Use {orderId}" });
-    expect(renderTemplate("broadcast", "en", { title: "", body: "Hello" }).title).toBeNull();
+    expect(
+      renderTemplate("broadcast", "en", {
+        title: "{code}",
+        body: "Use {orderId}",
+      }),
+    ).toMatchObject({ title: "{code}", body: "Use {orderId}" });
+    expect(
+      renderTemplate("broadcast", "en", { title: "", body: "Hello" }).title,
+    ).toBeNull();
   });
   it("recognises only real template ids", () => {
     expect(isTemplateId("otp.email.signup")).toBe(true);
@@ -1137,19 +1422,32 @@ describe("notification templates", () => {
 ```ts
 // services/api/test/unit/notifications/tokens.spec.ts
 import { describe, expect, it } from "vitest";
-import { E164, EMAIL, classifyToken } from "../../../src/modules/notifications/tokens.js";
+import {
+  E164,
+  EMAIL,
+  classifyToken,
+} from "../../../src/modules/notifications/tokens.js";
 import { formatAmount } from "../../../src/modules/notifications/format.js";
 
 describe("push token classification", () => {
   it("recognises Expo tokens with both prefixes", () => {
-    expect(classifyToken("ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]")).toBe("EXPO");
+    expect(classifyToken("ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]")).toBe(
+      "EXPO",
+    );
     expect(classifyToken("ExpoPushToken[yyyyyyyyyyyyyyyyyyyy]")).toBe("EXPO");
   });
   it("recognises FCM registration tokens", () => {
     expect(classifyToken(`d1Xn2AbC:APA91b${"x".repeat(140)}`)).toBe("FCM");
   });
   it("rejects empty, short, spaced, malformed or non-string tokens", () => {
-    for (const value of ["", "short", `has spaces ${"x".repeat(40)}`, null, undefined, "ExponentPushToken[]"])
+    for (const value of [
+      "",
+      "short",
+      `has spaces ${"x".repeat(40)}`,
+      null,
+      undefined,
+      "ExponentPushToken[]",
+    ])
       expect(classifyToken(value as string)).toBeNull();
   });
 });
@@ -1165,9 +1463,15 @@ describe("address formats", () => {
 
 describe("amount formatting", () => {
   it("formats integer minor units with the currency symbol and exponent", () => {
-    expect(formatAmount(1250, { code: "USD", symbol: "$", exponent: 2 })).toBe("$12.50");
-    expect(formatAmount(1500, { code: "JPY", symbol: "¥", exponent: 0 })).toBe("¥1500");
-    expect(formatAmount(1234, { code: "KWD", symbol: "KD", exponent: 3 })).toBe("KD1.234");
+    expect(formatAmount(1250, { code: "USD", symbol: "$", exponent: 2 })).toBe(
+      "$12.50",
+    );
+    expect(formatAmount(1500, { code: "JPY", symbol: "¥", exponent: 0 })).toBe(
+      "¥1500",
+    );
+    expect(formatAmount(1234, { code: "KWD", symbol: "KD", exponent: 3 })).toBe(
+      "KD1.234",
+    );
   });
 });
 ```
@@ -1175,16 +1479,23 @@ describe("amount formatting", () => {
 ```ts
 // services/api/test/unit/notifications/limiter.spec.ts
 import { describe, expect, it } from "vitest";
-import { RateLimiter, backoffSeconds } from "../../../src/modules/notifications/limiter.js";
+import {
+  RateLimiter,
+  backoffSeconds,
+} from "../../../src/modules/notifications/limiter.js";
 
 describe("provider rate limiter", () => {
   it("spaces calls per provider at the configured rate and keeps providers independent", async () => {
     let now = 0;
     const waits: number[] = [];
-    const limiter = new RateLimiter(10, () => now, async (ms) => {
-      waits.push(ms);
-      now += ms;
-    });
+    const limiter = new RateLimiter(
+      10,
+      () => now,
+      async (ms) => {
+        waits.push(ms);
+        now += ms;
+      },
+    );
     await limiter.take("EXPO");
     await limiter.take("EXPO");
     await limiter.take("TWILIO");
@@ -1195,7 +1506,9 @@ describe("provider rate limiter", () => {
 
 describe("retry backoff", () => {
   it("doubles from 30 seconds and caps at one hour", () => {
-    expect([1, 2, 3, 4, 8, 20].map(backoffSeconds)).toEqual([30, 60, 120, 240, 3600, 3600]);
+    expect([1, 2, 3, 4, 8, 20].map(backoffSeconds)).toEqual([
+      30, 60, 120, 240, 3600, 3600,
+    ]);
   });
 });
 ```
@@ -1224,7 +1537,11 @@ export type TemplateDefinition = {
 
 const HOUR = 3600;
 const DAY = 86400;
-const push = (title: string, body: string, ttlSeconds = HOUR): TemplateDefinition => ({
+const push = (
+  title: string,
+  body: string,
+  ttlSeconds = HOUR,
+): TemplateDefinition => ({
   channel: "PUSH",
   sensitive: false,
   ttlSeconds,
@@ -1265,26 +1582,92 @@ export const TEMPLATES = {
   "otp.sms.signup": otpSms(`Your ${brand.name} verification code is {code}.`),
   "otp.sms.login": otpSms(`Your ${brand.name} sign-in code is {code}.`),
   "otp.sms.reset": otpSms(`Your ${brand.name} password reset code is {code}.`),
-  "order.placed.restaurant": push("New order", "You have a new order {orderId}.", 2 * HOUR),
-  "order.accepted.customer": push("Order accepted", "{restaurant} accepted your order {orderId}."),
-  "order.accepted.customer.pickup": push("Order accepted", "{restaurant} accepted your pickup order {orderId}."),
-  "order.accepted.rider": push("New order available", "Order {orderId} from {restaurant} is waiting for a rider."),
-  "order.assigned.customer": push("Rider assigned", "A rider is on the way to collect your order {orderId}."),
-  "order.assigned.restaurant": push("Rider assigned", "A rider has been assigned to order {orderId}."),
-  "order.assigned.rider": push("New order assigned", "Order {orderId} from {restaurant} has been assigned to you."),
-  "order.picked.customer": push("Order on the way", "Your order {orderId} has been picked up and is on its way."),
-  "order.delivered.customer": push("Order delivered", "Your order {orderId} has been delivered. Enjoy your meal!", DAY),
-  "order.delivered.customer.pickup": push("Order collected", "Your order {orderId} has been collected. Enjoy your meal!", DAY),
-  "order.cancelled.customer": push("Order cancelled", "Your order {orderId} was cancelled.", DAY),
-  "order.cancelled.restaurant": push("Order cancelled", "Order {orderId} was cancelled.", DAY),
-  "order.cancelled.rider": push("Order cancelled", "Order {orderId} was cancelled.", DAY),
-  "order.paid.customer": push("Payment received", "We received your payment of {amount} for order {orderId}.", DAY),
-  "withdraw.transferred": push("Withdrawal transferred", "Your withdrawal request of {amount} has been transferred.", DAY),
-  "withdraw.cancelled": push("Withdrawal cancelled", "Your withdrawal request of {amount} was cancelled.", DAY),
-  "ticket.reply.customer": push("New reply from support", 'You have a new reply on your support ticket "{ticket}".', DAY),
+  "order.placed.restaurant": push(
+    "New order",
+    "You have a new order {orderId}.",
+    2 * HOUR,
+  ),
+  "order.accepted.customer": push(
+    "Order accepted",
+    "{restaurant} accepted your order {orderId}.",
+  ),
+  "order.accepted.customer.pickup": push(
+    "Order accepted",
+    "{restaurant} accepted your pickup order {orderId}.",
+  ),
+  "order.accepted.rider": push(
+    "New order available",
+    "Order {orderId} from {restaurant} is waiting for a rider.",
+  ),
+  "order.assigned.customer": push(
+    "Rider assigned",
+    "A rider is on the way to collect your order {orderId}.",
+  ),
+  "order.assigned.restaurant": push(
+    "Rider assigned",
+    "A rider has been assigned to order {orderId}.",
+  ),
+  "order.assigned.rider": push(
+    "New order assigned",
+    "Order {orderId} from {restaurant} has been assigned to you.",
+  ),
+  "order.picked.customer": push(
+    "Order on the way",
+    "Your order {orderId} has been picked up and is on its way.",
+  ),
+  "order.delivered.customer": push(
+    "Order delivered",
+    "Your order {orderId} has been delivered. Enjoy your meal!",
+    DAY,
+  ),
+  "order.delivered.customer.pickup": push(
+    "Order collected",
+    "Your order {orderId} has been collected. Enjoy your meal!",
+    DAY,
+  ),
+  "order.cancelled.customer": push(
+    "Order cancelled",
+    "Your order {orderId} was cancelled.",
+    DAY,
+  ),
+  "order.cancelled.restaurant": push(
+    "Order cancelled",
+    "Order {orderId} was cancelled.",
+    DAY,
+  ),
+  "order.cancelled.rider": push(
+    "Order cancelled",
+    "Order {orderId} was cancelled.",
+    DAY,
+  ),
+  "order.paid.customer": push(
+    "Payment received",
+    "We received your payment of {amount} for order {orderId}.",
+    DAY,
+  ),
+  "withdraw.transferred": push(
+    "Withdrawal transferred",
+    "Your withdrawal request of {amount} has been transferred.",
+    DAY,
+  ),
+  "withdraw.cancelled": push(
+    "Withdrawal cancelled",
+    "Your withdrawal request of {amount} was cancelled.",
+    DAY,
+  ),
+  "ticket.reply.customer": push(
+    "New reply from support",
+    'You have a new reply on your support ticket "{ticket}".',
+    DAY,
+  ),
   broadcast: push("{title}", "{body}", DAY),
   "direct.push": push("{title}", "{body}", DAY),
-  "direct.sms": { channel: "SMS", sensitive: false, ttlSeconds: DAY, text: { en: { title: null, body: "{body}" } } },
+  "direct.sms": {
+    channel: "SMS",
+    sensitive: false,
+    ttlSeconds: DAY,
+    text: { en: { title: null, body: "{body}" } },
+  },
   "web.order.placed": web("New order {orderId} received"),
   "web.withdraw.requested": web("New withdrawal request of {amount}"),
   "web.ticket.message": web('New message on support ticket "{ticket}"'),
@@ -1308,7 +1691,10 @@ export function templateChannel(id: TemplateId): TemplateChannel {
   return (TEMPLATES[id] as TemplateDefinition).channel;
 }
 
-export function resolveLocale(definition: TemplateDefinition, requested: string | null | undefined): string {
+export function resolveLocale(
+  definition: TemplateDefinition,
+  requested: string | null | undefined,
+): string {
   const wanted = (requested ?? "").trim().toLowerCase().replace("_", "-");
   if (wanted && Object.hasOwn(definition.text, wanted)) return wanted;
   const language = wanted.split("-")[0];
@@ -1327,7 +1713,8 @@ export function renderTemplate(
   // Single pass: substituted values are never re-scanned, so user text with braces stays literal.
   const fill = (value: string) =>
     value.replace(/\{(\w+)\}/g, (_match, name: string) => {
-      if (!Object.hasOwn(vars, name)) throw new Error(`Missing template variable ${name} for ${id}`);
+      if (!Object.hasOwn(vars, name))
+        throw new Error(`Missing template variable ${name} for ${id}`);
       return String(vars[name]);
     });
   const title = text.title === null ? null : fill(text.title);
@@ -1350,7 +1737,9 @@ const EXPO = /^Expo(nent)?PushToken\[[A-Za-z0-9_-]{8,200}\]$/;
 // FCM registration tokens (customer web saveNotificationTokenWeb, native FCM).
 const FCM = /^[A-Za-z0-9_:-]{32,512}$/;
 
-export function classifyToken(token: string | null | undefined): PushKind | null {
+export function classifyToken(
+  token: string | null | undefined,
+): PushKind | null {
   if (typeof token !== "string") return null;
   const value = token.trim();
   if (EXPO.test(value)) return "EXPO";
@@ -1381,7 +1770,8 @@ export class RateLimiter {
   constructor(
     private readonly perSecond: number,
     private readonly now: () => number = () => performance.now(),
-    private readonly sleep: (ms: number) => Promise<void> = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+    private readonly sleep: (ms: number) => Promise<void> = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms)),
   ) {}
   async take(key: string): Promise<void> {
     const interval = 1000 / this.perSecond;
@@ -1412,6 +1802,7 @@ git commit -m "feat(L8): add message templates with English fallback, token chec
 ### Task 4: Provider contract fakes, HTTP helper and the Expo push adapter
 
 **Files:**
+
 - Create: `services/api/src/modules/notifications/providers/types.ts`
 - Create: `services/api/src/modules/notifications/providers/http.ts`
 - Create: `services/api/src/modules/notifications/providers/expo.ts`
@@ -1428,9 +1819,20 @@ The fakes emulate the documented request/response contracts (Expo `POST /--/api/
 import { createServer, type IncomingHttpHeaders, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 
-export type RecordedRequest = { method: string; path: string; headers: IncomingHttpHeaders; body: string };
-export type FakeReply = { status: number; headers?: Record<string, string>; body?: unknown };
-export type FakeHandler = (request: RecordedRequest) => FakeReply | Promise<FakeReply>;
+export type RecordedRequest = {
+  method: string;
+  path: string;
+  headers: IncomingHttpHeaders;
+  body: string;
+};
+export type FakeReply = {
+  status: number;
+  headers?: Record<string, string>;
+  body?: unknown;
+};
+export type FakeHandler = (
+  request: RecordedRequest,
+) => FakeReply | Promise<FakeReply>;
 
 // Loopback HTTP server that records every request; the provider fakes build on it.
 export async function startFakeHttp(handler: FakeHandler) {
@@ -1448,10 +1850,25 @@ export async function startFakeHttp(handler: FakeHandler) {
       requests.push(recorded);
       Promise.resolve()
         .then(() => handler(recorded))
-        .catch(() => ({ status: 500, body: { error: "fake handler failed" } }) as FakeReply)
+        .catch(
+          () =>
+            ({
+              status: 500,
+              body: { error: "fake handler failed" },
+            }) as FakeReply,
+        )
         .then((reply) => {
-          res.writeHead(reply.status, { "content-type": "application/json", ...(reply.headers ?? {}) });
-          res.end(reply.body === undefined ? "" : typeof reply.body === "string" ? reply.body : JSON.stringify(reply.body));
+          res.writeHead(reply.status, {
+            "content-type": "application/json",
+            ...(reply.headers ?? {}),
+          });
+          res.end(
+            reply.body === undefined
+              ? ""
+              : typeof reply.body === "string"
+                ? reply.body
+                : JSON.stringify(reply.body),
+          );
         });
     });
   });
@@ -1460,7 +1877,10 @@ export async function startFakeHttp(handler: FakeHandler) {
   return {
     url: `http://127.0.0.1:${port}`,
     requests,
-    close: () => new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve()))),
+    close: () =>
+      new Promise<void>((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve())),
+      ),
   };
 }
 ```
@@ -1480,8 +1900,16 @@ export async function startFakeExpo(options: { accessToken?: string } = {}) {
   let failNext: number | null = null;
   let counter = 0;
   const http = await startFakeHttp((request) => {
-    if (options.accessToken && request.headers.authorization !== `Bearer ${options.accessToken}`)
-      return { status: 401, body: { errors: [{ code: "UNAUTHORIZED", message: "Invalid access token" }] } };
+    if (
+      options.accessToken &&
+      request.headers.authorization !== `Bearer ${options.accessToken}`
+    )
+      return {
+        status: 401,
+        body: {
+          errors: [{ code: "UNAUTHORIZED", message: "Invalid access token" }],
+        },
+      };
     if (request.method === "POST" && request.path === "/--/api/v2/push/send") {
       if (failNext !== null) {
         const status = failNext;
@@ -1489,12 +1917,35 @@ export async function startFakeExpo(options: { accessToken?: string } = {}) {
         return {
           status,
           headers: status === 429 ? { "retry-after": "7" } : {},
-          body: { errors: [{ code: status === 429 ? "TOO_MANY_REQUESTS" : "INTERNAL_SERVER_ERROR", message: "fake failure" }] },
+          body: {
+            errors: [
+              {
+                code:
+                  status === 429
+                    ? "TOO_MANY_REQUESTS"
+                    : "INTERNAL_SERVER_ERROR",
+                message: "fake failure",
+              },
+            ],
+          },
         };
       }
       const messages = JSON.parse(request.body) as { to?: unknown }[];
-      if (!Array.isArray(messages) || messages.some((m) => typeof m.to !== "string" || !EXPO_TOKEN.test(m.to)))
-        return { status: 400, body: { errors: [{ code: "VALIDATION_ERROR", message: '"to" must be an Expo push token' }] } };
+      if (
+        !Array.isArray(messages) ||
+        messages.some((m) => typeof m.to !== "string" || !EXPO_TOKEN.test(m.to))
+      )
+        return {
+          status: 400,
+          body: {
+            errors: [
+              {
+                code: "VALIDATION_ERROR",
+                message: '"to" must be an Expo push token',
+              },
+            ],
+          },
+        };
       return {
         status: 200,
         body: {
@@ -1506,7 +1957,12 @@ export async function startFakeExpo(options: { accessToken?: string } = {}) {
                 message: `"${to}" is not a registered push notification recipient`,
                 details: { error: "DeviceNotRegistered", expoPushToken: to },
               };
-            if (rateLimited.has(to)) return { status: "error", message: "Rate exceeded", details: { error: "MessageRateExceeded" } };
+            if (rateLimited.has(to))
+              return {
+                status: "error",
+                message: "Rate exceeded",
+                details: { error: "MessageRateExceeded" },
+              };
             const id = `ticket-${++counter}`;
             tickets.set(id, to);
             return { status: "ok", id };
@@ -1514,7 +1970,10 @@ export async function startFakeExpo(options: { accessToken?: string } = {}) {
         },
       };
     }
-    if (request.method === "POST" && request.path === "/--/api/v2/push/getReceipts") {
+    if (
+      request.method === "POST" &&
+      request.path === "/--/api/v2/push/getReceipts"
+    ) {
       const { ids } = JSON.parse(request.body) as { ids: string[] };
       return {
         status: 200,
@@ -1525,14 +1984,21 @@ export async function startFakeExpo(options: { accessToken?: string } = {}) {
               .map((id) => [
                 id,
                 receiptErrors.has(id)
-                  ? { status: "error", message: "receipt error", details: { error: receiptErrors.get(id) } }
+                  ? {
+                      status: "error",
+                      message: "receipt error",
+                      details: { error: receiptErrors.get(id) },
+                    }
                   : { status: "ok" },
               ]),
           ),
         },
       };
     }
-    return { status: 404, body: { errors: [{ code: "NOT_FOUND", message: "Unknown route" }] } };
+    return {
+      status: 404,
+      body: { errors: [{ code: "NOT_FOUND", message: "Unknown route" }] },
+    };
   });
   return {
     ...http,
@@ -1558,7 +2024,11 @@ let fake: Awaited<ReturnType<typeof startFakeExpo>>;
 let sender: ExpoPushSender;
 beforeAll(async () => {
   fake = await startFakeExpo({ accessToken: "expo-secret" });
-  sender = new ExpoPushSender({ baseUrl: fake.url, accessToken: "expo-secret", timeoutMs: 2000 });
+  sender = new ExpoPushSender({
+    baseUrl: fake.url,
+    accessToken: "expo-secret",
+    timeoutMs: 2000,
+  });
 });
 afterAll(() => fake.close());
 beforeEach(() => {
@@ -1569,49 +2039,110 @@ beforeEach(() => {
 
 describe("Expo push adapter against the contract fake", () => {
   it("sends one message with sound, priority, the default Android channel and string data", async () => {
-    const result = await sender.send({ token: TOKEN, title: "Order accepted", body: "Pasta Place accepted your order PAS-1.", data: { type: "order", _id: "o1" } });
-    expect(result).toEqual({ kind: "sent", providerMessageId: expect.stringMatching(/^ticket-\d+$/) });
+    const result = await sender.send({
+      token: TOKEN,
+      title: "Order accepted",
+      body: "Pasta Place accepted your order PAS-1.",
+      data: { type: "order", _id: "o1" },
+    });
+    expect(result).toEqual({
+      kind: "sent",
+      providerMessageId: expect.stringMatching(/^ticket-\d+$/),
+    });
     const last = fake.requests.at(-1)!;
     expect(last.headers.authorization).toBe("Bearer expo-secret");
     expect(JSON.parse(last.body)).toEqual([
-      { to: TOKEN, title: "Order accepted", body: "Pasta Place accepted your order PAS-1.", data: { type: "order", _id: "o1" }, sound: "default", priority: "high", channelId: "default" },
+      {
+        to: TOKEN,
+        title: "Order accepted",
+        body: "Pasta Place accepted your order PAS-1.",
+        data: { type: "order", _id: "o1" },
+        sound: "default",
+        priority: "high",
+        channelId: "default",
+      },
     ]);
   });
   it("omits a null title", async () => {
     await sender.send({ token: TOKEN, title: null, body: "Hello", data: {} });
-    expect(JSON.parse(fake.requests.at(-1)!.body)[0]).not.toHaveProperty("title");
+    expect(JSON.parse(fake.requests.at(-1)!.body)[0]).not.toHaveProperty(
+      "title",
+    );
   });
   it("maps DeviceNotRegistered to an invalid recipient", async () => {
     fake.unregistered.add(TOKEN);
-    expect(await sender.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "invalid-recipient", error: "Expo DeviceNotRegistered" });
+    expect(
+      await sender.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "invalid-recipient", error: "Expo DeviceNotRegistered" });
   });
   it("maps MessageRateExceeded, HTTP 429 with Retry-After and HTTP 5xx to retry", async () => {
     fake.rateLimited.add(TOKEN);
-    expect(await sender.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "retry", error: "Expo MessageRateExceeded" });
+    expect(
+      await sender.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "retry", error: "Expo MessageRateExceeded" });
     fake.rateLimited.clear();
     fake.failNextWith(429);
-    expect(await sender.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "retry", error: "Expo HTTP 429", retryAfterSeconds: 7 });
+    expect(
+      await sender.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "retry", error: "Expo HTTP 429", retryAfterSeconds: 7 });
     fake.failNextWith(503);
-    expect(await sender.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "retry", error: "Expo HTTP 503" });
+    expect(
+      await sender.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "retry", error: "Expo HTTP 503" });
   });
   it("maps a request validation error and bad credentials to permanent failures", async () => {
-    expect(await sender.send({ token: "not-an-expo-token", title: null, body: "x", data: {} })).toEqual({ kind: "failed", error: "Expo HTTP 400" });
-    const wrongKey = new ExpoPushSender({ baseUrl: fake.url, accessToken: "wrong", timeoutMs: 2000 });
-    expect(await wrongKey.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "failed", error: "Expo HTTP 401" });
+    expect(
+      await sender.send({
+        token: "not-an-expo-token",
+        title: null,
+        body: "x",
+        data: {},
+      }),
+    ).toEqual({ kind: "failed", error: "Expo HTTP 400" });
+    const wrongKey = new ExpoPushSender({
+      baseUrl: fake.url,
+      accessToken: "wrong",
+      timeoutMs: 2000,
+    });
+    expect(
+      await wrongKey.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "failed", error: "Expo HTTP 401" });
   });
   it("treats a refused connection as retryable", async () => {
-    const offline = new ExpoPushSender({ baseUrl: "http://127.0.0.1:1", accessToken: null, timeoutMs: 500 });
-    expect(await offline.send({ token: TOKEN, title: null, body: "x", data: {} })).toMatchObject({ kind: "retry", error: expect.stringMatching(/^Expo request failed: /) });
+    const offline = new ExpoPushSender({
+      baseUrl: "http://127.0.0.1:1",
+      accessToken: null,
+      timeoutMs: 500,
+    });
+    expect(
+      await offline.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toMatchObject({
+      kind: "retry",
+      error: expect.stringMatching(/^Expo request failed: /),
+    });
   });
   it("reads receipts and reports per-ticket errors", async () => {
-    const ok = await sender.send({ token: TOKEN, title: null, body: "a", data: {} });
-    const bad = await sender.send({ token: TOKEN, title: null, body: "b", data: {} });
+    const ok = await sender.send({
+      token: TOKEN,
+      title: null,
+      body: "a",
+      data: {},
+    });
+    const bad = await sender.send({
+      token: TOKEN,
+      title: null,
+      body: "b",
+      data: {},
+    });
     const okId = (ok as { providerMessageId: string }).providerMessageId;
     const badId = (bad as { providerMessageId: string }).providerMessageId;
     fake.receiptErrors.set(badId, "DeviceNotRegistered");
     const receipts = await sender.receipts([okId, badId, "ticket-unknown"]);
     expect(receipts?.get(okId)).toEqual({ ok: true, error: null });
-    expect(receipts?.get(badId)).toEqual({ ok: false, error: "DeviceNotRegistered" });
+    expect(receipts?.get(badId)).toEqual({
+      ok: false,
+      error: "DeviceNotRegistered",
+    });
     expect(receipts?.has("ticket-unknown")).toBe(false);
   });
 });
@@ -1635,7 +2166,12 @@ export type SendResult =
   | { kind: "invalid-recipient"; error: string }
   | { kind: "unavailable"; error: string };
 export type ProviderName = "EXPO" | "FCM" | "TWILIO" | "SENDGRID" | "OUTBOX";
-export type PushMessage = { token: string; title: string | null; body: string; data: Record<string, string> };
+export type PushMessage = {
+  token: string;
+  title: string | null;
+  body: string;
+  data: Record<string, string>;
+};
 export type EmailMessage = { to: string; subject: string; text: string };
 export type SmsMessage = { to: string; text: string };
 export interface PushSender {
@@ -1669,7 +2205,12 @@ export async function postProvider(
   timeoutMs: number,
 ): Promise<HttpResponse | { error: string }> {
   try {
-    const response = await fetchImpl(url, { method: "POST", headers, body, signal: AbortSignal.timeout(timeoutMs) });
+    const response = await fetchImpl(url, {
+      method: "POST",
+      headers,
+      body,
+      signal: AbortSignal.timeout(timeoutMs),
+    });
     const text = await response.text();
     let parsed: unknown = null;
     if (text) {
@@ -1687,7 +2228,9 @@ export async function postProvider(
 
 export function retryAfterSeconds(headers: Headers): number | undefined {
   const value = Number(headers.get("retry-after"));
-  return headers.has("retry-after") && Number.isFinite(value) && value >= 0 ? Math.min(Math.ceil(value), 3600) : undefined;
+  return headers.has("retry-after") && Number.isFinite(value) && value >= 0
+    ? Math.min(Math.ceil(value), 3600)
+    : undefined;
 }
 
 export function retryable(status: number): boolean {
@@ -1705,7 +2248,11 @@ type Ticket = { status?: string; id?: string; details?: { error?: string } };
 export class ExpoPushSender implements PushSender {
   readonly provider = "EXPO" as const;
   constructor(
-    private readonly options: { baseUrl: string; accessToken: string | null; timeoutMs: number },
+    private readonly options: {
+      baseUrl: string;
+      accessToken: string | null;
+      timeoutMs: number;
+    },
     private readonly fetchImpl: typeof fetch = fetch,
   ) {}
 
@@ -1717,7 +2264,9 @@ export class ExpoPushSender implements PushSender {
     return {
       "content-type": "application/json",
       accept: "application/json",
-      ...(this.options.accessToken ? { authorization: `Bearer ${this.options.accessToken}` } : {}),
+      ...(this.options.accessToken
+        ? { authorization: `Bearer ${this.options.accessToken}` }
+        : {}),
     };
   }
 
@@ -1741,24 +2290,35 @@ export class ExpoPushSender implements PushSender {
       JSON.stringify(payload),
       this.options.timeoutMs,
     );
-    if ("error" in response) return { kind: "retry", error: `Expo request failed: ${response.error}` };
+    if ("error" in response)
+      return { kind: "retry", error: `Expo request failed: ${response.error}` };
     if (retryable(response.status)) {
       const after = retryAfterSeconds(response.headers);
       return after === undefined
         ? { kind: "retry", error: `Expo HTTP ${response.status}` }
-        : { kind: "retry", error: `Expo HTTP ${response.status}`, retryAfterSeconds: after };
+        : {
+            kind: "retry",
+            error: `Expo HTTP ${response.status}`,
+            retryAfterSeconds: after,
+          };
     }
-    if (response.status !== 200) return { kind: "failed", error: `Expo HTTP ${response.status}` };
+    if (response.status !== 200)
+      return { kind: "failed", error: `Expo HTTP ${response.status}` };
     const ticket = (response.body as { data?: Ticket[] } | null)?.data?.[0];
-    if (ticket?.status === "ok") return { kind: "sent", providerMessageId: ticket.id ?? null };
+    if (ticket?.status === "ok")
+      return { kind: "sent", providerMessageId: ticket.id ?? null };
     const code = ticket?.details?.error ?? "UnknownError";
-    if (code === "DeviceNotRegistered") return { kind: "invalid-recipient", error: "Expo DeviceNotRegistered" };
-    if (code === "MessageRateExceeded") return { kind: "retry", error: "Expo MessageRateExceeded" };
+    if (code === "DeviceNotRegistered")
+      return { kind: "invalid-recipient", error: "Expo DeviceNotRegistered" };
+    if (code === "MessageRateExceeded")
+      return { kind: "retry", error: "Expo MessageRateExceeded" };
     return { kind: "failed", error: `Expo ${code}` };
   }
 
   // Returns null when the receipts call itself failed; missing ids are not ready yet.
-  async receipts(ids: string[]): Promise<Map<string, { ok: boolean; error: string | null }> | null> {
+  async receipts(
+    ids: string[],
+  ): Promise<Map<string, { ok: boolean; error: string | null }> | null> {
     const response = await postProvider(
       this.fetchImpl,
       `${this.options.baseUrl}/--/api/v2/push/getReceipts`,
@@ -1767,10 +2327,16 @@ export class ExpoPushSender implements PushSender {
       this.options.timeoutMs,
     );
     if ("error" in response || response.status !== 200) return null;
-    const data = ((response.body as { data?: Record<string, Ticket> } | null)?.data ?? {}) as Record<string, Ticket>;
+    const data = ((response.body as { data?: Record<string, Ticket> } | null)
+      ?.data ?? {}) as Record<string, Ticket>;
     const result = new Map<string, { ok: boolean; error: string | null }>();
     for (const [id, receipt] of Object.entries(data))
-      result.set(id, receipt.status === "ok" ? { ok: true, error: null } : { ok: false, error: receipt.details?.error ?? "UnknownError" });
+      result.set(
+        id,
+        receipt.status === "ok"
+          ? { ok: true, error: null }
+          : { ok: false, error: receipt.details?.error ?? "UnknownError" },
+      );
     return result;
   }
 }
@@ -1791,6 +2357,7 @@ git commit -m "feat(L8): add Expo push adapter proven against a local contract f
 ### Task 5: FCM HTTP v1 adapter
 
 **Files:**
+
 - Create: `services/api/src/modules/notifications/providers/fcm.ts`
 - Create: `services/api/test/support/providers/fcm.ts`
 - Test: `services/api/test/integration/notifications/providers/fcm.integration.spec.ts`
@@ -1810,13 +2377,20 @@ const fcmError = (code: number, status: string, errorCode: string) => ({
     code,
     status,
     message: errorCode,
-    details: [{ "@type": "type.googleapis.com/google.firebase.fcm.v1.FcmError", errorCode }],
+    details: [
+      {
+        "@type": "type.googleapis.com/google.firebase.fcm.v1.FcmError",
+        errorCode,
+      },
+    ],
   },
 });
 
 // Contract fake of Google OAuth token exchange + FCM HTTP v1 messages:send.
 export async function startFakeFcm(projectId = "fairbite-test") {
-  const { privateKey, publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+  const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+  });
   const clientEmail = `push@${projectId}.iam.gserviceaccount.com`;
   const issued = new Set<string>();
   const unregistered = new Set<string>();
@@ -1827,40 +2401,111 @@ export async function startFakeFcm(projectId = "fairbite-test") {
     if (request.method === "POST" && request.path === "/token") {
       state.tokenRequests++;
       const form = new URLSearchParams(request.body);
-      if (form.get("grant_type") !== "urn:ietf:params:oauth:grant-type:jwt-bearer")
+      if (
+        form.get("grant_type") !== "urn:ietf:params:oauth:grant-type:jwt-bearer"
+      )
         return { status: 400, body: { error: "unsupported_grant_type" } };
       try {
-        const { payload } = await jwtVerify(form.get("assertion") ?? "", publicKey, {
-          audience: state.tokenUrl,
-          issuer: clientEmail,
-          algorithms: ["RS256"],
-        });
-        if (payload.scope !== "https://www.googleapis.com/auth/firebase.messaging")
+        const { payload } = await jwtVerify(
+          form.get("assertion") ?? "",
+          publicKey,
+          {
+            audience: state.tokenUrl,
+            issuer: clientEmail,
+            algorithms: ["RS256"],
+          },
+        );
+        if (
+          payload.scope !== "https://www.googleapis.com/auth/firebase.messaging"
+        )
           return { status: 400, body: { error: "invalid_scope" } };
       } catch {
-        return { status: 400, body: { error: "invalid_grant", error_description: "Invalid JWT Signature." } };
+        return {
+          status: 400,
+          body: {
+            error: "invalid_grant",
+            error_description: "Invalid JWT Signature.",
+          },
+        };
       }
       const token = `fake-access-${++state.counter}`;
       issued.add(token);
-      return { status: 200, body: { access_token: token, expires_in: 3599, token_type: "Bearer" } };
+      return {
+        status: 200,
+        body: { access_token: token, expires_in: 3599, token_type: "Bearer" },
+      };
     }
     const match = /^\/v1\/projects\/([^/]+)\/messages:send$/.exec(request.path);
     if (request.method === "POST" && match) {
-      const bearer = (request.headers.authorization ?? "").replace(/^Bearer /, "");
+      const bearer = (request.headers.authorization ?? "").replace(
+        /^Bearer /,
+        "",
+      );
       if (!issued.has(bearer))
-        return { status: 401, body: { error: { code: 401, status: "UNAUTHENTICATED", message: "Request had invalid authentication credentials." } } };
-      if (match[1] !== projectId) return { status: 403, body: { error: { code: 403, status: "PERMISSION_DENIED", message: "Wrong project" } } };
+        return {
+          status: 401,
+          body: {
+            error: {
+              code: 401,
+              status: "UNAUTHENTICATED",
+              message: "Request had invalid authentication credentials.",
+            },
+          },
+        };
+      if (match[1] !== projectId)
+        return {
+          status: 403,
+          body: {
+            error: {
+              code: 403,
+              status: "PERMISSION_DENIED",
+              message: "Wrong project",
+            },
+          },
+        };
       const { message } = JSON.parse(request.body) as {
-        message?: { token?: string; data?: Record<string, unknown>; notification?: { body?: string } };
+        message?: {
+          token?: string;
+          data?: Record<string, unknown>;
+          notification?: { body?: string };
+        };
       };
-      if (!message?.token || Object.values(message.data ?? {}).some((value) => typeof value !== "string"))
-        return { status: 400, body: fcmError(400, "INVALID_ARGUMENT", "INVALID_ARGUMENT") };
-      if (unregistered.has(message.token)) return { status: 404, body: fcmError(404, "NOT_FOUND", "UNREGISTERED") };
-      if (mismatched.has(message.token)) return { status: 403, body: fcmError(403, "PERMISSION_DENIED", "SENDER_ID_MISMATCH") };
-      if (unavailable.has(message.token)) return { status: 503, body: fcmError(503, "UNAVAILABLE", "UNAVAILABLE") };
-      return { status: 200, body: { name: `projects/${projectId}/messages/${++state.counter}` } };
+      if (
+        !message?.token ||
+        Object.values(message.data ?? {}).some(
+          (value) => typeof value !== "string",
+        )
+      )
+        return {
+          status: 400,
+          body: fcmError(400, "INVALID_ARGUMENT", "INVALID_ARGUMENT"),
+        };
+      if (unregistered.has(message.token))
+        return {
+          status: 404,
+          body: fcmError(404, "NOT_FOUND", "UNREGISTERED"),
+        };
+      if (mismatched.has(message.token))
+        return {
+          status: 403,
+          body: fcmError(403, "PERMISSION_DENIED", "SENDER_ID_MISMATCH"),
+        };
+      if (unavailable.has(message.token))
+        return {
+          status: 503,
+          body: fcmError(503, "UNAVAILABLE", "UNAVAILABLE"),
+        };
+      return {
+        status: 200,
+        body: { name: `projects/${projectId}/messages/${++state.counter}` },
+      };
     }
-    return { status: 404, body: { error: { code: 404, status: "NOT_FOUND", message: "Unknown route" } } };
+    return {
+      status: 404,
+      body: {
+        error: { code: 404, status: "NOT_FOUND", message: "Unknown route" },
+      },
+    };
   });
   state.tokenUrl = `${http.url}/token`;
   const serviceAccount = {
@@ -1872,7 +2517,11 @@ export async function startFakeFcm(projectId = "fairbite-test") {
     ...http,
     tokenUrl: state.tokenUrl,
     serviceAccount,
-    serviceAccountJson: JSON.stringify({ project_id: projectId, client_email: clientEmail, private_key: serviceAccount.privateKey }),
+    serviceAccountJson: JSON.stringify({
+      project_id: projectId,
+      client_email: clientEmail,
+      private_key: serviceAccount.privateKey,
+    }),
     unregistered,
     mismatched,
     unavailable,
@@ -1903,15 +2552,39 @@ beforeEach(() => {
   fake.unregistered.clear();
   fake.mismatched.clear();
   fake.unavailable.clear();
-  sender = new FcmPushSender({ apiBaseUrl: fake.url, tokenUrl: fake.tokenUrl, serviceAccount: fake.serviceAccount, timeoutMs: 2000 }, fetch, clock);
+  sender = new FcmPushSender(
+    {
+      apiBaseUrl: fake.url,
+      tokenUrl: fake.tokenUrl,
+      serviceAccount: fake.serviceAccount,
+      timeoutMs: 2000,
+    },
+    fetch,
+    clock,
+  );
 });
 
 describe("FCM HTTP v1 adapter against the contract fake", () => {
   it("exchanges a signed service-account JWT for an access token, caches it, and sends a v1 message", async () => {
     const before = fake.tokenRequests();
-    const first = await sender.send({ token: TOKEN, title: "Order accepted", body: "Accepted", data: { type: "order", _id: "o1" } });
-    const second = await sender.send({ token: TOKEN, title: null, body: "Again", data: {} });
-    expect(first).toEqual({ kind: "sent", providerMessageId: expect.stringMatching(/^projects\/fairbite-test\/messages\/\d+$/) });
+    const first = await sender.send({
+      token: TOKEN,
+      title: "Order accepted",
+      body: "Accepted",
+      data: { type: "order", _id: "o1" },
+    });
+    const second = await sender.send({
+      token: TOKEN,
+      title: null,
+      body: "Again",
+      data: {},
+    });
+    expect(first).toEqual({
+      kind: "sent",
+      providerMessageId: expect.stringMatching(
+        /^projects\/fairbite-test\/messages\/\d+$/,
+      ),
+    });
     expect(second.kind).toBe("sent");
     expect(fake.tokenRequests() - before).toBe(1);
     const sent = fake.requests.filter((r) => r.path.endsWith("messages:send"));
@@ -1920,42 +2593,87 @@ describe("FCM HTTP v1 adapter against the contract fake", () => {
         token: TOKEN,
         notification: { title: "Order accepted", body: "Accepted" },
         data: { type: "order", _id: "o1" },
-        android: { priority: "HIGH", notification: { sound: "default", channel_id: "default" } },
-        apns: { headers: { "apns-priority": "10" }, payload: { aps: { sound: "default" } } },
+        android: {
+          priority: "HIGH",
+          notification: { sound: "default", channel_id: "default" },
+        },
+        apns: {
+          headers: { "apns-priority": "10" },
+          payload: { aps: { sound: "default" } },
+        },
       },
     });
-    expect(JSON.parse(sent.at(-1)!.body).message.notification).toEqual({ body: "Again" });
+    expect(JSON.parse(sent.at(-1)!.body).message.notification).toEqual({
+      body: "Again",
+    });
   });
   it("re-authenticates once when the access token is rejected", async () => {
     await sender.send({ token: TOKEN, title: null, body: "x", data: {} });
     fake.revokeAccessTokens();
     const before = fake.tokenRequests();
-    expect((await sender.send({ token: TOKEN, title: null, body: "x", data: {} })).kind).toBe("sent");
+    expect(
+      (await sender.send({ token: TOKEN, title: null, body: "x", data: {} }))
+        .kind,
+    ).toBe("sent");
     expect(fake.tokenRequests() - before).toBe(1);
   });
   it("maps UNREGISTERED and SENDER_ID_MISMATCH to invalid recipients", async () => {
     fake.unregistered.add(TOKEN);
-    expect(await sender.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "invalid-recipient", error: "FCM UNREGISTERED" });
+    expect(
+      await sender.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "invalid-recipient", error: "FCM UNREGISTERED" });
     fake.unregistered.clear();
     fake.mismatched.add(TOKEN);
-    expect(await sender.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "invalid-recipient", error: "FCM SENDER_ID_MISMATCH" });
+    expect(
+      await sender.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "invalid-recipient", error: "FCM SENDER_ID_MISMATCH" });
   });
   it("maps UNAVAILABLE to retry and INVALID_ARGUMENT to a permanent failure", async () => {
     fake.unavailable.add(TOKEN);
-    expect(await sender.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "retry", error: "FCM UNAVAILABLE" });
-    expect(await sender.send({ token: "", title: null, body: "x", data: {} })).toEqual({ kind: "failed", error: "FCM INVALID_ARGUMENT" });
+    expect(
+      await sender.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "retry", error: "FCM UNAVAILABLE" });
+    expect(
+      await sender.send({ token: "", title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "failed", error: "FCM INVALID_ARGUMENT" });
   });
   it("reports PROVIDER_UNAVAILABLE without a service account and fails on a rejected key", async () => {
-    const unconfigured = new FcmPushSender({ apiBaseUrl: fake.url, tokenUrl: fake.tokenUrl, serviceAccount: null, timeoutMs: 2000 }, fetch, clock);
-    expect(await unconfigured.available()).toBe(false);
-    expect(await unconfigured.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "unavailable", error: "FCM is not configured" });
-    const other = await startFakeFcm();
-    const wrongKey = new FcmPushSender(
-      { apiBaseUrl: fake.url, tokenUrl: fake.tokenUrl, serviceAccount: { ...fake.serviceAccount, privateKey: other.serviceAccount.privateKey }, timeoutMs: 2000 },
+    const unconfigured = new FcmPushSender(
+      {
+        apiBaseUrl: fake.url,
+        tokenUrl: fake.tokenUrl,
+        serviceAccount: null,
+        timeoutMs: 2000,
+      },
       fetch,
       clock,
     );
-    expect(await wrongKey.send({ token: TOKEN, title: null, body: "x", data: {} })).toEqual({ kind: "failed", error: "FCM token HTTP 400" });
+    expect(await unconfigured.available()).toBe(false);
+    expect(
+      await unconfigured.send({
+        token: TOKEN,
+        title: null,
+        body: "x",
+        data: {},
+      }),
+    ).toEqual({ kind: "unavailable", error: "FCM is not configured" });
+    const other = await startFakeFcm();
+    const wrongKey = new FcmPushSender(
+      {
+        apiBaseUrl: fake.url,
+        tokenUrl: fake.tokenUrl,
+        serviceAccount: {
+          ...fake.serviceAccount,
+          privateKey: other.serviceAccount.privateKey,
+        },
+        timeoutMs: 2000,
+      },
+      fetch,
+      clock,
+    );
+    expect(
+      await wrongKey.send({ token: TOKEN, title: null, body: "x", data: {} }),
+    ).toEqual({ kind: "failed", error: "FCM token HTTP 400" });
     await other.close();
   });
 });
@@ -1977,18 +2695,30 @@ import { postProvider, retryable } from "./http.js";
 import type { PushMessage, PushSender, SendResult } from "./types.js";
 
 const SCOPE = "https://www.googleapis.com/auth/firebase.messaging";
-type FcmErrorBody = { error?: { status?: string; details?: { errorCode?: string }[] } } | null;
+type FcmErrorBody = {
+  error?: { status?: string; details?: { errorCode?: string }[] };
+} | null;
 
 function fcmCode(body: unknown): string | null {
   const error = (body as FcmErrorBody)?.error;
-  return error?.details?.find((detail) => typeof detail.errorCode === "string")?.errorCode ?? error?.status ?? null;
+  return (
+    error?.details?.find((detail) => typeof detail.errorCode === "string")
+      ?.errorCode ??
+    error?.status ??
+    null
+  );
 }
 
 export class FcmPushSender implements PushSender {
   readonly provider = "FCM" as const;
   private cached: { token: string; expiresAt: number } | null = null;
   constructor(
-    private readonly options: { apiBaseUrl: string; tokenUrl: string; serviceAccount: ServiceAccount | null; timeoutMs: number },
+    private readonly options: {
+      apiBaseUrl: string;
+      tokenUrl: string;
+      serviceAccount: ServiceAccount | null;
+      timeoutMs: number;
+    },
     private readonly fetchImpl: typeof fetch = fetch,
     private readonly clock: Clock = systemClock,
   ) {}
@@ -1997,9 +2727,12 @@ export class FcmPushSender implements PushSender {
     return this.options.serviceAccount !== null;
   }
 
-  private async accessToken(account: ServiceAccount): Promise<string | SendResult> {
+  private async accessToken(
+    account: ServiceAccount,
+  ): Promise<string | SendResult> {
     const now = Math.floor(this.clock.now().getTime() / 1000);
-    if (this.cached && this.cached.expiresAt - 60 > now) return this.cached.token;
+    if (this.cached && this.cached.expiresAt - 60 > now)
+      return this.cached.token;
     const key = await importPKCS8(account.privateKey, "RS256");
     const assertion = await new SignJWT({ scope: SCOPE })
       .setProtectedHeader({ alg: "RS256", typ: "JWT" })
@@ -2013,28 +2746,55 @@ export class FcmPushSender implements PushSender {
       this.fetchImpl,
       this.options.tokenUrl,
       { "content-type": "application/x-www-form-urlencoded" },
-      new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }).toString(),
+      new URLSearchParams({
+        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        assertion,
+      }).toString(),
       this.options.timeoutMs,
     );
-    if ("error" in response) return { kind: "retry", error: `FCM token request failed: ${response.error}` };
-    if (retryable(response.status)) return { kind: "retry", error: `FCM token HTTP ${response.status}` };
-    if (response.status !== 200) return { kind: "failed", error: `FCM token HTTP ${response.status}` };
-    const body = response.body as { access_token?: unknown; expires_in?: unknown } | null;
-    if (typeof body?.access_token !== "string") return { kind: "failed", error: "FCM token response invalid" };
-    this.cached = { token: body.access_token, expiresAt: now + (typeof body.expires_in === "number" ? body.expires_in : 3600) };
+    if ("error" in response)
+      return {
+        kind: "retry",
+        error: `FCM token request failed: ${response.error}`,
+      };
+    if (retryable(response.status))
+      return { kind: "retry", error: `FCM token HTTP ${response.status}` };
+    if (response.status !== 200)
+      return { kind: "failed", error: `FCM token HTTP ${response.status}` };
+    const body = response.body as {
+      access_token?: unknown;
+      expires_in?: unknown;
+    } | null;
+    if (typeof body?.access_token !== "string")
+      return { kind: "failed", error: "FCM token response invalid" };
+    this.cached = {
+      token: body.access_token,
+      expiresAt:
+        now + (typeof body.expires_in === "number" ? body.expires_in : 3600),
+    };
     return body.access_token;
   }
 
   async send(message: PushMessage): Promise<SendResult> {
     const account = this.options.serviceAccount;
-    if (!account) return { kind: "unavailable", error: "FCM is not configured" };
+    if (!account)
+      return { kind: "unavailable", error: "FCM is not configured" };
     const payload = JSON.stringify({
       message: {
         token: message.token,
-        notification: { ...(message.title ? { title: message.title } : {}), body: message.body },
+        notification: {
+          ...(message.title ? { title: message.title } : {}),
+          body: message.body,
+        },
         data: message.data,
-        android: { priority: "HIGH", notification: { sound: "default", channel_id: "default" } },
-        apns: { headers: { "apns-priority": "10" }, payload: { aps: { sound: "default" } } },
+        android: {
+          priority: "HIGH",
+          notification: { sound: "default", channel_id: "default" },
+        },
+        apns: {
+          headers: { "apns-priority": "10" },
+          payload: { aps: { sound: "default" } },
+        },
       },
     });
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -2043,23 +2803,41 @@ export class FcmPushSender implements PushSender {
       const response = await postProvider(
         this.fetchImpl,
         `${this.options.apiBaseUrl}/v1/projects/${encodeURIComponent(account.projectId)}/messages:send`,
-        { authorization: `Bearer ${token}`, "content-type": "application/json" },
+        {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
         payload,
         this.options.timeoutMs,
       );
-      if ("error" in response) return { kind: "retry", error: `FCM request failed: ${response.error}` };
+      if ("error" in response)
+        return {
+          kind: "retry",
+          error: `FCM request failed: ${response.error}`,
+        };
       if (response.status === 200) {
         const name = (response.body as { name?: unknown } | null)?.name;
-        return { kind: "sent", providerMessageId: typeof name === "string" ? name : null };
+        return {
+          kind: "sent",
+          providerMessageId: typeof name === "string" ? name : null,
+        };
       }
       if (response.status === 401 && attempt === 0) {
         this.cached = null;
         continue;
       }
       const code = fcmCode(response.body);
-      if (code === "UNREGISTERED" || code === "SENDER_ID_MISMATCH") return { kind: "invalid-recipient", error: `FCM ${code}` };
-      if (retryable(response.status)) return { kind: "retry", error: `FCM ${code ?? `HTTP ${response.status}`}` };
-      return { kind: "failed", error: `FCM ${code ?? `HTTP ${response.status}`}` };
+      if (code === "UNREGISTERED" || code === "SENDER_ID_MISMATCH")
+        return { kind: "invalid-recipient", error: `FCM ${code}` };
+      if (retryable(response.status))
+        return {
+          kind: "retry",
+          error: `FCM ${code ?? `HTTP ${response.status}`}`,
+        };
+      return {
+        kind: "failed",
+        error: `FCM ${code ?? `HTTP ${response.status}`}`,
+      };
     }
     return { kind: "failed", error: "FCM authentication failed" };
   }
@@ -2081,6 +2859,7 @@ git commit -m "feat(L8): add FCM HTTP v1 adapter with service-account OAuth, pro
 ### Task 6: Twilio SMS and SendGrid email adapters
 
 **Files:**
+
 - Create: `services/api/src/modules/notifications/providers/twilio.ts`
 - Create: `services/api/src/modules/notifications/providers/sendgrid.ts`
 - Create: `services/api/test/support/providers/twilio.ts`
@@ -2096,29 +2875,93 @@ Contracts emulated: Twilio `POST /2010-04-01/Accounts/{AccountSid}/Messages.json
 import { startFakeHttp } from "./http.js";
 
 // Contract fake of the Twilio Programmable Messaging REST API.
-export async function startFakeTwilio(credentials = { accountSid: `AC${"0".repeat(32)}`, authToken: "twilio-test-token" }) {
+export async function startFakeTwilio(
+  credentials = {
+    accountSid: `AC${"0".repeat(32)}`,
+    authToken: "twilio-test-token",
+  },
+) {
   const invalidNumbers = new Set<string>();
   const rateLimited = new Set<string>();
   let counter = 0;
   const http = await startFakeHttp((request) => {
-    const match = /^\/2010-04-01\/Accounts\/([^/]+)\/Messages\.json$/.exec(request.path);
+    const match = /^\/2010-04-01\/Accounts\/([^/]+)\/Messages\.json$/.exec(
+      request.path,
+    );
     if (request.method !== "POST" || !match)
-      return { status: 404, body: { code: 20404, message: "The requested resource was not found", status: 404 } };
+      return {
+        status: 404,
+        body: {
+          code: 20404,
+          message: "The requested resource was not found",
+          status: 404,
+        },
+      };
     const expected = `Basic ${Buffer.from(`${credentials.accountSid}:${credentials.authToken}`).toString("base64")}`;
-    if (match[1] !== credentials.accountSid || request.headers.authorization !== expected)
-      return { status: 401, body: { code: 20003, message: "Authenticate", status: 401 } };
-    if (!String(request.headers["content-type"]).startsWith("application/x-www-form-urlencoded"))
-      return { status: 400, body: { code: 20001, message: "Unsupported content type", status: 400 } };
+    if (
+      match[1] !== credentials.accountSid ||
+      request.headers.authorization !== expected
+    )
+      return {
+        status: 401,
+        body: { code: 20003, message: "Authenticate", status: 401 },
+      };
+    if (
+      !String(request.headers["content-type"]).startsWith(
+        "application/x-www-form-urlencoded",
+      )
+    )
+      return {
+        status: 400,
+        body: { code: 20001, message: "Unsupported content type", status: 400 },
+      };
     const form = new URLSearchParams(request.body);
     const to = form.get("To") ?? "";
     const from = form.get("From") ?? "";
     const body = form.get("Body") ?? "";
-    if (!from) return { status: 400, body: { code: 21603, message: "A 'From' phone number is required.", status: 400 } };
-    if (!body) return { status: 400, body: { code: 21602, message: "Message body is required.", status: 400 } };
+    if (!from)
+      return {
+        status: 400,
+        body: {
+          code: 21603,
+          message: "A 'From' phone number is required.",
+          status: 400,
+        },
+      };
+    if (!body)
+      return {
+        status: 400,
+        body: {
+          code: 21602,
+          message: "Message body is required.",
+          status: 400,
+        },
+      };
     if (invalidNumbers.has(to) || !/^\+[1-9]\d{6,14}$/.test(to))
-      return { status: 400, body: { code: 21211, message: `The 'To' number ${to} is not a valid phone number.`, status: 400 } };
-    if (rateLimited.has(to)) return { status: 429, headers: { "retry-after": "5" }, body: { code: 20429, message: "Too Many Requests", status: 429 } };
-    return { status: 201, body: { sid: `SM${(++counter).toString(16).padStart(32, "0")}`, status: "queued", to, from, body } };
+      return {
+        status: 400,
+        body: {
+          code: 21211,
+          message: `The 'To' number ${to} is not a valid phone number.`,
+          status: 400,
+        },
+      };
+    if (rateLimited.has(to))
+      return {
+        status: 429,
+        headers: { "retry-after": "5" },
+        body: { code: 20429, message: "Too Many Requests", status: 429 },
+      };
+    return {
+      status: 201,
+      body: {
+        sid: `SM${(++counter).toString(16).padStart(32, "0")}`,
+        status: "queued",
+        to,
+        from,
+        body,
+      },
+    };
   });
   return { ...http, credentials, invalidNumbers, rateLimited };
 }
@@ -2134,9 +2977,23 @@ export async function startFakeSendGrid(apiKey = "SG.test-key") {
   let counter = 0;
   const http = await startFakeHttp((request) => {
     if (request.method !== "POST" || request.path !== "/v3/mail/send")
-      return { status: 404, body: { errors: [{ message: "Not found", field: null }] } };
+      return {
+        status: 404,
+        body: { errors: [{ message: "Not found", field: null }] },
+      };
     if (request.headers.authorization !== `Bearer ${apiKey}`)
-      return { status: 401, body: { errors: [{ message: "The provided authorization grant is invalid, expired, or revoked", field: null }] } };
+      return {
+        status: 401,
+        body: {
+          errors: [
+            {
+              message:
+                "The provided authorization grant is invalid, expired, or revoked",
+              field: null,
+            },
+          ],
+        },
+      };
     const mail = JSON.parse(request.body) as {
       personalizations?: { to?: { email?: string }[] }[];
       from?: { email?: string };
@@ -2144,11 +3001,46 @@ export async function startFakeSendGrid(apiKey = "SG.test-key") {
       content?: { type?: string; value?: string }[];
     };
     const to = mail.personalizations?.[0]?.to?.[0]?.email;
-    if (!to) return { status: 400, body: { errors: [{ message: "The to field is required", field: "personalizations.0.to" }] } };
-    if (!mail.from?.email) return { status: 400, body: { errors: [{ message: "The from email is required", field: "from.email" }] } };
-    if (!mail.subject) return { status: 400, body: { errors: [{ message: "The subject is required", field: "subject" }] } };
-    if (!mail.content?.[0]?.value) return { status: 400, body: { errors: [{ message: "Content is required", field: "content" }] } };
-    if (failing.has(to)) return { status: 503, body: { errors: [{ message: "Service unavailable", field: null }] } };
+    if (!to)
+      return {
+        status: 400,
+        body: {
+          errors: [
+            {
+              message: "The to field is required",
+              field: "personalizations.0.to",
+            },
+          ],
+        },
+      };
+    if (!mail.from?.email)
+      return {
+        status: 400,
+        body: {
+          errors: [
+            { message: "The from email is required", field: "from.email" },
+          ],
+        },
+      };
+    if (!mail.subject)
+      return {
+        status: 400,
+        body: {
+          errors: [{ message: "The subject is required", field: "subject" }],
+        },
+      };
+    if (!mail.content?.[0]?.value)
+      return {
+        status: 400,
+        body: {
+          errors: [{ message: "Content is required", field: "content" }],
+        },
+      };
+    if (failing.has(to))
+      return {
+        status: 503,
+        body: { errors: [{ message: "Service unavailable", field: null }] },
+      };
     return { status: 202, headers: { "x-message-id": `sg-${++counter}` } };
   });
   return { ...http, apiKey, failing };
@@ -2158,12 +3050,19 @@ export async function startFakeSendGrid(apiKey = "SG.test-key") {
 ```ts
 // services/api/test/integration/notifications/providers/twilio.integration.spec.ts
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { TwilioSmsSender, type TwilioCredentials } from "../../../../src/modules/notifications/providers/twilio.js";
+import {
+  TwilioSmsSender,
+  type TwilioCredentials,
+} from "../../../../src/modules/notifications/providers/twilio.js";
 import { startFakeTwilio } from "../../../support/providers/twilio.js";
 
 let fake: Awaited<ReturnType<typeof startFakeTwilio>>;
 let credentials: TwilioCredentials;
-const sender = () => new TwilioSmsSender({ baseUrl: fake.url, timeoutMs: 2000 }, async () => credentials);
+const sender = () =>
+  new TwilioSmsSender(
+    { baseUrl: fake.url, timeoutMs: 2000 },
+    async () => credentials,
+  );
 beforeAll(async () => {
   fake = await startFakeTwilio();
 });
@@ -2171,27 +3070,64 @@ afterAll(() => fake.close());
 
 describe("Twilio SMS adapter against the contract fake", () => {
   it("posts To, From and Body with HTTP Basic auth and returns the message SID", async () => {
-    credentials = { enabled: true, accountSid: fake.credentials.accountSid, authToken: fake.credentials.authToken, fromNumber: "+15005550006" };
+    credentials = {
+      enabled: true,
+      accountSid: fake.credentials.accountSid,
+      authToken: fake.credentials.authToken,
+      fromNumber: "+15005550006",
+    };
     expect(await sender().available()).toBe(true);
-    expect(await sender().send({ to: "+447700900123", text: "Your code is 1" })).toEqual({ kind: "sent", providerMessageId: expect.stringMatching(/^SM[0-9a-f]{32}$/) });
+    expect(
+      await sender().send({ to: "+447700900123", text: "Your code is 1" }),
+    ).toEqual({
+      kind: "sent",
+      providerMessageId: expect.stringMatching(/^SM[0-9a-f]{32}$/),
+    });
     const form = new URLSearchParams(fake.requests.at(-1)!.body);
-    expect(Object.fromEntries(form)).toEqual({ To: "+447700900123", From: "+15005550006", Body: "Your code is 1" });
+    expect(Object.fromEntries(form)).toEqual({
+      To: "+447700900123",
+      From: "+15005550006",
+      Body: "Your code is 1",
+    });
   });
   it("maps an invalid To number to an invalid recipient and 429 to retry", async () => {
     fake.invalidNumbers.add("+15005550001");
-    expect(await sender().send({ to: "+15005550001", text: "x" })).toEqual({ kind: "invalid-recipient", error: "Twilio error 21211" });
+    expect(await sender().send({ to: "+15005550001", text: "x" })).toEqual({
+      kind: "invalid-recipient",
+      error: "Twilio error 21211",
+    });
     fake.rateLimited.add("+447700900124");
-    expect(await sender().send({ to: "+447700900124", text: "x" })).toEqual({ kind: "retry", error: "Twilio HTTP 429", retryAfterSeconds: 5 });
+    expect(await sender().send({ to: "+447700900124", text: "x" })).toEqual({
+      kind: "retry",
+      error: "Twilio HTTP 429",
+      retryAfterSeconds: 5,
+    });
   });
   it("fails permanently on rejected credentials", async () => {
     credentials = { ...credentials, authToken: "wrong" };
-    expect(await sender().send({ to: "+447700900123", text: "x" })).toEqual({ kind: "failed", error: "Twilio authentication failed" });
+    expect(await sender().send({ to: "+447700900123", text: "x" })).toEqual({
+      kind: "failed",
+      error: "Twilio authentication failed",
+    });
   });
   it("is unavailable when disabled or incomplete in configuration", async () => {
-    credentials = { enabled: false, accountSid: fake.credentials.accountSid, authToken: fake.credentials.authToken, fromNumber: "+15005550006" };
+    credentials = {
+      enabled: false,
+      accountSid: fake.credentials.accountSid,
+      authToken: fake.credentials.authToken,
+      fromNumber: "+15005550006",
+    };
     expect(await sender().available()).toBe(false);
-    expect(await sender().send({ to: "+447700900123", text: "x" })).toEqual({ kind: "unavailable", error: "Twilio is not configured" });
-    credentials = { enabled: true, accountSid: fake.credentials.accountSid, authToken: null, fromNumber: "+15005550006" };
+    expect(await sender().send({ to: "+447700900123", text: "x" })).toEqual({
+      kind: "unavailable",
+      error: "Twilio is not configured",
+    });
+    credentials = {
+      enabled: true,
+      accountSid: fake.credentials.accountSid,
+      authToken: null,
+      fromNumber: "+15005550006",
+    };
     expect(await sender().available()).toBe(false);
   });
 });
@@ -2200,12 +3136,19 @@ describe("Twilio SMS adapter against the contract fake", () => {
 ```ts
 // services/api/test/integration/notifications/providers/sendgrid.integration.spec.ts
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { SendGridEmailSender, type SendGridCredentials } from "../../../../src/modules/notifications/providers/sendgrid.js";
+import {
+  SendGridEmailSender,
+  type SendGridCredentials,
+} from "../../../../src/modules/notifications/providers/sendgrid.js";
 import { startFakeSendGrid } from "../../../support/providers/sendgrid.js";
 
 let fake: Awaited<ReturnType<typeof startFakeSendGrid>>;
 let credentials: SendGridCredentials;
-const sender = () => new SendGridEmailSender({ baseUrl: fake.url, timeoutMs: 2000 }, async () => credentials);
+const sender = () =>
+  new SendGridEmailSender(
+    { baseUrl: fake.url, timeoutMs: 2000 },
+    async () => credentials,
+  );
 beforeAll(async () => {
   fake = await startFakeSendGrid();
 });
@@ -2213,8 +3156,19 @@ afterAll(() => fake.close());
 
 describe("SendGrid email adapter against the contract fake", () => {
   it("sends a plain-text v3 mail with the configured sender and returns X-Message-Id", async () => {
-    credentials = { enabled: true, apiKey: fake.apiKey, fromEmail: "no-reply@fairbite.test", fromName: "FairBite" };
-    expect(await sender().send({ to: "ada@example.com", subject: "Your code", text: "Code 1" })).toEqual({ kind: "sent", providerMessageId: "sg-1" });
+    credentials = {
+      enabled: true,
+      apiKey: fake.apiKey,
+      fromEmail: "no-reply@fairbite.test",
+      fromName: "FairBite",
+    };
+    expect(
+      await sender().send({
+        to: "ada@example.com",
+        subject: "Your code",
+        text: "Code 1",
+      }),
+    ).toEqual({ kind: "sent", providerMessageId: "sg-1" });
     expect(JSON.parse(fake.requests.at(-1)!.body)).toEqual({
       personalizations: [{ to: [{ email: "ada@example.com" }] }],
       from: { email: "no-reply@fairbite.test", name: "FairBite" },
@@ -2223,22 +3177,42 @@ describe("SendGrid email adapter against the contract fake", () => {
     });
   });
   it("omits an empty sender name", async () => {
-    credentials = { enabled: true, apiKey: fake.apiKey, fromEmail: "no-reply@fairbite.test", fromName: null };
+    credentials = {
+      enabled: true,
+      apiKey: fake.apiKey,
+      fromEmail: "no-reply@fairbite.test",
+      fromName: null,
+    };
     await sender().send({ to: "ada@example.com", subject: "s", text: "t" });
-    expect(JSON.parse(fake.requests.at(-1)!.body).from).toEqual({ email: "no-reply@fairbite.test" });
+    expect(JSON.parse(fake.requests.at(-1)!.body).from).toEqual({
+      email: "no-reply@fairbite.test",
+    });
   });
   it("maps 5xx to retry, a rejected key to a permanent failure and a 400 to a permanent failure", async () => {
     fake.failing.add("down@example.com");
-    expect(await sender().send({ to: "down@example.com", subject: "s", text: "t" })).toEqual({ kind: "retry", error: "SendGrid HTTP 503" });
+    expect(
+      await sender().send({ to: "down@example.com", subject: "s", text: "t" }),
+    ).toEqual({ kind: "retry", error: "SendGrid HTTP 503" });
     credentials = { ...credentials, apiKey: "SG.wrong" };
-    expect(await sender().send({ to: "ada@example.com", subject: "s", text: "t" })).toEqual({ kind: "failed", error: "SendGrid authentication failed" });
+    expect(
+      await sender().send({ to: "ada@example.com", subject: "s", text: "t" }),
+    ).toEqual({ kind: "failed", error: "SendGrid authentication failed" });
     credentials = { ...credentials, apiKey: fake.apiKey };
-    expect(await sender().send({ to: "ada@example.com", subject: "", text: "t" })).toEqual({ kind: "failed", error: "SendGrid HTTP 400" });
+    expect(
+      await sender().send({ to: "ada@example.com", subject: "", text: "t" }),
+    ).toEqual({ kind: "failed", error: "SendGrid HTTP 400" });
   });
   it("is unavailable when disabled or missing a key or sender", async () => {
-    credentials = { enabled: true, apiKey: null, fromEmail: "no-reply@fairbite.test", fromName: null };
+    credentials = {
+      enabled: true,
+      apiKey: null,
+      fromEmail: "no-reply@fairbite.test",
+      fromName: null,
+    };
     expect(await sender().available()).toBe(false);
-    expect(await sender().send({ to: "ada@example.com", subject: "s", text: "t" })).toEqual({ kind: "unavailable", error: "SendGrid is not configured" });
+    expect(
+      await sender().send({ to: "ada@example.com", subject: "s", text: "t" }),
+    ).toEqual({ kind: "unavailable", error: "SendGrid is not configured" });
   });
 });
 ```
@@ -2255,7 +3229,12 @@ Expected: FAIL — modules not found.
 import { postProvider, retryable, retryAfterSeconds } from "./http.js";
 import type { SendResult, SmsMessage, SmsSender } from "./types.js";
 
-export type TwilioCredentials = { enabled: boolean; accountSid: string | null; authToken: string | null; fromNumber: string | null };
+export type TwilioCredentials = {
+  enabled: boolean;
+  accountSid: string | null;
+  authToken: string | null;
+  fromNumber: string | null;
+};
 const INVALID_RECIPIENT = new Set([21211, 21610, 21614]);
 
 export class TwilioSmsSender implements SmsSender {
@@ -2275,7 +3254,8 @@ export class TwilioSmsSender implements SmsSender {
   async send(message: SmsMessage): Promise<SendResult> {
     const c = await this.credentials();
     const { accountSid, authToken, fromNumber } = c;
-    if (!c.enabled || !accountSid || !authToken || !fromNumber) return { kind: "unavailable", error: "Twilio is not configured" };
+    if (!c.enabled || !accountSid || !authToken || !fromNumber)
+      return { kind: "unavailable", error: "Twilio is not configured" };
     const response = await postProvider(
       this.fetchImpl,
       `${this.options.baseUrl}/2010-04-01/Accounts/${encodeURIComponent(accountSid)}/Messages.json`,
@@ -2284,24 +3264,44 @@ export class TwilioSmsSender implements SmsSender {
         "content-type": "application/x-www-form-urlencoded",
         accept: "application/json",
       },
-      new URLSearchParams({ To: message.to, From: fromNumber, Body: message.text }).toString(),
+      new URLSearchParams({
+        To: message.to,
+        From: fromNumber,
+        Body: message.text,
+      }).toString(),
       this.options.timeoutMs,
     );
-    if ("error" in response) return { kind: "retry", error: `Twilio request failed: ${response.error}` };
+    if ("error" in response)
+      return {
+        kind: "retry",
+        error: `Twilio request failed: ${response.error}`,
+      };
     if (response.status === 200 || response.status === 201) {
       const sid = (response.body as { sid?: unknown } | null)?.sid;
-      return { kind: "sent", providerMessageId: typeof sid === "string" ? sid : null };
+      return {
+        kind: "sent",
+        providerMessageId: typeof sid === "string" ? sid : null,
+      };
     }
     if (retryable(response.status)) {
       const after = retryAfterSeconds(response.headers);
       return after === undefined
         ? { kind: "retry", error: `Twilio HTTP ${response.status}` }
-        : { kind: "retry", error: `Twilio HTTP ${response.status}`, retryAfterSeconds: after };
+        : {
+            kind: "retry",
+            error: `Twilio HTTP ${response.status}`,
+            retryAfterSeconds: after,
+          };
     }
-    if (response.status === 401) return { kind: "failed", error: "Twilio authentication failed" };
+    if (response.status === 401)
+      return { kind: "failed", error: "Twilio authentication failed" };
     const code = (response.body as { code?: unknown } | null)?.code;
-    if (typeof code === "number" && INVALID_RECIPIENT.has(code)) return { kind: "invalid-recipient", error: `Twilio error ${code}` };
-    return { kind: "failed", error: `Twilio error ${typeof code === "number" ? code : response.status}` };
+    if (typeof code === "number" && INVALID_RECIPIENT.has(code))
+      return { kind: "invalid-recipient", error: `Twilio error ${code}` };
+    return {
+      kind: "failed",
+      error: `Twilio error ${typeof code === "number" ? code : response.status}`,
+    };
   }
 }
 ```
@@ -2311,7 +3311,12 @@ export class TwilioSmsSender implements SmsSender {
 import { postProvider, retryable, retryAfterSeconds } from "./http.js";
 import type { EmailMessage, EmailSender, SendResult } from "./types.js";
 
-export type SendGridCredentials = { enabled: boolean; apiKey: string | null; fromEmail: string | null; fromName: string | null };
+export type SendGridCredentials = {
+  enabled: boolean;
+  apiKey: string | null;
+  fromEmail: string | null;
+  fromName: string | null;
+};
 
 export class SendGridEmailSender implements EmailSender {
   readonly provider = "SENDGRID" as const;
@@ -2330,7 +3335,8 @@ export class SendGridEmailSender implements EmailSender {
   async send(message: EmailMessage): Promise<SendResult> {
     const c = await this.credentials();
     const { apiKey, fromEmail } = c;
-    if (!c.enabled || !apiKey || !fromEmail) return { kind: "unavailable", error: "SendGrid is not configured" };
+    if (!c.enabled || !apiKey || !fromEmail)
+      return { kind: "unavailable", error: "SendGrid is not configured" };
     const response = await postProvider(
       this.fetchImpl,
       `${this.options.baseUrl}/v3/mail/send`,
@@ -2343,16 +3349,28 @@ export class SendGridEmailSender implements EmailSender {
       }),
       this.options.timeoutMs,
     );
-    if ("error" in response) return { kind: "retry", error: `SendGrid request failed: ${response.error}` };
+    if ("error" in response)
+      return {
+        kind: "retry",
+        error: `SendGrid request failed: ${response.error}`,
+      };
     if (response.status === 202 || response.status === 200)
-      return { kind: "sent", providerMessageId: response.headers.get("x-message-id") };
+      return {
+        kind: "sent",
+        providerMessageId: response.headers.get("x-message-id"),
+      };
     if (retryable(response.status)) {
       const after = retryAfterSeconds(response.headers);
       return after === undefined
         ? { kind: "retry", error: `SendGrid HTTP ${response.status}` }
-        : { kind: "retry", error: `SendGrid HTTP ${response.status}`, retryAfterSeconds: after };
+        : {
+            kind: "retry",
+            error: `SendGrid HTTP ${response.status}`,
+            retryAfterSeconds: after,
+          };
     }
-    if (response.status === 401 || response.status === 403) return { kind: "failed", error: "SendGrid authentication failed" };
+    if (response.status === 401 || response.status === 403)
+      return { kind: "failed", error: "SendGrid authentication failed" };
     return { kind: "failed", error: `SendGrid HTTP ${response.status}` };
   }
 }
@@ -2369,4 +3387,3 @@ Expected: PASS (4 + 4 tests).
 git add services/api/src/modules/notifications/providers/twilio.ts services/api/src/modules/notifications/providers/sendgrid.ts services/api/test/support/providers/twilio.ts services/api/test/support/providers/sendgrid.ts services/api/test/integration/notifications/providers/twilio.integration.spec.ts services/api/test/integration/notifications/providers/sendgrid.integration.spec.ts
 git commit -m "feat(L8): add Twilio SMS and SendGrid email adapters proven against contract fakes"
 ```
-

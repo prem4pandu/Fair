@@ -15,6 +15,10 @@ const env = {
   DATABASE_URL: "postgres://localhost:1/missing",
   REDIS_URL: "redis://localhost:1",
 };
+const productionTransport = {
+  PUBLIC_BASE_URL: "https://api.example.com",
+  PUBLIC_ACCESS_SECRET: Buffer.alloc(32, 4).toString("base64url"),
+};
 describe("foundation HTTP boundaries", () => {
   it("keeps password operations disabled by default while serving foundation", async () => {
     app = await createApp(readConfig(env));
@@ -75,6 +79,7 @@ describe("foundation HTTP boundaries", () => {
     app = await createApp(
       readConfig({
         ...env,
+        ...productionTransport,
         APP_ENV: "production",
         DATABASE_URL: "postgres://localhost:1/db?sslmode=verify-full",
         REDIS_URL: "rediss://localhost:1",
@@ -90,6 +95,7 @@ describe("foundation HTTP boundaries", () => {
     app = await createApp(
       readConfig({
         ...env,
+        ...productionTransport,
         APP_ENV: "production",
         DATABASE_URL: "postgres://localhost:1/db?sslmode=verify-full",
         REDIS_URL: "rediss://localhost:1",

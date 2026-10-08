@@ -19,6 +19,7 @@
 ### Task R1: Threat model and review checklist
 
 **Files:**
+
 - Create: `docs/security/THREAT_MODEL.md`
 - Create: `docs/security/REVIEW_2026-W4.md`
 
@@ -43,6 +44,7 @@
 ### Task R2: Authorization coverage tool
 
 **Files:**
+
 - Create: `tools/check-authz.mjs` + `tools/check-authz.test.mjs`
 - Create: `docs/AUTHZ_MATRIX.json` (generated)
 
@@ -54,6 +56,7 @@
 ### Task R3: Security regression suite
 
 **Files:**
+
 - Create: `services/api/test/integration/security/*.integration.spec.ts`
 
 - [ ] One spec per checklist item 2, 3, 5, 6, 7, 8, 9, 11 with concrete attacks: subscribe to another customer's `subscriptionOrder(id)` and expect no events; rider calls `updateOrderStatusRider` on an order assigned to another rider → `FORBIDDEN`; restaurant owner calls `acceptOrder` on another restaurant's order → `FORBIDDEN`; replayed refresh token revokes the family; webhook with bad signature → 400 and no state change; 6 MB upload → `BAD_USER_INPUT`; SVG with script → rejected; 51st subscription on one socket → error; `UPDATE "JournalLine"` → database error.
@@ -66,6 +69,7 @@
 ### Task R5: Observability
 
 **Files:**
+
 - Create: `services/api/src/kernel/log.ts`, `services/api/src/kernel/telemetry.ts`
 - Modify: `services/api/src/app.ts`, `services/worker/src/main.ts`
 
@@ -78,6 +82,7 @@
 ### Task R6: Load and resilience tests
 
 **Files:**
+
 - Create: `perf/k6/*.js`, `perf/README.md`, `perf/seed.ts`
 
 Targets (single API instance, 2 vCPU, Postgres and Redis local): p95 < 250 ms for `nearByRestaurantsPreview`, `restaurant`, `fetchCategoryDetailsByStoreId`, `orders`; p95 < 500 ms for `placeOrder`; 500 concurrent legacy WebSocket subscriptions with event fan-out latency p95 < 500 ms; 50 rider location updates/s sustained; zero errors other than expected rate limits.
@@ -102,15 +107,15 @@ Targets (single API instance, 2 vCPU, Postgres and Redis local): p95 < 250 ms fo
 
 For each provider with credentials supplied, run the lane's sandbox suite (each lane plan defines it; suites skip when env vars are absent) and record results in `docs/PROVIDERS.md`:
 
-| Provider | Lane | Env vars | Suite |
-|---|---|---|---|
-| Stripe Checkout + webhooks + Connect | L7 | `STRIPE_TEST_SECRET`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_CONNECT_CLIENT_ID` | `test/sandbox/stripe.sandbox.spec.ts` |
-| SendGrid or SMTP | L8 | `SENDGRID_API_KEY` or `SMTP_URL` | `test/sandbox/email.sandbox.spec.ts` |
-| Twilio SMS | L8 | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM` | `test/sandbox/sms.sandbox.spec.ts` |
-| FCM HTTP v1 / Expo push | L8 | `FCM_SERVICE_ACCOUNT_JSON`, `EXPO_ACCESS_TOKEN` | `test/sandbox/push.sandbox.spec.ts` |
-| Google Maps (Places, Geocoding, Directions) | L2/L6 | `GOOGLE_MAPS_SERVER_KEY` | `test/sandbox/maps.sandbox.spec.ts` |
-| S3 media | L2 | `MEDIA_S3_BUCKET`, `AWS_*` | `test/sandbox/media.sandbox.spec.ts` |
-| Google / Apple sign-in | L1 | `GOOGLE_CLIENT_IDS`, `APPLE_SERVICE_ID` | `test/sandbox/social.sandbox.spec.ts` |
+| Provider                                    | Lane  | Env vars                                                                  | Suite                                 |
+| ------------------------------------------- | ----- | ------------------------------------------------------------------------- | ------------------------------------- |
+| Stripe Checkout + webhooks + Connect        | L7    | `STRIPE_TEST_SECRET`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_CONNECT_CLIENT_ID` | `test/sandbox/stripe.sandbox.spec.ts` |
+| SendGrid or SMTP                            | L8    | `SENDGRID_API_KEY` or `SMTP_URL`                                          | `test/sandbox/email.sandbox.spec.ts`  |
+| Twilio SMS                                  | L8    | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`                  | `test/sandbox/sms.sandbox.spec.ts`    |
+| FCM HTTP v1 / Expo push                     | L8    | `FCM_SERVICE_ACCOUNT_JSON`, `EXPO_ACCESS_TOKEN`                           | `test/sandbox/push.sandbox.spec.ts`   |
+| Google Maps (Places, Geocoding, Directions) | L2/L6 | `GOOGLE_MAPS_SERVER_KEY`                                                  | `test/sandbox/maps.sandbox.spec.ts`   |
+| S3 media                                    | L2    | `MEDIA_S3_BUCKET`, `AWS_*`                                                | `test/sandbox/media.sandbox.spec.ts`  |
+| Google / Apple sign-in                      | L1    | `GOOGLE_CLIENT_IDS`, `APPLE_SERVICE_ID`                                   | `test/sandbox/social.sandbox.spec.ts` |
 
 - [ ] Enter provider credentials in the deployment secret store only (never in the repo, never in client config). The admin configuration screens (L2) receive only the values that are public by design.
 - [ ] Run the Playwright card-payment scenario from plan 20 with Stripe sandbox and record it.

@@ -24,32 +24,32 @@ Authority: `implementation/docs/OPERATION_LANES.json`, filter `lane == "L7"` →
 
 Legend (reference/04 §B): A = ADMIN, S(x) = STAFF with permission `x`, R = RESTAURANT (own store), V = VENDOR (own stores), RI = RIDER (self), C = CUSTOMER.
 
-| # | Type | Name | Apps (multivendor) | Who may call | Documents used in tests (`app`, `file`, `exportName`) | Reference |
-|---|---|---|---|---|---|---|
-| 1 | query | `earnings` | admin, store | A; S(`Admin`); R/V scoped to own store(s) (`userType` forced to STORE); RI self (not called by apps, allowed read-only) | `enatega-multivendor-admin`, `lib/api/graphql/queries/earnings/index.ts`, `GET_EARNING` and `GET_EARNING_FOR_STORE`; `enatega-multivendor-store`, `lib/apollo/queries/store.query.ts`, `STORE_EARNINGS`; `enatega-multivendor-store`, `lib/apollo/queries/earnings.query.ts`, `STORE_GRAND_TOTAL_EARNINGS` | 04 §5.2, §B; 03 §1.14 |
-| 2 | query | `transactionHistory` | admin, rider, store | same as `earnings` | `enatega-multivendor-admin`, `lib/api/graphql/queries/transaction-history/index.ts`, `GET_TRANSACTION_HISTORY`; `enatega-multivendor-store`, `lib/apollo/queries/store.query.ts`, `STORE_TRANSACTIONS_HISTORY`; `enatega-multivendor-rider`, `lib/apollo/queries/rider.query.ts`, `RIDER_TRANSACTIONS_HISTORY` | 04 §5.3; 03 §1.14, §2.15, §D |
-| 3 | query | `withdrawRequests` | admin | A; S(`Withdraw Request`); R/V own store(s) | `enatega-multivendor-admin`, `lib/api/graphql/queries/withdraw-requests/index.ts`, `GET_ALL_WITHDRAW_REQUESTS` | 04 §5.4, §B |
-| 4 | query | `riderCurrentWithdrawRequest` | rider | RI self; A; S(`Withdraw Request`) | `enatega-multivendor-rider`, `lib/apollo/queries/rider.query.ts`, `RIDER_CURRENT_WITHDRAW_REQUEST` | 03 §2.15, §D |
-| 5 | query | `storeCurrentWithdrawRequest` | store | R/V own; A; S(`Withdraw Request`) | `enatega-multivendor-store`, `lib/apollo/queries/store.query.ts`, `STORE_CURRENT_WITHDRAW_REQUEST` | 03 §1.14, §D |
-| 6 | query | `riderEarningsGraph` | rider | RI self; A; S(`Riders`) | `enatega-multivendor-rider`, `lib/apollo/queries/earnings.query.ts`, `RIDER_EARNINGS_GRAPH` | 03 §2.15, §D |
-| 7 | query | `storeEarningsGraph` | store | R/V own; A; S(`Stores`) | `enatega-multivendor-store`, `lib/apollo/queries/earnings.query.ts`, `STORE_EARNINGS_GRAPH` | 03 §1.14, §D |
-| 8 | query | `commissionRate` | admin | A; S(`Commission Rate`) | `enatega-multivendor-admin`, `lib/api/graphql/queries/restaurants/index.ts`, `GET_COMMISSION_RATES_PAGINATED` | 04 §5.1, §B |
-| 9 | mutation | `createWithdrawRequest` | admin, rider, store | R (own store) and RI (self) only; A/V/S/C rejected `FORBIDDEN` | `enatega-multivendor-admin`, `lib/api/graphql/mutations/withdraw-requests/index.ts`, `CREATE_WITHDRAW_REQUEST`; `enatega-multivendor-store`, `lib/apollo/mutations/withdraw-request.mutation.ts`, `CREATE_WITHDRAW_REQUEST`; `enatega-multivendor-rider`, `lib/apollo/mutations/withdraw-request.mutation.ts`, `CREATE_WITHDRAW_REQUEST` | 03 §1.14, §2.15, §D; 04 §5.4, §B |
-| 10 | mutation | `updateWithdrawReqStatus` | admin | A; S(`Withdraw Request`) | `enatega-multivendor-admin`, `lib/api/graphql/mutations/withdraw-requests/index.ts`, `UPDATE_WITHDRAW_REQUEST` | 04 §5.4, §B, §D.2 |
-| 11 | mutation | `updateCommission` | admin | A; S(`Commission Rate`) | `enatega-multivendor-admin`, `lib/api/graphql/mutations/commission-rate/index.ts`, `updateCommission` | 04 §5.1; master D4 |
+| #   | Type     | Name                          | Apps (multivendor)  | Who may call                                                                                                            | Documents used in tests (`app`, `file`, `exportName`)                                                                                                                                                                                                                                                                                    | Reference                        |
+| --- | -------- | ----------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| 1   | query    | `earnings`                    | admin, store        | A; S(`Admin`); R/V scoped to own store(s) (`userType` forced to STORE); RI self (not called by apps, allowed read-only) | `enatega-multivendor-admin`, `lib/api/graphql/queries/earnings/index.ts`, `GET_EARNING` and `GET_EARNING_FOR_STORE`; `enatega-multivendor-store`, `lib/apollo/queries/store.query.ts`, `STORE_EARNINGS`; `enatega-multivendor-store`, `lib/apollo/queries/earnings.query.ts`, `STORE_GRAND_TOTAL_EARNINGS`                               | 04 §5.2, §B; 03 §1.14            |
+| 2   | query    | `transactionHistory`          | admin, rider, store | same as `earnings`                                                                                                      | `enatega-multivendor-admin`, `lib/api/graphql/queries/transaction-history/index.ts`, `GET_TRANSACTION_HISTORY`; `enatega-multivendor-store`, `lib/apollo/queries/store.query.ts`, `STORE_TRANSACTIONS_HISTORY`; `enatega-multivendor-rider`, `lib/apollo/queries/rider.query.ts`, `RIDER_TRANSACTIONS_HISTORY`                           | 04 §5.3; 03 §1.14, §2.15, §D     |
+| 3   | query    | `withdrawRequests`            | admin               | A; S(`Withdraw Request`); R/V own store(s)                                                                              | `enatega-multivendor-admin`, `lib/api/graphql/queries/withdraw-requests/index.ts`, `GET_ALL_WITHDRAW_REQUESTS`                                                                                                                                                                                                                           | 04 §5.4, §B                      |
+| 4   | query    | `riderCurrentWithdrawRequest` | rider               | RI self; A; S(`Withdraw Request`)                                                                                       | `enatega-multivendor-rider`, `lib/apollo/queries/rider.query.ts`, `RIDER_CURRENT_WITHDRAW_REQUEST`                                                                                                                                                                                                                                       | 03 §2.15, §D                     |
+| 5   | query    | `storeCurrentWithdrawRequest` | store               | R/V own; A; S(`Withdraw Request`)                                                                                       | `enatega-multivendor-store`, `lib/apollo/queries/store.query.ts`, `STORE_CURRENT_WITHDRAW_REQUEST`                                                                                                                                                                                                                                       | 03 §1.14, §D                     |
+| 6   | query    | `riderEarningsGraph`          | rider               | RI self; A; S(`Riders`)                                                                                                 | `enatega-multivendor-rider`, `lib/apollo/queries/earnings.query.ts`, `RIDER_EARNINGS_GRAPH`                                                                                                                                                                                                                                              | 03 §2.15, §D                     |
+| 7   | query    | `storeEarningsGraph`          | store               | R/V own; A; S(`Stores`)                                                                                                 | `enatega-multivendor-store`, `lib/apollo/queries/earnings.query.ts`, `STORE_EARNINGS_GRAPH`                                                                                                                                                                                                                                              | 03 §1.14, §D                     |
+| 8   | query    | `commissionRate`              | admin               | A; S(`Commission Rate`)                                                                                                 | `enatega-multivendor-admin`, `lib/api/graphql/queries/restaurants/index.ts`, `GET_COMMISSION_RATES_PAGINATED`                                                                                                                                                                                                                            | 04 §5.1, §B                      |
+| 9   | mutation | `createWithdrawRequest`       | admin, rider, store | R (own store) and RI (self) only; A/V/S/C rejected `FORBIDDEN`                                                          | `enatega-multivendor-admin`, `lib/api/graphql/mutations/withdraw-requests/index.ts`, `CREATE_WITHDRAW_REQUEST`; `enatega-multivendor-store`, `lib/apollo/mutations/withdraw-request.mutation.ts`, `CREATE_WITHDRAW_REQUEST`; `enatega-multivendor-rider`, `lib/apollo/mutations/withdraw-request.mutation.ts`, `CREATE_WITHDRAW_REQUEST` | 03 §1.14, §2.15, §D; 04 §5.4, §B |
+| 10  | mutation | `updateWithdrawReqStatus`     | admin               | A; S(`Withdraw Request`)                                                                                                | `enatega-multivendor-admin`, `lib/api/graphql/mutations/withdraw-requests/index.ts`, `UPDATE_WITHDRAW_REQUEST`                                                                                                                                                                                                                           | 04 §5.4, §B, §D.2                |
+| 11  | mutation | `updateCommission`            | admin               | A; S(`Commission Rate`)                                                                                                 | `enatega-multivendor-admin`, `lib/api/graphql/mutations/commission-rate/index.ts`, `updateCommission`                                                                                                                                                                                                                                    | 04 §5.1; master D4               |
 
 The single-vendor admin (`svadmin(sv)`) also calls `earnings`, `transactionHistory`, `withdrawRequests`, `createWithdrawRequest`, `updateCommission`, `updateWithdrawReqStatus`; those documents are L12 scope (D1) and are only required to validate statically.
 
 ### 2.1 REST routes owned by L7 (`services/api/src/rest/stripe.controller.ts`)
 
-| Method + path | Caller (reference/01 §5.2) | Auth | Behaviour |
-|---|---|---|---|
-| `GET /stripe/create-checkout-session?id=<orderRef>[&platform=web]` | APP WebView (P6, `Authorization: Bearer`), WEB top-level navigation (P3, no header) | APP: bearer CUSTOMER, must own the order. WEB: no header accepted (R40) | 303 to the Stripe Checkout URL for the server-computed order total; HTML error pages otherwise; 503 "Card payments are not available" until Stripe is configured |
-| `GET /stripe/success`, `GET /stripe/cancel` | APP WebView detects `stripe/success` / `stripe/cancel` in the URL; must be on the backend host (P6 allowed hosts) | none | static HTML pages; never change payment state |
-| `POST /stripe/webhook` | Stripe | `Stripe-Signature` HMAC-SHA256 over the raw body | marks orders paid (via `OrdersPort.markPaid`), posts the payment journal, emits `order.paid`, updates Connect status |
-| `POST /stripe/account` body `{ "restaurantId" }` | ADMIN store Payment screen (P1) | bearer R(own)/V(own)/A/S(`Stores`); **the unmodified admin sends no header → 401** until L10 edit E8 | `{ "url": "https://connect.stripe.com/…" }` Stripe Connect onboarding link |
-| `POST /stripe/create-web-checkout-session` | WEB single-vendor (P5) | — | gated behind L12 (D1): HTTP 501 `{ "error": "create-web-checkout-session is not available yet", "code": "NOT_IMPLEMENTED" }` |
-| `GET /paypal` | APP PayPal WebView (P7; currently reaches `/graphqlpaypal` because of the upstream URL defect) | — | D12: HTTP 503 HTML "PayPal payments are not available". `/graphqlpaypal` is deliberately **not** served (reference/02 §5.7). |
+| Method + path                                                      | Caller (reference/01 §5.2)                                                                                        | Auth                                                                                                 | Behaviour                                                                                                                                                        |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /stripe/create-checkout-session?id=<orderRef>[&platform=web]` | APP WebView (P6, `Authorization: Bearer`), WEB top-level navigation (P3, no header)                               | APP: bearer CUSTOMER, must own the order. WEB: no header accepted (R40)                              | 303 to the Stripe Checkout URL for the server-computed order total; HTML error pages otherwise; 503 "Card payments are not available" until Stripe is configured |
+| `GET /stripe/success`, `GET /stripe/cancel`                        | APP WebView detects `stripe/success` / `stripe/cancel` in the URL; must be on the backend host (P6 allowed hosts) | none                                                                                                 | static HTML pages; never change payment state                                                                                                                    |
+| `POST /stripe/webhook`                                             | Stripe                                                                                                            | `Stripe-Signature` HMAC-SHA256 over the raw body                                                     | marks orders paid (via `OrdersPort.markPaid`), posts the payment journal, emits `order.paid`, updates Connect status                                             |
+| `POST /stripe/account` body `{ "restaurantId" }`                   | ADMIN store Payment screen (P1)                                                                                   | bearer R(own)/V(own)/A/S(`Stores`); **the unmodified admin sends no header → 401** until L10 edit E8 | `{ "url": "https://connect.stripe.com/…" }` Stripe Connect onboarding link                                                                                       |
+| `POST /stripe/create-web-checkout-session`                         | WEB single-vendor (P5)                                                                                            | —                                                                                                    | gated behind L12 (D1): HTTP 501 `{ "error": "create-web-checkout-session is not available yet", "code": "NOT_IMPLEMENTED" }`                                     |
+| `GET /paypal`                                                      | APP PayPal WebView (P7; currently reaches `/graphqlpaypal` because of the upstream URL defect)                    | —                                                                                                    | D12: HTTP 503 HTML "PayPal payments are not available". `/graphqlpaypal` is deliberately **not** served (reference/02 §5.7).                                     |
 
 ---
 
@@ -325,7 +325,10 @@ extend type Mutation {
   # admin (store context), store (sends userId), rider (no userId). RESTAURANT and RIDER only.
   createWithdrawRequest(requestAmount: Float!, userId: String): WithdrawRequest!
   # admin. A, S(Withdraw Request). REQUESTED -> TRANSFERRED | CANCELLED only.
-  updateWithdrawReqStatus(id: ID!, status: String!): WithdrawRequestUpdateResponse!
+  updateWithdrawReqStatus(
+    id: ID!
+    status: String!
+  ): WithdrawRequestUpdateResponse!
   # admin. A, S(Commission Rate). Core plan: always BAD_USER_INPUT (D4).
   updateCommission(id: String!, commissionRate: Float!): Restaurant!
 }
@@ -667,18 +670,18 @@ CREATE TRIGGER "WithdrawRequest_guard" BEFORE UPDATE OR DELETE ON "WithdrawReque
 
 Table names follow master §4.2 (`Order`, `Restaurant`, `Rider`, `User`); the lead substitutes the owning lane's final table name if it differs.
 
-| Column | References | On delete |
-|---|---|---|
-| `JournalEntry.orderId` | `Order.id` (L5) | RESTRICT |
-| `JournalEntry.restaurantId` | `Restaurant.id` (L3) | RESTRICT |
-| `JournalEntry.riderId` | `Rider.id` (L6) | RESTRICT |
-| `JournalEntry.customerId` | `User.id` (L1) | RESTRICT |
-| `PaymentSession.orderId` | `Order.id` (L5) | RESTRICT |
-| `PaymentRefund.orderId` | `Order.id` (L5) | RESTRICT |
-| `PaymentRefund.customerId` | `User.id` (L1) | RESTRICT |
-| `StripeConnectAccount.restaurantId` | `Restaurant.id` (L3) | RESTRICT |
-| `WithdrawRequest.requestedByUserId` | `User.id` (L1 principal table) | RESTRICT |
-| `WithdrawRequest.decidedByUserId` | `User.id` (L1 principal table) | RESTRICT |
+| Column                              | References                     | On delete |
+| ----------------------------------- | ------------------------------ | --------- |
+| `JournalEntry.orderId`              | `Order.id` (L5)                | RESTRICT  |
+| `JournalEntry.restaurantId`         | `Restaurant.id` (L3)           | RESTRICT  |
+| `JournalEntry.riderId`              | `Rider.id` (L6)                | RESTRICT  |
+| `JournalEntry.customerId`           | `User.id` (L1)                 | RESTRICT  |
+| `PaymentSession.orderId`            | `Order.id` (L5)                | RESTRICT  |
+| `PaymentRefund.orderId`             | `Order.id` (L5)                | RESTRICT  |
+| `PaymentRefund.customerId`          | `User.id` (L1)                 | RESTRICT  |
+| `StripeConnectAccount.restaurantId` | `Restaurant.id` (L3)           | RESTRICT  |
+| `WithdrawRequest.requestedByUserId` | `User.id` (L1 principal table) | RESTRICT  |
+| `WithdrawRequest.decidedByUserId`   | `User.id` (L1 principal table) | RESTRICT  |
 
 Polymorphic, intentionally without FK (validated in the service through ports): `LedgerAccount.ownerId`, `WithdrawRequest.payeeId`.
 
@@ -744,8 +747,11 @@ export type RestaurantListInput = {
 // PaymentsPort (L7) — add:
 //   stripeDetailsSubmitted(restaurantIds: string[]): Promise<Map<string, boolean>>; // for L3 Restaurant.stripeDetailsSubmitted
 export const SECRETS_PORT = Symbol("SECRETS_PORT");
-export interface SecretsPort {                       // L2 (provider-secret store, reference/04 §C)
-  get(name: "stripe.secretKey" | "stripe.webhookSecret"): Promise<string | null>;
+export interface SecretsPort {
+  // L2 (provider-secret store, reference/04 §C)
+  get(
+    name: "stripe.secretKey" | "stripe.webhookSecret",
+  ): Promise<string | null>;
 }
 ```
 
@@ -773,13 +779,21 @@ export interface SecretsPort {                       // L2 (provider-secret stor
 and to the `superRefine` body:
 
 ```ts
-    if (value.APP_ENV === "production") {
-      if (value.STRIPE_API_BASE_URL !== "https://api.stripe.com")
-        context.addIssue({ code: "custom", path: ["STRIPE_API_BASE_URL"], message: "Production must use https://api.stripe.com" });
-      for (const key of ["WEB_PUBLIC_URL", "ADMIN_PUBLIC_URL"] as const)
-        if (new URL(value[key]).protocol !== "https:")
-          context.addIssue({ code: "custom", path: [key], message: "https required" });
-    }
+if (value.APP_ENV === "production") {
+  if (value.STRIPE_API_BASE_URL !== "https://api.stripe.com")
+    context.addIssue({
+      code: "custom",
+      path: ["STRIPE_API_BASE_URL"],
+      message: "Production must use https://api.stripe.com",
+    });
+  for (const key of ["WEB_PUBLIC_URL", "ADMIN_PUBLIC_URL"] as const)
+    if (new URL(value[key]).protocol !== "https:")
+      context.addIssue({
+        code: "custom",
+        path: [key],
+        message: "https required",
+      });
+}
 ```
 
 **D-L7-3 `services/api/src/app.ts`:** `NestFactory.create(AppModule, { rawBody: true })` (the webhook needs `req.rawBody`); add `FinanceModule.register(config)` and `PaymentsModule.register(config)` to `imports`. Both modules are `global: true` and provide `LEDGER_PORT` / `PAYMENTS_PORT` through the lead's port-registration mechanism (replacing the Wave 1 `NOT_IMPLEMENTED` providers).
@@ -788,7 +802,9 @@ and to the `superRefine` body:
 
 ```ts
 import type { AuthContext } from "./guards.js";
-export type AuthResolver = (authorizationHeader: string) => Promise<AuthContext | null>;
+export type AuthResolver = (
+  authorizationHeader: string,
+) => Promise<AuthContext | null>;
 export const AUTH_RESOLVER = Symbol("AUTH_RESOLVER");
 ```
 
@@ -800,19 +816,19 @@ export const AUTH_RESOLVER = Symbol("AUTH_RESOLVER");
 
 ### 5.2 Chart of accounts
 
-| Account type | Owner | Normal side | Meaning |
-|---|---|---|---|
-| `PLATFORM_CASH` | platform | debit | platform bank money; credited when a payout is confirmed (manual in v1) |
-| `PLATFORM_REVENUE` | platform | credit | commission (0 % on core), delivery margin, platform fees |
-| `PROVIDER_CLEARING` | platform | debit | money held by Stripe for the platform |
-| `CUSTOMER_RECEIVABLE` | customer | debit | what a customer owes; a credit balance means the customer prepaid by card |
-| `RESTAURANT_PAYABLE` | restaurant | credit | store wallet: what the platform owes the store |
-| `RESTAURANT_CASH_HELD` | restaurant | debit | cash a store collected on COD takeaway orders (store owes platform) |
-| `RIDER_PAYABLE` | rider | credit | rider wallet |
-| `RIDER_CASH_HELD` | rider | debit | cash a rider collected on COD delivery (rider owes platform) |
-| `PAYOUT_RESERVED` | restaurant or rider | credit | funds reserved by an open withdraw request |
-| `TIPS_PAYABLE` | platform | credit | tips on takeaway orders (no rider), held pending owner policy (Q4) |
-| `TAX_PAYABLE` | platform | credit | tax when the platform is the tax collector (policy switch, default off) |
+| Account type           | Owner               | Normal side | Meaning                                                                   |
+| ---------------------- | ------------------- | ----------- | ------------------------------------------------------------------------- |
+| `PLATFORM_CASH`        | platform            | debit       | platform bank money; credited when a payout is confirmed (manual in v1)   |
+| `PLATFORM_REVENUE`     | platform            | credit      | commission (0 % on core), delivery margin, platform fees                  |
+| `PROVIDER_CLEARING`    | platform            | debit       | money held by Stripe for the platform                                     |
+| `CUSTOMER_RECEIVABLE`  | customer            | debit       | what a customer owes; a credit balance means the customer prepaid by card |
+| `RESTAURANT_PAYABLE`   | restaurant          | credit      | store wallet: what the platform owes the store                            |
+| `RESTAURANT_CASH_HELD` | restaurant          | debit       | cash a store collected on COD takeaway orders (store owes platform)       |
+| `RIDER_PAYABLE`        | rider               | credit      | rider wallet                                                              |
+| `RIDER_CASH_HELD`      | rider               | debit       | cash a rider collected on COD delivery (rider owes platform)              |
+| `PAYOUT_RESERVED`      | restaurant or rider | credit      | funds reserved by an open withdraw request                                |
+| `TIPS_PAYABLE`         | platform            | credit      | tips on takeaway orders (no rider), held pending owner policy (Q4)        |
+| `TAX_PAYABLE`          | platform            | credit      | tax when the platform is the tax collector (policy switch, default off)   |
 
 ### 5.3 Posting tables (integer minor units; worked examples in USD, exponent 2)
 
@@ -822,15 +838,15 @@ Zero-amount lines are omitted. `foodNet = items − discount`; `commission = per
 
 **P1 ORDER_SETTLEMENT, COD delivery** (key `order:<id>:settlement`; on `order.transitioned` to DELIVERED)
 
-| Side | Account | Component | E |
-|---|---|---|---|
-| Dr | RIDER_CASH_HELD(R) | CASH_COLLECTED | 3100 |
-| Cr | RESTAURANT_PAYABLE(S) | FOOD | 2500 |
-| Cr | PLATFORM_REVENUE | COMMISSION | 0 (omitted) |
-| Cr | RESTAURANT_PAYABLE(S) | TAX | 200 |
-| Cr | RIDER_PAYABLE(R) | DELIVERY_FEE | 300 |
-| Cr | PLATFORM_REVENUE | DELIVERY_MARGIN | 0 (omitted) |
-| Cr | RIDER_PAYABLE(R) | TIP | 100 |
+| Side | Account               | Component       | E           |
+| ---- | --------------------- | --------------- | ----------- |
+| Dr   | RIDER_CASH_HELD(R)    | CASH_COLLECTED  | 3100        |
+| Cr   | RESTAURANT_PAYABLE(S) | FOOD            | 2500        |
+| Cr   | PLATFORM_REVENUE      | COMMISSION      | 0 (omitted) |
+| Cr   | RESTAURANT_PAYABLE(S) | TAX             | 200         |
+| Cr   | RIDER_PAYABLE(R)      | DELIVERY_FEE    | 300         |
+| Cr   | PLATFORM_REVENUE      | DELIVERY_MARGIN | 0 (omitted) |
+| Cr   | RIDER_PAYABLE(R)      | TIP             | 100         |
 
 Result: store wallet total = current = 27.00; rider wallet total = current = 4.00; the rider holds 31.00 cash owed to the platform (not shown in any app; Q3).
 
@@ -838,13 +854,13 @@ Result: store wallet total = current = 27.00; rider wallet total = current = 4.0
 
 **P3 ORDER_SETTLEMENT, takeaway (isPickedUp) COD**, order T: items 1800, tax 144, delivery 0, tip 50, total 1994
 
-| Side | Account | Component | T |
-|---|---|---|---|
-| Dr | RESTAURANT_CASH_HELD(S) | CASH_COLLECTED | 1994 |
-| Cr | RESTAURANT_PAYABLE(S) | FOOD | 1800 |
-| Cr | RESTAURANT_PAYABLE(S) | TAX | 144 |
-| Cr | PLATFORM_REVENUE | DELIVERY_MARGIN | delivery fee (0, omitted) |
-| Cr | TIPS_PAYABLE | TIP | 50 |
+| Side | Account                 | Component       | T                         |
+| ---- | ----------------------- | --------------- | ------------------------- |
+| Dr   | RESTAURANT_CASH_HELD(S) | CASH_COLLECTED  | 1994                      |
+| Cr   | RESTAURANT_PAYABLE(S)   | FOOD            | 1800                      |
+| Cr   | RESTAURANT_PAYABLE(S)   | TAX             | 144                       |
+| Cr   | PLATFORM_REVENUE        | DELIVERY_MARGIN | delivery fee (0, omitted) |
+| Cr   | TIPS_PAYABLE            | TIP             | 50                        |
 
 Card takeaway: the debit is `CUSTOMER_RECEIVABLE(U) ORDER_TOTAL`.
 
@@ -920,6 +936,7 @@ Shared test type used in integration specs (defined in Task 6 `support.ts`): `Da
 Proves §4.2 (the W1-L.2 migration) enforces immutability, balance, currency, single-source, open-request uniqueness and the withdraw lifecycle in the database itself.
 
 **Files:**
+
 - Test: `services/api/test/integration/finance/schema.integration.spec.ts`
 - Modify (only if Step 2 fails because W1-L.2 omitted it): `services/api/prisma/migrations/202610090170_L7_init/migration.sql`
 
@@ -943,7 +960,9 @@ beforeEach(async () => {
   await stack.reset();
 });
 
-async function inTransaction(work: (client: PoolClient) => Promise<void>): Promise<void> {
+async function inTransaction(
+  work: (client: PoolClient) => Promise<void>,
+): Promise<void> {
   const client = await stack.pool.connect();
   try {
     await client.query("BEGIN");
@@ -956,23 +975,51 @@ async function inTransaction(work: (client: PoolClient) => Promise<void>): Promi
     client.release();
   }
 }
-async function account(client: PoolClient, type: string, ownerType: string, ownerId: string | null, currency = "USD") {
+async function account(
+  client: PoolClient,
+  type: string,
+  ownerType: string,
+  ownerId: string | null,
+  currency = "USD",
+) {
   const id = newId();
   await client.query(
     'INSERT INTO "LedgerAccount"(id, type, "ownerType", "ownerId", "ownerKey", currency) VALUES ($1, $2::"LedgerAccountType", $3::"LedgerOwnerType", $4, $5, $6)',
-    [id, type, ownerType, ownerId, ownerId ? `${ownerType}:${ownerId}` : "PLATFORM", currency],
+    [
+      id,
+      type,
+      ownerType,
+      ownerId,
+      ownerId ? `${ownerType}:${ownerId}` : "PLATFORM",
+      currency,
+    ],
   );
   return id;
 }
-async function entry(client: PoolClient, options: { currency?: string; orderId?: string | null } = {}) {
+async function entry(
+  client: PoolClient,
+  options: { currency?: string; orderId?: string | null } = {},
+) {
   const id = newId();
   await client.query(
     'INSERT INTO "JournalEntry"(id, kind, "idempotencyKey", currency, exponent, "postedAt", "orderId") VALUES ($1, \'ORDER_SETTLEMENT\', $2, $3, 2, now(), $4)',
-    [id, `test:${id}`, options.currency ?? "USD", options.orderId === undefined ? newId() : options.orderId],
+    [
+      id,
+      `test:${id}`,
+      options.currency ?? "USD",
+      options.orderId === undefined ? newId() : options.orderId,
+    ],
   );
   return id;
 }
-async function line(client: PoolClient, entryId: string, accountId: string, side: "DEBIT" | "CREDIT", amount: number, lineNo: number) {
+async function line(
+  client: PoolClient,
+  entryId: string,
+  accountId: string,
+  side: "DEBIT" | "CREDIT",
+  amount: number,
+  lineNo: number,
+) {
   await client.query(
     'INSERT INTO "JournalLine"(id, "entryId", "lineNo", "accountId", side, "amountMinor", component) VALUES ($1, $2, $3, $4, $5::"LedgerSide", $6, \'FOOD\')',
     [newId(), entryId, lineNo, accountId, side, amount],
@@ -982,7 +1029,12 @@ async function balancedEntry() {
   let entryId = "";
   await inTransaction(async (client) => {
     const cash = await account(client, "RIDER_CASH_HELD", "RIDER", newId());
-    const payable = await account(client, "RESTAURANT_PAYABLE", "RESTAURANT", newId());
+    const payable = await account(
+      client,
+      "RESTAURANT_PAYABLE",
+      "RESTAURANT",
+      newId(),
+    );
     entryId = await entry(client);
     await line(client, entryId, cash, "DEBIT", 100, 1);
     await line(client, entryId, payable, "CREDIT", 100, 2);
@@ -1001,7 +1053,10 @@ async function withdraw(payeeId: string, status = "REQUESTED") {
 describe("ledger schema", () => {
   it("commits a balanced two-line entry", async () => {
     const entryId = await balancedEntry();
-    const { rows } = await stack.pool.query('SELECT count(*)::int AS n FROM "JournalLine" WHERE "entryId" = $1', [entryId]);
+    const { rows } = await stack.pool.query(
+      'SELECT count(*)::int AS n FROM "JournalLine" WHERE "entryId" = $1',
+      [entryId],
+    );
     expect(rows[0].n).toBe(2);
   });
 
@@ -1009,7 +1064,12 @@ describe("ledger schema", () => {
     await expect(
       inTransaction(async (client) => {
         const a = await account(client, "RIDER_CASH_HELD", "RIDER", newId());
-        const b = await account(client, "RESTAURANT_PAYABLE", "RESTAURANT", newId());
+        const b = await account(
+          client,
+          "RESTAURANT_PAYABLE",
+          "RESTAURANT",
+          newId(),
+        );
         const e = await entry(client);
         await line(client, e, a, "DEBIT", 100, 1);
         await line(client, e, b, "CREDIT", 90, 2);
@@ -1055,8 +1115,20 @@ describe("ledger schema", () => {
   it("rejects a line whose account currency differs from the entry currency", async () => {
     await expect(
       inTransaction(async (client) => {
-        const a = await account(client, "PLATFORM_CASH", "PLATFORM", null, "EUR");
-        const b = await account(client, "PLATFORM_REVENUE", "PLATFORM", null, "EUR");
+        const a = await account(
+          client,
+          "PLATFORM_CASH",
+          "PLATFORM",
+          null,
+          "EUR",
+        );
+        const b = await account(
+          client,
+          "PLATFORM_REVENUE",
+          "PLATFORM",
+          null,
+          "EUR",
+        );
         const e = await entry(client, { currency: "USD" });
         await line(client, e, a, "DEBIT", 100, 1);
         await line(client, e, b, "CREDIT", 100, 2);
@@ -1066,25 +1138,57 @@ describe("ledger schema", () => {
 
   it("makes accounts, entries and lines immutable", async () => {
     const entryId = await balancedEntry();
-    await expect(stack.pool.query('UPDATE "JournalLine" SET "amountMinor" = 1 WHERE "entryId" = $1', [entryId])).rejects.toThrow(/immutable/);
-    await expect(stack.pool.query('DELETE FROM "JournalLine" WHERE "entryId" = $1', [entryId])).rejects.toThrow(/immutable/);
-    await expect(stack.pool.query('DELETE FROM "JournalEntry" WHERE id = $1', [entryId])).rejects.toThrow(/immutable/);
-    await expect(stack.pool.query('UPDATE "LedgerAccount" SET currency = \'EUR\'')).rejects.toThrow(/immutable/);
+    await expect(
+      stack.pool.query(
+        'UPDATE "JournalLine" SET "amountMinor" = 1 WHERE "entryId" = $1',
+        [entryId],
+      ),
+    ).rejects.toThrow(/immutable/);
+    await expect(
+      stack.pool.query('DELETE FROM "JournalLine" WHERE "entryId" = $1', [
+        entryId,
+      ]),
+    ).rejects.toThrow(/immutable/);
+    await expect(
+      stack.pool.query('DELETE FROM "JournalEntry" WHERE id = $1', [entryId]),
+    ).rejects.toThrow(/immutable/);
+    await expect(
+      stack.pool.query("UPDATE \"LedgerAccount\" SET currency = 'EUR'"),
+    ).rejects.toThrow(/immutable/);
   });
 
   it("allows one open withdraw request per payee", async () => {
     const payee = newId();
     await withdraw(payee);
-    await expect(withdraw(payee)).rejects.toThrow(/WithdrawRequest_one_open_per_payee/);
+    await expect(withdraw(payee)).rejects.toThrow(
+      /WithdrawRequest_one_open_per_payee/,
+    );
     await withdraw(payee, "CANCELLED");
   });
 
   it("guards the withdraw lifecycle and terms", async () => {
     const id = await withdraw(newId());
-    await expect(stack.pool.query('UPDATE "WithdrawRequest" SET "amountMinor" = 5 WHERE id = $1', [id])).rejects.toThrow(/terms are immutable/);
-    await stack.pool.query('UPDATE "WithdrawRequest" SET status = \'TRANSFERRED\' WHERE id = $1', [id]);
-    await expect(stack.pool.query('UPDATE "WithdrawRequest" SET status = \'REQUESTED\' WHERE id = $1', [id])).rejects.toThrow(/invalid withdraw request transition TRANSFERRED -> REQUESTED/);
-    await expect(stack.pool.query('DELETE FROM "WithdrawRequest" WHERE id = $1', [id])).rejects.toThrow(/cannot be deleted/);
+    await expect(
+      stack.pool.query(
+        'UPDATE "WithdrawRequest" SET "amountMinor" = 5 WHERE id = $1',
+        [id],
+      ),
+    ).rejects.toThrow(/terms are immutable/);
+    await stack.pool.query(
+      "UPDATE \"WithdrawRequest\" SET status = 'TRANSFERRED' WHERE id = $1",
+      [id],
+    );
+    await expect(
+      stack.pool.query(
+        "UPDATE \"WithdrawRequest\" SET status = 'REQUESTED' WHERE id = $1",
+        [id],
+      ),
+    ).rejects.toThrow(
+      /invalid withdraw request transition TRANSFERRED -> REQUESTED/,
+    );
+    await expect(
+      stack.pool.query('DELETE FROM "WithdrawRequest" WHERE id = $1', [id]),
+    ).rejects.toThrow(/cannot be deleted/);
   });
 });
 ```
@@ -1111,6 +1215,7 @@ git commit -m "test(L7): prove ledger immutability, balance and withdraw lifecyc
 ### Task 2: Chart of accounts and posting builders (pure)
 
 **Files:**
+
 - Create: `services/api/src/modules/finance/types.ts`
 - Create: `services/api/src/modules/finance/policy.ts`
 - Create: `services/api/src/modules/finance/ledger/accounts.ts`
@@ -1123,7 +1228,10 @@ git commit -m "test(L7): prove ledger immutability, balance and withdraw lifecyc
 // services/api/test/unit/finance/postings.spec.ts
 import { describe, expect, it } from "vitest";
 import type { OrderSnapshot } from "../../../src/kernel/ports.js";
-import { account, ownerKey } from "../../../src/modules/finance/ledger/accounts.js";
+import {
+  account,
+  ownerKey,
+} from "../../../src/modules/finance/ledger/accounts.js";
 import {
   PostingError,
   assertBalanced,
@@ -1167,15 +1275,25 @@ const order = (overrides: Partial<OrderSnapshot> = {}): OrderSnapshot => ({
   ...overrides,
 });
 const lines = (draft: EntryDraft | null) =>
-  draft!.lines.map((l) => [l.side, l.account.type, l.account.ownerId, l.amountMinor, l.component]);
+  draft!.lines.map((l) => [
+    l.side,
+    l.account.type,
+    l.account.ownerId,
+    l.amountMinor,
+    l.component,
+  ]);
 
 describe("accounts", () => {
   it("enforces owner rules and builds stable owner keys", () => {
     expect(ownerKey(account("PLATFORM_CASH", "PLATFORM"))).toBe("PLATFORM");
     expect(ownerKey(account("RIDER_PAYABLE", "RIDER", R))).toBe(`RIDER:${R}`);
-    expect(() => account("RIDER_PAYABLE", "PLATFORM")).toThrow(/cannot be owned by PLATFORM/);
+    expect(() => account("RIDER_PAYABLE", "PLATFORM")).toThrow(
+      /cannot be owned by PLATFORM/,
+    );
     expect(() => account("PLATFORM_CASH", "PLATFORM", S)).toThrow(/owner id/);
-    expect(() => account("RESTAURANT_PAYABLE", "RESTAURANT", null)).toThrow(/owner id/);
+    expect(() => account("RESTAURANT_PAYABLE", "RESTAURANT", null)).toThrow(
+      /owner id/,
+    );
     expect(account("PAYOUT_RESERVED", "RIDER", R).ownerType).toBe("RIDER");
   });
 });
@@ -1191,7 +1309,15 @@ describe("order settlement (P1–P4)", () => {
       postedAt: at,
       orderId: O,
       withdrawRequestId: null,
-      order: { orderRef: "PP-1", orderType: "DELIVERY", paymentMethod: "COD", restaurantId: S, riderId: R, customerId: U, grossMinor: 3100 },
+      order: {
+        orderRef: "PP-1",
+        orderType: "DELIVERY",
+        paymentMethod: "COD",
+        restaurantId: S,
+        riderId: R,
+        customerId: U,
+        grossMinor: 3100,
+      },
     });
     expect(lines(draft)).toEqual([
       ["DEBIT", "RIDER_CASH_HELD", R, 3100, "CASH_COLLECTED"],
@@ -1204,14 +1330,32 @@ describe("order settlement (P1–P4)", () => {
   });
 
   it("P2 card delivery debits the customer receivable", () => {
-    const draft = orderSettlement(order({ paymentMethod: "STRIPE", paymentStatus: "PAID" }), at, SETTLEMENT_POLICY);
-    expect(lines(draft)[0]).toEqual(["DEBIT", "CUSTOMER_RECEIVABLE", U, 3100, "ORDER_TOTAL"]);
+    const draft = orderSettlement(
+      order({ paymentMethod: "STRIPE", paymentStatus: "PAID" }),
+      at,
+      SETTLEMENT_POLICY,
+    );
+    expect(lines(draft)[0]).toEqual([
+      "DEBIT",
+      "CUSTOMER_RECEIVABLE",
+      U,
+      3100,
+      "ORDER_TOTAL",
+    ]);
     expect(lines(draft)).toHaveLength(5);
   });
 
   it("P3 takeaway COD: the store holds the cash, tips go to TIPS_PAYABLE, no rider lines", () => {
     const draft = orderSettlement(
-      order({ isPickedUp: true, riderId: null, itemsMinor: 1800, taxMinor: 144, deliveryMinor: 0, tipMinor: 50, totalMinor: 1994 }),
+      order({
+        isPickedUp: true,
+        riderId: null,
+        itemsMinor: 1800,
+        taxMinor: 144,
+        deliveryMinor: 0,
+        tipMinor: 50,
+        totalMinor: 1994,
+      }),
       at,
       SETTLEMENT_POLICY,
     );
@@ -1225,16 +1369,35 @@ describe("order settlement (P1–P4)", () => {
   });
 
   it("P4 platform tax collector credits TAX_PAYABLE", () => {
-    const draft = orderSettlement(order(), at, { ...SETTLEMENT_POLICY, taxCollector: "PLATFORM" });
-    expect(lines(draft)).toContainEqual(["CREDIT", "TAX_PAYABLE", null, 200, "TAX"]);
-    expect(lines(draft)).not.toContainEqual(["CREDIT", "RESTAURANT_PAYABLE", S, 200, "TAX"]);
+    const draft = orderSettlement(order(), at, {
+      ...SETTLEMENT_POLICY,
+      taxCollector: "PLATFORM",
+    });
+    expect(lines(draft)).toContainEqual([
+      "CREDIT",
+      "TAX_PAYABLE",
+      null,
+      200,
+      "TAX",
+    ]);
+    expect(lines(draft)).not.toContainEqual([
+      "CREDIT",
+      "RESTAURANT_PAYABLE",
+      S,
+      200,
+      "TAX",
+    ]);
   });
 
   it("applies the discount to the food share and splits delivery and commission by policy", () => {
     const draft = orderSettlement(
       order({ discountMinor: 500, totalMinor: 2600 }),
       at,
-      { taxCollector: "RESTAURANT", riderDeliverySharePercent: 80, commissionPercent: 10 },
+      {
+        taxCollector: "RESTAURANT",
+        riderDeliverySharePercent: 80,
+        commissionPercent: 10,
+      },
     );
     expect(lines(draft)).toEqual([
       ["DEBIT", "RIDER_CASH_HELD", R, 2600, "CASH_COLLECTED"],
@@ -1248,22 +1411,56 @@ describe("order settlement (P1–P4)", () => {
   });
 
   it("core plan writes no commission line (D4)", () => {
-    expect(lines(orderSettlement(order(), at, SETTLEMENT_POLICY)).some((l) => l[4] === "COMMISSION")).toBe(false);
+    expect(
+      lines(orderSettlement(order(), at, SETTLEMENT_POLICY)).some(
+        (l) => l[4] === "COMMISSION",
+      ),
+    ).toBe(false);
   });
 
   it("returns null for zero-total orders", () => {
-    expect(orderSettlement(order({ itemsMinor: 0, taxMinor: 0, deliveryMinor: 0, tipMinor: 0, totalMinor: 0 }), at, SETTLEMENT_POLICY)).toBeNull();
+    expect(
+      orderSettlement(
+        order({
+          itemsMinor: 0,
+          taxMinor: 0,
+          deliveryMinor: 0,
+          tipMinor: 0,
+          totalMinor: 0,
+        }),
+        at,
+        SETTLEMENT_POLICY,
+      ),
+    ).toBeNull();
   });
 
   it("refuses orders that do not reconcile, over-discounted orders and deliveries without a rider", () => {
-    expect(() => orderSettlement(order({ totalMinor: 3000 }), at, SETTLEMENT_POLICY)).toThrow(PostingError);
-    expect(() => orderSettlement(order({ discountMinor: 3000, totalMinor: 100 }), at, SETTLEMENT_POLICY)).toThrow(/discount exceeds items/);
-    expect(() => orderSettlement(order({ riderId: null }), at, SETTLEMENT_POLICY)).toThrow(/without a rider/);
+    expect(() =>
+      orderSettlement(order({ totalMinor: 3000 }), at, SETTLEMENT_POLICY),
+    ).toThrow(PostingError);
+    expect(() =>
+      orderSettlement(
+        order({ discountMinor: 3000, totalMinor: 100 }),
+        at,
+        SETTLEMENT_POLICY,
+      ),
+    ).toThrow(/discount exceeds items/);
+    expect(() =>
+      orderSettlement(order({ riderId: null }), at, SETTLEMENT_POLICY),
+    ).toThrow(/without a rider/);
   });
 });
 
 describe("payment, refund and withdrawal entries (P5, P7, P9–P11)", () => {
-  const payment = { orderId: O, orderRef: "PP-1", customerId: U, amountMinor: 3100, currency: "USD", exponent: 2, postedAt: at };
+  const payment = {
+    orderId: O,
+    orderRef: "PP-1",
+    customerId: U,
+    amountMinor: 3100,
+    currency: "USD",
+    exponent: 2,
+    postedAt: at,
+  };
   it("P5 payment moves provider clearing against the customer receivable", () => {
     const draft = orderPayment(payment);
     expect(draft.idempotencyKey).toBe(`order:${O}:payment`);
@@ -1281,9 +1478,22 @@ describe("payment, refund and withdrawal entries (P5, P7, P9–P11)", () => {
       ["CREDIT", "PROVIDER_CLEARING", null, 3100, "REFUND"],
     ]);
   });
-  const request = { requestId: W, payeeType: "RESTAURANT" as const, payeeId: S, amountMinor: 2000, currency: "USD", exponent: 2, postedAt: at };
+  const request = {
+    requestId: W,
+    payeeType: "RESTAURANT" as const,
+    payeeId: S,
+    amountMinor: 2000,
+    currency: "USD",
+    exponent: 2,
+    postedAt: at,
+  };
   it("P9 reserve, P10 settle and P11 release", () => {
-    expect(withdrawalReserve(request)).toMatchObject({ kind: "WITHDRAWAL_RESERVE", idempotencyKey: `withdraw:${W}:reserve`, withdrawRequestId: W, orderId: null });
+    expect(withdrawalReserve(request)).toMatchObject({
+      kind: "WITHDRAWAL_RESERVE",
+      idempotencyKey: `withdraw:${W}:reserve`,
+      withdrawRequestId: W,
+      orderId: null,
+    });
     expect(lines(withdrawalReserve(request))).toEqual([
       ["DEBIT", "RESTAURANT_PAYABLE", S, 2000, "WITHDRAWAL"],
       ["CREDIT", "PAYOUT_RESERVED", S, 2000, "WITHDRAWAL"],
@@ -1292,22 +1502,53 @@ describe("payment, refund and withdrawal entries (P5, P7, P9–P11)", () => {
       ["DEBIT", "PAYOUT_RESERVED", S, 2000, "WITHDRAWAL"],
       ["CREDIT", "PLATFORM_CASH", null, 2000, "WITHDRAWAL"],
     ]);
-    expect(lines(withdrawalRelease({ ...request, payeeType: "RIDER", payeeId: R }))).toEqual([
+    expect(
+      lines(withdrawalRelease({ ...request, payeeType: "RIDER", payeeId: R })),
+    ).toEqual([
       ["DEBIT", "PAYOUT_RESERVED", R, 2000, "WITHDRAWAL"],
       ["CREDIT", "RIDER_PAYABLE", R, 2000, "WITHDRAWAL"],
     ]);
-    expect(withdrawalSettle(request).idempotencyKey).toBe(`withdraw:${W}:settle`);
-    expect(withdrawalRelease(request).idempotencyKey).toBe(`withdraw:${W}:release`);
+    expect(withdrawalSettle(request).idempotencyKey).toBe(
+      `withdraw:${W}:settle`,
+    );
+    expect(withdrawalRelease(request).idempotencyKey).toBe(
+      `withdraw:${W}:release`,
+    );
   });
 });
 
 describe("assertBalanced", () => {
-  const base = withdrawalReserve({ requestId: W, payeeType: "RIDER", payeeId: R, amountMinor: 1000, currency: "USD", exponent: 2, postedAt: at });
+  const base = withdrawalReserve({
+    requestId: W,
+    payeeType: "RIDER",
+    payeeId: R,
+    amountMinor: 1000,
+    currency: "USD",
+    exponent: 2,
+    postedAt: at,
+  });
   it("rejects unbalanced, single-line, zero and fractional drafts", () => {
-    expect(() => assertBalanced({ ...base, lines: [base.lines[0], { ...base.lines[1], amountMinor: 999 }] })).toThrow(/debits 1000 != credits 999/);
-    expect(() => assertBalanced({ ...base, lines: [base.lines[0]] })).toThrow(/at least two lines/);
-    expect(() => assertBalanced({ ...base, lines: base.lines.map((l) => ({ ...l, amountMinor: 0 })) })).toThrow(/positive integers/);
-    expect(() => assertBalanced({ ...base, lines: base.lines.map((l) => ({ ...l, amountMinor: 10.5 })) })).toThrow(/positive integers/);
+    expect(() =>
+      assertBalanced({
+        ...base,
+        lines: [base.lines[0], { ...base.lines[1], amountMinor: 999 }],
+      }),
+    ).toThrow(/debits 1000 != credits 999/);
+    expect(() => assertBalanced({ ...base, lines: [base.lines[0]] })).toThrow(
+      /at least two lines/,
+    );
+    expect(() =>
+      assertBalanced({
+        ...base,
+        lines: base.lines.map((l) => ({ ...l, amountMinor: 0 })),
+      }),
+    ).toThrow(/positive integers/);
+    expect(() =>
+      assertBalanced({
+        ...base,
+        lines: base.lines.map((l) => ({ ...l, amountMinor: 10.5 })),
+      }),
+    ).toThrow(/positive integers/);
   });
 });
 ```
@@ -1322,7 +1563,11 @@ Expected: FAIL — `Cannot find module '../../../src/modules/finance/ledger/acco
 ```ts
 // services/api/src/modules/finance/types.ts
 export type PayeeType = "RESTAURANT" | "RIDER";
-export const WITHDRAW_STATUSES = ["REQUESTED", "TRANSFERRED", "CANCELLED"] as const;
+export const WITHDRAW_STATUSES = [
+  "REQUESTED",
+  "TRANSFERRED",
+  "CANCELLED",
+] as const;
 export type WithdrawStatus = (typeof WITHDRAW_STATUSES)[number];
 ```
 
@@ -1379,7 +1624,11 @@ export const ACCOUNT_TYPES = [
 export type AccountType = (typeof ACCOUNT_TYPES)[number];
 export type OwnerType = "PLATFORM" | "RESTAURANT" | "RIDER" | "CUSTOMER";
 export type Side = "DEBIT" | "CREDIT";
-export type AccountRef = { type: AccountType; ownerType: OwnerType; ownerId: string | null };
+export type AccountRef = {
+  type: AccountType;
+  ownerType: OwnerType;
+  ownerId: string | null;
+};
 
 const OWNERS: Record<AccountType, readonly OwnerType[]> = {
   PLATFORM_CASH: ["PLATFORM"],
@@ -1408,16 +1657,28 @@ export const NORMAL_SIDE: Record<AccountType, Side> = {
   TAX_PAYABLE: "CREDIT",
 };
 
-export function account(type: AccountType, ownerType: OwnerType, ownerId: string | null = null): AccountRef {
-  if (!OWNERS[type].includes(ownerType)) throw new Error(`Account ${type} cannot be owned by ${ownerType}`);
-  if ((ownerType === "PLATFORM") !== (ownerId === null)) throw new Error(`Account ${type} owner id mismatch`);
+export function account(
+  type: AccountType,
+  ownerType: OwnerType,
+  ownerId: string | null = null,
+): AccountRef {
+  if (!OWNERS[type].includes(ownerType))
+    throw new Error(`Account ${type} cannot be owned by ${ownerType}`);
+  if ((ownerType === "PLATFORM") !== (ownerId === null))
+    throw new Error(`Account ${type} owner id mismatch`);
   return { type, ownerType, ownerId };
 }
 export function ownerKey(ref: AccountRef): string {
-  return ref.ownerType === "PLATFORM" ? "PLATFORM" : `${ref.ownerType}:${ref.ownerId}`;
+  return ref.ownerType === "PLATFORM"
+    ? "PLATFORM"
+    : `${ref.ownerType}:${ref.ownerId}`;
 }
 export const payableOf = (payeeType: PayeeType, payeeId: string): AccountRef =>
-  account(payeeType === "RESTAURANT" ? "RESTAURANT_PAYABLE" : "RIDER_PAYABLE", payeeType, payeeId);
+  account(
+    payeeType === "RESTAURANT" ? "RESTAURANT_PAYABLE" : "RIDER_PAYABLE",
+    payeeType,
+    payeeId,
+  );
 export const reserveOf = (payeeType: PayeeType, payeeId: string): AccountRef =>
   account("PAYOUT_RESERVED", payeeType, payeeId);
 ```
@@ -1428,7 +1689,13 @@ import { percentOf } from "../../../kernel/money.js";
 import type { OrderSnapshot } from "../../../kernel/ports.js";
 import type { SettlementPolicy } from "../policy.js";
 import type { PayeeType } from "../types.js";
-import { account, payableOf, reserveOf, type AccountRef, type Side } from "./accounts.js";
+import {
+  account,
+  payableOf,
+  reserveOf,
+  type AccountRef,
+  type Side,
+} from "./accounts.js";
 
 export const COMPONENTS = [
   "FOOD",
@@ -1452,7 +1719,12 @@ export type EntryKind =
   | "WITHDRAWAL_RESERVE"
   | "WITHDRAWAL_SETTLE"
   | "WITHDRAWAL_RELEASE";
-export type LineDraft = { account: AccountRef; side: Side; amountMinor: number; component: Component };
+export type LineDraft = {
+  account: AccountRef;
+  side: Side;
+  amountMinor: number;
+  component: Component;
+};
 export type EntryOrderMeta = {
   orderRef: string;
   customerId: string;
@@ -1481,7 +1753,12 @@ export class PostingError extends Error {
   }
 }
 
-const line = (target: AccountRef, side: Side, amountMinor: number, component: Component): LineDraft => ({
+const line = (
+  target: AccountRef,
+  side: Side,
+  amountMinor: number,
+  component: Component,
+): LineDraft => ({
   account: target,
   side,
   amountMinor,
@@ -1489,30 +1766,50 @@ const line = (target: AccountRef, side: Side, amountMinor: number, component: Co
 });
 
 export function assertBalanced(draft: EntryDraft): void {
-  if (draft.lines.length < 2) throw new PostingError(`${draft.idempotencyKey}: an entry needs at least two lines`);
+  if (draft.lines.length < 2)
+    throw new PostingError(
+      `${draft.idempotencyKey}: an entry needs at least two lines`,
+    );
   let debits = 0;
   let credits = 0;
   for (const entry of draft.lines) {
     if (!Number.isSafeInteger(entry.amountMinor) || entry.amountMinor <= 0)
-      throw new PostingError(`${draft.idempotencyKey}: line amounts must be positive integers`);
+      throw new PostingError(
+        `${draft.idempotencyKey}: line amounts must be positive integers`,
+      );
     if (entry.side === "DEBIT") debits += entry.amountMinor;
     else credits += entry.amountMinor;
   }
-  if (debits !== credits) throw new PostingError(`${draft.idempotencyKey}: debits ${debits} != credits ${credits}`);
+  if (debits !== credits)
+    throw new PostingError(
+      `${draft.idempotencyKey}: debits ${debits} != credits ${credits}`,
+    );
 }
 
 // P1–P4 (§5.3). Pure: the same snapshot, time and policy always give the same draft.
-export function orderSettlement(order: OrderSnapshot, postedAt: Date, policy: SettlementPolicy): EntryDraft | null {
+export function orderSettlement(
+  order: OrderSnapshot,
+  postedAt: Date,
+  policy: SettlementPolicy,
+): EntryDraft | null {
   const foodNet = order.itemsMinor - order.discountMinor;
-  if (foodNet < 0) throw new PostingError(`order ${order.id}: discount exceeds items`);
-  const expected = foodNet + order.taxMinor + order.deliveryMinor + order.tipMinor;
+  if (foodNet < 0)
+    throw new PostingError(`order ${order.id}: discount exceeds items`);
+  const expected =
+    foodNet + order.taxMinor + order.deliveryMinor + order.tipMinor;
   if (expected !== order.totalMinor)
-    throw new PostingError(`order ${order.id}: total ${order.totalMinor} does not reconcile to ${expected}`);
+    throw new PostingError(
+      `order ${order.id}: total ${order.totalMinor} does not reconcile to ${expected}`,
+    );
   if (order.totalMinor === 0) return null;
   const pickup = order.isPickedUp;
-  if (!pickup && !order.riderId) throw new PostingError(`order ${order.id}: delivery order delivered without a rider`);
+  if (!pickup && !order.riderId)
+    throw new PostingError(
+      `order ${order.id}: delivery order delivered without a rider`,
+    );
 
-  const store = (type: "RESTAURANT_PAYABLE" | "RESTAURANT_CASH_HELD") => account(type, "RESTAURANT", order.restaurantId);
+  const store = (type: "RESTAURANT_PAYABLE" | "RESTAURANT_CASH_HELD") =>
+    account(type, "RESTAURANT", order.restaurantId);
   const revenue = account("PLATFORM_REVENUE", "PLATFORM");
   const lines: LineDraft[] = [];
   const credit = (target: AccountRef, amount: number, component: Component) => {
@@ -1522,19 +1819,31 @@ export function orderSettlement(order: OrderSnapshot, postedAt: Date, policy: Se
   if (order.paymentMethod === "COD")
     lines.push(
       line(
-        pickup ? store("RESTAURANT_CASH_HELD") : account("RIDER_CASH_HELD", "RIDER", order.riderId),
+        pickup
+          ? store("RESTAURANT_CASH_HELD")
+          : account("RIDER_CASH_HELD", "RIDER", order.riderId),
         "DEBIT",
         order.totalMinor,
         "CASH_COLLECTED",
       ),
     );
-  else lines.push(line(account("CUSTOMER_RECEIVABLE", "CUSTOMER", order.userId), "DEBIT", order.totalMinor, "ORDER_TOTAL"));
+  else
+    lines.push(
+      line(
+        account("CUSTOMER_RECEIVABLE", "CUSTOMER", order.userId),
+        "DEBIT",
+        order.totalMinor,
+        "ORDER_TOTAL",
+      ),
+    );
 
   const commission = percentOf(foodNet, policy.commissionPercent);
   credit(store("RESTAURANT_PAYABLE"), foodNet - commission, "FOOD");
   credit(revenue, commission, "COMMISSION");
   credit(
-    policy.taxCollector === "RESTAURANT" ? store("RESTAURANT_PAYABLE") : account("TAX_PAYABLE", "PLATFORM"),
+    policy.taxCollector === "RESTAURANT"
+      ? store("RESTAURANT_PAYABLE")
+      : account("TAX_PAYABLE", "PLATFORM"),
     order.taxMinor,
     "TAX",
   );
@@ -1543,7 +1852,10 @@ export function orderSettlement(order: OrderSnapshot, postedAt: Date, policy: Se
     credit(account("TIPS_PAYABLE", "PLATFORM"), order.tipMinor, "TIP");
   } else {
     const rider = account("RIDER_PAYABLE", "RIDER", order.riderId);
-    const riderDelivery = percentOf(order.deliveryMinor, policy.riderDeliverySharePercent);
+    const riderDelivery = percentOf(
+      order.deliveryMinor,
+      policy.riderDeliverySharePercent,
+    );
     credit(rider, riderDelivery, "DELIVERY_FEE");
     credit(revenue, order.deliveryMinor - riderDelivery, "DELIVERY_MARGIN");
     credit(rider, order.tipMinor, "TIP");
@@ -1579,7 +1891,11 @@ export type PaymentInput = {
   exponent: number;
   postedAt: Date;
 };
-const paymentEntry = (kind: "ORDER_PAYMENT" | "ORDER_REFUND", input: PaymentInput, lines: LineDraft[]): EntryDraft => ({
+const paymentEntry = (
+  kind: "ORDER_PAYMENT" | "ORDER_REFUND",
+  input: PaymentInput,
+  lines: LineDraft[],
+): EntryDraft => ({
   kind,
   idempotencyKey: `order:${input.orderId}:${kind === "ORDER_PAYMENT" ? "payment" : "refund"}`,
   currency: input.currency,
@@ -1587,21 +1903,45 @@ const paymentEntry = (kind: "ORDER_PAYMENT" | "ORDER_REFUND", input: PaymentInpu
   postedAt: input.postedAt,
   orderId: input.orderId,
   withdrawRequestId: null,
-  order: { orderRef: input.orderRef, customerId: input.customerId, paymentMethod: "STRIPE" },
+  order: {
+    orderRef: input.orderRef,
+    customerId: input.customerId,
+    paymentMethod: "STRIPE",
+  },
   lines,
 });
 // P5
 export function orderPayment(input: PaymentInput): EntryDraft {
   return paymentEntry("ORDER_PAYMENT", input, [
-    line(account("PROVIDER_CLEARING", "PLATFORM"), "DEBIT", input.amountMinor, "PAYMENT"),
-    line(account("CUSTOMER_RECEIVABLE", "CUSTOMER", input.customerId), "CREDIT", input.amountMinor, "PAYMENT"),
+    line(
+      account("PROVIDER_CLEARING", "PLATFORM"),
+      "DEBIT",
+      input.amountMinor,
+      "PAYMENT",
+    ),
+    line(
+      account("CUSTOMER_RECEIVABLE", "CUSTOMER", input.customerId),
+      "CREDIT",
+      input.amountMinor,
+      "PAYMENT",
+    ),
   ]);
 }
 // P7
 export function orderRefund(input: PaymentInput): EntryDraft {
   return paymentEntry("ORDER_REFUND", input, [
-    line(account("CUSTOMER_RECEIVABLE", "CUSTOMER", input.customerId), "DEBIT", input.amountMinor, "REFUND"),
-    line(account("PROVIDER_CLEARING", "PLATFORM"), "CREDIT", input.amountMinor, "REFUND"),
+    line(
+      account("CUSTOMER_RECEIVABLE", "CUSTOMER", input.customerId),
+      "DEBIT",
+      input.amountMinor,
+      "REFUND",
+    ),
+    line(
+      account("PROVIDER_CLEARING", "PLATFORM"),
+      "CREDIT",
+      input.amountMinor,
+      "REFUND",
+    ),
   ]);
 }
 
@@ -1629,17 +1969,38 @@ const withdrawalEntry = (
   orderId: null,
   withdrawRequestId: input.requestId,
   order: null,
-  lines: [line(debit, "DEBIT", input.amountMinor, "WITHDRAWAL"), line(credit, "CREDIT", input.amountMinor, "WITHDRAWAL")],
+  lines: [
+    line(debit, "DEBIT", input.amountMinor, "WITHDRAWAL"),
+    line(credit, "CREDIT", input.amountMinor, "WITHDRAWAL"),
+  ],
 });
 // P9
 export const withdrawalReserve = (input: WithdrawalInput) =>
-  withdrawalEntry("WITHDRAWAL_RESERVE", "reserve", input, payableOf(input.payeeType, input.payeeId), reserveOf(input.payeeType, input.payeeId));
+  withdrawalEntry(
+    "WITHDRAWAL_RESERVE",
+    "reserve",
+    input,
+    payableOf(input.payeeType, input.payeeId),
+    reserveOf(input.payeeType, input.payeeId),
+  );
 // P10
 export const withdrawalSettle = (input: WithdrawalInput) =>
-  withdrawalEntry("WITHDRAWAL_SETTLE", "settle", input, reserveOf(input.payeeType, input.payeeId), account("PLATFORM_CASH", "PLATFORM"));
+  withdrawalEntry(
+    "WITHDRAWAL_SETTLE",
+    "settle",
+    input,
+    reserveOf(input.payeeType, input.payeeId),
+    account("PLATFORM_CASH", "PLATFORM"),
+  );
 // P11
 export const withdrawalRelease = (input: WithdrawalInput) =>
-  withdrawalEntry("WITHDRAWAL_RELEASE", "release", input, reserveOf(input.payeeType, input.payeeId), payableOf(input.payeeType, input.payeeId));
+  withdrawalEntry(
+    "WITHDRAWAL_RELEASE",
+    "release",
+    input,
+    reserveOf(input.payeeType, input.payeeId),
+    payableOf(input.payeeType, input.payeeId),
+  );
 ```
 
 - [ ] **Step 4: Run it**
@@ -1657,6 +2018,7 @@ git commit -m "feat(L7): add chart of accounts and balanced posting builders"
 ### Task 3: Journal writer, SQL balances and `LedgerPort`
 
 **Files:**
+
 - Create: `services/api/src/modules/finance/tokens.ts`
 - Create: `services/api/src/modules/finance/ledger/journal.ts`
 - Create: `services/api/src/modules/finance/ledger/balances.ts`
@@ -1671,7 +2033,10 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { startStack, type Stack } from "../../support/stack.js";
 import { newId } from "../../../src/kernel/ids.js";
 import type { ConfigPort, OrderSnapshot } from "../../../src/kernel/ports.js";
-import { postEntry, withTransaction } from "../../../src/modules/finance/ledger/journal.js";
+import {
+  postEntry,
+  withTransaction,
+} from "../../../src/modules/finance/ledger/journal.js";
 import { balancesFor } from "../../../src/modules/finance/ledger/balances.js";
 import {
   PostingError,
@@ -1696,15 +2061,43 @@ beforeEach(async () => {
   await stack.reset();
 });
 
-const order = (restaurantId: string, riderId: string, overrides: Partial<OrderSnapshot> = {}): OrderSnapshot => ({
-  id: newId(), orderId: "PP-1", status: "DELIVERED", restaurantId, userId: newId(), riderId, zoneId: null,
-  isPickedUp: false, paymentMethod: "COD", paymentStatus: "PENDING", currency: USD, itemsMinor: 2500,
-  discountMinor: 0, deliveryMinor: 300, taxMinor: 200, tipMinor: 100, totalMinor: 3100, version: 1,
-  createdAt: at, acceptedAt: at, ...overrides,
+const order = (
+  restaurantId: string,
+  riderId: string,
+  overrides: Partial<OrderSnapshot> = {},
+): OrderSnapshot => ({
+  id: newId(),
+  orderId: "PP-1",
+  status: "DELIVERED",
+  restaurantId,
+  userId: newId(),
+  riderId,
+  zoneId: null,
+  isPickedUp: false,
+  paymentMethod: "COD",
+  paymentStatus: "PENDING",
+  currency: USD,
+  itemsMinor: 2500,
+  discountMinor: 0,
+  deliveryMinor: 300,
+  taxMinor: 200,
+  tipMinor: 100,
+  totalMinor: 3100,
+  version: 1,
+  createdAt: at,
+  acceptedAt: at,
+  ...overrides,
 });
-const post = (draft: Parameters<typeof postEntry>[1]) => withTransaction(stack.pool, (client) => postEntry(client, draft));
+const post = (draft: Parameters<typeof postEntry>[1]) =>
+  withTransaction(stack.pool, (client) => postEntry(client, draft));
 const request = (payeeId: string, amountMinor: number) => ({
-  requestId: newId(), payeeType: "RESTAURANT" as const, payeeId, amountMinor, currency: "USD", exponent: 2, postedAt: at,
+  requestId: newId(),
+  payeeType: "RESTAURANT" as const,
+  payeeId,
+  amountMinor,
+  currency: "USD",
+  exponent: 2,
+  postedAt: at,
 });
 const seedRequest = async (id: string, payeeId: string, amountMinor: number) =>
   stack.pool.query(
@@ -1714,25 +2107,45 @@ const seedRequest = async (id: string, payeeId: string, amountMinor: number) =>
 
 describe("journal writer", () => {
   it("posts a balanced entry exactly once per idempotency key", async () => {
-    const draft = orderSettlement(order(newId(), newId()), at, SETTLEMENT_POLICY)!;
+    const draft = orderSettlement(
+      order(newId(), newId()),
+      at,
+      SETTLEMENT_POLICY,
+    )!;
     const first = await post(draft);
     const second = await post(draft);
     expect(first.created).toBe(true);
     expect(second).toEqual({ entryId: first.entryId, created: false });
-    const { rows } = await stack.pool.query('SELECT count(*)::int AS n FROM "JournalLine" WHERE "entryId" = $1', [first.entryId]);
+    const { rows } = await stack.pool.query(
+      'SELECT count(*)::int AS n FROM "JournalLine" WHERE "entryId" = $1',
+      [first.entryId],
+    );
     expect(rows[0].n).toBe(5);
     const entry = await stack.pool.query(
       'SELECT kind::text, "orderRef", "orderType", "paymentMethod", "grossMinor"::int AS gross, "postedAt" FROM "JournalEntry" WHERE id = $1',
       [first.entryId],
     );
-    expect(entry.rows[0]).toMatchObject({ kind: "ORDER_SETTLEMENT", orderRef: "PP-1", orderType: "DELIVERY", paymentMethod: "COD", gross: 3100, postedAt: at });
+    expect(entry.rows[0]).toMatchObject({
+      kind: "ORDER_SETTLEMENT",
+      orderRef: "PP-1",
+      orderType: "DELIVERY",
+      paymentMethod: "COD",
+      gross: 3100,
+      postedAt: at,
+    });
   });
 
   it("serialises concurrent duplicates to a single entry", async () => {
-    const draft = orderSettlement(order(newId(), newId()), at, SETTLEMENT_POLICY)!;
+    const draft = orderSettlement(
+      order(newId(), newId()),
+      at,
+      SETTLEMENT_POLICY,
+    )!;
     const results = await Promise.all([post(draft), post(draft), post(draft)]);
     expect(results.filter((r) => r.created)).toHaveLength(1);
-    const { rows } = await stack.pool.query('SELECT count(*)::int AS n FROM "JournalEntry"');
+    const { rows } = await stack.pool.query(
+      'SELECT count(*)::int AS n FROM "JournalEntry"',
+    );
     expect(rows[0].n).toBe(1);
   });
 
@@ -1740,14 +2153,25 @@ describe("journal writer", () => {
     const store = newId();
     await post(orderSettlement(order(store, newId()), at, SETTLEMENT_POLICY)!);
     await post(orderSettlement(order(store, newId()), at, SETTLEMENT_POLICY)!);
-    const { rows } = await stack.pool.query('SELECT count(*)::int AS n FROM "LedgerAccount" WHERE "ownerId" = $1', [store]);
+    const { rows } = await stack.pool.query(
+      'SELECT count(*)::int AS n FROM "LedgerAccount" WHERE "ownerId" = $1',
+      [store],
+    );
     expect(rows[0].n).toBe(1);
   });
 
   it("rejects unbalanced drafts before any SQL runs", async () => {
-    const draft = orderSettlement(order(newId(), newId()), at, SETTLEMENT_POLICY)!;
-    await expect(post({ ...draft, lines: draft.lines.slice(0, 2) })).rejects.toBeInstanceOf(PostingError);
-    const { rows } = await stack.pool.query('SELECT count(*)::int AS n FROM "JournalEntry"');
+    const draft = orderSettlement(
+      order(newId(), newId()),
+      at,
+      SETTLEMENT_POLICY,
+    )!;
+    await expect(
+      post({ ...draft, lines: draft.lines.slice(0, 2) }),
+    ).rejects.toBeInstanceOf(PostingError);
+    const { rows } = await stack.pool.query(
+      'SELECT count(*)::int AS n FROM "JournalEntry"',
+    );
     expect(rows[0].n).toBe(0);
   });
 });
@@ -1757,38 +2181,91 @@ describe("balances", () => {
     const store = newId();
     const rider = newId();
     await post(orderSettlement(order(store, rider), at, SETTLEMENT_POLICY)!);
-    expect(await balancesFor(stack.pool, "RESTAURANT", store, "USD")).toEqual({ totalMinor: 2700, currentMinor: 2700, pendingMinor: 0, withdrawnMinor: 0 });
-    expect(await balancesFor(stack.pool, "RIDER", rider, "USD")).toEqual({ totalMinor: 400, currentMinor: 400, pendingMinor: 0, withdrawnMinor: 0 });
+    expect(await balancesFor(stack.pool, "RESTAURANT", store, "USD")).toEqual({
+      totalMinor: 2700,
+      currentMinor: 2700,
+      pendingMinor: 0,
+      withdrawnMinor: 0,
+    });
+    expect(await balancesFor(stack.pool, "RIDER", rider, "USD")).toEqual({
+      totalMinor: 400,
+      currentMinor: 400,
+      pendingMinor: 0,
+      withdrawnMinor: 0,
+    });
 
     const first = request(store, 2000);
     await seedRequest(first.requestId, store, 2000);
     await post(withdrawalReserve(first));
-    expect(await balancesFor(stack.pool, "RESTAURANT", store, "USD")).toEqual({ totalMinor: 2700, currentMinor: 700, pendingMinor: 2000, withdrawnMinor: 0 });
+    expect(await balancesFor(stack.pool, "RESTAURANT", store, "USD")).toEqual({
+      totalMinor: 2700,
+      currentMinor: 700,
+      pendingMinor: 2000,
+      withdrawnMinor: 0,
+    });
     await post(withdrawalSettle(first));
-    expect(await balancesFor(stack.pool, "RESTAURANT", store, "USD")).toEqual({ totalMinor: 2700, currentMinor: 700, pendingMinor: 0, withdrawnMinor: 2000 });
+    expect(await balancesFor(stack.pool, "RESTAURANT", store, "USD")).toEqual({
+      totalMinor: 2700,
+      currentMinor: 700,
+      pendingMinor: 0,
+      withdrawnMinor: 2000,
+    });
 
-    await stack.pool.query('UPDATE "WithdrawRequest" SET status = \'TRANSFERRED\' WHERE id = $1', [first.requestId]);
+    await stack.pool.query(
+      "UPDATE \"WithdrawRequest\" SET status = 'TRANSFERRED' WHERE id = $1",
+      [first.requestId],
+    );
     const second = request(store, 500);
     await seedRequest(second.requestId, store, 500);
     await post(withdrawalReserve(second));
-    expect((await balancesFor(stack.pool, "RESTAURANT", store, "USD")).currentMinor).toBe(200);
+    expect(
+      (await balancesFor(stack.pool, "RESTAURANT", store, "USD")).currentMinor,
+    ).toBe(200);
     await post(withdrawalRelease(second));
-    expect(await balancesFor(stack.pool, "RESTAURANT", store, "USD")).toEqual({ totalMinor: 2700, currentMinor: 700, pendingMinor: 0, withdrawnMinor: 2000 });
+    expect(await balancesFor(stack.pool, "RESTAURANT", store, "USD")).toEqual({
+      totalMinor: 2700,
+      currentMinor: 700,
+      pendingMinor: 0,
+      withdrawnMinor: 2000,
+    });
   });
 
   it("returns zeros for a payee without lines and ignores other currencies", async () => {
-    expect(await balancesFor(stack.pool, "RIDER", newId(), "USD")).toEqual({ totalMinor: 0, currentMinor: 0, pendingMinor: 0, withdrawnMinor: 0 });
+    expect(await balancesFor(stack.pool, "RIDER", newId(), "USD")).toEqual({
+      totalMinor: 0,
+      currentMinor: 0,
+      pendingMinor: 0,
+      withdrawnMinor: 0,
+    });
     const store = newId();
-    await post(orderSettlement(order(store, newId(), { currency: { code: "EUR", symbol: "€", exponent: 2 } }), at, SETTLEMENT_POLICY)!);
-    expect((await balancesFor(stack.pool, "RESTAURANT", store, "USD")).totalMinor).toBe(0);
+    await post(
+      orderSettlement(
+        order(store, newId(), {
+          currency: { code: "EUR", symbol: "€", exponent: 2 },
+        }),
+        at,
+        SETTLEMENT_POLICY,
+      )!,
+    );
+    expect(
+      (await balancesFor(stack.pool, "RESTAURANT", store, "USD")).totalMinor,
+    ).toBe(0);
   });
 
   it("serves LEDGER_PORT in the configured platform currency", async () => {
     const store = newId();
     await post(orderSettlement(order(store, newId()), at, SETTLEMENT_POLICY)!);
     const config = { currency: async () => USD } as unknown as ConfigPort;
-    expect(await new LedgerPortImpl(stack.pool, config).balances({ type: "RESTAURANT", id: store })).toEqual({
-      totalMinor: 2700, currentMinor: 2700, pendingMinor: 0, withdrawnMinor: 0,
+    expect(
+      await new LedgerPortImpl(stack.pool, config).balances({
+        type: "RESTAURANT",
+        id: store,
+      }),
+    ).toEqual({
+      totalMinor: 2700,
+      currentMinor: 2700,
+      pendingMinor: 0,
+      withdrawnMinor: 0,
     });
   });
 });
@@ -1819,7 +2296,10 @@ import { assertBalanced, type EntryDraft } from "./postings.js";
 
 export type Db = Pick<PoolClient, "query">;
 
-export async function withTransaction<T>(pool: Pool, work: (client: PoolClient) => Promise<T>): Promise<T> {
+export async function withTransaction<T>(
+  pool: Pool,
+  work: (client: PoolClient) => Promise<T>,
+): Promise<T> {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -1834,7 +2314,11 @@ export async function withTransaction<T>(pool: Pool, work: (client: PoolClient) 
   }
 }
 
-export async function ensureAccount(db: Db, ref: AccountRef, currency: string): Promise<string> {
+export async function ensureAccount(
+  db: Db,
+  ref: AccountRef,
+  currency: string,
+): Promise<string> {
   const key = ownerKey(ref);
   const inserted = await db.query<{ id: string }>(
     `INSERT INTO "LedgerAccount"(id, type, "ownerType", "ownerId", "ownerKey", currency)
@@ -1852,7 +2336,10 @@ export async function ensureAccount(db: Db, ref: AccountRef, currency: string): 
 }
 
 // Must run inside a transaction: the balance check is a deferred constraint trigger.
-export async function postEntry(db: Db, draft: EntryDraft): Promise<{ entryId: string; created: boolean }> {
+export async function postEntry(
+  db: Db,
+  draft: EntryDraft,
+): Promise<{ entryId: string; created: boolean }> {
   assertBalanced(draft);
   const id = newId();
   const meta = draft.order;
@@ -1881,16 +2368,31 @@ export async function postEntry(db: Db, draft: EntryDraft): Promise<{ entryId: s
     ],
   );
   if (!inserted.rows[0]) {
-    const existing = await db.query<{ id: string }>('SELECT id FROM "JournalEntry" WHERE "idempotencyKey" = $1', [draft.idempotencyKey]);
+    const existing = await db.query<{ id: string }>(
+      'SELECT id FROM "JournalEntry" WHERE "idempotencyKey" = $1',
+      [draft.idempotencyKey],
+    );
     return { entryId: existing.rows[0].id, created: false };
   }
   let lineNo = 1;
   for (const entryLine of draft.lines) {
-    const accountId = await ensureAccount(db, entryLine.account, draft.currency);
+    const accountId = await ensureAccount(
+      db,
+      entryLine.account,
+      draft.currency,
+    );
     await db.query(
       `INSERT INTO "JournalLine"(id, "entryId", "lineNo", "accountId", side, "amountMinor", component)
        VALUES ($1, $2, $3, $4, $5::"LedgerSide", $6, $7::"LineComponent")`,
-      [newId(), id, lineNo++, accountId, entryLine.side, entryLine.amountMinor, entryLine.component],
+      [
+        newId(),
+        id,
+        lineNo++,
+        accountId,
+        entryLine.side,
+        entryLine.amountMinor,
+        entryLine.component,
+      ],
     );
   }
   return { entryId: id, created: true };
@@ -1902,12 +2404,28 @@ export async function postEntry(db: Db, draft: EntryDraft): Promise<{ entryId: s
 import type { PayeeType } from "../types.js";
 import type { Db } from "./journal.js";
 
-export type Balances = { totalMinor: number; withdrawnMinor: number; currentMinor: number; pendingMinor: number };
+export type Balances = {
+  totalMinor: number;
+  withdrawnMinor: number;
+  currentMinor: number;
+  pendingMinor: number;
+};
 
 // R4: balances are always derived from journal lines, never stored.
-export async function balancesFor(db: Db, payeeType: PayeeType, payeeId: string, currency: string): Promise<Balances> {
-  const payable = payeeType === "RESTAURANT" ? "RESTAURANT_PAYABLE" : "RIDER_PAYABLE";
-  const { rows } = await db.query<{ total: string; pending: string; withdrawn: string; current: string }>(
+export async function balancesFor(
+  db: Db,
+  payeeType: PayeeType,
+  payeeId: string,
+  currency: string,
+): Promise<Balances> {
+  const payable =
+    payeeType === "RESTAURANT" ? "RESTAURANT_PAYABLE" : "RIDER_PAYABLE";
+  const { rows } = await db.query<{
+    total: string;
+    pending: string;
+    withdrawn: string;
+    current: string;
+  }>(
     `SELECT
        COALESCE(SUM(l."amountMinor") FILTER (WHERE a.type::text = $3 AND l.side = 'CREDIT' AND e.kind = 'ORDER_SETTLEMENT'), 0)::text AS total,
        COALESCE(SUM(CASE WHEN l.side = 'CREDIT' THEN l."amountMinor" ELSE -l."amountMinor" END) FILTER (WHERE a.type = 'PAYOUT_RESERVED'), 0)::text AS pending,
@@ -1933,7 +2451,11 @@ export async function balancesFor(db: Db, payeeType: PayeeType, payeeId: string,
 // services/api/src/modules/finance/ledger.port.ts
 import { Inject, Injectable } from "@nestjs/common";
 import type { Pool } from "pg";
-import { CONFIG_PORT, type ConfigPort, type LedgerPort } from "../../kernel/ports.js";
+import {
+  CONFIG_PORT,
+  type ConfigPort,
+  type LedgerPort,
+} from "../../kernel/ports.js";
 import { balancesFor } from "./ledger/balances.js";
 import { FINANCE_POOL } from "./tokens.js";
 
@@ -1965,6 +2487,7 @@ git commit -m "feat(L7): add idempotent journal writer, SQL balances and LedgerP
 ### Task 4: Outbox consumer `order.transitioned` and worker wiring
 
 **Files:**
+
 - Create: `services/api/src/modules/finance/ledger/handlers.ts`
 - Create: `services/api/src/modules/finance/ledger/index.ts`
 - Create: `services/worker/src/jobs/L7/index.ts`
@@ -1979,7 +2502,11 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { startStack, type Stack } from "../../support/stack.js";
 import { newId } from "../../../src/kernel/ids.js";
 import type { OrderSnapshot } from "../../../src/kernel/ports.js";
-import { PostingError, balancesFor, handleOrderTransitioned } from "../../../src/modules/finance/ledger/index.js";
+import {
+  PostingError,
+  balancesFor,
+  handleOrderTransitioned,
+} from "../../../src/modules/finance/ledger/index.js";
 
 const USD = { code: "USD", symbol: "$", exponent: 2 };
 let stack: Stack;
@@ -1994,15 +2521,50 @@ beforeEach(async () => {
 });
 
 const snapshot = (overrides: Partial<OrderSnapshot> = {}): OrderSnapshot => ({
-  id: newId(), orderId: "PP-7", status: "DELIVERED", restaurantId: newId(), userId: newId(), riderId: newId(),
-  zoneId: null, isPickedUp: false, paymentMethod: "COD", paymentStatus: "PENDING", currency: USD, itemsMinor: 2500,
-  discountMinor: 0, deliveryMinor: 300, taxMinor: 200, tipMinor: 100, totalMinor: 3100, version: 4,
-  createdAt: new Date("2026-10-08T02:00:00Z"), acceptedAt: new Date("2026-10-08T02:01:00Z"), ...overrides,
+  id: newId(),
+  orderId: "PP-7",
+  status: "DELIVERED",
+  restaurantId: newId(),
+  userId: newId(),
+  riderId: newId(),
+  zoneId: null,
+  isPickedUp: false,
+  paymentMethod: "COD",
+  paymentStatus: "PENDING",
+  currency: USD,
+  itemsMinor: 2500,
+  discountMinor: 0,
+  deliveryMinor: 300,
+  taxMinor: 200,
+  tipMinor: 100,
+  totalMinor: 3100,
+  version: 4,
+  createdAt: new Date("2026-10-08T02:00:00Z"),
+  acceptedAt: new Date("2026-10-08T02:01:00Z"),
+  ...overrides,
 });
-const transitioned = (order: OrderSnapshot, to: string, createdAt = new Date("2026-10-08T03:00:00.000Z")) =>
+const transitioned = (
+  order: OrderSnapshot,
+  to: string,
+  createdAt = new Date("2026-10-08T03:00:00.000Z"),
+) =>
   // Payload exactly as stored in "DomainEvent".payload (JSON round trip).
-  ({ id: newId(), type: "order.transitioned", payload: JSON.parse(JSON.stringify({ from: "PICKED", to, order, actor: { type: "RIDER", id: "r" } })), createdAt });
-const count = async (table: string) => (await stack.pool.query(`SELECT count(*)::int AS n FROM "${table}"`)).rows[0].n as number;
+  ({
+    id: newId(),
+    type: "order.transitioned",
+    payload: JSON.parse(
+      JSON.stringify({
+        from: "PICKED",
+        to,
+        order,
+        actor: { type: "RIDER", id: "r" },
+      }),
+    ),
+    createdAt,
+  });
+const count = async (table: string) =>
+  (await stack.pool.query(`SELECT count(*)::int AS n FROM "${table}"`)).rows[0]
+    .n as number;
 const accountBalance = async (type: string, ownerId: string) =>
   Number(
     (
@@ -2017,12 +2579,36 @@ const accountBalance = async (type: string, ownerId: string) =>
 describe("order.transitioned consumer (outbox, R22)", () => {
   it("posts the COD delivery settlement at DELIVERED with the event time", async () => {
     const order = snapshot();
-    expect(await handleOrderTransitioned(stack.pool, transitioned(order, "DELIVERED"))).toBe("posted");
-    expect(await balancesFor(stack.pool, "RESTAURANT", order.restaurantId, "USD")).toEqual({ totalMinor: 2700, currentMinor: 2700, pendingMinor: 0, withdrawnMinor: 0 });
-    expect(await balancesFor(stack.pool, "RIDER", order.riderId!, "USD")).toEqual({ totalMinor: 400, currentMinor: 400, pendingMinor: 0, withdrawnMinor: 0 });
+    expect(
+      await handleOrderTransitioned(
+        stack.pool,
+        transitioned(order, "DELIVERED"),
+      ),
+    ).toBe("posted");
+    expect(
+      await balancesFor(stack.pool, "RESTAURANT", order.restaurantId, "USD"),
+    ).toEqual({
+      totalMinor: 2700,
+      currentMinor: 2700,
+      pendingMinor: 0,
+      withdrawnMinor: 0,
+    });
+    expect(
+      await balancesFor(stack.pool, "RIDER", order.riderId!, "USD"),
+    ).toEqual({
+      totalMinor: 400,
+      currentMinor: 400,
+      pendingMinor: 0,
+      withdrawnMinor: 0,
+    });
     expect(await accountBalance("RIDER_CASH_HELD", order.riderId!)).toBe(3100);
-    const { rows } = await stack.pool.query('SELECT "postedAt", "orderRef" FROM "JournalEntry"');
-    expect(rows[0]).toEqual({ postedAt: new Date("2026-10-08T03:00:00.000Z"), orderRef: "PP-7" });
+    const { rows } = await stack.pool.query(
+      'SELECT "postedAt", "orderRef" FROM "JournalEntry"',
+    );
+    expect(rows[0]).toEqual({
+      postedAt: new Date("2026-10-08T03:00:00.000Z"),
+      orderRef: "PP-7",
+    });
   });
 
   it("is idempotent across redelivery and concurrent delivery", async () => {
@@ -2032,7 +2618,12 @@ describe("order.transitioned consumer (outbox, R22)", () => {
       handleOrderTransitioned(stack.pool, transitioned(order, "DELIVERED")),
     ]);
     expect(outcomes.sort()).toEqual(["duplicate", "posted"]);
-    expect(await handleOrderTransitioned(stack.pool, transitioned(order, "DELIVERED"))).toBe("duplicate");
+    expect(
+      await handleOrderTransitioned(
+        stack.pool,
+        transitioned(order, "DELIVERED"),
+      ),
+    ).toBe("duplicate");
     expect(await count("JournalEntry")).toBe(1);
     expect(await count("JournalLine")).toBe(5);
   });
@@ -2040,41 +2631,96 @@ describe("order.transitioned consumer (outbox, R22)", () => {
   it("posts card deliveries against the customer receivable", async () => {
     const order = snapshot({ paymentMethod: "STRIPE", paymentStatus: "PAID" });
     await handleOrderTransitioned(stack.pool, transitioned(order, "DELIVERED"));
-    expect(await accountBalance("CUSTOMER_RECEIVABLE", order.userId)).toBe(3100);
+    expect(await accountBalance("CUSTOMER_RECEIVABLE", order.userId)).toBe(
+      3100,
+    );
   });
 
   it("posts takeaway COD with the store holding the cash and the tip in TIPS_PAYABLE", async () => {
-    const order = snapshot({ isPickedUp: true, riderId: null, itemsMinor: 1800, taxMinor: 144, deliveryMinor: 0, tipMinor: 50, totalMinor: 1994 });
+    const order = snapshot({
+      isPickedUp: true,
+      riderId: null,
+      itemsMinor: 1800,
+      taxMinor: 144,
+      deliveryMinor: 0,
+      tipMinor: 50,
+      totalMinor: 1994,
+    });
     await handleOrderTransitioned(stack.pool, transitioned(order, "DELIVERED"));
-    expect(await accountBalance("RESTAURANT_CASH_HELD", order.restaurantId)).toBe(1994);
-    expect((await balancesFor(stack.pool, "RESTAURANT", order.restaurantId, "USD")).totalMinor).toBe(1944);
-    const tips = await stack.pool.query(`SELECT count(*)::int AS n FROM "LedgerAccount" WHERE type = 'TIPS_PAYABLE'`);
+    expect(
+      await accountBalance("RESTAURANT_CASH_HELD", order.restaurantId),
+    ).toBe(1994);
+    expect(
+      (await balancesFor(stack.pool, "RESTAURANT", order.restaurantId, "USD"))
+        .totalMinor,
+    ).toBe(1944);
+    const tips = await stack.pool.query(
+      `SELECT count(*)::int AS n FROM "LedgerAccount" WHERE type = 'TIPS_PAYABLE'`,
+    );
     expect(tips.rows[0].n).toBe(1);
   });
 
   it("refuses an order whose total does not reconcile and writes nothing", async () => {
-    await expect(handleOrderTransitioned(stack.pool, transitioned(snapshot({ totalMinor: 9999 }), "DELIVERED"))).rejects.toBeInstanceOf(PostingError);
+    await expect(
+      handleOrderTransitioned(
+        stack.pool,
+        transitioned(snapshot({ totalMinor: 9999 }), "DELIVERED"),
+      ),
+    ).rejects.toBeInstanceOf(PostingError);
     expect(await count("JournalEntry")).toBe(0);
   });
 
   it("ignores non-final transitions and unpaid cancellations (P6)", async () => {
-    expect(await handleOrderTransitioned(stack.pool, transitioned(snapshot(), "ACCEPTED"))).toBe("ignored");
-    expect(await handleOrderTransitioned(stack.pool, transitioned(snapshot({ status: "CANCELLED" }), "CANCELLED"))).toBe("ignored");
+    expect(
+      await handleOrderTransitioned(
+        stack.pool,
+        transitioned(snapshot(), "ACCEPTED"),
+      ),
+    ).toBe("ignored");
+    expect(
+      await handleOrderTransitioned(
+        stack.pool,
+        transitioned(snapshot({ status: "CANCELLED" }), "CANCELLED"),
+      ),
+    ).toBe("ignored");
     expect(await count("JournalEntry")).toBe(0);
     expect(await count("PaymentRefund")).toBe(0);
   });
 
   it("schedules exactly one refund for a paid cancellation (P7), copying the payment reference", async () => {
-    const order = snapshot({ status: "CANCELLED", paymentMethod: "STRIPE", paymentStatus: "PAID" });
+    const order = snapshot({
+      status: "CANCELLED",
+      paymentMethod: "STRIPE",
+      paymentStatus: "PAID",
+    });
     await stack.pool.query(
       `INSERT INTO "PaymentSession"(id, "orderId", "orderRef", provider, "providerSessionId", url, "amountMinor", currency, platform, status, "paymentIntentId", "expiresAt", "completedAt")
        VALUES ($1, $2, 'PP-7', 'STRIPE', 'cs_test_x', 'https://checkout.stripe.com/c/pay/cs_test_x', 3100, 'USD', 'app', 'COMPLETED', 'pi_test_x', now(), now())`,
       [newId(), order.id],
     );
-    expect(await handleOrderTransitioned(stack.pool, transitioned(order, "CANCELLED"))).toBe("refund-scheduled");
-    expect(await handleOrderTransitioned(stack.pool, transitioned(order, "CANCELLED"))).toBe("refund-exists");
-    const { rows } = await stack.pool.query('SELECT status::text, "amountMinor"::int AS amount, "paymentIntentId", "customerId" FROM "PaymentRefund"');
-    expect(rows).toEqual([{ status: "PENDING", amount: 3100, paymentIntentId: "pi_test_x", customerId: order.userId }]);
+    expect(
+      await handleOrderTransitioned(
+        stack.pool,
+        transitioned(order, "CANCELLED"),
+      ),
+    ).toBe("refund-scheduled");
+    expect(
+      await handleOrderTransitioned(
+        stack.pool,
+        transitioned(order, "CANCELLED"),
+      ),
+    ).toBe("refund-exists");
+    const { rows } = await stack.pool.query(
+      'SELECT status::text, "amountMinor"::int AS amount, "paymentIntentId", "customerId" FROM "PaymentRefund"',
+    );
+    expect(rows).toEqual([
+      {
+        status: "PENDING",
+        amount: 3100,
+        paymentIntentId: "pi_test_x",
+        customerId: order.userId,
+      },
+    ]);
   });
 });
 ```
@@ -2092,7 +2738,12 @@ describe("L7 outbox handlers", () => {
   it("ignores non-final transitions without touching the database", async () => {
     const pool = { connect: vi.fn(), query: vi.fn() } as unknown as Pool;
     await handlers["order.transitioned"](
-      { id: "e1", type: "order.transitioned", payload: { from: "PENDING", to: "ACCEPTED", order: {} }, createdAt: new Date() },
+      {
+        id: "e1",
+        type: "order.transitioned",
+        payload: { from: "PENDING", to: "ACCEPTED", order: {} },
+        createdAt: new Date(),
+      },
       pool,
     );
     expect(pool.connect).not.toHaveBeenCalled();
@@ -2117,8 +2768,18 @@ import { SETTLEMENT_POLICY, type SettlementPolicy } from "../policy.js";
 import { postEntry, withTransaction, type Db } from "./journal.js";
 import { orderSettlement } from "./postings.js";
 
-export type OutboxEvent = { id: string; type: string; payload: unknown; createdAt: Date | string };
-export type TransitionOutcome = "posted" | "duplicate" | "refund-scheduled" | "refund-exists" | "ignored";
+export type OutboxEvent = {
+  id: string;
+  type: string;
+  payload: unknown;
+  createdAt: Date | string;
+};
+export type TransitionOutcome =
+  | "posted"
+  | "duplicate"
+  | "refund-scheduled"
+  | "refund-exists"
+  | "ignored";
 type TransitionedPayload = { from: string; to: string; order: OrderSnapshot };
 
 // R22. Idempotent: settlement by idempotency key, refunds by PaymentRefund.orderId.
@@ -2128,12 +2789,15 @@ export async function handleOrderTransitioned(
   policy: SettlementPolicy = SETTLEMENT_POLICY,
 ): Promise<TransitionOutcome> {
   const payload = event.payload as TransitionedPayload;
-  if (payload.to !== "DELIVERED" && payload.to !== "CANCELLED") return "ignored";
+  if (payload.to !== "DELIVERED" && payload.to !== "CANCELLED")
+    return "ignored";
   const order = payload.order;
   if (payload.to === "DELIVERED") {
     const draft = orderSettlement(order, new Date(event.createdAt), policy);
     if (!draft) return "ignored";
-    const { created } = await withTransaction(pool, (client) => postEntry(client, draft));
+    const { created } = await withTransaction(pool, (client) =>
+      postEntry(client, draft),
+    );
     return created ? "posted" : "duplicate";
   }
   if (order.paymentStatus !== "PAID") return "ignored";
@@ -2159,7 +2823,10 @@ export type RefundRequest = {
   exponent: number;
 };
 // P7: the refund itself runs in PaymentsService.runRefunds (R28).
-export async function scheduleRefund(db: Db, input: RefundRequest): Promise<boolean> {
+export async function scheduleRefund(
+  db: Db,
+  input: RefundRequest,
+): Promise<boolean> {
   const session = await db.query<{ paymentIntentId: string | null }>(
     `SELECT "paymentIntentId" FROM "PaymentSession"
      WHERE "orderId" = $1 AND status = 'COMPLETED' ORDER BY "completedAt" DESC NULLS LAST LIMIT 1`,
@@ -2169,7 +2836,16 @@ export async function scheduleRefund(db: Db, input: RefundRequest): Promise<bool
     `INSERT INTO "PaymentRefund"(id, "orderId", "orderRef", "customerId", "amountMinor", currency, exponent, "paymentIntentId")
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      ON CONFLICT ("orderId") DO NOTHING`,
-    [newId(), input.orderId, input.orderRef, input.customerId, input.amountMinor, input.currency, input.exponent, session.rows[0]?.paymentIntentId ?? null],
+    [
+      newId(),
+      input.orderId,
+      input.orderRef,
+      input.customerId,
+      input.amountMinor,
+      input.currency,
+      input.exponent,
+      session.rows[0]?.paymentIntentId ?? null,
+    ],
   );
   return inserted.rowCount === 1;
 }
@@ -2189,7 +2865,10 @@ export { SETTLEMENT_POLICY, type SettlementPolicy } from "../policy.js";
 ```ts
 // services/worker/src/jobs/L7/index.ts
 import type { Pool } from "pg";
-import { handleOrderTransitioned, type OutboxEvent } from "@fairbite/api/finance-ledger";
+import {
+  handleOrderTransitioned,
+  type OutboxEvent,
+} from "@fairbite/api/finance-ledger";
 
 export type L7Handler = (event: OutboxEvent, db: Pool) => Promise<void>;
 
@@ -2217,6 +2896,7 @@ git commit -m "feat(L7): post settlements and schedule refunds from order.transi
 ### Task 5: Argument parsing, subject scope, mappers and withdraw transitions (pure)
 
 **Files:**
+
 - Create: `services/api/src/modules/finance/args.ts`
 - Create: `services/api/src/modules/finance/scope.ts`
 - Create: `services/api/src/modules/finance/mappers.ts`
@@ -2228,18 +2908,34 @@ git commit -m "feat(L7): post settlements and schedule refunds from order.transi
 ```ts
 // services/api/test/unit/finance/args.spec.ts
 import { describe, expect, it } from "vitest";
-import { createWithdrawArgs, dateRange, earningsArgs, parseArgs, parseRequestAmount } from "../../../src/modules/finance/args.js";
+import {
+  createWithdrawArgs,
+  dateRange,
+  earningsArgs,
+  parseArgs,
+  parseRequestAmount,
+} from "../../../src/modules/finance/args.js";
 
 describe("finance arguments", () => {
   it("maps ALL to no filter, trims text and keeps P4 pagination", () => {
     expect(
       parseArgs(earningsArgs, {
-        userType: "ALL", orderType: "ALL", paymentMethod: "COD", search: "  PP- ", userId: "",
-        pagination: { pageSize: 40, pageNo: 2 }, dateFilter: { starting_date: "2026-10-01", ending_date: null },
+        userType: "ALL",
+        orderType: "ALL",
+        paymentMethod: "COD",
+        search: "  PP- ",
+        userId: "",
+        pagination: { pageSize: 40, pageNo: 2 },
+        dateFilter: { starting_date: "2026-10-01", ending_date: null },
       }),
     ).toEqual({
-      userType: null, orderType: null, paymentMethod: "COD", search: "PP-", userId: null,
-      pagination: { pageSize: 40, pageNo: 2 }, dateFilter: { starting_date: "2026-10-01", ending_date: null },
+      userType: null,
+      orderType: null,
+      paymentMethod: "COD",
+      search: "PP-",
+      userId: null,
+      pagination: { pageSize: 40, pageNo: 2 },
+      dateFilter: { starting_date: "2026-10-01", ending_date: null },
     });
     const empty = parseArgs(earningsArgs, {});
     expect(empty.userType ?? null).toBeNull();
@@ -2247,10 +2943,14 @@ describe("finance arguments", () => {
     expect(empty.userId ?? null).toBeNull();
   });
   it("rejects malformed arguments with BAD_USER_INPUT", () => {
-    expect(() => parseArgs(createWithdrawArgs, { requestAmount: "ten" })).toThrow(/Invalid request/);
+    expect(() =>
+      parseArgs(createWithdrawArgs, { requestAmount: "ten" }),
+    ).toThrow(/Invalid request/);
   });
   it("parses ISO and date-only ranges with an exclusive end", () => {
-    expect(dateRange("2026-10-07T18:30:00.000Z", "2026-10-08T18:29:59.999Z")).toEqual({
+    expect(
+      dateRange("2026-10-07T18:30:00.000Z", "2026-10-08T18:29:59.999Z"),
+    ).toEqual({
       from: new Date("2026-10-07T18:30:00.000Z"),
       to: new Date("2026-10-08T18:30:00.000Z"),
     });
@@ -2260,7 +2960,9 @@ describe("finance arguments", () => {
     });
     expect(dateRange(null, "")).toEqual({ from: null, to: null });
     expect(() => dateRange("nonsense", null)).toThrow(/Invalid date/);
-    expect(() => dateRange("2026-10-09", "2026-10-01")).toThrow(/Invalid date range/);
+    expect(() => dateRange("2026-10-09", "2026-10-01")).toThrow(
+      /Invalid date range/,
+    );
   });
   it("converts request amounts to minor units and rejects extra decimals", () => {
     expect(parseRequestAmount(20, 2)).toBe(2000);
@@ -2278,59 +2980,171 @@ describe("finance arguments", () => {
 // services/api/test/unit/finance/scope.spec.ts
 import { describe, expect, it } from "vitest";
 import type { AuthContext } from "../../../src/kernel/auth/guards.js";
-import { financeScope, riderSubject, storeSubject } from "../../../src/modules/finance/scope.js";
+import {
+  financeScope,
+  riderSubject,
+  storeSubject,
+} from "../../../src/modules/finance/scope.js";
 
 const S1 = "0190a000-0000-7000-8000-0000000000a1";
 const S2 = "0190a000-0000-7000-8000-0000000000a2";
 const R1 = "0190a000-0000-7000-8000-0000000000b1";
 const auth = (overrides: Partial<AuthContext>): AuthContext => ({
-  userId: "0190a000-0000-7000-8000-0000000000c1", type: "ADMIN", sessionId: "s", permissions: [],
-  restaurantIds: [], vendorId: null, riderId: null, ...overrides,
+  userId: "0190a000-0000-7000-8000-0000000000c1",
+  type: "ADMIN",
+  sessionId: "s",
+  permissions: [],
+  restaurantIds: [],
+  vendorId: null,
+  riderId: null,
+  ...overrides,
 });
 
 describe("financeScope (R9)", () => {
   it("lets ADMIN and STAFF(Admin) filter freely", () => {
-    expect(financeScope(auth({}), null, null, "Admin")).toEqual({ restaurantIds: null, riderIds: null, requireRider: false, viewer: "PLATFORM", fullBankDetails: true });
-    expect(financeScope(auth({ type: "STAFF", permissions: ["Admin"] }), "RIDER", R1, "Admin")).toEqual({ restaurantIds: null, riderIds: [R1], requireRider: true, viewer: "PLATFORM", fullBankDetails: false });
-    expect(financeScope(auth({}), "STORE", S1, "Admin")).toMatchObject({ restaurantIds: [S1], riderIds: null });
-    expect(() => financeScope(auth({}), null, S1, "Admin")).toThrow(/userType is required with userId/);
+    expect(financeScope(auth({}), null, null, "Admin")).toEqual({
+      restaurantIds: null,
+      riderIds: null,
+      requireRider: false,
+      viewer: "PLATFORM",
+      fullBankDetails: true,
+    });
+    expect(
+      financeScope(
+        auth({ type: "STAFF", permissions: ["Admin"] }),
+        "RIDER",
+        R1,
+        "Admin",
+      ),
+    ).toEqual({
+      restaurantIds: null,
+      riderIds: [R1],
+      requireRider: true,
+      viewer: "PLATFORM",
+      fullBankDetails: false,
+    });
+    expect(financeScope(auth({}), "STORE", S1, "Admin")).toMatchObject({
+      restaurantIds: [S1],
+      riderIds: null,
+    });
+    expect(() => financeScope(auth({}), null, S1, "Admin")).toThrow(
+      /userType is required with userId/,
+    );
   });
   it("scopes stores to their own restaurants", () => {
     const owner = auth({ type: "RESTAURANT", restaurantIds: [S1] });
-    expect(financeScope(owner, null, null, "Admin")).toMatchObject({ restaurantIds: [S1], viewer: "STORE", fullBankDetails: true });
-    expect(financeScope(owner, "STORE", S1, "Admin")).toMatchObject({ restaurantIds: [S1] });
-    expect(() => financeScope(owner, "STORE", S2, "Admin")).toThrow(/Forbidden/);
-    expect(() => financeScope(owner, "RIDER", null, "Admin")).toThrow(/Forbidden/);
-    expect(() => financeScope(auth({ type: "VENDOR", restaurantIds: [] }), null, null, "Admin")).toThrow(/Forbidden/);
+    expect(financeScope(owner, null, null, "Admin")).toMatchObject({
+      restaurantIds: [S1],
+      viewer: "STORE",
+      fullBankDetails: true,
+    });
+    expect(financeScope(owner, "STORE", S1, "Admin")).toMatchObject({
+      restaurantIds: [S1],
+    });
+    expect(() => financeScope(owner, "STORE", S2, "Admin")).toThrow(
+      /Forbidden/,
+    );
+    expect(() => financeScope(owner, "RIDER", null, "Admin")).toThrow(
+      /Forbidden/,
+    );
+    expect(() =>
+      financeScope(
+        auth({ type: "VENDOR", restaurantIds: [] }),
+        null,
+        null,
+        "Admin",
+      ),
+    ).toThrow(/Forbidden/);
   });
   it("scopes riders to themselves", () => {
     const rider = auth({ type: "RIDER", riderId: R1 });
-    expect(financeScope(rider, null, null, "Admin")).toEqual({ restaurantIds: null, riderIds: [R1], requireRider: true, viewer: "RIDER", fullBankDetails: true });
-    expect(() => financeScope(rider, "STORE", null, "Admin")).toThrow(/Forbidden/);
-    expect(() => financeScope(rider, "RIDER", S1, "Admin")).toThrow(/Forbidden/);
+    expect(financeScope(rider, null, null, "Admin")).toEqual({
+      restaurantIds: null,
+      riderIds: [R1],
+      requireRider: true,
+      viewer: "RIDER",
+      fullBankDetails: true,
+    });
+    expect(() => financeScope(rider, "STORE", null, "Admin")).toThrow(
+      /Forbidden/,
+    );
+    expect(() => financeScope(rider, "RIDER", S1, "Admin")).toThrow(
+      /Forbidden/,
+    );
   });
   it("rejects STAFF without the permission and customers", () => {
-    expect(() => financeScope(auth({ type: "STAFF", permissions: ["Riders"] }), null, null, "Admin")).toThrow(/Forbidden/);
-    expect(() => financeScope(auth({ type: "CUSTOMER" }), null, null, "Admin")).toThrow(/Forbidden/);
+    expect(() =>
+      financeScope(
+        auth({ type: "STAFF", permissions: ["Riders"] }),
+        null,
+        null,
+        "Admin",
+      ),
+    ).toThrow(/Forbidden/);
+    expect(() =>
+      financeScope(auth({ type: "CUSTOMER" }), null, null, "Admin"),
+    ).toThrow(/Forbidden/);
   });
 });
 
 describe("store and rider subjects (R10)", () => {
   it("accepts own ids, the single own store, staff with permission and admin", () => {
-    expect(storeSubject(auth({ type: "RESTAURANT", restaurantIds: [S1] }), S1, "Stores")).toBe(S1);
-    expect(storeSubject(auth({ type: "RESTAURANT", restaurantIds: [S1] }), null, "Stores")).toBe(S1);
-    expect(storeSubject(auth({ type: "STAFF", permissions: ["Stores"] }), S2, "Stores")).toBe(S2);
+    expect(
+      storeSubject(
+        auth({ type: "RESTAURANT", restaurantIds: [S1] }),
+        S1,
+        "Stores",
+      ),
+    ).toBe(S1);
+    expect(
+      storeSubject(
+        auth({ type: "RESTAURANT", restaurantIds: [S1] }),
+        null,
+        "Stores",
+      ),
+    ).toBe(S1);
+    expect(
+      storeSubject(
+        auth({ type: "STAFF", permissions: ["Stores"] }),
+        S2,
+        "Stores",
+      ),
+    ).toBe(S2);
     expect(storeSubject(auth({}), S2, "Stores")).toBe(S2);
-    expect(riderSubject(auth({ type: "RIDER", riderId: R1 }), null, "Riders")).toBe(R1);
-    expect(riderSubject(auth({ type: "RIDER", riderId: R1 }), R1, "Riders")).toBe(R1);
+    expect(
+      riderSubject(auth({ type: "RIDER", riderId: R1 }), null, "Riders"),
+    ).toBe(R1);
+    expect(
+      riderSubject(auth({ type: "RIDER", riderId: R1 }), R1, "Riders"),
+    ).toBe(R1);
   });
   it("rejects foreign ids, ambiguous stores and malformed ids", () => {
-    expect(() => storeSubject(auth({ type: "RESTAURANT", restaurantIds: [S1] }), S2, "Stores")).toThrow(/Forbidden/);
-    expect(() => storeSubject(auth({ type: "VENDOR", restaurantIds: [S1, S2] }), null, "Stores")).toThrow(/Select a store/);
-    expect(() => storeSubject(auth({ type: "STAFF", permissions: [] }), S1, "Stores")).toThrow(/Forbidden/);
-    expect(() => storeSubject(auth({}), "abc", "Stores")).toThrow(/Invalid store id/);
-    expect(() => riderSubject(auth({ type: "RIDER", riderId: R1 }), S1, "Riders")).toThrow(/Forbidden/);
-    expect(() => riderSubject(auth({}), null, "Riders")).toThrow(/Select a rider/);
+    expect(() =>
+      storeSubject(
+        auth({ type: "RESTAURANT", restaurantIds: [S1] }),
+        S2,
+        "Stores",
+      ),
+    ).toThrow(/Forbidden/);
+    expect(() =>
+      storeSubject(
+        auth({ type: "VENDOR", restaurantIds: [S1, S2] }),
+        null,
+        "Stores",
+      ),
+    ).toThrow(/Select a store/);
+    expect(() =>
+      storeSubject(auth({ type: "STAFF", permissions: [] }), S1, "Stores"),
+    ).toThrow(/Forbidden/);
+    expect(() => storeSubject(auth({}), "abc", "Stores")).toThrow(
+      /Invalid store id/,
+    );
+    expect(() =>
+      riderSubject(auth({ type: "RIDER", riderId: R1 }), S1, "Riders"),
+    ).toThrow(/Forbidden/);
+    expect(() => riderSubject(auth({}), null, "Riders")).toThrow(
+      /Select a rider/,
+    );
   });
 });
 ```
@@ -2357,67 +3171,214 @@ const parents = {
   restaurants: new Map([["s1", { _id: "s1", name: "Pasta Place" }]]),
 };
 const earning: EarningRow = {
-  id: "e1", orderRef: "PP-1", orderType: "DELIVERY", paymentMethod: "COD", postedAt: at, restaurantId: "s1", riderId: "r1",
-  exponent: 2, commissionMinor: 0, deliveryMarginMinor: 60, platformFeeMinor: 0, platformTaxMinor: 0,
-  riderDeliveryMinor: 240, riderTipMinor: 100, storeFoodMinor: 2500, storeTaxMinor: 200,
+  id: "e1",
+  orderRef: "PP-1",
+  orderType: "DELIVERY",
+  paymentMethod: "COD",
+  postedAt: at,
+  restaurantId: "s1",
+  riderId: "r1",
+  exponent: 2,
+  commissionMinor: 0,
+  deliveryMarginMinor: 60,
+  platformFeeMinor: 0,
+  platformTaxMinor: 0,
+  riderDeliveryMinor: 240,
+  riderTipMinor: 100,
+  storeFoodMinor: 2500,
+  storeTaxMinor: 200,
 };
 const request: WithdrawRow = {
-  id: "w1", requestRef: "WR000001", payeeType: "RESTAURANT", payeeId: "s1", amountMinor: 2000, currency: "USD", exponent: 2,
-  status: "REQUESTED", requestedAt: at, decidedAt: null, transactionRef: null, createdAt: at, version: 1,
+  id: "w1",
+  requestRef: "WR000001",
+  payeeType: "RESTAURANT",
+  payeeId: "s1",
+  amountMinor: 2000,
+  currency: "USD",
+  exponent: 2,
+  status: "REQUESTED",
+  requestedAt: at,
+  decidedAt: null,
+  transactionRef: null,
+  createdAt: at,
+  version: 1,
 };
 
 describe("finance mappers", () => {
   it("maps an earnings row for the platform with major units and ISO times", () => {
     expect(mapEarning(earning, "PLATFORM", parents)).toEqual({
-      _id: "e1", orderId: "PP-1", orderType: "DELIVERY", paymentMethod: "COD",
-      createdAt: "2026-10-08T03:00:00.000Z", updatedAt: "2026-10-08T03:00:00.000Z",
-      platformEarnings: { marketplaceCommission: 0, deliveryCommission: 0.6, tax: 0, platformFee: 0, totalEarnings: 0.6 },
-      riderEarnings: { riderId: { _id: "r1", name: "Ali" }, deliveryFee: 2.4, tip: 1, totalEarnings: 3.4 },
-      storeEarnings: { storeId: { _id: "s1", name: "Pasta Place" }, orderAmount: 25, totalEarnings: 27 },
+      _id: "e1",
+      orderId: "PP-1",
+      orderType: "DELIVERY",
+      paymentMethod: "COD",
+      createdAt: "2026-10-08T03:00:00.000Z",
+      updatedAt: "2026-10-08T03:00:00.000Z",
+      platformEarnings: {
+        marketplaceCommission: 0,
+        deliveryCommission: 0.6,
+        tax: 0,
+        platformFee: 0,
+        totalEarnings: 0.6,
+      },
+      riderEarnings: {
+        riderId: { _id: "r1", name: "Ali" },
+        deliveryFee: 2.4,
+        tip: 1,
+        totalEarnings: 3.4,
+      },
+      storeEarnings: {
+        storeId: { _id: "s1", name: "Pasta Place" },
+        orderAmount: 25,
+        totalEarnings: 27,
+      },
     });
   });
   it("hides platform earnings from stores and store earnings from riders; no rider on takeaway", () => {
     expect(mapEarning(earning, "STORE", parents).platformEarnings).toBeNull();
     expect(mapEarning(earning, "RIDER", parents).storeEarnings).toBeNull();
-    expect(mapEarning({ ...earning, riderId: null }, "PLATFORM", parents).riderEarnings).toBeNull();
+    expect(
+      mapEarning({ ...earning, riderId: null }, "PLATFORM", parents)
+        .riderEarnings,
+    ).toBeNull();
   });
   it("maps withdraw requests with the right parent", () => {
     expect(mapWithdrawRequest(request, parents)).toEqual({
-      _id: "w1", requestId: "WR000001", requestAmount: 20, requestTime: "2026-10-08T03:00:00.000Z", status: "REQUESTED",
-      createdAt: "2026-10-08T03:00:00.000Z", rider: null, store: { _id: "s1", name: "Pasta Place" },
+      _id: "w1",
+      requestId: "WR000001",
+      requestAmount: 20,
+      requestTime: "2026-10-08T03:00:00.000Z",
+      status: "REQUESTED",
+      createdAt: "2026-10-08T03:00:00.000Z",
+      rider: null,
+      store: { _id: "s1", name: "Pasta Place" },
     });
-    expect(mapWithdrawRequest({ ...request, payeeType: "RIDER", payeeId: "r1" }, parents)).toMatchObject({ rider: { _id: "r1" }, store: null });
+    expect(
+      mapWithdrawRequest(
+        { ...request, payeeType: "RIDER", payeeId: "r1" },
+        parents,
+      ),
+    ).toMatchObject({ rider: { _id: "r1" }, store: null });
   });
   it("maps transactions and masks the account number for non-owners", () => {
-    const profile = { hasBusinessDetails: true, bankName: "Maybank", accountName: "Pasta", accountCode: "MBB", accountNumber: "5140123456789" };
-    const transferred = { ...request, status: "TRANSFERRED" as const, transactionRef: "TXN000001" };
+    const profile = {
+      hasBusinessDetails: true,
+      bankName: "Maybank",
+      accountName: "Pasta",
+      accountCode: "MBB",
+      accountNumber: "5140123456789",
+    };
+    const transferred = {
+      ...request,
+      status: "TRANSFERRED" as const,
+      transactionRef: "TXN000001",
+    };
     expect(mapTransaction(transferred, profile, true, parents)).toEqual({
-      _id: "w1", amountCurrency: "USD", status: "TRANSFERRED", transactionId: "TXN000001", userType: "STORE", userId: "s1",
-      amountTransferred: 20, createdAt: "2026-10-08T03:00:00.000Z",
-      toBank: { accountName: "Pasta", bankName: "Maybank", accountCode: "MBB", accountNumber: "5140123456789" },
-      rider: null, store: { _id: "s1", name: "Pasta Place" },
+      _id: "w1",
+      amountCurrency: "USD",
+      status: "TRANSFERRED",
+      transactionId: "TXN000001",
+      userType: "STORE",
+      userId: "s1",
+      amountTransferred: 20,
+      createdAt: "2026-10-08T03:00:00.000Z",
+      toBank: {
+        accountName: "Pasta",
+        bankName: "Maybank",
+        accountCode: "MBB",
+        accountNumber: "5140123456789",
+      },
+      rider: null,
+      store: { _id: "s1", name: "Pasta Place" },
     });
-    expect(mapTransaction(transferred, profile, false, parents).toBank?.accountNumber).toBe("*********6789");
+    expect(
+      mapTransaction(transferred, profile, false, parents).toBank
+        ?.accountNumber,
+    ).toBe("*********6789");
     expect(mapTransaction(transferred, null, true, parents).toBank).toBeNull();
     expect(maskAccountNumber("123")).toBe("***");
     expect(maskAccountNumber(null)).toBeNull();
   });
   it("maps store and rider day buckets", () => {
-    const day = { day: "2026-10-08", key: "08-10-2026", start: new Date("2026-10-07T16:00:00.000Z") };
+    const day = {
+      day: "2026-10-08",
+      key: "08-10-2026",
+      start: new Date("2026-10-07T16:00:00.000Z"),
+    };
     const entries: GraphEntry[] = [
-      { id: "e1", key: "08-10-2026", orderRef: "PP-1", orderType: "DELIVERY", paymentMethod: "COD", postedAt: at, exponent: 2, grossMinor: 3100, earnedMinor: 2700, deliveryMinor: 300, tipMinor: 100 },
-      { id: "e2", key: "08-10-2026", orderRef: "PP-2", orderType: "PICKUP", paymentMethod: "STRIPE", postedAt: at, exponent: 2, grossMinor: 1994, earnedMinor: 1944, deliveryMinor: 0, tipMinor: 0 },
+      {
+        id: "e1",
+        key: "08-10-2026",
+        orderRef: "PP-1",
+        orderType: "DELIVERY",
+        paymentMethod: "COD",
+        postedAt: at,
+        exponent: 2,
+        grossMinor: 3100,
+        earnedMinor: 2700,
+        deliveryMinor: 300,
+        tipMinor: 100,
+      },
+      {
+        id: "e2",
+        key: "08-10-2026",
+        orderRef: "PP-2",
+        orderType: "PICKUP",
+        paymentMethod: "STRIPE",
+        postedAt: at,
+        exponent: 2,
+        grossMinor: 1994,
+        earnedMinor: 1944,
+        deliveryMinor: 0,
+        tipMinor: 0,
+      },
     ];
     expect(mapStoreDay(day, entries, 2)).toEqual({
-      _id: "08-10-2026", date: "2026-10-07T16:00:00.000Z", totalEarningsSum: 46.44,
+      _id: "08-10-2026",
+      date: "2026-10-07T16:00:00.000Z",
+      totalEarningsSum: 46.44,
       earningsArray: [
-        { totalOrderAmount: 31, totalEarnings: 27, orderDetails: { orderId: "PP-1", orderType: "DELIVERY", paymentMethod: "COD" }, date: "2026-10-08T03:00:00.000Z" },
-        { totalOrderAmount: 19.94, totalEarnings: 19.44, orderDetails: { orderId: "PP-2", orderType: "PICKUP", paymentMethod: "STRIPE" }, date: "2026-10-08T03:00:00.000Z" },
+        {
+          totalOrderAmount: 31,
+          totalEarnings: 27,
+          orderDetails: {
+            orderId: "PP-1",
+            orderType: "DELIVERY",
+            paymentMethod: "COD",
+          },
+          date: "2026-10-08T03:00:00.000Z",
+        },
+        {
+          totalOrderAmount: 19.94,
+          totalEarnings: 19.44,
+          orderDetails: {
+            orderId: "PP-2",
+            orderType: "PICKUP",
+            paymentMethod: "STRIPE",
+          },
+          date: "2026-10-08T03:00:00.000Z",
+        },
       ],
     });
     expect(mapRiderDay(day, entries.slice(0, 1), 2)).toEqual({
-      _id: "08-10-2026", date: "2026-10-07T16:00:00.000Z", totalDeliveries: 1, totalEarningsSum: 4, totalTipsSum: 1, totalHours: 0,
-      earningsArray: [{ tip: 1, deliveryFee: 3, totalEarnings: 4, orderDetails: { orderId: "PP-1", orderType: "DELIVERY", paymentMethod: "COD" }, date: "2026-10-08T03:00:00.000Z" }],
+      _id: "08-10-2026",
+      date: "2026-10-07T16:00:00.000Z",
+      totalDeliveries: 1,
+      totalEarningsSum: 4,
+      totalTipsSum: 1,
+      totalHours: 0,
+      earningsArray: [
+        {
+          tip: 1,
+          deliveryFee: 3,
+          totalEarnings: 4,
+          orderDetails: {
+            orderId: "PP-1",
+            orderType: "DELIVERY",
+            paymentMethod: "COD",
+          },
+          date: "2026-10-08T03:00:00.000Z",
+        },
+      ],
     });
   });
   it("deduplicates ids", () => {
@@ -2429,19 +3390,34 @@ describe("finance mappers", () => {
 ```ts
 // services/api/test/unit/finance/withdraw-transitions.spec.ts
 import { describe, expect, it } from "vitest";
-import { assertWithdrawTransition, parseWithdrawStatus } from "../../../src/modules/finance/withdraw-transitions.js";
+import {
+  assertWithdrawTransition,
+  parseWithdrawStatus,
+} from "../../../src/modules/finance/withdraw-transitions.js";
 
 describe("withdraw transitions (R14)", () => {
   it("allows REQUESTED to TRANSFERRED or CANCELLED only", () => {
-    expect(() => assertWithdrawTransition("REQUESTED", "TRANSFERRED")).not.toThrow();
-    expect(() => assertWithdrawTransition("REQUESTED", "CANCELLED")).not.toThrow();
-    expect(() => assertWithdrawTransition("REQUESTED", "REQUESTED")).toThrow("Withdraw request is already REQUESTED");
-    expect(() => assertWithdrawTransition("TRANSFERRED", "CANCELLED")).toThrow("Withdraw request cannot change from TRANSFERRED to CANCELLED");
-    expect(() => assertWithdrawTransition("CANCELLED", "REQUESTED")).toThrow("Withdraw request cannot change from CANCELLED to REQUESTED");
+    expect(() =>
+      assertWithdrawTransition("REQUESTED", "TRANSFERRED"),
+    ).not.toThrow();
+    expect(() =>
+      assertWithdrawTransition("REQUESTED", "CANCELLED"),
+    ).not.toThrow();
+    expect(() => assertWithdrawTransition("REQUESTED", "REQUESTED")).toThrow(
+      "Withdraw request is already REQUESTED",
+    );
+    expect(() => assertWithdrawTransition("TRANSFERRED", "CANCELLED")).toThrow(
+      "Withdraw request cannot change from TRANSFERRED to CANCELLED",
+    );
+    expect(() => assertWithdrawTransition("CANCELLED", "REQUESTED")).toThrow(
+      "Withdraw request cannot change from CANCELLED to REQUESTED",
+    );
   });
   it("parses only the three statuses", () => {
     expect(parseWithdrawStatus("TRANSFERRED")).toBe("TRANSFERRED");
-    expect(() => parseWithdrawStatus("PAID")).toThrow("Invalid withdraw request status");
+    expect(() => parseWithdrawStatus("PAID")).toThrow(
+      "Invalid withdraw request status",
+    );
   });
 });
 ```
@@ -2461,7 +3437,10 @@ import { toMinor } from "../../kernel/money.js";
 import { parseClientDate } from "../../kernel/time.js";
 import { MESSAGES } from "./policy.js";
 
-export function parseArgs<T extends z.ZodType>(schema: T, args: unknown): z.infer<T> {
+export function parseArgs<T extends z.ZodType>(
+  schema: T,
+  args: unknown,
+): z.infer<T> {
   const parsed = schema.safeParse(args ?? {});
   if (!parsed.success) throw appError("BAD_USER_INPUT", "Invalid request");
   return parsed.data;
@@ -2486,9 +3465,14 @@ const paymentMethod = z
   .enum(["ALL", "COD", "PAYPAL", "STRIPE"])
   .nullish()
   .transform((value) => (value && value !== "ALL" ? value : null));
-const pagination = z.object({ pageSize: z.number().int(), pageNo: z.number().int() }).nullish();
+const pagination = z
+  .object({ pageSize: z.number().int(), pageNo: z.number().int() })
+  .nullish();
 const dateFilter = z
-  .object({ starting_date: z.string().max(40).nullish(), ending_date: z.string().max(40).nullish() })
+  .object({
+    starting_date: z.string().max(40).nullish(),
+    ending_date: z.string().max(40).nullish(),
+  })
   .nullish();
 const pageNumber = z.number().int().nullish();
 
@@ -2502,19 +3486,48 @@ export const earningsArgs = z.object({
   dateFilter,
 });
 export type EarningsArgs = z.infer<typeof earningsArgs>;
-export const transactionHistoryArgs = z.object({ userId: text(64), userType, search: text(100), pagination, dateFilter });
+export const transactionHistoryArgs = z.object({
+  userId: text(64),
+  userType,
+  search: text(100),
+  pagination,
+  dateFilter,
+});
 export type TransactionHistoryArgs = z.infer<typeof transactionHistoryArgs>;
-export const withdrawRequestsArgs = z.object({ userId: text(64), userType, search: text(100), pagination });
+export const withdrawRequestsArgs = z.object({
+  userId: text(64),
+  userType,
+  search: text(100),
+  pagination,
+});
 export type WithdrawRequestsArgs = z.infer<typeof withdrawRequestsArgs>;
-export const storeGraphArgs = z.object({ storeId: z.string().max(64), page: pageNumber, limit: pageNumber, startDate: text(40), endDate: text(40) });
+export const storeGraphArgs = z.object({
+  storeId: z.string().max(64),
+  page: pageNumber,
+  limit: pageNumber,
+  startDate: text(40),
+  endDate: text(40),
+});
 export type StoreGraphArgs = z.infer<typeof storeGraphArgs>;
-export const riderGraphArgs = z.object({ riderId: z.string().max(64), page: pageNumber, limit: pageNumber, startDate: text(40), endDate: text(40) });
+export const riderGraphArgs = z.object({
+  riderId: z.string().max(64),
+  page: pageNumber,
+  limit: pageNumber,
+  startDate: text(40),
+  endDate: text(40),
+});
 export type RiderGraphArgs = z.infer<typeof riderGraphArgs>;
 export const storeCurrentArgs = z.object({ storeId: text(64) });
 export const riderCurrentArgs = z.object({ riderId: text(64) });
-export const createWithdrawArgs = z.object({ requestAmount: z.number(), userId: text(64) });
+export const createWithdrawArgs = z.object({
+  requestAmount: z.number(),
+  userId: text(64),
+});
 export type CreateWithdrawArgs = z.infer<typeof createWithdrawArgs>;
-export const updateWithdrawArgs = z.object({ id: z.string().max(64), status: z.string().max(32) });
+export const updateWithdrawArgs = z.object({
+  id: z.string().max(64),
+  status: z.string().max(32),
+});
 export const commissionRateArgs = z.object({
   page: pageNumber,
   limit: pageNumber,
@@ -2523,30 +3536,44 @@ export const commissionRateArgs = z.object({
   sortOrder: z.enum(["ASC", "DESC"]).nullish(),
 });
 export type CommissionRateArgs = z.infer<typeof commissionRateArgs>;
-export const updateCommissionArgs = z.object({ id: z.string().max(64), commissionRate: z.number() });
+export const updateCommissionArgs = z.object({
+  id: z.string().max(64),
+  commissionRate: z.number(),
+});
 
 export type DateRange = { from: Date | null; to: Date | null };
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
 // R8: date-only ends include the whole day; ISO ends are inclusive instants. `to` is exclusive.
-export function dateRange(start: string | null | undefined, end: string | null | undefined): DateRange {
-  const parse = (value: string | null | undefined, isEnd: boolean): Date | null => {
+export function dateRange(
+  start: string | null | undefined,
+  end: string | null | undefined,
+): DateRange {
+  const parse = (
+    value: string | null | undefined,
+    isEnd: boolean,
+  ): Date | null => {
     const trimmed = value?.trim() ?? "";
     if (!trimmed) return null;
     const date = parseClientDate(trimmed);
     if (!date) throw appError("BAD_USER_INPUT", MESSAGES.invalidDate);
     if (!isEnd) return date;
-    return new Date(date.getTime() + (DATE_ONLY.test(trimmed) ? 86_400_000 : 1));
+    return new Date(
+      date.getTime() + (DATE_ONLY.test(trimmed) ? 86_400_000 : 1),
+    );
   };
   const range = { from: parse(start, false), to: parse(end, true) };
-  if (range.from && range.to && range.from >= range.to) throw appError("BAD_USER_INPUT", MESSAGES.invalidDateRange);
+  if (range.from && range.to && range.from >= range.to)
+    throw appError("BAD_USER_INPUT", MESSAGES.invalidDateRange);
   return range;
 }
 
 // R1: Float major units in, integer minor units out; more decimals than the exponent is an error.
 export function parseRequestAmount(value: number, exponent: number): number {
-  if (!Number.isFinite(value) || value <= 0) throw appError("BAD_USER_INPUT", MESSAGES.invalidAmount);
+  if (!Number.isFinite(value) || value <= 0)
+    throw appError("BAD_USER_INPUT", MESSAGES.invalidAmount);
   const minor = toMinor(value, exponent);
-  if (minor <= 0 || Math.abs(minor / 10 ** exponent - value) > 1e-9) throw appError("BAD_USER_INPUT", MESSAGES.invalidAmount);
+  if (minor <= 0 || Math.abs(minor / 10 ** exponent - value) > 1e-9)
+    throw appError("BAD_USER_INPUT", MESSAGES.invalidAmount);
   return minor;
 }
 ```
@@ -2555,7 +3582,10 @@ export function parseRequestAmount(value: number, exponent: number): number {
 // services/api/src/modules/finance/scope.ts
 import { appError } from "../../kernel/errors.js";
 import { parseId } from "../../kernel/ids.js";
-import { requireOwnership, type AuthContext } from "../../kernel/auth/guards.js";
+import {
+  requireOwnership,
+  type AuthContext,
+} from "../../kernel/auth/guards.js";
 import { MESSAGES } from "./policy.js";
 
 export const PERMISSIONS = {
@@ -2575,7 +3605,8 @@ export type FinanceScope = {
 };
 
 const platformViewer = (auth: AuthContext, permission: string) =>
-  auth.type === "ADMIN" || (auth.type === "STAFF" && auth.permissions.includes(permission));
+  auth.type === "ADMIN" ||
+  (auth.type === "STAFF" && auth.permissions.includes(permission));
 
 // R9. `platformPermission` is "Admin" (earnings, transactionHistory) or "Withdraw Request" (withdrawRequests).
 export function financeScope(
@@ -2585,8 +3616,11 @@ export function financeScope(
   platformPermission: string,
 ): FinanceScope {
   if (platformViewer(auth, platformPermission)) {
-    if (userId && !userType) throw appError("BAD_USER_INPUT", MESSAGES.userTypeRequired);
-    const id = userId ? parseId(userId, userType === "RIDER" ? "rider" : "store") : null;
+    if (userId && !userType)
+      throw appError("BAD_USER_INPUT", MESSAGES.userTypeRequired);
+    const id = userId
+      ? parseId(userId, userType === "RIDER" ? "rider" : "store")
+      : null;
     return {
       restaurantIds: userType === "STORE" && id ? [id] : null,
       riderIds: userType === "RIDER" && id ? [id] : null,
@@ -2600,30 +3634,61 @@ export function financeScope(
     if (userId) {
       const id = parseId(userId, "store");
       requireOwnership(auth, { restaurantId: id });
-      return { restaurantIds: [id], riderIds: null, requireRider: false, viewer: "STORE", fullBankDetails: true };
+      return {
+        restaurantIds: [id],
+        riderIds: null,
+        requireRider: false,
+        viewer: "STORE",
+        fullBankDetails: true,
+      };
     }
     if (!auth.restaurantIds.length) throw appError("FORBIDDEN");
-    return { restaurantIds: [...auth.restaurantIds], riderIds: null, requireRider: false, viewer: "STORE", fullBankDetails: true };
+    return {
+      restaurantIds: [...auth.restaurantIds],
+      riderIds: null,
+      requireRider: false,
+      viewer: "STORE",
+      fullBankDetails: true,
+    };
   }
   if (auth.type === "RIDER") {
     if (userType === "STORE" || !auth.riderId) throw appError("FORBIDDEN");
-    if (userId && parseId(userId, "rider") !== auth.riderId) throw appError("FORBIDDEN");
-    return { restaurantIds: null, riderIds: [auth.riderId], requireRider: true, viewer: "RIDER", fullBankDetails: true };
+    if (userId && parseId(userId, "rider") !== auth.riderId)
+      throw appError("FORBIDDEN");
+    return {
+      restaurantIds: null,
+      riderIds: [auth.riderId],
+      requireRider: true,
+      viewer: "RIDER",
+      fullBankDetails: true,
+    };
   }
   throw appError("FORBIDDEN");
 }
 
 // R10
-export function storeSubject(auth: AuthContext, storeId: string | null, staffPermission: string): string {
+export function storeSubject(
+  auth: AuthContext,
+  storeId: string | null,
+  staffPermission: string,
+): string {
   if (storeId) {
     const id = parseId(storeId, "store");
     requireOwnership(auth, { restaurantId: id }, staffPermission);
     return id;
   }
-  if ((auth.type === "RESTAURANT" || auth.type === "VENDOR") && auth.restaurantIds.length === 1) return auth.restaurantIds[0];
+  if (
+    (auth.type === "RESTAURANT" || auth.type === "VENDOR") &&
+    auth.restaurantIds.length === 1
+  )
+    return auth.restaurantIds[0];
   throw appError("BAD_USER_INPUT", MESSAGES.selectStore);
 }
-export function riderSubject(auth: AuthContext, riderId: string | null, staffPermission: string): string {
+export function riderSubject(
+  auth: AuthContext,
+  riderId: string | null,
+  staffPermission: string,
+): string {
   if (riderId) {
     const id = parseId(riderId, "rider");
     requireOwnership(auth, { riderId: id }, staffPermission);
@@ -2644,7 +3709,10 @@ import type { GraphqlParent, PayoutProfile } from "../../kernel/ports.js";
 import type { PayeeType, WithdrawStatus } from "./types.js";
 
 export type Viewer = "PLATFORM" | "STORE" | "RIDER";
-export type Parents = { riders: Map<string, GraphqlParent>; restaurants: Map<string, GraphqlParent> };
+export type Parents = {
+  riders: Map<string, GraphqlParent>;
+  restaurants: Map<string, GraphqlParent>;
+};
 export type EarningRow = {
   id: string;
   orderRef: string;
@@ -2695,7 +3763,11 @@ export type GraphEntry = {
 
 const iso = (value: Date): string => isoString(value) as string;
 export const uniqueIds = (values: (string | null | undefined)[]): string[] => [
-  ...new Set(values.filter((value): value is string => typeof value === "string" && value.length > 0)),
+  ...new Set(
+    values.filter(
+      (value): value is string => typeof value === "string" && value.length > 0,
+    ),
+  ),
 ];
 
 // R7
@@ -2715,7 +3787,11 @@ export function mapEarning(row: EarningRow, viewer: Viewer, parents: Parents) {
             deliveryCommission: major(row.deliveryMarginMinor),
             tax: major(row.platformTaxMinor),
             platformFee: major(row.platformFeeMinor),
-            totalEarnings: major(row.commissionMinor + row.deliveryMarginMinor + row.platformFeeMinor),
+            totalEarnings: major(
+              row.commissionMinor +
+                row.deliveryMarginMinor +
+                row.platformFeeMinor,
+            ),
           }
         : null,
     riderEarnings: row.riderId
@@ -2745,18 +3821,31 @@ export function mapWithdrawRequest(row: WithdrawRow, parents: Parents) {
     requestTime: iso(row.requestedAt),
     status: row.status,
     createdAt: iso(row.createdAt),
-    rider: row.payeeType === "RIDER" ? (parents.riders.get(row.payeeId) ?? null) : null,
-    store: row.payeeType === "RESTAURANT" ? (parents.restaurants.get(row.payeeId) ?? null) : null,
+    rider:
+      row.payeeType === "RIDER"
+        ? (parents.riders.get(row.payeeId) ?? null)
+        : null,
+    store:
+      row.payeeType === "RESTAURANT"
+        ? (parents.restaurants.get(row.payeeId) ?? null)
+        : null,
   };
 }
 
 export function maskAccountNumber(value: string | null): string | null {
   if (!value) return value;
-  return value.length <= 4 ? "*".repeat(value.length) : "*".repeat(value.length - 4) + value.slice(-4);
+  return value.length <= 4
+    ? "*".repeat(value.length)
+    : "*".repeat(value.length - 4) + value.slice(-4);
 }
 
 // R17
-export function mapTransaction(row: WithdrawRow, profile: PayoutProfile | null, fullAccountNumber: boolean, parents: Parents) {
+export function mapTransaction(
+  row: WithdrawRow,
+  profile: PayoutProfile | null,
+  fullAccountNumber: boolean,
+  parents: Parents,
+) {
   return {
     _id: row.id,
     amountCurrency: row.currency,
@@ -2771,18 +3860,34 @@ export function mapTransaction(row: WithdrawRow, profile: PayoutProfile | null, 
           accountName: profile.accountName,
           bankName: profile.bankName,
           accountCode: profile.accountCode,
-          accountNumber: fullAccountNumber ? profile.accountNumber : maskAccountNumber(profile.accountNumber),
+          accountNumber: fullAccountNumber
+            ? profile.accountNumber
+            : maskAccountNumber(profile.accountNumber),
         }
       : null,
-    rider: row.payeeType === "RIDER" ? (parents.riders.get(row.payeeId) ?? null) : null,
-    store: row.payeeType === "RESTAURANT" ? (parents.restaurants.get(row.payeeId) ?? null) : null,
+    rider:
+      row.payeeType === "RIDER"
+        ? (parents.riders.get(row.payeeId) ?? null)
+        : null,
+    store:
+      row.payeeType === "RESTAURANT"
+        ? (parents.restaurants.get(row.payeeId) ?? null)
+        : null,
   };
 }
 
-const orderDetails = (entry: GraphEntry) => ({ orderId: entry.orderRef, orderType: entry.orderType, paymentMethod: entry.paymentMethod });
+const orderDetails = (entry: GraphEntry) => ({
+  orderId: entry.orderRef,
+  orderType: entry.orderType,
+  paymentMethod: entry.paymentMethod,
+});
 
 // R11 (store)
-export function mapStoreDay(day: GraphDay, entries: GraphEntry[], exponent: number) {
+export function mapStoreDay(
+  day: GraphDay,
+  entries: GraphEntry[],
+  exponent: number,
+) {
   const earned = entries.reduce((total, entry) => total + entry.earnedMinor, 0);
   return {
     _id: day.key,
@@ -2798,7 +3903,11 @@ export function mapStoreDay(day: GraphDay, entries: GraphEntry[], exponent: numb
 }
 
 // R11 (rider), R31
-export function mapRiderDay(day: GraphDay, entries: GraphEntry[], exponent: number) {
+export function mapRiderDay(
+  day: GraphDay,
+  entries: GraphEntry[],
+  exponent: number,
+) {
   const fees = entries.reduce((total, entry) => total + entry.deliveryMinor, 0);
   const tips = entries.reduce((total, entry) => total + entry.tipMinor, 0);
   return {
@@ -2807,7 +3916,10 @@ export function mapRiderDay(day: GraphDay, entries: GraphEntry[], exponent: numb
     earningsArray: entries.map((entry) => ({
       tip: toMajor(entry.tipMinor, entry.exponent),
       deliveryFee: toMajor(entry.deliveryMinor, entry.exponent),
-      totalEarnings: toMajor(entry.deliveryMinor + entry.tipMinor, entry.exponent),
+      totalEarnings: toMajor(
+        entry.deliveryMinor + entry.tipMinor,
+        entry.exponent,
+      ),
       orderDetails: orderDetails(entry),
       date: iso(entry.postedAt),
     })),
@@ -2833,15 +3945,21 @@ const ALLOWED: Record<WithdrawStatus, readonly WithdrawStatus[]> = {
 };
 
 export function parseWithdrawStatus(value: string): WithdrawStatus {
-  if (!(WITHDRAW_STATUSES as readonly string[]).includes(value)) throw appError("BAD_USER_INPUT", MESSAGES.invalidStatus);
+  if (!(WITHDRAW_STATUSES as readonly string[]).includes(value))
+    throw appError("BAD_USER_INPUT", MESSAGES.invalidStatus);
   return value as WithdrawStatus;
 }
 
-export function assertWithdrawTransition(from: WithdrawStatus, to: WithdrawStatus): void {
+export function assertWithdrawTransition(
+  from: WithdrawStatus,
+  to: WithdrawStatus,
+): void {
   if (ALLOWED[from].includes(to)) return;
   throw appError(
     "BAD_USER_INPUT",
-    from === to ? `Withdraw request is already ${from}` : `Withdraw request cannot change from ${from} to ${to}`,
+    from === to
+      ? `Withdraw request is already ${from}`
+      : `Withdraw request cannot change from ${from} to ${to}`,
   );
 }
 ```
@@ -2857,4 +3975,3 @@ Expected: PASS (4 files).
 git add services/api/src/modules/finance/{args,scope,mappers,withdraw-transitions}.ts services/api/test/unit/finance
 git commit -m "feat(L7): add finance argument parsing, subject scope, mappers and withdraw transitions"
 ```
-

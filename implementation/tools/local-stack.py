@@ -96,13 +96,20 @@ def infrastructure():
     if CONFIG_FILE.exists():
         os.chmod(CONFIG_FILE, 0o600)
         config = json.loads(CONFIG_FILE.read_text())
+        if "PUBLIC_ACCESS_SECRET" not in config:
+            config["PUBLIC_ACCESS_SECRET"] = secrets.token_urlsafe(32)
+            CONFIG_FILE.write_text(json.dumps(config))
+            os.chmod(CONFIG_FILE, 0o600)
     else:
         config = {"ACCESS_TOKEN_SECRET": secrets.token_urlsafe(32),
-                  "REFRESH_TOKEN_PEPPER": secrets.token_urlsafe(32)}
+                  "REFRESH_TOKEN_PEPPER": secrets.token_urlsafe(32),
+                  "PUBLIC_ACCESS_SECRET": secrets.token_urlsafe(32)}
         fd = os.open(CONFIG_FILE, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         with os.fdopen(fd, "w") as stream:
             json.dump(config, stream)
     return {**os.environ, **config, "APP_ENV": "development", "PORT": "4100",
+            "HOST": "127.0.0.1", "PUBLIC_BASE_URL": "http://localhost:4100",
+            "GRAPHQL_BODY_LIMIT": "1mb", "PUBLIC_ACCESS_ENFORCED": "true",
             "PASSWORD_AUTH_ENABLED": "true",
             "DATABASE_URL": f"postgresql://fairbite_local:{password}@127.0.0.1:55433/fairbite_fresh",
             "REDIS_URL": "redis://127.0.0.1:56380/0",
@@ -144,7 +151,8 @@ def start(names, restart):
         cwd = ROOT
         runtime = os.environ.copy()
         for key in ("DATABASE_URL", "REDIS_URL", "ACCESS_TOKEN_SECRET", "REFRESH_TOKEN_PEPPER",
-                    "PASSWORD_AUTH_ENABLED", "CORS_ORIGINS", "PORT"):
+                    "PUBLIC_ACCESS_SECRET", "PUBLIC_ACCESS_ENFORCED", "PUBLIC_BASE_URL",
+                    "GRAPHQL_BODY_LIMIT", "HOST", "PASSWORD_AUTH_ENABLED", "CORS_ORIGINS", "PORT"):
             runtime.pop(key, None)
         if name in ("api", "worker"):
             cwd = ROOT / "services" / name

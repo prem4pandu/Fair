@@ -2,9 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4 and §6 first.
 
-**Goal:** Give every later lane a working transport (HTTP + both WebSocket protocols), the public-access handshake, user-token verification, the error contract, codecs, the `NOT_IMPLEMENTED` fallback, contract/coverage gates, the database test harness and a Playwright harness that runs the real Enatega admin and customer web apps against our API.
+**Goal:** Give every later lane a working transport (HTTP + both WebSocket protocols), the public-access handshake, user-token verification, the error contract, codecs, the `NOT_IMPLEMENTED` fallback, contract/coverage gates, the database test harness and a Playwright harness that runs the real Enatega admin and customer web apps against our API. Preserve and verify the existing `configuration` and `publicConfiguration` roots while the remaining Enatega roots are added.
 
-**Architecture:** New code lives in `services/api/src/kernel/`, `services/api/test/support/`, `tools/` and `e2e/`. `app.ts` is reduced to wiring. Three agents work in parallel: **W0-A** (kernel and transport), **W0-B** (contract tooling and gates), **W0-C** (test, coverage and E2E harness). They share no files; the lead merges A, then B, then C.
+**Architecture:** New code lives in `services/api/src/kernel/`, `services/api/test/support/`, `tools/` and `e2e/`. `app.ts` is reduced to wiring. With four total agent slots, three bounded workers may run concurrently: **W0-A** (kernel and transport), **W0-B** (contract tooling and gates), and **W0-C** (test, coverage and E2E harness), while the lead coordinates integration. Workers do not edit root `package.json`, `pnpm-lock.yaml`, `turbo.json`, `codegen.ts`, or any other shared workspace file directly. They instead report an exact dependency/script/config delta; the lead applies those queued changes serially after the owning worker packet is reviewed. Any task below that lists a lead-owned file means “request this queued lead edit.” The lead merges A, then B, then C and resolves only mechanical integration conflicts.
+
+**Original UI and network boundary:** The vendored Enatega UI remains structurally unchanged. Before the first web, Expo, emulator, device, or E2E launch, every known upstream backend URL, OTA URL, analytics/telemetry initializer, Firebase service worker, EmailJS include, Sentry DSN, and similar external initializer must be removed, configuration-gated, or fail closed when its Fair-owned configuration is absent. Browser request interception is additional evidence, not the control that makes launch safe. Every permitted transport/configuration edit is recorded in `SOURCE_PROVENANCE.json`, followed by manifest regeneration and verification. No task may fake a successful provider or backend response.
 
 **Tech stack:** as in the master plan. New dependencies: `ws` 8.22.0 (present in the offline store), `@vitest/coverage-v8` 4.1.11 (needs registry access, see master §10).
 
@@ -19,6 +21,7 @@ Owns: `services/api/src/kernel/**`, `services/api/src/app.ts`, `services/api/src
 ### Task A1: Configuration for the new transport
 
 **Files:**
+
 - Modify: `services/api/src/config.ts`
 - Modify: `services/api/.env.example`
 - Test: `services/api/test/unit/kernel/config.spec.ts`
@@ -105,41 +108,41 @@ In `services/api/src/config.ts`, extend the zod object (keep every existing key 
 Add to the `superRefine` body:
 
 ```ts
-    const canonicalKey = (secret: string | undefined) =>
-      !!secret &&
-      /^[A-Za-z0-9_-]{43}$/.test(secret) &&
-      Buffer.from(secret, "base64url").length === 32 &&
-      Buffer.from(secret, "base64url").toString("base64url") === secret;
-    if (
-      value.PUBLIC_ACCESS_ENFORCED &&
-      value.APP_ENV !== "test" &&
-      !canonicalKey(value.PUBLIC_ACCESS_SECRET)
-    )
-      context.addIssue({
-        code: "custom",
-        path: ["PUBLIC_ACCESS_SECRET"],
-        message: "Canonical 32-byte key required",
-      });
-    if (
-      value.APP_ENV === "production" &&
-      new URL(value.PUBLIC_BASE_URL).protocol !== "https:"
-    )
-      context.addIssue({
-        code: "custom",
-        path: ["PUBLIC_BASE_URL"],
-        message: "https required",
-      });
+const canonicalKey = (secret: string | undefined) =>
+  !!secret &&
+  /^[A-Za-z0-9_-]{43}$/.test(secret) &&
+  Buffer.from(secret, "base64url").length === 32 &&
+  Buffer.from(secret, "base64url").toString("base64url") === secret;
+if (
+  value.PUBLIC_ACCESS_ENFORCED &&
+  value.APP_ENV !== "test" &&
+  !canonicalKey(value.PUBLIC_ACCESS_SECRET)
+)
+  context.addIssue({
+    code: "custom",
+    path: ["PUBLIC_ACCESS_SECRET"],
+    message: "Canonical 32-byte key required",
+  });
+if (
+  value.APP_ENV === "production" &&
+  new URL(value.PUBLIC_BASE_URL).protocol !== "https:"
+)
+  context.addIssue({
+    code: "custom",
+    path: ["PUBLIC_BASE_URL"],
+    message: "https required",
+  });
 ```
 
 In `readConfig`, after parsing, set a deterministic test key when none is given so tests never need a secret:
 
 ```ts
-  const publicAccessSecret =
-    parsed.data.PUBLIC_ACCESS_SECRET ??
-    (parsed.data.APP_ENV === "test"
-      ? Buffer.alloc(32, 7).toString("base64url")
-      : undefined);
-  return { ...parsed.data, PUBLIC_ACCESS_SECRET: publicAccessSecret, origins };
+const publicAccessSecret =
+  parsed.data.PUBLIC_ACCESS_SECRET ??
+  (parsed.data.APP_ENV === "test"
+    ? Buffer.alloc(32, 7).toString("base64url")
+    : undefined);
+return { ...parsed.data, PUBLIC_ACCESS_SECRET: publicAccessSecret, origins };
 ```
 
 Append to `services/api/.env.example`:
@@ -156,6 +159,8 @@ PUBLIC_ACCESS_TTL_SECONDS=900
 USER_TOKEN_TTL_SECONDS=900
 ```
 
+`PUBLIC_ACCESS_SECRET` is mandatory for non-test local startup when enforcement is enabled. Task C4 must therefore make `tools/local-stack.py` generate one canonical random 32-byte base64url secret on the first start, persist it in the existing ignored runtime state with mode `0600`, and reuse it across restarts. The tool injects `HOST`, `PUBLIC_BASE_URL`, `GRAPHQL_BODY_LIMIT`, `PUBLIC_ACCESS_ENFORCED`, `PUBLIC_ACCESS_TTL_SECONDS`, and the persisted secret into the API process. It must never print, commit, or pass this secret to a frontend process. A unit test for the local-stack configuration path must prove generation, permissions, reuse, and redaction before enforcement is enabled.
+
 - [ ] **Step 4: Run the test and the existing config test**
 
 Run: `pnpm --filter @fairbite/api exec vitest run test/unit/kernel/config.spec.ts test/config.spec.ts`
@@ -171,6 +176,7 @@ git commit -m "feat(L0): add transport and public-access configuration"
 ### Task A2: Error contract
 
 **Files:**
+
 - Create: `services/api/src/kernel/errors.ts`
 - Create: `services/api/src/kernel/http-status.plugin.ts`
 - Test: `services/api/test/unit/kernel/errors.spec.ts`
@@ -191,7 +197,9 @@ import {
 describe("error contract", () => {
   it("keeps allow-listed codes and their messages", () => {
     const error = appError("BAD_USER_INPUT", "Minimum order not met");
-    expect(formatError({ message: error.message, extensions: error.extensions })).toEqual({
+    expect(
+      formatError({ message: error.message, extensions: error.extensions }),
+    ).toEqual({
       message: "Minimum order not met",
       extensions: { code: "BAD_USER_INPUT" },
     });
@@ -261,9 +269,15 @@ const defaults = {
   PUBLIC_ACCESS_DENIED: { status: 403, message: "Unauthorized: invalid token" },
   RATE_LIMITED: { status: 200, message: "Too many attempts, try again later" },
   CONFLICT: { status: 200, message: "The resource changed, try again" },
-  NOT_IMPLEMENTED: { status: 200, message: "This operation is not available yet" },
+  NOT_IMPLEMENTED: {
+    status: 200,
+    message: "This operation is not available yet",
+  },
   SERVICE_UNAVAILABLE: { status: 503, message: "Service unavailable" },
-  PROVIDER_UNAVAILABLE: { status: 200, message: "This service is not available" },
+  PROVIDER_UNAVAILABLE: {
+    status: 200,
+    message: "This service is not available",
+  },
   INTERNAL_SERVER_ERROR: { status: 500, message: "GraphQL request failed" },
   // Produced by graphql-js / Apollo before resolvers run; passed through unchanged.
   GRAPHQL_VALIDATION_FAILED: { status: 400, message: "Invalid request" },
@@ -339,20 +353,27 @@ import { statusFor } from "./errors.js";
 // status (reference/01 §3.4) see 401/403/503 rather than 200.
 export const httpStatusPlugin: ApolloServerPlugin = {
   async requestDidStart() {
+    let status = 200;
     return {
-      async willSendResponse({ response, errors }) {
-        if (!errors?.length) return;
-        const status = Math.max(
+      async didEncounterErrors({ errors }) {
+        status = Math.max(
+          status,
           ...errors.map((error) =>
-            statusFor(String(error.extensions?.code ?? "INTERNAL_SERVER_ERROR")),
+            statusFor(
+              String(error.extensions?.code ?? "INTERNAL_SERVER_ERROR"),
+            ),
           ),
         );
+      },
+      async willSendResponse({ response }) {
         if (status !== 200) response.http.status = status;
       },
     };
   },
 };
 ```
+
+Apollo Server's `willSendResponse` hook does not receive an `errors` argument. `didEncounterErrors` records the most severe formatted error status for the request, and `willSendResponse` applies it to `response.http.status`. Extend the unit test with a typed plugin-hook harness covering a successful response and mixed 200/401/403/503 errors, then assert through `transport.integration.spec.ts` that resolver, validation, and service-unavailable failures produce the intended HTTP status. Do not inspect Apollo response internals that differ between single and incremental bodies.
 
 - [ ] **Step 4: Run the test**
 
@@ -369,6 +390,7 @@ git commit -m "feat(L0): add error contract and HTTP status plugin"
 ### Task A3: Codecs — ids, money, time, geo, pagination
 
 **Files:**
+
 - Create: `services/api/src/kernel/ids.ts`, `money.ts`, `time.ts`, `geo.ts`, `pagination.ts`
 - Test: `services/api/test/unit/kernel/codecs.spec.ts`
 
@@ -378,8 +400,17 @@ git commit -m "feat(L0): add error contract and HTTP status plugin"
 // services/api/test/unit/kernel/codecs.spec.ts
 import { describe, expect, it } from "vitest";
 import { newId, parseId } from "../../../src/kernel/ids.js";
-import { toMinor, toMajor, sumMinor, percentOf } from "../../../src/kernel/money.js";
-import { isoString, epochMillisString, parseClientDate } from "../../../src/kernel/time.js";
+import {
+  toMinor,
+  toMajor,
+  sumMinor,
+  percentOf,
+} from "../../../src/kernel/money.js";
+import {
+  isoString,
+  epochMillisString,
+  parseClientDate,
+} from "../../../src/kernel/time.js";
 import {
   point,
   parseCoordinate,
@@ -395,7 +426,9 @@ describe("ids", () => {
   it("creates time-ordered UUIDv7 ids", () => {
     const a = newId();
     const b = newId();
-    expect(a).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    expect(a).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+    );
     expect(a < b).toBe(true);
   });
   it("rejects malformed ids with BAD_USER_INPUT", () => {
@@ -405,24 +438,31 @@ describe("ids", () => {
 });
 
 describe("money", () => {
-  it("converts major floats to integer minor units with half-up rounding", () => {
-    expect(toMinor(12.345, 2)).toBe(1235);
-    expect(toMinor(0.1 + 0.2, 2)).toBe(30);
-    expect(toMinor(1000, 0)).toBe(1000);
-    expect(toMinor(1.2345, 3)).toBe(1235);
+  it("converts decimal wire values to bigint minor units with half-up rounding", () => {
+    expect(toMinor("12.345", 2)).toBe(1235n);
+    expect(toMinor("0.30", 2)).toBe(30n);
+    expect(toMinor("1000", 0)).toBe(1000n);
+    expect(toMinor("1.2345", 3)).toBe(1235n);
   });
-  it("converts back for the wire", () => {
-    expect(toMajor(1235, 2)).toBe(12.35);
-    expect(toMajor(5, 0)).toBe(5);
+  it("converts back to an exact decimal wire string", () => {
+    expect(toMajor(1235n, 2)).toBe("12.35");
+    expect(toMajor(5n, 0)).toBe("5");
   });
-  it("rejects non-finite and negative amounts where required", () => {
-    expect(() => toMinor(Number.NaN, 2)).toThrow();
-    expect(() => toMinor(-1, 2, { allowNegative: false })).toThrow();
+  it("rejects malformed, over-precision and negative amounts where required", () => {
+    expect(() => toMinor("NaN", 2)).toThrow();
+    expect(() => toMinor("1.234", 2, { rounding: "reject" })).toThrow();
+    expect(() => toMinor("-1", 2, { allowNegative: false })).toThrow();
   });
-  it("sums and takes integer percentages", () => {
-    expect(sumMinor([100, 250, 1])).toBe(351);
-    expect(percentOf(1000, 7.5)).toBe(75);
-    expect(percentOf(999, 10)).toBe(100);
+  it("keeps arithmetic exact beyond Number.MAX_SAFE_INTEGER", () => {
+    const boundary = BigInt(Number.MAX_SAFE_INTEGER) + 10_000n;
+    expect(sumMinor([boundary, 250n, 1n])).toBe(boundary + 251n);
+    expect(percentOf(boundary, 750n)).toBe(
+      (boundary * 750n + 5_000n) / 10_000n,
+    );
+    expect(toMajor(boundary, 2)).toBe("90071992547509.91");
+  });
+  it("rejects unsafe number inputs at the wire boundary", () => {
+    expect(() => toMinor(Number.MAX_SAFE_INTEGER + 1, 2)).toThrow();
   });
 });
 
@@ -434,7 +474,9 @@ describe("time", () => {
     expect(isoString(null)).toBeNull();
   });
   it("parses YYYY-MM-DD and full ISO client dates", () => {
-    expect(parseClientDate("2026-10-08")?.toISOString()).toBe("2026-10-08T00:00:00.000Z");
+    expect(parseClientDate("2026-10-08")?.toISOString()).toBe(
+      "2026-10-08T00:00:00.000Z",
+    );
     expect(parseClientDate("2026-10-07T18:30:00.000Z")?.toISOString()).toBe(
       "2026-10-07T18:30:00.000Z",
     );
@@ -444,7 +486,10 @@ describe("time", () => {
 
 describe("geo", () => {
   it("builds GeoJSON points as [lng, lat]", () => {
-    expect(point(101.7, 3.1)).toEqual({ type: "Point", coordinates: [101.7, 3.1] });
+    expect(point(101.7, 3.1)).toEqual({
+      type: "Point",
+      coordinates: [101.7, 3.1],
+    });
   });
   it("parses numeric strings and rejects out-of-range coordinates", () => {
     expect(parseCoordinate("3.14", "latitude")).toBe(3.14);
@@ -452,12 +497,35 @@ describe("geo", () => {
     expect(() => parseCoordinate("181", "longitude")).toThrow();
   });
   it("validates closed polygon rings", () => {
-    const ring = [[[0, 0], [0, 1], [1, 1], [0, 0]]];
+    const ring = [
+      [
+        [0, 0],
+        [0, 1],
+        [1, 1],
+        [0, 0],
+      ],
+    ];
     expect(polygon(ring)).toEqual({ type: "Polygon", coordinates: ring });
-    expect(() => polygon([[[0, 0], [0, 1], [1, 1]]])).toThrow(/closed/);
+    expect(() =>
+      polygon([
+        [
+          [0, 0],
+          [0, 1],
+          [1, 1],
+        ],
+      ]),
+    ).toThrow(/closed/);
   });
   it("checks point-in-polygon", () => {
-    const square = polygon([[[0, 0], [0, 2], [2, 2], [2, 0], [0, 0]]]);
+    const square = polygon([
+      [
+        [0, 0],
+        [0, 2],
+        [2, 2],
+        [2, 0],
+        [0, 0],
+      ],
+    ]);
     expect(containsPoint(square, 1, 1)).toBe(true);
     expect(containsPoint(square, 3, 1)).toBe(false);
   });
@@ -466,17 +534,25 @@ describe("geo", () => {
   });
   it("normalises opening times to [HH, MM] arrays and evaluates them in a timezone", () => {
     const times = openingTimes([
-      { day: "THU", times: [{ startTime: ["09", "00"], endTime: ["17", "30"] }] },
+      {
+        day: "THU",
+        times: [{ startTime: ["09", "00"], endTime: ["17", "30"] }],
+      },
     ]);
     expect(times[0].times[0].startTime).toEqual(["09", "00"]);
     // 2026-10-08 is a Thursday; 10:00 in Asia/Kuala_Lumpur is 02:00Z.
-    expect(isOpenAt(times, new Date("2026-10-08T02:00:00Z"), "Asia/Kuala_Lumpur")).toBe(true);
-    expect(isOpenAt(times, new Date("2026-10-08T10:00:00Z"), "Asia/Kuala_Lumpur")).toBe(false);
+    expect(
+      isOpenAt(times, new Date("2026-10-08T02:00:00Z"), "Asia/Kuala_Lumpur"),
+    ).toBe(true);
+    expect(
+      isOpenAt(times, new Date("2026-10-08T10:00:00Z"), "Asia/Kuala_Lumpur"),
+    ).toBe(false);
   });
   it("accepts HH:MM strings from web forms", () => {
     expect(
-      openingTimes([{ day: "MON", times: [{ startTime: "08:15", endTime: "20:00" }] }])[0]
-        .times[0],
+      openingTimes([
+        { day: "MON", times: [{ startTime: "08:15", endTime: "20:00" }] },
+      ])[0].times[0],
     ).toEqual({ startTime: ["08", "15"], endTime: ["20", "00"] });
   });
 });
@@ -501,7 +577,12 @@ describe("pagination", () => {
       prevPage: 1,
     });
     expect(p2(["o"], 21, window).orders).toEqual(["o"]);
-    expect(p4(["t"], 21)).toEqual({ success: true, message: null, data: ["t"], pagination: { total: 21 } });
+    expect(p4(["t"], 21)).toEqual({
+      success: true,
+      message: null,
+      data: ["t"],
+      pagination: { total: 21 },
+    });
     expect(p6("tickets", ["x"], 21, window)).toEqual({
       tickets: ["x"],
       docsCount: 21,
@@ -557,42 +638,79 @@ export function parseOptionalId(value: unknown, field: string): string | null {
 // services/api/src/kernel/money.ts
 import { appError } from "./errors.js";
 
-// Half-up rounding on the decimal string avoids binary float artefacts (0.1 + 0.2).
+// All domain arithmetic uses bigint minor units. Decimal parsing happens once at
+// an explicit wire boundary; callers should pass the original decimal string.
 export function toMinor(
-  major: number,
+  major: string | number,
   exponent: number,
-  { allowNegative = false }: { allowNegative?: boolean } = {},
-): number {
-  if (!Number.isFinite(major)) throw appError("BAD_USER_INPUT", "Invalid amount");
-  if (!allowNegative && major < 0) throw appError("BAD_USER_INPUT", "Amount must not be negative");
-  const scaled = Number((Math.abs(major) * 10 ** exponent).toPrecision(15));
-  const minor = Math.floor(scaled + 0.5) * Math.sign(major || 1);
-  if (!Number.isSafeInteger(minor)) throw appError("BAD_USER_INPUT", "Amount too large");
-  return minor === 0 ? 0 : minor;
+  options: { allowNegative?: boolean; rounding?: "half-up" | "reject" } = {},
+): bigint {
+  const { allowNegative = false, rounding = "half-up" } = options;
+  if (!Number.isInteger(exponent) || exponent < 0 || exponent > 18)
+    throw appError("BAD_USER_INPUT", "Invalid currency exponent");
+  if (
+    typeof major === "number" &&
+    (!Number.isFinite(major) || !Number.isSafeInteger(major * 10 ** exponent))
+  )
+    throw appError(
+      "BAD_USER_INPUT",
+      "Unsafe numeric amount; send a decimal string",
+    );
+  const match = String(major)
+    .trim()
+    .match(/^(-?)(\d+)(?:\.(\d+))?$/);
+  if (!match) throw appError("BAD_USER_INPUT", "Invalid amount");
+  const negative = match[1] === "-";
+  if (negative && !allowNegative)
+    throw appError("BAD_USER_INPUT", "Amount must not be negative");
+  const fraction = match[3] ?? "";
+  const discarded = fraction.slice(exponent);
+  if (rounding === "reject" && /[1-9]/.test(discarded))
+    throw appError("BAD_USER_INPUT", "Amount has too many decimal places");
+  const digits = `${match[2]}${fraction.slice(0, exponent).padEnd(exponent, "0")}`;
+  let minor = BigInt(digits);
+  if (rounding === "half-up" && (discarded[0] ?? "0") >= "5") minor += 1n;
+  if (negative) minor = -minor;
+  return minor === 0n ? 0n : minor;
 }
-export function toMajor(minor: number | bigint, exponent: number): number {
-  return Number(minor) / 10 ** exponent;
+export function toMajor(minor: bigint, exponent: number): string {
+  const negative = minor < 0n;
+  const digits = (negative ? -minor : minor)
+    .toString()
+    .padStart(exponent + 1, "0");
+  const value =
+    exponent === 0
+      ? digits
+      : `${digits.slice(0, -exponent)}.${digits.slice(-exponent)}`;
+  return negative ? `-${value}` : value;
 }
-export function sumMinor(values: number[]): number {
-  return values.reduce((total, value) => total + value, 0);
+export function sumMinor(values: readonly bigint[]): bigint {
+  return values.reduce((total, value) => total + value, 0n);
 }
-// Integer percentage of a minor amount, half-up. percent may have decimals (7.5 %).
-export function percentOf(minor: number, percent: number): number {
-  return Math.floor((minor * Math.round(percent * 100)) / 10000 + 0.5);
+// Basis points are integer configuration (750n = 7.5%); result is half-up.
+export function percentOf(minor: bigint, basisPoints: bigint): bigint {
+  const numerator = minor * basisPoints;
+  return (numerator + (numerator >= 0n ? 5_000n : -5_000n)) / 10_000n;
 }
 ```
+
+Never convert a persisted, summed, taxed, discounted, commissioned, refunded, or settled amount to `number`. If an unchanged Enatega GraphQL field requires `Float`, convert only in its resolver after checking `Number.isSafeInteger(Number(minor))`; otherwise fail closed with a bounded error. Prefer exact decimal strings or a bigint-safe scalar for new contracts. The boundary tests above are mandatory.
 
 ```ts
 // services/api/src/kernel/time.ts
 export function isoString(value: Date | null | undefined): string | null {
   return value ? value.toISOString() : null;
 }
-export function epochMillisString(value: Date | null | undefined): string | null {
+export function epochMillisString(
+  value: Date | null | undefined,
+): string | null {
   return value ? String(value.getTime()) : null;
 }
 export function parseClientDate(value: unknown): Date | null {
   if (typeof value !== "string" || !value.trim()) return null;
-  const text = /^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00.000Z` : value;
+  const text = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? `${value}T00:00:00.000Z`
+    : value;
   const date = new Date(text);
   return Number.isNaN(date.getTime()) ? null : date;
 }
@@ -612,10 +730,17 @@ export const point = (longitude: number, latitude: number): Point => ({
   type: "Point",
   coordinates: [longitude, latitude],
 });
-export function parseCoordinate(value: unknown, axis: "latitude" | "longitude"): number {
+export function parseCoordinate(
+  value: unknown,
+  axis: "latitude" | "longitude",
+): number {
   const number = typeof value === "string" ? Number(value.trim()) : value;
   const limit = axis === "latitude" ? 90 : 180;
-  if (typeof number !== "number" || !Number.isFinite(number) || Math.abs(number) > limit)
+  if (
+    typeof number !== "number" ||
+    !Number.isFinite(number) ||
+    Math.abs(number) > limit
+  )
     throw appError("BAD_USER_INPUT", `Invalid ${axis}`);
   return number;
 }
@@ -628,10 +753,10 @@ export function polygon(rings: unknown): Polygon {
     const points = ring.map((pair) => {
       if (!Array.isArray(pair) || pair.length !== 2)
         throw appError("BAD_USER_INPUT", "Invalid polygon");
-      return [parseCoordinate(pair[0], "longitude"), parseCoordinate(pair[1], "latitude")] as [
-        number,
-        number,
-      ];
+      return [
+        parseCoordinate(pair[0], "longitude"),
+        parseCoordinate(pair[1], "latitude"),
+      ] as [number, number];
     });
     const [first, last] = [points[0], points[points.length - 1]];
     if (first[0] !== last[0] || first[1] !== last[1])
@@ -641,13 +766,20 @@ export function polygon(rings: unknown): Polygon {
   return { type: "Polygon", coordinates: parsed };
 }
 // Ray casting on the outer ring; holes (rings 1..n) exclude.
-export function containsPoint(shape: Polygon, longitude: number, latitude: number): boolean {
+export function containsPoint(
+  shape: Polygon,
+  longitude: number,
+  latitude: number,
+): boolean {
   const inRing = (ring: [number, number][]) => {
     let inside = false;
     for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
       const [xi, yi] = ring[i];
       const [xj, yj] = ring[j];
-      if (yi > latitude !== yj > latitude && longitude < ((xj - xi) * (latitude - yi)) / (yj - yi) + xi)
+      if (
+        yi > latitude !== yj > latitude &&
+        longitude < ((xj - xi) * (latitude - yi)) / (yj - yi) + xi
+      )
         inside = !inside;
     }
     return inside;
@@ -655,11 +787,18 @@ export function containsPoint(shape: Polygon, longitude: number, latitude: numbe
   const [outer, ...holes] = shape.coordinates;
   return inRing(outer) && !holes.some(inRing);
 }
-export function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+export function haversineKm(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+): number {
   const rad = Math.PI / 180;
   const a =
     Math.sin(((lat2 - lat1) * rad) / 2) ** 2 +
-    Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(((lng2 - lng1) * rad) / 2) ** 2;
+    Math.cos(lat1 * rad) *
+      Math.cos(lat2 * rad) *
+      Math.sin(((lng2 - lng1) * rad) / 2) ** 2;
   return 2 * 6371.0088 * Math.asin(Math.sqrt(a));
 }
 
@@ -668,24 +807,36 @@ type Day = (typeof days)[number];
 type Slot = { startTime: [string, string]; endTime: [string, string] };
 export type OpeningTimes = { day: Day; times: Slot[] }[];
 function hhmm(value: unknown): [string, string] {
-  const parts = Array.isArray(value) ? value.map(String) : String(value ?? "").split(":");
-  if (parts.length !== 2 || !/^\d{1,2}$/.test(parts[0]) || !/^\d{1,2}$/.test(parts[1]))
+  const parts = Array.isArray(value)
+    ? value.map(String)
+    : String(value ?? "").split(":");
+  if (
+    parts.length !== 2 ||
+    !/^\d{1,2}$/.test(parts[0]) ||
+    !/^\d{1,2}$/.test(parts[1])
+  )
     throw appError("BAD_USER_INPUT", "Invalid opening time");
   const [h, m] = parts.map(Number);
-  if (h > 23 || m > 59) throw appError("BAD_USER_INPUT", "Invalid opening time");
+  if (h > 23 || m > 59)
+    throw appError("BAD_USER_INPUT", "Invalid opening time");
   return [String(h).padStart(2, "0"), String(m).padStart(2, "0")];
 }
 export function openingTimes(input: unknown): OpeningTimes {
-  if (!Array.isArray(input)) throw appError("BAD_USER_INPUT", "Invalid opening times");
+  if (!Array.isArray(input))
+    throw appError("BAD_USER_INPUT", "Invalid opening times");
   return input.map((entry) => {
     const day = String(entry?.day ?? "") as Day;
-    if (!days.includes(day)) throw appError("BAD_USER_INPUT", "Invalid opening day");
+    if (!days.includes(day))
+      throw appError("BAD_USER_INPUT", "Invalid opening day");
     const times = (Array.isArray(entry.times) ? entry.times : []).map(
       (slot: { startTime: unknown; endTime: unknown }) => {
         const startTime = hhmm(slot.startTime);
         const endTime = hhmm(slot.endTime);
         if (startTime.join("") > endTime.join(""))
-          throw appError("BAD_USER_INPUT", "Opening time must end after it starts");
+          throw appError(
+            "BAD_USER_INPUT",
+            "Opening time must end after it starts",
+          );
         return { startTime, endTime };
       },
     );
@@ -693,7 +844,11 @@ export function openingTimes(input: unknown): OpeningTimes {
   });
 }
 // Inclusive bounds, no overnight slots — the same semantics the apps display (reference/02 §0.5).
-export function isOpenAt(times: OpeningTimes, at: Date, timeZone: string): boolean {
+export function isOpenAt(
+  times: OpeningTimes,
+  at: Date,
+  timeZone: string,
+): boolean {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone,
     weekday: "short",
@@ -701,13 +856,17 @@ export function isOpenAt(times: OpeningTimes, at: Date, timeZone: string): boole
     minute: "2-digit",
     hourCycle: "h23",
   }).formatToParts(at);
-  const weekday = parts.find((p) => p.type === "weekday")!.value.toUpperCase().slice(0, 3);
+  const weekday = parts
+    .find((p) => p.type === "weekday")!
+    .value.toUpperCase()
+    .slice(0, 3);
   const clock = `${parts.find((p) => p.type === "hour")!.value}${parts.find((p) => p.type === "minute")!.value}`;
   return times
     .filter((entry) => entry.day === weekday)
     .some((entry) =>
       entry.times.some(
-        (slot) => slot.startTime.join("") <= clock && clock <= slot.endTime.join(""),
+        (slot) =>
+          slot.startTime.join("") <= clock && clock <= slot.endTime.join(""),
       ),
     );
 }
@@ -725,9 +884,12 @@ export function paginate({
   limit?: number | null;
   maxLimit?: number;
 }): Window {
-  const safePage = Number.isInteger(page) && (page as number) > 0 ? (page as number) : 1;
+  const safePage =
+    Number.isInteger(page) && (page as number) > 0 ? (page as number) : 1;
   const safeLimit =
-    Number.isInteger(limit) && (limit as number) > 0 ? Math.min(limit as number, maxLimit) : 10;
+    Number.isInteger(limit) && (limit as number) > 0
+      ? Math.min(limit as number, maxLimit)
+      : 10;
   return { page: safePage, limit: safeLimit, skip: (safePage - 1) * safeLimit };
 }
 const pages = (total: number, window: Window) => {
@@ -768,9 +930,17 @@ export const p5 = <T>(data: T[], total: number, window: Window) => {
     hasPrevPage: currentPage > 1,
   };
 };
-export const p6 = <K extends string, T>(key: K, rows: T[], docsCount: number, window: Window) => {
+export const p6 = <K extends string, T>(
+  key: K,
+  rows: T[],
+  docsCount: number,
+  window: Window,
+) => {
   const { totalPages, currentPage } = pages(docsCount, window);
-  return { [key]: rows, docsCount, totalPages, currentPage } as Record<K, T[]> & {
+  return { [key]: rows, docsCount, totalPages, currentPage } as Record<
+    K,
+    T[]
+  > & {
     docsCount: number;
     totalPages: number;
     currentPage: number;
@@ -795,6 +965,7 @@ git commit -m "feat(L0): add id, money, time, geo and pagination codecs"
 Spec: `reference/01-client-transport-and-launch.md` §2.5 (S1–S10). Read it before starting.
 
 **Files:**
+
 - Create: `contracts/enatega/kernel.graphql`
 - Create: `services/api/src/kernel/public-access/token.ts`
 - Create: `services/api/src/kernel/public-access/gate.ts`
@@ -847,20 +1018,38 @@ const at = (iso: string) => ({ now: () => new Date(iso) });
 
 describe("public-access tokens", () => {
   it("mints a token bound to the nonce with an ISO expiry", async () => {
-    const tokens = new PublicAccessTokens(secret, 900, at("2026-10-08T00:00:00Z"));
+    const tokens = new PublicAccessTokens(
+      secret,
+      900,
+      at("2026-10-08T00:00:00Z"),
+    );
     const minted = await tokens.mint("device-1");
     expect(minted.hehe).toBe("2026-10-08T00:15:00.000Z");
-    expect(await tokens.verify(minted.experience, "device-1")).toEqual({ ok: true });
+    expect(await tokens.verify(minted.experience, "device-1")).toEqual({
+      ok: true,
+    });
   });
   it("re-minting for the same nonce leaves earlier tokens valid", async () => {
-    const tokens = new PublicAccessTokens(secret, 900, at("2026-10-08T00:00:00Z"));
+    const tokens = new PublicAccessTokens(
+      secret,
+      900,
+      at("2026-10-08T00:00:00Z"),
+    );
     const first = await tokens.mint("n");
     await tokens.mint("n");
     expect(await tokens.verify(first.experience, "n")).toEqual({ ok: true });
   });
   it("reports each failure with the exact client-recognised reason", async () => {
-    const early = new PublicAccessTokens(secret, 900, at("2026-10-08T00:00:00Z"));
-    const late = new PublicAccessTokens(secret, 900, at("2026-10-08T01:00:00Z"));
+    const early = new PublicAccessTokens(
+      secret,
+      900,
+      at("2026-10-08T00:00:00Z"),
+    );
+    const late = new PublicAccessTokens(
+      secret,
+      900,
+      at("2026-10-08T01:00:00Z"),
+    );
     const minted = await early.mint("n");
     expect(await early.verify(minted.experience, "other")).toEqual({
       ok: false,
@@ -876,9 +1065,15 @@ describe("public-access tokens", () => {
     });
   });
   it("accepts opaque nonces with dots, spaces and a leading dash", async () => {
-    const tokens = new PublicAccessTokens(secret, 900, at("2026-10-08T00:00:00Z"));
+    const tokens = new PublicAccessTokens(
+      secret,
+      900,
+      at("2026-10-08T00:00:00Z"),
+    );
     const nonce = "-iPhone14,2 17.0-lq3k-0123456789abcdef0123456789abcdef";
-    expect(await tokens.verify((await tokens.mint(nonce)).experience, nonce)).toEqual({ ok: true });
+    expect(
+      await tokens.verify((await tokens.mint(nonce)).experience, nonce),
+    ).toEqual({ ok: true });
   });
 });
 
@@ -890,19 +1085,33 @@ describe("gate decision", () => {
       "mutation BackgroundPublicToken { metricsGeneral { experience hehe } }",
       "mutation { metricsGeneral { experience hehe } }",
     ])
-      expect(await gateDecision({ query }, { nonce: "n" }, ok)).toEqual({ pass: true });
+      expect(await gateDecision({ query }, { nonce: "n" }, ok)).toEqual({
+        pass: true,
+      });
   });
   it("requires a nonce for metricsGeneral", async () => {
     expect(
-      await gateDecision({ query: "mutation { metricsGeneral { experience } }" }, {}, ok),
+      await gateDecision(
+        { query: "mutation { metricsGeneral { experience } }" },
+        {},
+        ok,
+      ),
     ).toEqual({ pass: false, message: "Unauthorized: nonce header missing" });
   });
   it("requires bop-auth and nonce for every other operation", async () => {
-    expect(await gateDecision({ query: "{ configuration { _id } }" }, { nonce: "n" }, ok)).toEqual(
-      { pass: false, message: "Unauthorized: token missing" },
-    );
     expect(
-      await gateDecision({ query: "{ configuration { _id } }" }, { "bop-auth": "Bearer t" }, ok),
+      await gateDecision(
+        { query: "{ configuration { _id } }" },
+        { nonce: "n" },
+        ok,
+      ),
+    ).toEqual({ pass: false, message: "Unauthorized: token missing" });
+    expect(
+      await gateDecision(
+        { query: "{ configuration { _id } }" },
+        { "bop-auth": "Bearer t" },
+        ok,
+      ),
     ).toEqual({ pass: false, message: "Unauthorized: nonce header missing" });
     expect(
       await gateDecision(
@@ -914,16 +1123,26 @@ describe("gate decision", () => {
   });
   it("treats an empty bop-auth as missing", async () => {
     expect(
-      await gateDecision({ query: "{ a }" }, { "bop-auth": "", nonce: "n" }, ok),
+      await gateDecision(
+        { query: "{ a }" },
+        { "bop-auth": "", nonce: "n" },
+        ok,
+      ),
     ).toEqual({ pass: false, message: "Unauthorized: token missing" });
   });
   it("does not gate mixed documents that include metricsGeneral and another root", async () => {
     expect(
-      await gateDecision({ query: "mutation { metricsGeneral { hehe } other }" }, { nonce: "n" }, ok),
+      await gateDecision(
+        { query: "mutation { metricsGeneral { hehe } other }" },
+        { nonce: "n" },
+        ok,
+      ),
     ).toEqual({ pass: false, message: "Unauthorized: token missing" });
   });
   it("leaves unparsable bodies to Apollo (it returns GRAPHQL_PARSE_FAILED)", async () => {
-    expect(await gateDecision({ query: "{{{" }, {}, ok)).toEqual({ pass: true });
+    expect(await gateDecision({ query: "{{{" }, {}, ok)).toEqual({
+      pass: true,
+    });
   });
 });
 ```
@@ -982,7 +1201,8 @@ export class PublicAccessTokens {
         algorithms: ["HS256"],
         currentDate: this.clock.now(),
       });
-      if (payload.typ !== "public") return { ok: false, message: "Unauthorized: invalid token" };
+      if (payload.typ !== "public")
+        return { ok: false, message: "Unauthorized: invalid token" };
       if (payload.nonce !== nonce)
         return { ok: false, message: "Unauthorized: fingerprint mismatch" };
       return { ok: true };
@@ -1008,7 +1228,10 @@ const header = (headers: Headers, name: string) => {
 };
 // Only metricsGeneral is exempt, and only when it is the sole root field of the
 // operation that will execute (operationName or the single operation).
-function isHandshakeOnly(body: { query?: unknown; operationName?: unknown }): boolean | null {
+function isHandshakeOnly(body: {
+  query?: unknown;
+  operationName?: unknown;
+}): boolean | null {
   if (typeof body.query !== "string") return null;
   let document;
   try {
@@ -1043,11 +1266,16 @@ export async function gateDecision(
   if (handshake === null) return { pass: true };
   const nonce = header(headers, "nonce");
   if (handshake)
-    return nonce ? { pass: true } : { pass: false, message: "Unauthorized: nonce header missing" };
+    return nonce
+      ? { pass: true }
+      : { pass: false, message: "Unauthorized: nonce header missing" };
   const bearer = header(headers, "bop-auth");
-  const token = bearer.toLowerCase().startsWith("bearer ") ? bearer.slice(7).trim() : bearer;
+  const token = bearer.toLowerCase().startsWith("bearer ")
+    ? bearer.slice(7).trim()
+    : bearer;
   if (!token) return { pass: false, message: "Unauthorized: token missing" };
-  if (!nonce) return { pass: false, message: "Unauthorized: nonce header missing" };
+  if (!nonce)
+    return { pass: false, message: "Unauthorized: nonce header missing" };
   const result = await verify(token, nonce);
   return result.ok ? { pass: true } : { pass: false, message: result.message };
 }
@@ -1058,14 +1286,30 @@ export function publicAccessMiddleware(
   return async (request: Request, response: Response, next: NextFunction) => {
     if (!enforced || request.method !== "POST") return next();
     if (Array.isArray(request.body)) {
-      response.status(400).json({ errors: [{ message: "Batched requests are not supported", extensions: { code: "BAD_USER_INPUT" } }] });
+      response.status(400).json({
+        errors: [
+          {
+            message: "Batched requests are not supported",
+            extensions: { code: "BAD_USER_INPUT" },
+          },
+        ],
+      });
       return;
     }
-    const decision = await gateDecision(request.body ?? {}, request.headers, verify);
+    const decision = await gateDecision(
+      request.body ?? {},
+      request.headers,
+      verify,
+    );
     if (decision.pass) return next();
     response.status(403).json({
       data: null,
-      errors: [{ message: decision.message, extensions: { code: "PUBLIC_ACCESS_DENIED" } }],
+      errors: [
+        {
+          message: decision.message,
+          extensions: { code: "PUBLIC_ACCESS_DENIED" },
+        },
+      ],
     });
   };
 }
@@ -1080,9 +1324,13 @@ import type { RequestContext } from "../context.js";
 
 @Resolver()
 export class PublicAccessResolver {
-  constructor(@Inject(PublicAccessTokens) private readonly tokens: PublicAccessTokens) {}
+  constructor(
+    @Inject(PublicAccessTokens) private readonly tokens: PublicAccessTokens,
+  ) {}
   // The gate has already required a non-empty nonce for this operation.
-  @Mutation("metricsGeneral") metricsGeneral(@Context() context: RequestContext) {
+  @Mutation("metricsGeneral") metricsGeneral(
+    @Context() context: RequestContext,
+  ) {
     return this.tokens.mint(context.nonce);
   }
 }
@@ -1103,6 +1351,7 @@ git commit -m "feat(L0): add metricsGeneral public-access handshake and gate"
 ### Task A5: Request context, user tokens and auth guards
 
 **Files:**
+
 - Create: `services/api/src/kernel/context.ts`
 - Create: `services/api/src/kernel/auth/tokens.ts`
 - Create: `services/api/src/kernel/auth/guards.ts`
@@ -1115,7 +1364,12 @@ git commit -m "feat(L0): add metricsGeneral public-access handshake and gate"
 // services/api/test/unit/kernel/auth.spec.ts
 import { describe, expect, it } from "vitest";
 import { UserTokens } from "../../../src/kernel/auth/tokens.js";
-import { resolveAuth, requireAuth, requirePermission, requireOwnership } from "../../../src/kernel/auth/guards.js";
+import {
+  resolveAuth,
+  requireAuth,
+  requirePermission,
+  requireOwnership,
+} from "../../../src/kernel/auth/guards.js";
 
 const secret = Buffer.alloc(32, 3).toString("base64url");
 const clock = (iso: string) => ({ now: () => new Date(iso) });
@@ -1125,12 +1379,17 @@ describe("user tokens", () => {
   it("issues JWTs with exp whose payload segment is atob-safe", async () => {
     const tokens = new UserTokens(secret, 900, clock("2026-10-08T00:00:00Z"));
     for (let i = 0; i < 50; i++) {
-      const { token, expiresAt } = await tokens.issue({ sub: `user-${i}`, typ: "RESTAURANT", sid: `s-${i}` });
+      const { token, expiresAt } = await tokens.issue({
+        sub: `user-${i}`,
+        typ: "RESTAURANT",
+        sid: `s-${i}`,
+      });
       const payload = token.split(".")[1];
       expect(payload).not.toMatch(/[-_]/);
-      expect(JSON.parse(atob(payload + "=".repeat((4 - (payload.length % 4)) % 4))).exp).toBe(
-        Math.floor(expiresAt.getTime() / 1000),
-      );
+      expect(
+        JSON.parse(atob(payload + "=".repeat((4 - (payload.length % 4)) % 4)))
+          .exp,
+      ).toBe(Math.floor(expiresAt.getTime() / 1000));
     }
   });
 });
@@ -1141,39 +1400,75 @@ describe("guards", () => {
   it("returns null for anonymous requests and auth for valid tokens", async () => {
     expect(await resolveAuth(undefined, tokens, sessions)).toBeNull();
     expect(await resolveAuth("", tokens, sessions)).toBeNull();
-    const { token } = await tokens.issue({ sub: "u1", typ: "CUSTOMER", sid: "s1" });
-    expect(await resolveAuth(`Bearer ${token}`, tokens, sessions)).toMatchObject({
+    const { token } = await tokens.issue({
+      sub: "u1",
+      typ: "CUSTOMER",
+      sid: "s1",
+    });
+    expect(
+      await resolveAuth(`Bearer ${token}`, tokens, sessions),
+    ).toMatchObject({
       userId: "u1",
       type: "CUSTOMER",
       sessionId: "s1",
     });
   });
   it("distinguishes expired, invalid and revoked tokens", async () => {
-    const { token } = await tokens.issue({ sub: "u1", typ: "CUSTOMER", sid: "s1" });
-    await expect(resolveAuth(`Bearer ${token}`, later, sessions)).rejects.toMatchObject({
+    const { token } = await tokens.issue({
+      sub: "u1",
+      typ: "CUSTOMER",
+      sid: "s1",
+    });
+    await expect(
+      resolveAuth(`Bearer ${token}`, later, sessions),
+    ).rejects.toMatchObject({
       extensions: { code: "TOKEN_EXPIRED" },
     });
-    await expect(resolveAuth("Bearer nope", tokens, sessions)).rejects.toMatchObject({
+    await expect(
+      resolveAuth("Bearer nope", tokens, sessions),
+    ).rejects.toMatchObject({
       extensions: { code: "INVALID_TOKEN" },
     });
-    const revoked = await tokens.issue({ sub: "u1", typ: "CUSTOMER", sid: "revoked" });
-    await expect(resolveAuth(`Bearer ${revoked.token}`, tokens, sessions)).rejects.toMatchObject({
+    const revoked = await tokens.issue({
+      sub: "u1",
+      typ: "CUSTOMER",
+      sid: "revoked",
+    });
+    await expect(
+      resolveAuth(`Bearer ${revoked.token}`, tokens, sessions),
+    ).rejects.toMatchObject({
       extensions: { code: "INVALID_TOKEN" },
     });
   });
   it("enforces types, permissions and ownership", () => {
-    const staff = { userId: "s", type: "STAFF" as const, sessionId: "x", permissions: ["Riders"], restaurantIds: [], vendorId: null, riderId: null };
+    const staff = {
+      userId: "s",
+      type: "STAFF" as const,
+      sessionId: "x",
+      permissions: ["Riders"],
+      restaurantIds: [],
+      vendorId: null,
+      riderId: null,
+    };
     expect(() => requireAuth(null)).toThrow(/Unauthenticated/);
     expect(() => requireAuth(staff, "CUSTOMER")).toThrow(/Forbidden/);
     expect(requireAuth(staff, "STAFF", "ADMIN")).toBe(staff);
     expect(() => requirePermission(staff, "Users")).toThrow(/Forbidden/);
     expect(() => requirePermission(staff, "Riders")).not.toThrow();
-    const owner = { ...staff, type: "RESTAURANT" as const, restaurantIds: ["r1"] };
-    expect(() => requireOwnership(owner, { restaurantId: "r2" })).toThrow(/Forbidden/);
+    const owner = {
+      ...staff,
+      type: "RESTAURANT" as const,
+      restaurantIds: ["r1"],
+    };
+    expect(() => requireOwnership(owner, { restaurantId: "r2" })).toThrow(
+      /Forbidden/,
+    );
     expect(() => requireOwnership(owner, { restaurantId: "r1" })).not.toThrow();
     const admin = { ...staff, type: "ADMIN" as const, permissions: [] };
     expect(() => requirePermission(admin, "Users")).not.toThrow();
-    expect(() => requireOwnership(admin, { restaurantId: "any" })).not.toThrow();
+    expect(() =>
+      requireOwnership(admin, { restaurantId: "any" }),
+    ).not.toThrow();
   });
 });
 ```
@@ -1192,13 +1487,24 @@ import { randomBytes } from "node:crypto";
 import { appError } from "../errors.js";
 import { systemClock, type Clock } from "../time.js";
 
-export const USER_TYPES = ["CUSTOMER", "RIDER", "RESTAURANT", "VENDOR", "ADMIN", "STAFF"] as const;
+export const USER_TYPES = [
+  "CUSTOMER",
+  "RIDER",
+  "RESTAURANT",
+  "VENDOR",
+  "ADMIN",
+  "STAFF",
+] as const;
 export type UserType = (typeof USER_TYPES)[number];
 export type TokenClaims = { sub: string; typ: UserType; sid: string };
 
 export class UserTokens {
   private readonly key: Uint8Array;
-  constructor(secret: string, private readonly ttlSeconds: number, private readonly clock: Clock = systemClock) {
+  constructor(
+    secret: string,
+    private readonly ttlSeconds: number,
+    private readonly clock: Clock = systemClock,
+  ) {
     this.key = Buffer.from(secret, "base64url");
   }
   // The store app decodes the payload with atob(), which rejects base64url '-' and '_'
@@ -1207,22 +1513,38 @@ export class UserTokens {
     const issuedAt = Math.floor(this.clock.now().getTime() / 1000);
     const exp = issuedAt + this.ttlSeconds;
     for (let attempt = 0; attempt < 256; attempt++) {
-      const token = await new SignJWT({ typ: claims.typ, sid: claims.sid, n: randomBytes(3).toString("hex") })
+      const token = await new SignJWT({
+        typ: claims.typ,
+        sid: claims.sid,
+        n: randomBytes(3).toString("hex"),
+      })
         .setProtectedHeader({ alg: "HS256", typ: "JWT" })
         .setSubject(claims.sub)
         .setIssuedAt(issuedAt)
         .setExpirationTime(exp)
         .sign(this.key);
-      if (!/[-_]/.test(token.split(".")[1])) return { token, expiresAt: new Date(exp * 1000) };
+      if (!/[-_]/.test(token.split(".")[1]))
+        return { token, expiresAt: new Date(exp * 1000) };
     }
     throw new Error("Unable to produce an atob-safe token");
   }
   async verify(token: string): Promise<TokenClaims> {
     try {
-      const { payload } = await jwtVerify(token, this.key, { algorithms: ["HS256"], currentDate: this.clock.now() });
-      if (typeof payload.sub !== "string" || typeof payload.sid !== "string" || !USER_TYPES.includes(payload.typ as UserType))
+      const { payload } = await jwtVerify(token, this.key, {
+        algorithms: ["HS256"],
+        currentDate: this.clock.now(),
+      });
+      if (
+        typeof payload.sub !== "string" ||
+        typeof payload.sid !== "string" ||
+        !USER_TYPES.includes(payload.typ as UserType)
+      )
         throw appError("INVALID_TOKEN");
-      return { sub: payload.sub, typ: payload.typ as UserType, sid: payload.sid };
+      return {
+        sub: payload.sub,
+        typ: payload.typ as UserType,
+        sid: payload.sid,
+      };
     } catch (error) {
       if (error instanceof errors.JWTExpired) throw appError("TOKEN_EXPIRED");
       throw appError("INVALID_TOKEN");
@@ -1240,7 +1562,10 @@ export interface SessionValidator {
 }
 export const SESSION_VALIDATOR = Symbol("SESSION_VALIDATOR");
 export interface PrincipalLoader {
-  load(userId: string, type: string): Promise<{
+  load(
+    userId: string,
+    type: string,
+  ): Promise<{
     permissions: string[];
     restaurantIds: string[];
     vendorId: string | null;
@@ -1272,31 +1597,52 @@ export async function resolveAuth(
 ): Promise<Pick<AuthContext, "userId" | "type" | "sessionId"> | null> {
   const value = header?.trim() ?? "";
   if (!value) return null;
-  const token = value.toLowerCase().startsWith("bearer ") ? value.slice(7).trim() : value;
+  const token = value.toLowerCase().startsWith("bearer ")
+    ? value.slice(7).trim()
+    : value;
   if (!token) return null;
   const claims = await tokens.verify(token);
   if (!(await sessions.isActive(claims.sid))) throw appError("INVALID_TOKEN");
   return { userId: claims.sub, type: claims.typ, sessionId: claims.sid };
 }
-export function requireAuth(auth: AuthContext | null, ...types: UserType[]): AuthContext {
+export function requireAuth(
+  auth: AuthContext | null,
+  ...types: UserType[]
+): AuthContext {
   if (!auth) throw appError("UNAUTHENTICATED");
-  if (types.length && !types.includes(auth.type) && auth.type !== "ADMIN") throw appError("FORBIDDEN");
+  if (types.length && !types.includes(auth.type) && auth.type !== "ADMIN")
+    throw appError("FORBIDDEN");
   return auth;
 }
-export function requirePermission(auth: AuthContext | null, permission: string): AuthContext {
+export function requirePermission(
+  auth: AuthContext | null,
+  permission: string,
+): AuthContext {
   const caller = requireAuth(auth, "ADMIN", "STAFF");
-  if (caller.type === "STAFF" && !caller.permissions.includes(permission)) throw appError("FORBIDDEN");
+  if (caller.type === "STAFF" && !caller.permissions.includes(permission))
+    throw appError("FORBIDDEN");
   return caller;
 }
 export function requireOwnership(
   auth: AuthContext,
-  scope: { restaurantId?: string | null; vendorId?: string | null; riderId?: string | null; userId?: string | null },
+  scope: {
+    restaurantId?: string | null;
+    vendorId?: string | null;
+    riderId?: string | null;
+    userId?: string | null;
+  },
   staffPermission?: string,
 ): void {
   if (auth.type === "ADMIN") return;
-  if (auth.type === "STAFF" && staffPermission && auth.permissions.includes(staffPermission)) return;
+  if (
+    auth.type === "STAFF" &&
+    staffPermission &&
+    auth.permissions.includes(staffPermission)
+  )
+    return;
   const ok =
-    (scope.restaurantId == null || auth.restaurantIds.includes(scope.restaurantId)) &&
+    (scope.restaurantId == null ||
+      auth.restaurantIds.includes(scope.restaurantId)) &&
     (scope.vendorId == null || auth.vendorId === scope.vendorId) &&
     (scope.riderId == null || auth.riderId === scope.riderId) &&
     (scope.userId == null || auth.userId === scope.userId);
@@ -1335,6 +1681,7 @@ git commit -m "feat(L0): add user tokens, request context and auth guards"
 ### Task A6: Operation limits and `NOT_IMPLEMENTED` fallback
 
 **Files:**
+
 - Create: `services/api/src/kernel/limits.ts` (exports `boundedOperation`; the compatibility tool reads this file after W0-B Task B2)
 - Create: `services/api/src/kernel/not-implemented.ts`
 - Test: `services/api/test/unit/kernel/limits.spec.ts`
@@ -1354,14 +1701,20 @@ const schema = buildSchema(`
   type Mutation { one: Int, two: Int }
   type Subscription { tick: Int }
 `);
-const errorsFor = (query: string) => validate(schema, parse(query), [boundedOperation]);
+const errorsFor = (query: string) =>
+  validate(schema, parse(query), [boundedOperation]);
 
 describe("operation limits", () => {
   it("accepts documents within the limits", () => {
     expect(errorsFor("{ node { a child { a } } }")).toHaveLength(0);
   });
   it("rejects documents deeper than the depth limit", () => {
-    const deep = "{ node " + "{ child ".repeat(LIMITS.depth) + "{ a }" + " }".repeat(LIMITS.depth) + " }";
+    const deep =
+      "{ node " +
+      "{ child ".repeat(LIMITS.depth) +
+      "{ a }" +
+      " }".repeat(LIMITS.depth) +
+      " }";
     expect(errorsFor(deep)[0].message).toBe("Operation exceeds allowed limits");
   });
   it("rejects more than one mutation root", () => {
@@ -1369,17 +1722,24 @@ describe("operation limits", () => {
   });
   it("rejects fragment cycles", () => {
     expect(
-      errorsFor("query { node { ...A } } fragment A on Node { child { ...B } } fragment B on Node { child { ...A } }").length,
+      errorsFor(
+        "query { node { ...A } } fragment A on Node { child { ...B } } fragment B on Node { child { ...A } }",
+      ).length,
     ).toBeGreaterThan(0);
   });
 });
 
 describe("NOT_IMPLEMENTED fallback", () => {
   it("fills unresolved root fields with a NOT_IMPLEMENTED error and keeps implemented ones", async () => {
-    const executable = buildSchema("type Query { ready: String, missing: String }");
+    const executable = buildSchema(
+      "type Query { ready: String, missing: String }",
+    );
     executable.getQueryType()!.getFields().ready.resolve = () => "yes";
     fillNotImplemented(executable);
-    const result = await graphql({ schema: executable, source: "{ ready missing }" });
+    const result = await graphql({
+      schema: executable,
+      source: "{ ready missing }",
+    });
     expect(result.data).toEqual({ ready: "yes", missing: null });
     expect(result.errors?.[0].message).toBe("missing is not available yet");
     expect(result.errors?.[0].extensions.code).toBe("NOT_IMPLEMENTED");
@@ -1387,7 +1747,9 @@ describe("NOT_IMPLEMENTED fallback", () => {
   it("fills subscriptions without subscribe functions", () => {
     fillNotImplemented(schema);
     const tick = schema.getSubscriptionType()!.getFields().tick;
-    expect(() => tick.subscribe!(undefined, {}, {}, {} as never)).toThrow(/not available yet/);
+    expect(() => tick.subscribe!(undefined, {}, {}, {} as never)).toThrow(
+      /not available yet/,
+    );
   });
 });
 ```
@@ -1411,18 +1773,28 @@ import {
 
 // Sized so the largest pinned Enatega document passes with headroom; the Wave 1
 // contract test (`pnpm check:enatega`) proves every app document is accepted.
-export const LIMITS = { depth: 15, fields: 600, definitions: 60, aliases: 30 } as const;
+export const LIMITS = {
+  depth: 15,
+  fields: 600,
+  definitions: 60,
+  aliases: 30,
+} as const;
 
 // Name is load-bearing: tools/check-enatega-compatibility.mjs extracts this rule.
 export const boundedOperation: ValidationRule = (context) => ({
   Document(node) {
     const fragments = new Map<string, FragmentDefinitionNode>();
     for (const definition of node.definitions)
-      if (definition.kind === Kind.FRAGMENT_DEFINITION) fragments.set(definition.name.value, definition);
+      if (definition.kind === Kind.FRAGMENT_DEFINITION)
+        fragments.set(definition.name.value, definition);
     let fields = 0;
     let aliases = 0;
     let exceeded = node.definitions.length > LIMITS.definitions;
-    const walk = (selection: SelectionSetNode, depth: number, seen: Set<string>): void => {
+    const walk = (
+      selection: SelectionSetNode,
+      depth: number,
+      seen: Set<string>,
+    ): void => {
       if (depth > LIMITS.depth || fields > LIMITS.fields) {
         exceeded = true;
         return;
@@ -1432,7 +1804,8 @@ export const boundedOperation: ValidationRule = (context) => ({
           fields++;
           if (entry.alias) aliases++;
           if (entry.selectionSet) walk(entry.selectionSet, depth + 1, seen);
-        } else if (entry.kind === Kind.INLINE_FRAGMENT) walk(entry.selectionSet, depth, seen);
+        } else if (entry.kind === Kind.INLINE_FRAGMENT)
+          walk(entry.selectionSet, depth, seen);
         else {
           const name = entry.name.value;
           if (seen.has(name)) {
@@ -1440,7 +1813,8 @@ export const boundedOperation: ValidationRule = (context) => ({
             return;
           }
           const fragment = fragments.get(name);
-          if (fragment) walk(fragment.selectionSet, depth, new Set([...seen, name]));
+          if (fragment)
+            walk(fragment.selectionSet, depth, new Set([...seen, name]));
         }
         if (fields > LIMITS.fields || aliases > LIMITS.aliases) {
           exceeded = true;
@@ -1452,12 +1826,15 @@ export const boundedOperation: ValidationRule = (context) => ({
       if (definition.kind === Kind.OPERATION_DEFINITION) {
         if (
           definition.operation === "mutation" &&
-          definition.selectionSet.selections.filter((s) => s.kind === Kind.FIELD).length > 1
+          definition.selectionSet.selections.filter(
+            (s) => s.kind === Kind.FIELD,
+          ).length > 1
         )
           exceeded = true;
         walk(definition.selectionSet, 1, new Set());
       }
-    if (exceeded) context.reportError(new GraphQLError("Operation exceeds allowed limits"));
+    if (exceeded)
+      context.reportError(new GraphQLError("Operation exceeds allowed limits"));
   },
 });
 ```
@@ -1474,9 +1851,14 @@ export function fillNotImplemented(schema: GraphQLSchema): GraphQLSchema {
     for (const field of Object.values(type?.getFields() ?? {}))
       if (!field.resolve)
         field.resolve = () => {
-          throw appError("NOT_IMPLEMENTED", `${field.name} is not available yet`);
+          throw appError(
+            "NOT_IMPLEMENTED",
+            `${field.name} is not available yet`,
+          );
         };
-  for (const field of Object.values(schema.getSubscriptionType()?.getFields() ?? {}))
+  for (const field of Object.values(
+    schema.getSubscriptionType()?.getFields() ?? {},
+  ))
     if (!field.subscribe)
       field.subscribe = () => {
         throw appError("NOT_IMPLEMENTED", `${field.name} is not available yet`);
@@ -1500,35 +1882,37 @@ git commit -m "feat(L0): add operation limits and NOT_IMPLEMENTED fallback"
 ### Task A7: Redis pub/sub
 
 **Files:**
+
 - Create: `services/api/src/kernel/pubsub.ts`
-- Test: `services/api/test/integration/kernel/pubsub.integration.spec.ts` (uses W0-C `stack.ts` once merged; until then start Redis inline with `GenericContainer` as the existing configuration integration test does)
+- Test: `services/api/test/integration/kernel/pubsub.integration.spec.ts` (uses the W0-C shared `stack.ts`; queue this test until C1 merges rather than starting another container)
 
 - [ ] **Step 1: Write the failing test**
 
 ```ts
 // services/api/test/integration/kernel/pubsub.integration.spec.ts
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { GenericContainer, type StartedTestContainer } from "testcontainers";
+import { startStack, type Stack } from "../../support/stack.js";
 import { RedisPubSub } from "../../../src/kernel/pubsub.js";
 
-let redis: StartedTestContainer;
+let stack: Stack;
 let a: RedisPubSub;
 let b: RedisPubSub;
 beforeAll(async () => {
-  redis = await new GenericContainer("redis:7-alpine").withExposedPorts(6379).start();
-  const url = `redis://${redis.getHost()}:${redis.getMappedPort(6379)}`;
-  a = new RedisPubSub(url);
-  b = new RedisPubSub(url);
+  stack = await startStack();
+  a = new RedisPubSub(stack.redisUrl);
+  b = new RedisPubSub(stack.redisUrl);
 });
 afterAll(async () => {
   await a?.close();
   await b?.close();
-  await redis?.stop();
+  await stack?.release();
 });
 
 describe("redis pub/sub", () => {
   it("delivers events published by one instance to subscribers on another", async () => {
-    const iterator = b.subscribe<{ n: number }>("order:1")[Symbol.asyncIterator]();
+    const iterator = b
+      .subscribe<{ n: number }>("order:1")
+      [Symbol.asyncIterator]();
     await b.ready("order:1");
     await a.publish("order:1", { n: 1 });
     await a.publish("order:1", { n: 2 });
@@ -1537,7 +1921,10 @@ describe("redis pub/sub", () => {
     await iterator.return!();
   });
   it("applies filters and unsubscribes when the iterator returns", async () => {
-    const iterable = b.subscribe<{ rider: string }>("zone:z", (event) => event.rider === "r1");
+    const iterable = b.subscribe<{ rider: string }>(
+      "zone:z",
+      (event) => event.rider === "r1",
+    );
     const iterator = iterable[Symbol.asyncIterator]();
     await b.ready("zone:z");
     await a.publish("zone:z", { rider: "r2" });
@@ -1563,7 +1950,10 @@ import { Redis } from "ioredis";
 type Listener = (payload: unknown) => void;
 export interface PubSub {
   publish(topic: string, payload: unknown): Promise<void>;
-  subscribe<T>(topic: string, filter?: (payload: T) => boolean): AsyncIterable<T>;
+  subscribe<T>(
+    topic: string,
+    filter?: (payload: T) => boolean,
+  ): AsyncIterable<T>;
 }
 export const PUBSUB = Symbol("PUBSUB");
 
@@ -1592,7 +1982,10 @@ export class RedisPubSub implements PubSub {
   listenerCount(topic: string) {
     return this.listeners.get(topic)?.size ?? 0;
   }
-  subscribe<T>(topic: string, filter?: (payload: T) => boolean): AsyncIterable<T> {
+  subscribe<T>(
+    topic: string,
+    filter?: (payload: T) => boolean,
+  ): AsyncIterable<T> {
     const self = this;
     return {
       [Symbol.asyncIterator](): AsyncIterator<T> {
@@ -1621,7 +2014,8 @@ export class RedisPubSub implements PubSub {
               self.subscriptions.delete(topic);
               await self.subscriber.unsubscribe(topic);
             }
-            for (const resolve of waiting.splice(0)) resolve({ value: undefined, done: true });
+            for (const resolve of waiting.splice(0))
+              resolve({ value: undefined, done: true });
           }
           return { value: undefined, done: true };
         };
@@ -1665,6 +2059,7 @@ git commit -m "feat(L0): add Redis pub/sub shared across API instances"
 Protocol references: legacy `subscriptions-transport-ws` (subprotocol `graphql-ws`): client `connection_init {payload}`, `start {id, payload:{query, variables, operationName}}`, `stop {id}`, `connection_terminate`; server `connection_ack`, `connection_error {payload}`, `ka`, `data {id, payload:{data, errors}}`, `error {id, payload}`, `complete {id}`. New protocol (subprotocol `graphql-transport-ws`): served by `graphql-ws` 6 `useServer` from `graphql-ws/use/ws`.
 
 **Files:**
+
 - Modify: `services/api/package.json` — add `"ws": "8.22.0"` to dependencies and `"@types/ws": "8.18.1"` to devDependencies, then run `pnpm install --offline` from `implementation/` (if `@types/ws` is not in the store, it needs registry access — master §10).
 - Create: `services/api/src/kernel/ws/legacy-protocol.ts`
 - Create: `services/api/src/kernel/ws/server.ts`
@@ -1694,7 +2089,9 @@ async function* ticks() {
   yield { tick: 1 };
   yield { tick: 2 };
 }
-const schema = buildSchema("type Query { a: Int } type Subscription { tick: Int }");
+const schema = buildSchema(
+  "type Query { a: Int } type Subscription { tick: Int }",
+);
 schema.getSubscriptionType()!.getFields().tick.subscribe = () => ticks();
 const flush = () => new Promise((r) => setTimeout(r, 20));
 
@@ -1709,16 +2106,35 @@ describe("legacy subscriptions-transport-ws session", () => {
       },
       keepAliveMs: 0,
     });
-    socket.emit("message", JSON.stringify({ type: "connection_init", payload: { authorization: "" } }));
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "connection_init",
+        payload: { authorization: "" },
+      }),
+    );
     await flush();
     expect(params).toEqual({ authorization: "" });
     expect(socket.sent).toEqual([{ type: "connection_ack" }]);
   });
   it("streams data messages then complete for a start", async () => {
     const socket = new FakeSocket();
-    new LegacySubscriptionSession(socket as never, schema, { onConnect: async () => ({}), keepAliveMs: 0 });
-    socket.emit("message", JSON.stringify({ type: "connection_init", payload: {} }));
-    socket.emit("message", JSON.stringify({ type: "start", id: "1", payload: { query: "subscription { tick }" } }));
+    new LegacySubscriptionSession(socket as never, schema, {
+      onConnect: async () => ({}),
+      keepAliveMs: 0,
+    });
+    socket.emit(
+      "message",
+      JSON.stringify({ type: "connection_init", payload: {} }),
+    );
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "1",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
     await flush();
     expect(socket.sent).toEqual([
       { type: "connection_ack" },
@@ -1729,16 +2145,39 @@ describe("legacy subscriptions-transport-ws session", () => {
   });
   it("returns validation errors as an error message", async () => {
     const socket = new FakeSocket();
-    new LegacySubscriptionSession(socket as never, schema, { onConnect: async () => ({}), keepAliveMs: 0 });
-    socket.emit("message", JSON.stringify({ type: "connection_init", payload: {} }));
-    socket.emit("message", JSON.stringify({ type: "start", id: "2", payload: { query: "subscription { nope }" } }));
+    new LegacySubscriptionSession(socket as never, schema, {
+      onConnect: async () => ({}),
+      keepAliveMs: 0,
+    });
+    socket.emit(
+      "message",
+      JSON.stringify({ type: "connection_init", payload: {} }),
+    );
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "2",
+        payload: { query: "subscription { nope }" },
+      }),
+    );
     await flush();
     expect(socket.sent[1]).toMatchObject({ type: "error", id: "2" });
   });
   it("rejects start before connection_init", async () => {
     const socket = new FakeSocket();
-    new LegacySubscriptionSession(socket as never, schema, { onConnect: async () => ({}), keepAliveMs: 0 });
-    socket.emit("message", JSON.stringify({ type: "start", id: "1", payload: { query: "subscription { tick }" } }));
+    new LegacySubscriptionSession(socket as never, schema, {
+      onConnect: async () => ({}),
+      keepAliveMs: 0,
+    });
+    socket.emit(
+      "message",
+      JSON.stringify({
+        type: "start",
+        id: "1",
+        payload: { query: "subscription { tick }" },
+      }),
+    );
     await flush();
     expect(socket.sent[0]).toMatchObject({ type: "error", id: "1" });
   });
@@ -1750,15 +2189,27 @@ describe("legacy subscriptions-transport-ws session", () => {
       },
       keepAliveMs: 0,
     });
-    socket.emit("message", JSON.stringify({ type: "connection_init", payload: {} }));
+    socket.emit(
+      "message",
+      JSON.stringify({ type: "connection_init", payload: {} }),
+    );
     await flush();
-    expect(socket.sent[0]).toEqual({ type: "connection_error", payload: { message: "Invalid token" } });
+    expect(socket.sent[0]).toEqual({
+      type: "connection_error",
+      payload: { message: "Invalid token" },
+    });
     expect(socket.closed).toBe(1011);
   });
   it("sends ka after ack when keep-alive is enabled", async () => {
     const socket = new FakeSocket();
-    const session = new LegacySubscriptionSession(socket as never, schema, { onConnect: async () => ({}), keepAliveMs: 5 });
-    socket.emit("message", JSON.stringify({ type: "connection_init", payload: {} }));
+    const session = new LegacySubscriptionSession(socket as never, schema, {
+      onConnect: async () => ({}),
+      keepAliveMs: 5,
+    });
+    socket.emit(
+      "message",
+      JSON.stringify({ type: "connection_init", payload: {} }),
+    );
     await flush();
     expect(socket.sent).toContainEqual({ type: "ka" });
     session.dispose();
@@ -1789,7 +2240,15 @@ import { formatError } from "../errors.js";
 
 type Message =
   | { type: "connection_init"; payload?: Record<string, unknown> }
-  | { type: "start"; id: string; payload: { query: string; variables?: Record<string, unknown>; operationName?: string } }
+  | {
+      type: "start";
+      id: string;
+      payload: {
+        query: string;
+        variables?: Record<string, unknown>;
+        operationName?: string;
+      };
+    }
   | { type: "stop"; id: string }
   | { type: "connection_terminate" };
 export type LegacyOptions = {
@@ -1803,14 +2262,23 @@ export type LegacyOptions = {
 export class LegacySubscriptionSession {
   private context: unknown;
   private initialised = false;
-  private readonly operations = new Map<string, AsyncIterator<ExecutionResult>>();
+  private readonly operations = new Map<
+    string,
+    AsyncIterator<ExecutionResult>
+  >();
   private keepAlive: NodeJS.Timeout | undefined;
   constructor(
-    private readonly socket: Pick<WebSocket, "send" | "close" | "on" | "readyState">,
+    private readonly socket: Pick<
+      WebSocket,
+      "send" | "close" | "on" | "readyState"
+    >,
     private readonly schema: GraphQLSchema,
     private readonly options: LegacyOptions,
   ) {
-    socket.on("message", (data: Buffer | string) => void this.handle(String(data)));
+    socket.on(
+      "message",
+      (data: Buffer | string) => void this.handle(String(data)),
+    );
     socket.on("close", () => this.dispose());
   }
   private send(message: object) {
@@ -1821,7 +2289,10 @@ export class LegacySubscriptionSession {
     try {
       message = JSON.parse(raw);
     } catch {
-      return this.send({ type: "error", payload: { message: "Invalid message" } });
+      return this.send({
+        type: "error",
+        payload: { message: "Invalid message" },
+      });
     }
     switch (message.type) {
       case "connection_init":
@@ -1831,10 +2302,16 @@ export class LegacySubscriptionSession {
           this.send({ type: "connection_ack" });
           if (this.options.keepAliveMs > 0) {
             this.send({ type: "ka" });
-            this.keepAlive = setInterval(() => this.send({ type: "ka" }), this.options.keepAliveMs);
+            this.keepAlive = setInterval(
+              () => this.send({ type: "ka" }),
+              this.options.keepAliveMs,
+            );
           }
         } catch (error) {
-          this.send({ type: "connection_error", payload: { message: (error as Error).message } });
+          this.send({
+            type: "connection_error",
+            payload: { message: (error as Error).message },
+          });
           this.socket.close(1011);
         }
         return;
@@ -1849,20 +2326,52 @@ export class LegacySubscriptionSession {
         this.socket.close(1000);
         return;
       default:
-        this.send({ type: "error", payload: { message: "Unknown message type" } });
+        this.send({
+          type: "error",
+          payload: { message: "Unknown message type" },
+        });
     }
   }
-  private async start(id: string, payload: { query: string; variables?: Record<string, unknown>; operationName?: string }) {
-    if (!this.initialised) return this.send({ type: "error", id, payload: { message: "Connection not initialised" } });
+  private async start(
+    id: string,
+    payload: {
+      query: string;
+      variables?: Record<string, unknown>;
+      operationName?: string;
+    },
+  ) {
+    if (!this.initialised)
+      return this.send({
+        type: "error",
+        id,
+        payload: { message: "Connection not initialised" },
+      });
     await this.operations.get(id)?.return?.();
     let document;
     try {
       document = parse(payload.query);
     } catch (error) {
-      return this.send({ type: "error", id, payload: { message: (error as Error).message } });
+      return this.send({
+        type: "error",
+        id,
+        payload: { message: (error as Error).message },
+      });
     }
-    const errors = validate(this.schema, document, [...specifiedRules, ...(this.options.rules ?? [])]);
-    if (errors.length) return this.send({ type: "error", id, payload: errors.map((e) => formatError({ message: e.message, extensions: { code: "GRAPHQL_VALIDATION_FAILED" } })) });
+    const errors = validate(this.schema, document, [
+      ...specifiedRules,
+      ...(this.options.rules ?? []),
+    ]);
+    if (errors.length)
+      return this.send({
+        type: "error",
+        id,
+        payload: errors.map((e) =>
+          formatError({
+            message: e.message,
+            extensions: { code: "GRAPHQL_VALIDATION_FAILED" },
+          }),
+        ),
+      });
     const result = await subscribe({
       schema: this.schema,
       document,
@@ -1871,7 +2380,14 @@ export class LegacySubscriptionSession {
       contextValue: this.context,
     });
     if (!(Symbol.asyncIterator in result)) {
-      this.send({ type: "data", id, payload: { data: result.data ?? null, errors: result.errors?.map(formatError) } });
+      this.send({
+        type: "data",
+        id,
+        payload: {
+          data: result.data ?? null,
+          errors: result.errors?.map(formatError),
+        },
+      });
       return this.send({ type: "complete", id });
     }
     const iterator = result[Symbol.asyncIterator]();
@@ -1883,7 +2399,9 @@ export class LegacySubscriptionSession {
       this.send({
         type: "data",
         id,
-        payload: value.errors ? { data: value.data ?? null, errors: value.errors.map(formatError) } : { data: value.data },
+        payload: value.errors
+          ? { data: value.data ?? null, errors: value.errors.map(formatError) }
+          : { data: value.data },
       });
     }
     if (this.operations.delete(id)) this.send({ type: "complete", id });
@@ -1905,12 +2423,25 @@ import type { GraphQLSchema } from "graphql";
 import { LegacySubscriptionSession } from "./legacy-protocol.js";
 import { boundedOperation } from "../limits.js";
 
-export type WsContextFactory = (params: Record<string, unknown>, request: IncomingMessage) => Promise<unknown>;
+export type WsContextFactory = (
+  params: Record<string, unknown>,
+  request: IncomingMessage,
+) => Promise<unknown>;
 
 // One path, two protocols, chosen by Sec-WebSocket-Protocol (master D9).
-export function attachSubscriptionServer(http: HttpServer, schema: GraphQLSchema, context: WsContextFactory) {
-  const legacy = new WebSocketServer({ noServer: true, handleProtocols: () => "graphql-ws" });
-  const modern = new WebSocketServer({ noServer: true, handleProtocols: () => "graphql-transport-ws" });
+export function attachSubscriptionServer(
+  http: HttpServer,
+  schema: GraphQLSchema,
+  context: WsContextFactory,
+) {
+  const legacy = new WebSocketServer({
+    noServer: true,
+    handleProtocols: () => "graphql-ws",
+  });
+  const modern = new WebSocketServer({
+    noServer: true,
+    handleProtocols: () => "graphql-transport-ws",
+  });
   legacy.on("connection", (socket, request: IncomingMessage) => {
     new LegacySubscriptionSession(socket, schema, {
       onConnect: (params) => context(params, request),
@@ -1922,7 +2453,11 @@ export function attachSubscriptionServer(http: HttpServer, schema: GraphQLSchema
     {
       schema,
       validationRules: [boundedOperation],
-      context: (ctx) => context((ctx.connectionParams ?? {}) as Record<string, unknown>, ctx.extra.request),
+      context: (ctx) =>
+        context(
+          (ctx.connectionParams ?? {}) as Record<string, unknown>,
+          ctx.extra.request,
+        ),
     },
     modern,
   );
@@ -1932,9 +2467,15 @@ export function attachSubscriptionServer(http: HttpServer, schema: GraphQLSchema
     const offered = String(request.headers["sec-websocket-protocol"] ?? "")
       .split(",")
       .map((p) => p.trim());
-    const target = offered.includes("graphql-transport-ws") ? modern : offered.includes("graphql-ws") ? legacy : null;
+    const target = offered.includes("graphql-transport-ws")
+      ? modern
+      : offered.includes("graphql-ws")
+        ? legacy
+        : null;
     if (!target) return socket.destroy();
-    target.handleUpgrade(request, socket, head, (ws) => target.emit("connection", ws, request));
+    target.handleUpgrade(request, socket, head, (ws) =>
+      target.emit("connection", ws, request),
+    );
   });
   return async () => {
     await disposeModern.dispose();
@@ -1953,13 +2494,16 @@ Expected: PASS (6 tests).
 - [ ] **Step 5: Commit**
 
 ```bash
-git add services/api/package.json ../pnpm-lock.yaml services/api/src/kernel/ws services/api/test/unit/kernel/legacy-protocol.spec.ts
+git add services/api/src/kernel/ws services/api/test/unit/kernel/legacy-protocol.spec.ts
 git commit -m "feat(L0): serve legacy and graphql-ws subscription protocols on /graphql"
 ```
+
+W0-A reports the exact `services/api/package.json` dependency delta for `ws`; the lead applies it and updates the single workspace lockfile during serialized integration.
 
 ### Task A9: Rewire `app.ts` and `main.ts`
 
 **Files:**
+
 - Modify: `services/api/src/app.ts` (replace inline `boundedOperation`, `formatError`, typeDefs list, body limit, CORS; mount gate, plugins, WebSocket server, `transformSchema`)
 - Modify: `services/api/src/main.ts` (listen on `config.HOST`)
 - Create: `services/api/src/kernel/kernel.module.ts`
@@ -1984,18 +2528,24 @@ beforeAll(async () => {
 });
 afterAll(async () => {
   await api?.close();
-  await stack?.stop();
+  await stack?.release();
 });
 
 describe("transport", () => {
   it("mints a public-access token and accepts it on later requests", async () => {
     const minted = await api.http.metricsGeneral("nonce-1");
     expect(minted.hehe).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-    const ok = await api.http.raw({ query: "{ _kernel }" }, { nonce: "nonce-1", "bop-auth": `Bearer ${minted.experience}` });
+    const ok = await api.http.raw(
+      { query: "{ _kernel }" },
+      { nonce: "nonce-1", "bop-auth": `Bearer ${minted.experience}` },
+    );
     expect(ok.status).toBe(200);
   });
   it("rejects requests without the handshake with HTTP 403 and the exact message", async () => {
-    const response = await api.http.raw({ query: "{ _kernel }" }, { nonce: "n" });
+    const response = await api.http.raw(
+      { query: "{ _kernel }" },
+      { nonce: "n" },
+    );
     expect(response.status).toBe(403);
     expect(response.body.errors[0]).toEqual({
       message: "Unauthorized: token missing",
@@ -2006,6 +2556,14 @@ describe("transport", () => {
     const result = await api.http.query("{ _kernel }");
     expect(result.errors[0].extensions.code).toBe("NOT_IMPLEMENTED");
   });
+  it("preserves the implemented configuration roots", async () => {
+    const result = await api.http.query(
+      "{ configuration { _id } publicConfiguration { _id } }",
+    );
+    expect(result.errors).toEqual([]);
+    expect(result.data?.configuration).toBeTruthy();
+    expect(result.data?.publicConfiguration).toBeTruthy();
+  });
   it("accepts a 900 kB document body (Enatega documents exceed the old 16 kB cap)", async () => {
     const padding = " ".repeat(900 * 1024);
     const result = await api.http.query(`{ _kernel }${padding}`);
@@ -2015,22 +2573,44 @@ describe("transport", () => {
     const socket = new WebSocket(api.wsUrl, "graphql-ws");
     const messages: { type: string }[] = [];
     await new Promise<void>((resolve, reject) => {
-      socket.on("open", () => socket.send(JSON.stringify({ type: "connection_init", payload: { authorization: "" } })));
+      socket.on("open", () =>
+        socket.send(
+          JSON.stringify({
+            type: "connection_init",
+            payload: { authorization: "" },
+          }),
+        ),
+      );
       socket.on("message", (data) => {
         messages.push(JSON.parse(String(data)));
         if (messages.some((m) => m.type === "connection_ack")) resolve();
       });
       socket.on("error", reject);
     });
-    socket.send(JSON.stringify({ type: "start", id: "1", payload: { query: "subscription { _kernel }" } }));
+    socket.send(
+      JSON.stringify({
+        type: "start",
+        id: "1",
+        payload: { query: "subscription { _kernel }" },
+      }),
+    );
     await new Promise((r) => setTimeout(r, 200));
-    expect(messages.find((m) => (m as { id?: string }).id === "1")).toMatchObject({ type: "error" });
+    expect(
+      messages.find((m) => (m as { id?: string }).id === "1"),
+    ).toMatchObject({ type: "error" });
     socket.close();
   });
   it("speaks the graphql-transport-ws subprotocol", async () => {
-    const client = createClient({ url: api.wsUrl, webSocketImpl: WebSocket, lazy: false });
+    const client = createClient({
+      url: api.wsUrl,
+      webSocketImpl: WebSocket,
+      lazy: false,
+    });
     const error = await new Promise((resolve) => {
-      client.subscribe({ query: "subscription { _kernel }" }, { next: () => {}, error: resolve, complete: () => {} });
+      client.subscribe(
+        { query: "subscription { _kernel }" },
+        { next: () => {}, error: resolve, complete: () => {} },
+      );
     });
     expect(JSON.stringify(error)).toContain("not available yet");
     await client.dispose();
@@ -2067,12 +2647,23 @@ const contracts = new URL("../../../../contracts/", import.meta.url);
 export function loadTypeDefs(): string[] {
   const directory = fileURLToPath(new URL("enatega/", contracts));
   const files = existsSync(directory)
-    ? readdirSync(directory).filter((f) => f.endsWith(".graphql")).sort()
+    ? readdirSync(directory)
+        .filter((f) => f.endsWith(".graphql"))
+        .sort()
     : [];
-  const legacy = ["foundation.graphql", "identity.graphql", "catalog.graphql", "addresses.graphql", "configuration.graphql"]
+  const legacy = [
+    "foundation.graphql",
+    "identity.graphql",
+    "catalog.graphql",
+    "addresses.graphql",
+    "configuration.graphql",
+  ]
     .map((f) => fileURLToPath(new URL(f, contracts)))
     .filter(existsSync);
-  return [...files.map((f) => readFileSync(`${directory}/${f}`, "utf8")), ...legacy.map((f) => readFileSync(f, "utf8"))];
+  return [
+    ...files.map((f) => readFileSync(`${directory}/${f}`, "utf8")),
+    ...legacy.map((f) => readFileSync(f, "utf8")),
+  ];
 }
 ```
 
@@ -2094,15 +2685,25 @@ export class KernelModule {
       module: KernelModule,
       global: true,
       providers: [
-        { provide: PublicAccessTokens, useValue: new PublicAccessTokens(config.PUBLIC_ACCESS_SECRET!, config.PUBLIC_ACCESS_TTL_SECONDS) },
+        {
+          provide: PublicAccessTokens,
+          useValue: new PublicAccessTokens(
+            config.PUBLIC_ACCESS_SECRET!,
+            config.PUBLIC_ACCESS_TTL_SECONDS,
+          ),
+        },
         {
           provide: UserTokens,
           useValue: new UserTokens(
-            config.ACCESS_TOKEN_SECRET ?? Buffer.alloc(32, 5).toString("base64url"),
+            config.ACCESS_TOKEN_SECRET ??
+              Buffer.alloc(32, 5).toString("base64url"),
             config.USER_TOKEN_TTL_SECONDS,
           ),
         },
-        { provide: PUBSUB, useFactory: () => new RedisPubSub(config.REDIS_URL) },
+        {
+          provide: PUBSUB,
+          useFactory: () => new RedisPubSub(config.REDIS_URL),
+        },
         PublicAccessResolver,
       ],
       exports: [PublicAccessTokens, UserTokens, PUBSUB],
@@ -2146,34 +2747,52 @@ where `authResolver` is created inside `createApp` from the `UserTokens` instanc
 7. Replace `app.enableCors(...)` with:
 
 ```ts
-  app.enableCors({
-    origin: config.origins,
-    credentials: false,
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: [
-      "content-type", "authorization", "nonce", "bop-auth", "userid", "isauth",
-      "x-client-type", "x-platform", "accept", "accept-language", "x-skip-public-auth",
-    ],
-  });
+app.enableCors({
+  origin: config.origins,
+  credentials: false,
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: [
+    "content-type",
+    "authorization",
+    "nonce",
+    "bop-auth",
+    "userid",
+    "isauth",
+    "x-client-type",
+    "x-platform",
+    "accept",
+    "accept-language",
+    "x-skip-public-auth",
+  ],
+});
 ```
 
 8. After `await app.init()`, attach the WebSocket server:
 
 ```ts
-  const schema = app.get(GraphQLSchemaHost).schema;
-  const closeWs = attachSubscriptionServer(app.getHttpServer(), schema, async (params) => {
-    const authorization = typeof params.authorization === "string" ? params.authorization : "";
+const schema = app.get(GraphQLSchemaHost).schema;
+const closeWs = attachSubscriptionServer(
+  app.getHttpServer(),
+  schema,
+  async (params) => {
+    const authorization =
+      typeof params.authorization === "string" ? params.authorization : "";
     let resolved: Promise<AuthContext | null> | undefined;
     return {
       requestId: randomUUID(),
       ip: "ws",
       nonce: typeof params.nonce === "string" ? params.nonce : "",
-      platform: typeof params["x-platform"] === "string" ? params["x-platform"] : null,
-      language: typeof params["accept-language"] === "string" ? params["accept-language"] : "en",
+      platform:
+        typeof params["x-platform"] === "string" ? params["x-platform"] : null,
+      language:
+        typeof params["accept-language"] === "string"
+          ? params["accept-language"]
+          : "en",
       transport: "ws",
       auth: () => (resolved ??= authResolver(authorization)),
     } satisfies RequestContext;
-  });
+  },
+);
 ```
 
 and close it in `DependencyLifecycle.onApplicationShutdown` (`await closeWs()`).
@@ -2190,7 +2809,10 @@ async function handshake(server: Parameters<typeof request>[0]) {
     .post("/graphql")
     .set("nonce", "unit-test")
     .send({ query: "mutation { metricsGeneral { experience } }" });
-  return { nonce: "unit-test", "bop-auth": `Bearer ${minted.body.data.metricsGeneral.experience}` };
+  return {
+    nonce: "unit-test",
+    "bop-auth": `Bearer ${minted.body.data.metricsGeneral.experience}`,
+  };
 }
 ```
 
@@ -2217,13 +2839,14 @@ git commit -m "feat(L0): wire kernel transport, gate, limits and subscriptions i
 
 ## Agent W0-B — contract tooling and gates
 
-Owns: `tools/**`, root `package.json` scripts, `codegen.ts`, `turbo.json`.
+Owns: `tools/**`. Changes to root `package.json` scripts, `codegen.ts`, and `turbo.json` are exact deltas queued for the lead; W0-B does not edit those shared files. The lead applies them serially and regenerates `pnpm-lock.yaml` once after worker integration.
 
 ### Task B1: Manifest tool skips untracked build artefacts
 
 `npm ci` and `next dev` inside `vendor/enatega-ui/<app>` create `node_modules`, `.next` and `.env*` files. The manifest must ignore exactly the exclusions it declares.
 
 **Files:**
+
 - Modify: `tools/manifest-enatega-ui.mjs`
 - Test: `tools/manifest-enatega-ui.test.mjs`
 
@@ -2240,7 +2863,14 @@ import { listFiles } from "./manifest-enatega-ui.mjs";
 
 test("ignores dependency, build and env artefacts but keeps source", () => {
   const root = mkdtempSync(join(tmpdir(), "manifest-"));
-  for (const dir of ["app/node_modules/x", "app/.next/cache", "app/.expo", "app/dist", "app/.turbo", "app/src"])
+  for (const dir of [
+    "app/node_modules/x",
+    "app/.next/cache",
+    "app/.expo",
+    "app/dist",
+    "app/.turbo",
+    "app/src",
+  ])
     mkdirSync(join(root, dir), { recursive: true });
   writeFileSync(join(root, "app/node_modules/x/index.js"), "");
   writeFileSync(join(root, "app/.next/cache/a"), "");
@@ -2264,22 +2894,40 @@ In `tools/manifest-enatega-ui.mjs`, replace the `files` function and its first u
 
 ```js
 export function listFiles(root) {
-  const skipDirs = new Set([".git", "node_modules", ".next", ".expo", "dist", ".turbo"]);
+  const skipDirs = new Set([
+    ".git",
+    "node_modules",
+    ".next",
+    ".expo",
+    "dist",
+    ".turbo",
+  ]);
   const skipFile = (name) =>
-    name === ".DS_Store" || name === ".env" || (/^\.env\..+/.test(name) && name !== ".env.example");
+    name === ".DS_Store" ||
+    name === ".env" ||
+    (/^\.env\..+/.test(name) && name !== ".env.example");
   const walk = (directory) =>
     readdirSync(directory, { withFileTypes: true })
       .sort((a, b) => a.name.localeCompare(b.name, "en"))
       .flatMap((entry) => {
         const path = resolve(directory, entry.name);
-        if (entry.isDirectory()) return skipDirs.has(entry.name) ? [] : walk(path);
+        if (entry.isDirectory())
+          return skipDirs.has(entry.name) ? [] : walk(path);
         const rel = relative(root, path).split(sep).join("/");
-        if (!entry.isFile() || ignored.has(entry.name) || skipFile(entry.name) || excludedPaths.has(rel)) return [];
+        if (
+          !entry.isFile() ||
+          ignored.has(entry.name) ||
+          skipFile(entry.name) ||
+          excludedPaths.has(rel)
+        )
+          return [];
         return [rel];
       });
   return walk(root);
 }
-const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+const isMain =
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   /* existing manifest build and --check logic, using listFiles(source) */
 }
@@ -2300,6 +2948,7 @@ git commit -m "fix(tools): ignore build and env artefacts in the Enatega UI mani
 ### Task B2: Compatibility checker reads the kernel rule and scopes by lane
 
 **Files:**
+
 - Modify: `tools/check-enatega-compatibility.mjs`
 - Modify: `tools/check-enatega-compatibility.test.mjs`
 
@@ -2307,14 +2956,21 @@ git commit -m "fix(tools): ignore build and env artefacts in the Enatega UI mani
 
 ```js
 test("reads boundedOperation from services/api/src/kernel/limits.ts when present", () => {
-  const report = audit(fixtureSource, fixtureContractsWithKernelLimits, ["enatega-multivendor-web"]);
+  const report = audit(fixtureSource, fixtureContractsWithKernelLimits, [
+    "enatega-multivendor-web",
+  ]);
   assert.equal(report.serverLimits.source, "services/api/src/kernel/limits.ts");
 });
 test("--scope multivendor ignores documents whose only missing roots are L12", () => {
-  const report = audit(fixtureSource, fixtureContracts, ["enatega-multivendor-web"], {
-    scope: "multivendor",
-    lanes: { "query.singleVendorDiscovery": "L12" },
-  });
+  const report = audit(
+    fixtureSource,
+    fixtureContracts,
+    ["enatega-multivendor-web"],
+    {
+      scope: "multivendor",
+      lanes: { "query.singleVendorDiscovery": "L12" },
+    },
+  );
   assert.equal(report.staticCompatibility, "PASS");
 });
 ```
@@ -2350,6 +3006,7 @@ git commit -m "feat(tools): read kernel limits and scope the contract gate by la
 Tests must send the exact documents the apps send. The loader resolves an exported `gql` document (with its interpolated fragments) from a vendored source file.
 
 **Files:**
+
 - Create: `tools/lib/documents.mjs`
 - Test: `tools/lib/documents.test.mjs`
 
@@ -2362,7 +3019,11 @@ import assert from "node:assert/strict";
 import { loadDocument, listDocuments } from "./documents.mjs";
 
 test("loads an exported gql document by name with its operation intact", () => {
-  const text = loadDocument("enatega-multivendor-admin", "lib/api/graphql/mutations/metrics/index.ts", "METRICS_GENERAL");
+  const text = loadDocument(
+    "enatega-multivendor-admin",
+    "lib/api/graphql/mutations/metrics/index.ts",
+    "METRICS_GENERAL",
+  );
   assert.match(text, /mutation MetricsGeneral/);
   assert.match(text, /metricsGeneral \{/);
 });
@@ -2407,6 +3068,7 @@ git commit -m "feat(tools): share exact Enatega document extraction between gate
 ### Task B4: Operation coverage gate
 
 **Files:**
+
 - Create: `tools/check-operations.mjs`
 - Test: `tools/check-operations.test.mjs`
 - Modify: `package.json` (`"check:operations": "node tools/check-operations.mjs"`)
@@ -2435,21 +3097,41 @@ import { coverage } from "./check-operations.mjs";
 
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), "ops-"));
-  for (const dir of ["contracts", "docs", "services/api/src/m", "services/api/test/integration/m", "e2e"])
+  for (const dir of [
+    "contracts",
+    "docs",
+    "services/api/src/m",
+    "services/api/test/integration/m",
+    "e2e",
+  ])
     mkdirSync(join(root, dir), { recursive: true });
-  writeFileSync(join(root, "contracts/a.graphql"), "type Query { a: Int b: Int } type Mutation { c: Int }");
+  writeFileSync(
+    join(root, "contracts/a.graphql"),
+    "type Query { a: Int b: Int } type Mutation { c: Int }",
+  );
   writeFileSync(
     join(root, "docs/OPERATION_LANES.json"),
-    JSON.stringify({ operations: [
-      { type: "query", name: "a", lane: "L1" },
-      { type: "query", name: "b", lane: "L1" },
-      { type: "mutation", name: "c", lane: "L2" },
-      { type: "mutation", name: "d", lane: "L2" },
-    ] }),
+    JSON.stringify({
+      operations: [
+        { type: "query", name: "a", lane: "L1" },
+        { type: "query", name: "b", lane: "L1" },
+        { type: "mutation", name: "c", lane: "L2" },
+        { type: "mutation", name: "d", lane: "L2" },
+      ],
+    }),
   );
-  writeFileSync(join(root, "services/api/src/m/r.ts"), '@Query("a") a() {}\n@Mutation("c") c() {}');
-  writeFileSync(join(root, "services/api/test/integration/m/a.integration.spec.ts"), 'describe(op("query.a"), () => {})');
-  writeFileSync(join(root, "e2e/a.spec.ts"), 'test("admin sees a @op:query.a", () => {})');
+  writeFileSync(
+    join(root, "services/api/src/m/r.ts"),
+    '@Query("a") a() {}\n@Mutation("c") c() {}',
+  );
+  writeFileSync(
+    join(root, "services/api/test/integration/m/a.integration.spec.ts"),
+    'describe(op("query.a"), () => {})',
+  );
+  writeFileSync(
+    join(root, "e2e/a.spec.ts"),
+    'test("admin sees a @op:query.a", () => {})',
+  );
   return root;
 }
 
@@ -2458,7 +3140,15 @@ test("classifies schema, implementation, tests and e2e per operation", () => {
   const byName = Object.fromEntries(report.operations.map((o) => [o.name, o]));
   assert.deepEqual(
     { ...byName.a, type: undefined, lane: undefined },
-    { type: undefined, lane: undefined, name: "a", inSchema: true, implemented: true, integrationTested: true, e2e: true },
+    {
+      type: undefined,
+      lane: undefined,
+      name: "a",
+      inSchema: true,
+      implemented: true,
+      integrationTested: true,
+      e2e: true,
+    },
   );
   assert.equal(byName.b.implemented, false);
   assert.equal(byName.d.inSchema, false);
@@ -2488,6 +3178,7 @@ git commit -m "feat(tools): add per-operation coverage gate"
 ### Task B5: Error-message gate and inventory freshness
 
 **Files:**
+
 - Create: `tools/check-error-messages.mjs` + `tools/check-error-messages.test.mjs`
 - Modify: `package.json`
 
@@ -2510,6 +3201,7 @@ Add scripts:
 ### Task B6: One verification entry point
 
 **Files:**
+
 - Create: `tools/verify.mjs`
 - Modify: `package.json` (`"verify": "node tools/verify.mjs"`, `"verify:gate": "node tools/verify.mjs --record"`)
 
@@ -2522,12 +3214,15 @@ Add scripts:
 
 ## Agent W0-C — test, coverage and E2E harness
 
-Owns: `services/api/test/support/**`, `services/api/vitest*.config.ts`, `e2e/**`, `infra/**`, and the recorded frontend edit in Task C7.
+Owns: `services/api/test/support/**`, `services/api/vitest*.config.ts`, `e2e/**`, `infra/**`, and the recorded frontend edits in Task C7. Root package scripts/dependencies and `pnpm-lock.yaml` remain lead-owned queued edits.
 
 ### Task C1: Database and Redis stack for integration tests
 
 **Files:**
+
 - Create: `services/api/test/support/stack.ts`
+- Create: `services/api/test/support/stack-global.ts`
+- Modify: `services/api/vitest.integration.config.ts`
 - Test: `services/api/test/integration/support/stack.integration.spec.ts`
 
 - [ ] **Step 1: Write the failing test**
@@ -2541,18 +3236,24 @@ let stack: Stack;
 beforeAll(async () => {
   stack = await startStack();
 });
-afterAll(async () => stack?.stop());
+afterAll(async () => stack?.release());
 
 it("starts PostGIS and Redis with every migration applied", async () => {
-  const { rows } = await stack.pool.query("SELECT extname FROM pg_extension WHERE extname = 'postgis'");
+  const { rows } = await stack.pool.query(
+    "SELECT extname FROM pg_extension WHERE extname = 'postgis'",
+  );
   expect(rows).toHaveLength(1);
-  const migrations = await stack.pool.query('SELECT count(*)::int AS n FROM "_prisma_migrations" WHERE finished_at IS NOT NULL');
+  const migrations = await stack.pool.query(
+    'SELECT count(*)::int AS n FROM "_prisma_migrations" WHERE finished_at IS NOT NULL',
+  );
   expect(migrations.rows[0].n).toBeGreaterThanOrEqual(5);
   expect(await stack.redis.ping()).toBe("PONG");
 });
 it("truncates all application tables between tests without dropping migrations", async () => {
   await stack.reset();
-  const { rows } = await stack.pool.query('SELECT count(*)::int AS n FROM "_prisma_migrations"');
+  const { rows } = await stack.pool.query(
+    'SELECT count(*)::int AS n FROM "_prisma_migrations"',
+  );
   expect(rows[0].n).toBeGreaterThanOrEqual(5);
 });
 ```
@@ -2563,38 +3264,31 @@ it("truncates all application tables between tests without dropping migrations",
 
 ```ts
 // services/api/test/support/stack.ts
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-import { fileURLToPath } from "node:url";
-import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql";
-import { GenericContainer, type StartedTestContainer } from "testcontainers";
 import { Pool } from "pg";
 import { Redis } from "ioredis";
+import { inject } from "vitest";
 
-const run = promisify(execFile);
-const apiRoot = fileURLToPath(new URL("../../", import.meta.url));
+const requiredTestUrl = (key: "databaseUrl" | "redisUrl") => {
+  const value = inject(key);
+  if (!value) throw new Error(`Missing shared integration ${key}`);
+  return value;
+};
 export type Stack = {
   databaseUrl: string;
   redisUrl: string;
   pool: Pool;
   redis: Redis;
   reset(): Promise<void>;
-  stop(): Promise<void>;
+  release(): Promise<void>;
 };
 
-// One container pair per test file; migrations are applied with the real
-// `prisma migrate deploy` so tests exercise exactly what production runs.
+// A Vitest global setup owns one bounded PostGIS/Redis pair for the complete
+// integration run. Test files connect to it, reset their isolated state, and
+// release clients without stopping the global containers. Migrations run once
+// through the real `prisma migrate deploy` command.
 export async function startStack(): Promise<Stack> {
-  const db: StartedPostgreSqlContainer = await new PostgreSqlContainer("postgis/postgis:17-3.5")
-    .withPlatform("linux/amd64")
-    .start();
-  const cache: StartedTestContainer = await new GenericContainer("redis:7-alpine").withExposedPorts(6379).start();
-  const databaseUrl = db.getConnectionUri();
-  const redisUrl = `redis://${cache.getHost()}:${cache.getMappedPort(6379)}`;
-  await run(process.execPath, [fileURLToPath(import.meta.resolve("prisma/build/index.js")), "migrate", "deploy"], {
-    cwd: apiRoot,
-    env: { ...process.env, DATABASE_URL: databaseUrl },
-  });
+  const databaseUrl = requiredTestUrl("databaseUrl");
+  const redisUrl = requiredTestUrl("redisUrl");
   const pool = new Pool({ connectionString: databaseUrl, max: 4 });
   pool.on("error", () => {});
   const redis = new Redis(redisUrl, { maxRetriesPerRequest: 2 });
@@ -2609,18 +3303,20 @@ export async function startStack(): Promise<Stack> {
         "SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename NOT IN ('_prisma_migrations', 'spatial_ref_sys')",
       );
       if (rows.length)
-        await pool.query(`TRUNCATE ${rows.map((r) => `"${r.tablename}"`).join(", ")} RESTART IDENTITY CASCADE`);
+        await pool.query(
+          `TRUNCATE ${rows.map((r) => `"${r.tablename}"`).join(", ")} RESTART IDENTITY CASCADE`,
+        );
       await redis.flushdb();
     },
-    async stop() {
+    async release() {
       redis.disconnect();
       await pool.end();
-      await cache.stop();
-      await db.stop();
     },
   };
 }
 ```
+
+`stack-global.ts` is the only owner of `PostgreSqlContainer` and `GenericContainer`. Its Vitest `setup` hook starts one pair with bounded startup timeouts, applies migrations once, publishes the two URLs through `provide`, and its teardown stops that exact pair. `vitest.integration.config.ts` registers it as `globalSetup`, keeps `fileParallelism: false`, and limits the pool to one integration worker until schema-per-worker isolation is implemented. `stack.ts` reads the injected URLs, opens bounded clients (`pg` max 4; Redis retry/time limits), and exposes `reset()` plus `release()`. A direct invocation outside Vitest may explicitly create one owned pair for a single process, but tests must not create a container pair per file. E2E may reuse this helper only in its own separate run; it never runs concurrently against the integration database.
 
 - [ ] **Step 4: Run it**, expect PASS (requires Docker image pulls; master §10).
 - [ ] **Step 5: Commit** `test(harness): add PostGIS and Redis stack with real migrations`.
@@ -2628,6 +3324,7 @@ export async function startStack(): Promise<Stack> {
 ### Task C2: API, GraphQL and WebSocket clients for tests
 
 **Files:**
+
 - Create: `services/api/test/support/app.ts`
 - Create: `services/api/test/support/gql.ts`
 - Create: `services/api/test/support/ws.ts`
@@ -2638,7 +3335,9 @@ export async function startStack(): Promise<Stack> {
 ```ts
 // services/api/test/support/op.ts
 // Tags a describe block with the root operation it exercises. Read by tools/check-operations.mjs.
-export const op = (name: `${"query" | "mutation" | "subscription"}.${string}`) => `[op:${name}]`;
+export const op = (
+  name: `${"query" | "mutation" | "subscription"}.${string}`,
+) => `[op:${name}]`;
 ```
 
 ```ts
@@ -2684,17 +3383,29 @@ export class GqlClient {
     const response = await request(this.server)
       .post("/graphql")
       .set("nonce", nonce)
-      .send({ query: "mutation MetricsGeneral { metricsGeneral { excellence topgun experience skydiver rider haha hehe huhu yoyo turu } }" });
-    return response.body.data.metricsGeneral as { experience: string; hehe: string };
+      .send({
+        query:
+          "mutation MetricsGeneral { metricsGeneral { excellence topgun experience skydiver rider haha hehe huhu yoyo turu } }",
+      });
+    return response.body.data.metricsGeneral as {
+      experience: string;
+      hehe: string;
+    };
   }
   async raw(body: object, headers: Record<string, string>) {
-    const response = await request(this.server).post("/graphql").set(headers).send(body);
+    const response = await request(this.server)
+      .post("/graphql")
+      .set(headers)
+      .send(body);
     return { status: response.status, body: response.body };
   }
   withUser(token: string | null) {
     return new GqlClient(this.server, this.nonce, token, this.extraHeaders);
   }
-  async query<T = Record<string, unknown>>(query: string, variables?: Record<string, unknown>): Promise<GqlResult<T>> {
+  async query<T = Record<string, unknown>>(
+    query: string,
+    variables?: Record<string, unknown>,
+  ): Promise<GqlResult<T>> {
     this.publicToken ??= (await this.metricsGeneral()).experience;
     const headers: Record<string, string> = {
       nonce: this.nonce,
@@ -2702,8 +3413,15 @@ export class GqlClient {
       authorization: this.userToken ? `Bearer ${this.userToken}` : "",
       ...this.extraHeaders,
     };
-    const response = await request(this.server).post("/graphql").set(headers).send({ query, variables });
-    return { status: response.status, data: response.body.data ?? null, errors: response.body.errors ?? [] };
+    const response = await request(this.server)
+      .post("/graphql")
+      .set(headers)
+      .send({ query, variables });
+    return {
+      status: response.status,
+      data: response.body.data ?? null,
+      errors: response.body.errors ?? [],
+    };
   }
 }
 ```
@@ -2727,24 +3445,42 @@ export async function legacySubscribe(
     waiters.splice(0).forEach((w) => w());
   });
   await new Promise<void>((resolve, reject) => {
-    socket.on("open", () => socket.send(JSON.stringify({ type: "connection_init", payload: connectionParams })));
+    socket.on("open", () =>
+      socket.send(
+        JSON.stringify({ type: "connection_init", payload: connectionParams }),
+      ),
+    );
     socket.on("error", reject);
-    const check = () => (events.some((e) => e.type === "connection_ack") ? resolve() : waiters.push(check));
+    const check = () =>
+      events.some((e) => e.type === "connection_ack")
+        ? resolve()
+        : waiters.push(check);
     waiters.push(check);
   });
-  socket.send(JSON.stringify({ type: "start", id: "1", payload: { query, variables } }));
+  socket.send(
+    JSON.stringify({ type: "start", id: "1", payload: { query, variables } }),
+  );
   return {
     // Resolves with the next `data` payload for this subscription, or rejects after timeoutMs.
     async next(timeoutMs = 3000) {
       const seen = events.filter((e) => e.id === "1").length;
-      return new Promise<{ data?: Record<string, unknown>; errors?: unknown[] }>((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error("No subscription event")), timeoutMs);
+      return new Promise<{
+        data?: Record<string, unknown>;
+        errors?: unknown[];
+      }>((resolve, reject) => {
+        const timer = setTimeout(
+          () => reject(new Error("No subscription event")),
+          timeoutMs,
+        );
         const check = () => {
           const event = events.filter((e) => e.id === "1")[seen];
           if (!event) return waiters.push(check);
           clearTimeout(timer);
           if (event.type === "data") resolve(event.payload as never);
-          else reject(Object.assign(new Error(event.type), { payload: event.payload }));
+          else
+            reject(
+              Object.assign(new Error(event.type), { payload: event.payload }),
+            );
         };
         check();
       });
@@ -2766,8 +3502,16 @@ import { readConfig } from "../../src/config.js";
 import { GqlClient } from "./gql.js";
 import type { Stack } from "./stack.js";
 
-export type Api = { app: INestApplication; http: GqlClient; wsUrl: string; close(): Promise<void> };
-export async function startApi(stack: Stack, env: Record<string, string> = {}): Promise<Api> {
+export type Api = {
+  app: INestApplication;
+  http: GqlClient;
+  wsUrl: string;
+  close(): Promise<void>;
+};
+export async function startApi(
+  stack: Stack,
+  env: Record<string, string> = {},
+): Promise<Api> {
   const app = await createApp(
     readConfig({
       APP_ENV: "test",
@@ -2801,6 +3545,7 @@ export async function startApi(stack: Stack, env: Record<string, string> = {}): 
 ### Task C3: Coverage
 
 **Files:**
+
 - Modify: `services/api/package.json` — add devDependency `"@vitest/coverage-v8": "4.1.11"` and script `"coverage": "vitest run --config vitest.coverage.config.ts"`
 - Create: `services/api/vitest.coverage.config.ts`
 - Modify: root `package.json` — `"coverage": "pnpm --filter @fairbite/api coverage"`
@@ -2821,8 +3566,18 @@ export default defineConfig({
       reporter: ["text-summary", "json-summary", "lcov"],
       reportsDirectory: "coverage",
       thresholds: {
-        "src/kernel/**": { lines: 90, branches: 85, functions: 90, statements: 90 },
-        "src/modules/**": { lines: 90, branches: 85, functions: 90, statements: 90 },
+        "src/kernel/**": {
+          lines: 90,
+          branches: 85,
+          functions: 90,
+          statements: 90,
+        },
+        "src/modules/**": {
+          lines: 90,
+          branches: 85,
+          functions: 90,
+          statements: 90,
+        },
       },
     },
   },
@@ -2837,9 +3592,11 @@ export default defineConfig({
 ### Task C4: Local stack
 
 **Files:**
+
 - Create: `infra/docker-compose.dev.yml`
-- Modify: `tools/local-stack.py` (remove the dead app launch branches; keep api/worker)
-- Modify: `package.json` (`"stack:up": "docker compose -f infra/docker-compose.dev.yml up -d --wait"`, `"stack:down": "docker compose -f infra/docker-compose.dev.yml down"`)
+- Modify: `tools/local-stack.py` (keep API/worker launch; frontend launch remains blocked until Task C7 passes)
+- Test: `tools/local-stack.test.py`
+- Queue for lead: root `package.json` (`"stack:up": "docker compose -f infra/docker-compose.dev.yml up -d --wait"`, `"stack:down": "docker compose -f infra/docker-compose.dev.yml down"`)
 
 ```yaml
 # infra/docker-compose.dev.yml — local development only; never production.
@@ -2866,17 +3623,29 @@ services:
       retries: 30
 ```
 
+Extend `tools/local-stack.py` before running the API:
+
+1. Create or reuse its ignored runtime state file under `.toolchain/local-run/` with filesystem mode `0600`.
+2. If absent, generate `PUBLIC_ACCESS_SECRET` using 32 cryptographically random bytes encoded as canonical base64url without padding; persist it only in that runtime file.
+3. Inject `HOST=127.0.0.1`, `PUBLIC_BASE_URL=http://localhost:4100`, `GRAPHQL_BODY_LIMIT=1mb`, `PUBLIC_ACCESS_ENFORCED=true`, `PUBLIC_ACCESS_TTL_SECONDS=900`, and the persisted secret into the API process. Keep the worker's environment limited to its actual needs and never expose private API secrets to Next or Expo processes.
+4. Redact all keys matching `SECRET`, `TOKEN`, `PASSWORD`, `PEPPER`, or `KEY` from status/log output. A corrupt or overly permissive runtime file fails closed with an actionable error.
+5. Keep replacement frontend commands disabled. Original Enatega frontends may be added only after C7's static scan, provenance, manifest, and no-upstream tests pass.
+
+`tools/local-stack.test.py` proves first-run generation, canonical 32-byte decoding, `0600` permissions, stable reuse, no secret in output, and fail-closed handling of invalid state. Tests use a temporary runtime directory and do not read or overwrite a developer's real secret.
+
 - [ ] Run `pnpm stack:up`, then `DATABASE_URL=postgresql://fairbite:fairbite-dev-only@127.0.0.1:5432/fairbite pnpm --filter @fairbite/api db:migrate`; expect all migrations applied.
+- [ ] Run the local-stack unit test, start API/worker twice, and verify the same secret is reused while readiness returns 200.
 - [ ] Commit `chore(infra): add local PostGIS and Redis stack`.
 
 ### Task C5: Playwright harness running the real admin and customer web apps
 
 **Files:**
+
 - Create: `e2e/playwright.config.ts`, `e2e/global-setup.ts`, `e2e/global-teardown.ts`, `e2e/fixtures.ts`, `e2e/README.md`
 - Modify: root `package.json` (`"e2e": "playwright test -c e2e/playwright.config.ts"`, `"e2e:smoke": "playwright test -c e2e/playwright.config.ts --grep @smoke"`, `"e2e:install-apps": "node e2e/install-apps.mjs"`)
 - Create: `e2e/install-apps.mjs`
 
-Facts (reference/01 §8): the Next apps use npm and their own lockfiles; `npm run dev` adds `--inspect`, so the harness runs `npx next dev` directly; the web app registers a service worker; ADMIN/WEB/APP load Microsoft Clarity and the web service worker initialises the upstream Firebase project.
+Facts (reference/01 §8): the Next apps use npm and their own lockfiles; `npm run dev` adds `--inspect`, so the harness runs `npx next dev` directly. Task C7 must finish before this task starts: no app may be launched while a service worker, layout, environment file, OTA configuration, telemetry initializer, or other startup path can contact an upstream Enatega or third-party project without explicit Fair configuration.
 
 `e2e/install-apps.mjs`: for `enatega-multivendor-admin` and `enatega-multivendor-web`, run `npm ci --no-audit --no-fund` in `vendor/enatega-ui/<app>` when `node_modules/.package-lock.json` is missing or older than `package-lock.json`. Never modifies tracked files (B1 makes the manifest ignore `node_modules`).
 
@@ -2892,7 +3661,9 @@ Facts (reference/01 §8): the Next apps use npm and their own lockfiles; `npm ru
 import { defineConfig, devices } from "@playwright/test";
 import { readFileSync, existsSync } from "node:fs";
 
-const state = existsSync("e2e/.state.json") ? JSON.parse(readFileSync("e2e/.state.json", "utf8")) : {};
+const state = existsSync("e2e/.state.json")
+  ? JSON.parse(readFileSync("e2e/.state.json", "utf8"))
+  : {};
 const api = "http://localhost:4100/";
 const ws = "ws://localhost:4100/";
 const appEnv = {
@@ -2910,20 +3681,34 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   fullyParallel: false,
   retries: process.env.CI ? 1 : 0,
-  reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }], ["json", { outputFile: "test-results/e2e.json" }]],
+  reporter: [
+    ["list"],
+    ["html", { open: "never", outputFolder: "playwright-report" }],
+    ["json", { outputFile: "test-results/e2e.json" }],
+  ],
   use: {
     trace: "retain-on-failure",
     video: "retain-on-failure",
-    // Upstream service workers initialise Enatega's Firebase project; never let them run.
+    // Service workers remain blocked in E2E as defence in depth after C7 removes
+    // or gates every upstream initializer in source.
     serviceWorkers: "block",
   },
   projects: [
-    { name: "admin", testMatch: /admin\/.*\.spec\.ts/, use: { ...devices["Desktop Chrome"], baseURL: "http://localhost:3000" } },
-    { name: "web", testMatch: /web\/.*\.spec\.ts/, use: { ...devices["Desktop Chrome"], baseURL: "http://localhost:3001" } },
+    {
+      name: "admin",
+      testMatch: /admin\/.*\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"], baseURL: "http://localhost:3000" },
+    },
+    {
+      name: "web",
+      testMatch: /web\/.*\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"], baseURL: "http://localhost:3001" },
+    },
   ],
   webServer: [
     {
-      command: "pnpm --filter @fairbite/api build && node services/api/dist/main.js",
+      command:
+        "pnpm --filter @fairbite/api build && node services/api/dist/main.js",
       url: "http://localhost:4100/health/live",
       reuseExistingServer: !process.env.CI,
       env: {
@@ -2961,7 +3746,7 @@ export default defineConfig({
 
 `e2e/fixtures.ts` extends Playwright `test` with:
 
-- `page` that aborts requests to `**/clarity.ms/**`, `**/*.clarity.ms/**`, `**/cdn.jsdelivr.net/npm/@emailjs/**`, `**/*.enatega.com/**`, `**/*.railway.app/**`, `**/*.netlify.app/**` and fails the test if any request to those hosts was attempted (`expect(blocked).toEqual([])` in teardown). This proves no upstream production backend is contacted.
+- `page` that aborts requests to `**/clarity.ms/**`, `**/*.clarity.ms/**`, `**/cdn.jsdelivr.net/npm/@emailjs/**`, `**/*.enatega.com/**`, `**/*.railway.app/**`, `**/*.netlify.app/**` and fails the test if any request to those hosts was attempted (`expect(blocked).toEqual([])` in teardown). This is defence-in-depth evidence after the static source gate; an intercepted attempt fails the test and is not treated as safe behavior.
 - `graphqlLog`: records every request to `localhost:4100/graphql` with operation name, HTTP status and error codes, attached to the test report.
 - `op(name)`: adds `@op:<name>` to the test title annotation for `check-operations`.
 
@@ -2970,14 +3755,21 @@ export default defineConfig({
 ```ts
 import { test, expect } from "../../fixtures.js";
 
-test("@smoke admin login page loads against our API and completes the handshake @op:mutation.metricsGeneral", async ({ page, graphqlLog }) => {
+test("@smoke admin login page loads against our API and completes the handshake @op:mutation.metricsGeneral", async ({
+  page,
+  graphqlLog,
+}) => {
   await page.goto("/authentication/login");
   await expect(page.locator("form")).toBeVisible();
-  await expect.poll(() => graphqlLog.find((e) => e.operation === "MetricsGeneral")?.status).toBe(200);
+  await expect
+    .poll(
+      () => graphqlLog.find((e) => e.operation === "MetricsGeneral")?.status,
+    )
+    .toBe(200);
 });
 ```
 
-- [ ] Write `e2e/specs/web/smoke.spec.ts` asserting the home page renders, `MetricsGeneral` returns 200, and the `configuration` request was sent to `localhost:4100` (its result is `NOT_IMPLEMENTED` or a configuration until L2 lands; the test asserts the request, not the data).
+- [ ] Write `e2e/specs/web/smoke.spec.ts` asserting the home page renders, `MetricsGeneral` returns 200, and the already-implemented `configuration`/`publicConfiguration` reads are sent to `localhost:4100` and return real configured data without `NOT_IMPLEMENTED`. Keep the existing configuration integration tests in the verification set.
 - [ ] Run `pnpm e2e:install-apps && pnpm e2e:smoke`. If the web app's requests to `http://localhost:4100` are blocked by its CSP (reference/01 §6.1), the browser console shows `Refused to connect`; do Task C7, then re-run.
 - [ ] Commit `test(e2e): run the real Enatega admin and web apps against the API`.
 
@@ -2986,6 +3778,7 @@ test("@smoke admin login page loads against our API and completes the handshake 
 Expo apps cannot run under Playwright (reference/01 §8). Until the native gate (Wave 4), their behaviour is proven by replaying their exact documents through `GqlClient` and `legacySubscribe` with each app's headers.
 
 **Files:**
+
 - Create: `services/api/test/support/mobile.ts`
 
 ```ts
@@ -2995,35 +3788,55 @@ import { GqlClient } from "./gql.js";
 
 // Headers each mobile app sends (reference/01 §1.4–§1.6).
 export const mobileHeaders = {
-  app: { "x-platform": "android", "accept-language": "en-US", "user-agent": "EnategaApp/android" },
-  store: { "x-platform": "android", "accept-language": "en", "user-agent": "Enatega-Store-App/android" },
-  rider: { "x-platform": "android", "accept-language": "en", "user-agent": "Enatega-Rider-App/android" },
+  app: {
+    "x-platform": "android",
+    "accept-language": "en-US",
+    "user-agent": "EnategaApp/android",
+  },
+  store: {
+    "x-platform": "android",
+    "accept-language": "en",
+    "user-agent": "Enatega-Store-App/android",
+  },
+  rider: {
+    "x-platform": "android",
+    "accept-language": "en",
+    "user-agent": "Enatega-Rider-App/android",
+  },
 } as const;
 export function mobileClient(server: Server, app: keyof typeof mobileHeaders) {
-  return new GqlClient(server, `${app}-device-${Date.now().toString(36)}-0123456789abcdef`, null, mobileHeaders[app]);
+  return new GqlClient(
+    server,
+    `${app}-device-${Date.now().toString(36)}-0123456789abcdef`,
+    null,
+    mobileHeaders[app],
+  );
 }
 ```
 
 - [ ] Write a test that the rider's `BackgroundPublicToken` document mints a token and the store client's JWT decodes with `atob` (once L1 issues tokens; until then assert the handshake only).
 - [ ] Commit `test(harness): add mobile document replay clients`.
 
-### Task C7: Recorded frontend configuration edits (only when proven necessary)
+### Task C7: Gate every known external initializer before the first launch
 
-Each edit is allowed by AGENTS.md as configuration/transport. For each one: confirm the need (failing check), make the minimal edit, add an `allowedModifications` entry to the root `SOURCE_PROVENANCE.json` with `{ path, change, reason, wave }`, run `node tools/manifest-enatega-ui.mjs` to regenerate `vendor/enatega-ui/SOURCE_MANIFEST.json`, then run `pnpm check:enatega-ui-source`.
+Each edit is limited to configuration/transport and preserves the original Enatega UI. For each one: prove the static upstream literal or unconditional initializer exists, make the minimal fail-closed edit, add an `allowedModifications` entry to the root `SOURCE_PROVENANCE.json` with `{ path, change, reason, wave }`, run `node tools/manifest-enatega-ui.mjs` to regenerate `vendor/enatega-ui/SOURCE_MANIFEST.json`, then run `pnpm check:enatega-ui-source`. Complete this task before C5, any Expo start, emulator/device launch, or local frontend start.
 
-| # | File | Edit | Prove first | Wave |
-|---|---|---|---|---|
-| E1 | `vendor/enatega-ui/enatega-multivendor-web/next.config.mjs` | Add the origins of `NEXT_PUBLIC_SERVER_URL` and `NEXT_PUBLIC_WS_SERVER_URL` to `connect-src`, and omit `upgrade-insecure-requests` when `NODE_ENV !== "production"` | `pnpm e2e:smoke` web project shows `Refused to connect` in the console | 0 |
-| E2 | `vendor/enatega-ui/enatega-multivendor-app/environment.config.js:8-11,23-26,38-41` | Read `GRAPHQL_URL`, `WS_GRAPHQL_URL`, `SERVER_URL`, `SERVER_REST_URL` from `process.env.EXPO_PUBLIC_*`; throw at startup if missing; set `SERVER_URL` to the REST base (fixes the `graphqlpaypal` concatenation, reference/01 §5.2 P7) | literals point at `aws-server-v2.enatega.com` | 4 (native gate) |
-| E3 | `vendor/enatega-ui/enatega-multivendor-store/environment.ts:10-11` | Same env reads | literals point at upstream | 4 |
-| E4 | `vendor/enatega-ui/enatega-multivendor-rider/lib/utils/service/sentry.ts:7-16` | Initialise Sentry only when `configuration.riderAppSentryUrl` is set | hard-coded upstream DSN | 4 |
-| E5 | Clarity in `enatega-multivendor-admin/app/layout.tsx`, `enatega-singlevendor-admin/app/layout.tsx`, `enatega-multivendor-web/app/layout.tsx`, `enatega-multivendor-app/App.js` | Render/initialise Clarity only when `NEXT_PUBLIC_CLARITY_PROJECT_ID` / `EXPO_PUBLIC_CLARITY_PROJECT_ID` is set, using that id | hard-coded upstream project ids | 4 |
-| E6 | Firebase service workers (`enatega-multivendor-admin/public/firebase-messaging-sw.js`, `enatega-singlevendor-admin/public/firebase-messaging-sw.js`, `enatega-multivendor-web/public/serviceWorker.js`, `public/sw.js`) | Replace the hard-coded upstream config with `importScripts('/firebase-config.js')` served by the app from its own env; do nothing when absent | upstream Firebase project ids | 4 |
-| E7 | `enatega-multivendor-app/app.config.js:236-239` | Expo `updates.url` and `extra.eas.projectId` from env; updates disabled when absent | upstream OTA project | 4 |
+| #   | File                                                                                                                                                                                                                    | Edit                                                                                                                                                                                                                                   | Prove first                                     | Wave |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---- |
+| E1  | `vendor/enatega-ui/enatega-multivendor-web/next.config.mjs`                                                                                                                                                             | Add the validated origins of `NEXT_PUBLIC_SERVER_URL` and `NEXT_PUBLIC_WS_SERVER_URL` to `connect-src`, and omit `upgrade-insecure-requests` when `NODE_ENV !== "production"`                                                          | configured local API would otherwise be refused | 0    |
+| E2  | `vendor/enatega-ui/enatega-multivendor-app/environment.config.js:8-11,23-26,38-41`                                                                                                                                      | Read `GRAPHQL_URL`, `WS_GRAPHQL_URL`, `SERVER_URL`, `SERVER_REST_URL` from `process.env.EXPO_PUBLIC_*`; throw at startup if missing; set `SERVER_URL` to the REST base (fixes the `graphqlpaypal` concatenation, reference/01 §5.2 P7) | literals point at `aws-server-v2.enatega.com`   | 0    |
+| E3  | `vendor/enatega-ui/enatega-multivendor-store/environment.ts:10-11`                                                                                                                                                      | Read validated GraphQL and WebSocket URLs from explicit public environment variables and fail closed when absent                                                                                                                       | literals point at upstream                      | 0    |
+| E4  | `vendor/enatega-ui/enatega-multivendor-rider/lib/utils/service/sentry.ts:7-16`                                                                                                                                          | Initialise Sentry only when `configuration.riderAppSentryUrl` is set                                                                                                                                                                   | hard-coded upstream DSN                         | 0    |
+| E5  | Clarity in `enatega-multivendor-admin/app/layout.tsx`, `enatega-singlevendor-admin/app/layout.tsx`, `enatega-multivendor-web/app/layout.tsx`, `enatega-multivendor-app/App.js`                                          | Render/initialise Clarity only when `NEXT_PUBLIC_CLARITY_PROJECT_ID` / `EXPO_PUBLIC_CLARITY_PROJECT_ID` is set, using that id                                                                                                          | hard-coded upstream project ids                 | 0    |
+| E6  | Firebase service workers (`enatega-multivendor-admin/public/firebase-messaging-sw.js`, `enatega-singlevendor-admin/public/firebase-messaging-sw.js`, `enatega-multivendor-web/public/serviceWorker.js`, `public/sw.js`) | Replace the hard-coded upstream config with a same-origin generated configuration file; register/initialise nothing when approved Firebase configuration is absent                                                                     | upstream Firebase project ids                   | 0    |
+| E7  | `enatega-multivendor-app/app.config.js:236-239`                                                                                                                                                                         | Read Expo `updates.url` and `extra.eas.projectId` from env; disable updates when absent                                                                                                                                                | upstream OTA project                            | 0    |
+| E8  | Web layout EmailJS scripts, Google OAuth providers, Google Maps loaders, and similar startup initializers found by the static scan                                                                                      | Load only from an explicit feature flag plus validated provider configuration; render the existing unavailable/error state when absent                                                                                                 | unconditional external script or SDK load       | 0    |
 
-In Wave 0 only E1 is done (if proven). E2–E7 are done by L10 in Wave 4 Task R4 before any native or release build. Playwright blocks service workers and the listed hosts, so E5/E6 do not affect E2E.
+Wave 0 completes E1–E8 before the first launch. L10 may later add approved provider configuration, but it does not own removal of upstream defaults. Add a static gate that scans all six vendored apps for known Enatega hosts/project IDs/DSNs and unconditional external startup URLs; maintain an explicit allowlist containing only documented package/download URLs that never execute at runtime. The gate must fail on an unknown runtime URL. Then regenerate the manifest, run `pnpm check:enatega-ui-source`, run the static gate, and only then run `pnpm e2e:smoke`. Network logs must show zero attempted requests to blocked upstream hosts.
 
-- [ ] For E1: prove, edit, record, regenerate the manifest, run `pnpm check:enatega-ui-source` and `pnpm e2e:smoke`, commit `chore(L10): allow the web CSP to reach the configured API (recorded)`.
+- [ ] Prove each E1–E8 source condition, make the minimum recorded edits, regenerate the manifest, and pass the manifest/static-network gates.
+- [ ] Run admin and web E2E with request-attempt failure hooks; run Expo static configuration tests without starting Metro until its E2/E7 gates pass.
+- [ ] Commit `chore(L10): gate vendored UI transports and external initializers (recorded)`.
 
 ### Task C8: W0-C handoff
 
@@ -3034,7 +3847,10 @@ In Wave 0 only E1 is done (if proven). E2–E7 are done by L10 in Wave 4 Task R4
 
 ## Lead — integrate Wave 0 and pass G0
 
-- [ ] Merge W0-A, then W0-B, then W0-C into `enatega-ui-backend`; resolve only mechanical conflicts.
+- [ ] Use at most four active slots: lead plus W0-A, W0-B, and W0-C. Start all three bounded workers after ownership is frozen; do not create another worker while all four slots are occupied.
+- [ ] Review W0-A first, then apply its queued API dependency delta. Review W0-B second, then apply its queued root scripts/config delta. Review W0-C third, then apply its queued harness scripts/config delta. Regenerate `pnpm-lock.yaml` once from the integrated package manifests. Workers never race on root manifests, the lockfile, codegen, Turbo configuration, provenance, or gate records.
+- [ ] Integrate W0-A, then W0-B, then W0-C into `enatega-ui-backend`; resolve only mechanical conflicts. If a semantic conflict appears, return it to the owning packet rather than choosing an unreviewed hybrid.
+- [ ] Run the C7 static network/provenance/manifest gates before starting any frontend. Then run the shared integration stack alone, stop/release it, and run E2E's separate stack; never run both suites against the same database concurrently.
 - [ ] Run `pnpm verify --integration --coverage --e2e --record G0`.
 - [ ] Request independent review (L11 QA, L13 security) of `kernel/**`, `tools/**`, `test/support/**`, `e2e/**`. Address findings.
 - [ ] Commit `docs/GATES.json` with the G0 entry.
