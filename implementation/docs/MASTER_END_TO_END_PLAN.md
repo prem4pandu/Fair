@@ -206,15 +206,18 @@ The full per-package audit is **`docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md`** (
 
 The findings that change this plan:
 
-1. **The pinned tree is not pristine upstream.** It already contains a hand-written adapter layer (env/mode endpoint
-   resolvers, a Next.js maps proxy, client `nonce`/`bop-auth` token services, a background-location transport) with
-   internal hardening IDs, and `vendor/enatega-ui/SOURCE_PROVENANCE.json` has **no `allowedModifications` key** while
-   the root file records only the four Firebase binding files. **W2 must reconcile the baseline before any frontend
-   edit**: classify every adapter artifact as upstream or Fair-authored, record the Fair-authored ones, or restore
-   upstream bytes.
+1. **The tree contains a hand-written adapter layer — and it is upstream, not ours (verified 2026-10-08).**
+   The env/mode endpoint resolvers, the Next.js maps proxy, the client `nonce`/`bop-auth` token services and the rider
+   background-location transport all exist in `upstream/`, and `diff -rq` reports **0 differences across all six
+   packages**. There are therefore no unrecorded Fair edits to reconcile; the boundary risk is future drift. The root
+   `SOURCE_PROVENANCE.json` now records this as `baselineVerification` (command, result, limit, invariant). The
+   package-level `vendor/enatega-ui/SOURCE_PROVENANCE.json` legitimately has no `allowedModifications` key because no
+   edits exist; the first real edit must add it and re-run the manifest.
 2. **Every request in every app depends on one handshake.** `metricsGeneral` returns the public token in `experience`
-   and its ISO expiry in `hehe`, bound to a client `nonce` and replayed as `bop-auth: Bearer`. The three web apps call
-   it as a **query**, the customer app as a **mutation** — the server must accept both, or login screens fail.
+   and its ISO expiry in `hehe`, bound to a client `nonce` and replayed as `bop-auth: Bearer`. Verified on 2026-10-08:
+   all six clients send it as a **`mutation`**, matching the SDL — but every decoy field the clients select
+   (`excellence`, `topgun`, `skydiver`, `rider`, `haha`, `huhu`, `yoyo`, `turu`) must resolve without error or the
+   handshake breaks and every app is unusable.
 3. **All six clients speak the legacy `subscriptions-transport-ws` frame set** under the `graphql-ws` subprotocol
    name. A `graphql-transport-ws`-only server breaks every dashboard, store subscription and rider tracking flow.
 4. **Non-GraphQL surface that a GraphQL-only backend misses:** three `maps/*` REST routes, three `stripe/*` REST
@@ -265,10 +268,10 @@ W0 task list (each ends with the exact command that proves it):
 
 ### 4.2 Wave 1 — foundation and contract freeze
 
-| ID     | Workstream                                                                                                                                                                                                                                        | Owner role       | Ops    | Scope                                                                                                                                                 | Depends |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| **W1** | Kernel/transport completion: legacy + modern WS frame sets, `metricsGeneral` as query **and** mutation with `nonce`/`bop-auth` binding, Redis pub/sub, limits proven against the largest real document, health/readiness, outbox worker hardening | backend-kernel   | 1 (L0) | `services/api/src/kernel/**`, `services/worker/**`, `test/support/**`                                                                                 | W0      |
-| **W2** | Contract + data-model freeze: L12 SDL gap closed (71 roots have no declaration), migration from the populated 005 baseline, ports interface freeze, dynamic-document reconciliation, **vendor baseline/provenance reconciliation**                | backend-contract | —      | `contracts/enatega/**`, `prisma/schema/base.prisma`, `prisma/migrations/**`, `kernel/ports.ts`, `vendor/enatega-ui/SOURCE_PROVENANCE.json` (via lead) | W0      |
+| ID     | Workstream                                                                                                                                                                                                                                        | Owner role       | Ops    | Scope                                                                                                                                                                                 | Depends |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| **W1** | Kernel/transport completion: legacy + modern WS frame sets, `metricsGeneral` as query **and** mutation with `nonce`/`bop-auth` binding, Redis pub/sub, limits proven against the largest real document, health/readiness, outbox worker hardening | backend-kernel   | 1 (L0) | `services/api/src/kernel/**`, `services/worker/**`, `test/support/**`                                                                                                                 | W0      |
+| **W2** | Contract + data-model freeze: L12 SDL gap closed (71 roots have no declaration), migration from the populated 005 baseline, ports interface freeze, dynamic-document reconciliation, full-mode compatibility report                               | backend-contract | —      | `contracts/enatega/**`, `prisma/schema/base.prisma`, `prisma/migrations/**`, `kernel/ports.ts` (only), `test/integration/schema/**`, `docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json` | W0      |
 
 W2 exit criteria: `pnpm check:enatega` PASS for multivendor **and** single-vendor scope; every migration applies both on
 an empty database and as an upgrade from the populated baseline with no data loss; `docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json`
@@ -579,23 +582,23 @@ roughly **14–20 working sessions/weeks**, dominated by provider, device and re
 
 ## 9. Risk register
 
-| #   | Risk                                                                                                        | Impact                 | Mitigation                                                                                                      |
-| --- | ----------------------------------------------------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------- |
-| R1  | 334 operations vs 18 implemented; scope is 10× the current code                                             | schedule               | lane batches with per-operation evidence; traceability matrix shows truth continuously                          |
-| R2  | Frontend install/build may not work under pnpm/Node 24 (npm lockfiles, Expo/Metro, duplicate package names) | blocks all UI gates    | D-F1 per-app npm in place; verify in W12 first; fallback documented                                             |
-| R3  | Vendor edits + manifest regeneration collide across frontend agents                                         | broken provenance gate | single serialisation point owned by the lead; batches of ≤ 2 frontend writers                                   |
-| R4  | Real payment/provider/device inputs absent                                                                  | G4 unreachable         | honest `PROVIDER_UNAVAILABLE`/blocked status; build everything up to the boundary                               |
-| R5  | Schema-complete but behaviour-thin code could be mistaken for progress                                      | false status           | `NOT_IMPLEMENTED` everywhere by default; status docs generated from gates, never narrative                      |
-| R6  | Silent clamping/interpretation in domain code (e.g. discount clamped to items total in `pricing.ts`)        | policy drift           | lane review must confirm each rule against upstream documents; reject vs clamp is an explicit decision          |
-| R7  | Playwright suite against mutable upstream DOM                                                               | flakes                 | page objects sourced from pinned markup; `retries: 0`; quarantine is a blocker                                  |
-| R8  | Migration drift across parallel lanes                                                                       | data loss              | migrations authored only by the lead; lanes submit reviewed SQL; upgrade test from populated baseline is a gate |
-| R9  | Dependency advisories (4 high, 4 moderate per audit)                                                        | release blocker        | bump/quarantine in W20; re-audit at G4                                                                          |
-| R10 | Docs drift (already happened once)                                                                          | wrong decisions        | every status doc generated from gate output; stale-file tests (`tools/*.test.mjs`) enforce                      |
-| R11 | The vendor tree contains unrecorded adapter edits; the provenance gate is currently unprovable              | boundary breach        | W2 reconciles and records every Fair-authored artifact before any frontend edit                                 |
-| R12 | Vendor web installs fail under Node 24 (`engine-strict=true`)                                               | frontend lanes stall   | D-F4 recipe verified in W12 before the other frontend lanes start                                               |
-| R13 | Upstream credentials/hosts remain live in the tree (Firebase web keys, Sentry DSN, EAS profiles)            | security, owner breach | gated and removed by the owning frontend lane; the Playwright network guard fails any upstream-host request     |
-| R14 | `metricsGeneral`/legacy-WS incompatibility blocks every app, including login                                | total UI blockage      | W1 owns it as the first transport gate; `e2e:smoke` proves both operation types and both WS frame sets          |
-| R15 | Signed media URLs, Live Activity and background-location contracts are easy to miss in a GraphQL-only plan  | silent mobile breakage | capability checklist in `docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md` §5 drives W4/W8/W10                        |
+| #   | Risk                                                                                                        | Impact                 | Mitigation                                                                                                                                                    |
+| --- | ----------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1  | 334 operations vs 18 implemented; scope is 10× the current code                                             | schedule               | lane batches with per-operation evidence; traceability matrix shows truth continuously                                                                        |
+| R2  | Frontend install/build may not work under pnpm/Node 24 (npm lockfiles, Expo/Metro, duplicate package names) | blocks all UI gates    | D-F1 per-app npm in place; verify in W12 first; fallback documented                                                                                           |
+| R3  | Vendor edits + manifest regeneration collide across frontend agents                                         | broken provenance gate | single serialisation point owned by the lead; batches of ≤ 2 frontend writers                                                                                 |
+| R4  | Real payment/provider/device inputs absent                                                                  | G4 unreachable         | honest `PROVIDER_UNAVAILABLE`/blocked status; build everything up to the boundary                                                                             |
+| R5  | Schema-complete but behaviour-thin code could be mistaken for progress                                      | false status           | `NOT_IMPLEMENTED` everywhere by default; status docs generated from gates, never narrative                                                                    |
+| R6  | Silent clamping/interpretation in domain code (e.g. discount clamped to items total in `pricing.ts`)        | policy drift           | lane review must confirm each rule against upstream documents; reject vs clamp is an explicit decision                                                        |
+| R7  | Playwright suite against mutable upstream DOM                                                               | flakes                 | page objects sourced from pinned markup; `retries: 0`; quarantine is a blocker                                                                                |
+| R8  | Migration drift across parallel lanes                                                                       | data loss              | migrations authored only by the lead; lanes submit reviewed SQL; upgrade test from populated baseline is a gate                                               |
+| R9  | Dependency advisories (4 high, 4 moderate per audit)                                                        | release blocker        | bump/quarantine in W20; re-audit at G4                                                                                                                        |
+| R10 | Docs drift (already happened once)                                                                          | wrong decisions        | every status doc generated from gate output; stale-file tests (`tools/*.test.mjs`) enforce                                                                    |
+| R11 | The vendor tree drifts from the pinned snapshot once frontend lanes start editing                           | boundary breach        | baseline verified byte-identical (0 diffs) and recorded in SOURCE_PROVENANCE.json; every future edit must be listed in allowedModifications and re-manifested |
+| R12 | Vendor web installs fail under Node 24 (`engine-strict=true`)                                               | frontend lanes stall   | D-F4 recipe verified in W12 before the other frontend lanes start                                                                                             |
+| R13 | Upstream credentials/hosts remain live in the tree (Firebase web keys, Sentry DSN, EAS profiles)            | security, owner breach | gated and removed by the owning frontend lane; the Playwright network guard fails any upstream-host request                                                   |
+| R14 | `metricsGeneral`/legacy-WS incompatibility blocks every app, including login                                | total UI blockage      | W1 owns it as the first transport gate; `e2e:smoke` proves both operation types and both WS frame sets                                                        |
+| R15 | Signed media URLs, Live Activity and background-location contracts are easy to miss in a GraphQL-only plan  | silent mobile breakage | capability checklist in `docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md` §5 drives W4/W8/W10                                                                      |
 
 ---
 

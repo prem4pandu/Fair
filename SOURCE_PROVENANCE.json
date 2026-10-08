@@ -77,5 +77,15 @@
       "reason": "Upstream Firebase project binding; Fair generates its own per environment."
     }
   ],
-  "executed_upstream_code": false
+  "executed_upstream_code": false,
+  "baselineVerification": {
+    "checkedOn": "2026-10-08",
+    "vendorTree": "implementation/vendor/enatega-ui",
+    "comparedAgainst": "upstream/ (repository-local pinned snapshot)",
+    "command": "for p in enatega-multivendor-web enatega-multivendor-admin enatega-singlevendor-admin enatega-multivendor-app enatega-multivendor-store enatega-multivendor-rider; do diff -rq upstream/$p implementation/vendor/enatega-ui/$p; done",
+    "result": "0 differences in all six packages",
+    "conclusion": "The tracked product UI is byte-identical to the repository-local pinned snapshot. The env/mode endpoint resolvers, the Next.js maps reverse-geocode proxy, the client public-access (nonce/bop-auth) token services and the rider background-location transport are part of that pinned snapshot, not unrecorded Fair edits.",
+    "limit": "The upstream GitHub commit is still not independently cloned, so commitIndependentlyVerified stays false; this verifies equality to the local snapshot only.",
+    "invariant": "Any future edit inside implementation/vendor/enatega-ui must be added to allowedModifications above, and node tools/manifest-enatega-ui.mjs re-run so SOURCE_MANIFEST.json matches."
+  }
 }

@@ -41,10 +41,11 @@ mostly by raw `fetch` outside the Apollo cache, and replays the result as `bop-a
 - `experience` = the bearer token string, `hehe` = the ISO expiry timestamp.
 - Requested decoy fields that must at least resolve without error: `excellence`, `topgun`, `skydiver`, `rider`,
   `haha`, `huhu`, `yoyo`, `turu`.
-- The three web packages issue it as a **query** (`enatega-multivendor-web/lib/api/graphql/mutations/metrics/index.ts`,
-  admin/single-admin `lib/hooks/useSetApollo.tsx`); the customer app issues it as a **mutation**
-  (`enatega-multivendor-app/src/apollo/publicAccess.js:3-17`, `src/services/publicAcccessService.js:69-72`).
-  **Both operation types must be accepted**, otherwise login screens themselves fail.
+- **Verified 2026-10-08: every client sends it as a `mutation`.** `enatega-multivendor-web/lib/api/graphql/mutations/metrics/index.ts`,
+  admin and single-admin `METRICS_GENERAL` (imported at `lib/hooks/useSetApollo.tsx:21`), customer app
+  `src/apollo/publicAccess.js`, store/rider `lib/services/public-access-token.service.ts`, and the rider background
+  task (`lib/services/background-location.ts:90-104`) all declare `mutation MetricsGeneral`. The SDL declares the root
+  under `type Mutation` (`contracts/enatega/core.graphql:23`), which matches. No query form is required.
 - Call sites: web `lib/hooks/useSetApollo.tsx:55-92`; admin `lib/hooks/useSetApollo.tsx:146-201` (+ refresh
   `:203-278`); single-admin `:153-201` (+ refresh `:210-278`); store
   `lib/services/public-access-token.service.ts:9-24,151-214`; rider `lib/services/public-access-token.service.ts:18-27`
