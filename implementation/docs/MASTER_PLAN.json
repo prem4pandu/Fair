@@ -1080,6 +1080,12 @@
       "id": "R17",
       "risk": "observed integration flake: test/catalog.integration.spec.ts failed once in three full runs (an assertion saw a response with no errors), while passing in isolation and in the other full runs",
       "mitigation": "assertion now prints the limit, query and response body so the next occurrence is diagnosable; W20 owns flake elimination before G4, and a quarantine is a blocker rather than a pass"
+    },
+    {
+      "id": "R18",
+      "risk": "scoped (`--scope multivendor`) compatibility audits only cover the supplied resolution set (439 sites) while the lexical scan finds 655 in the same five apps, so 216 sites are invisible to the multivendor gate",
+      "measured": "2026-10-08 with reconciliation forced in scoped mode: 534 valid, 25 INVALID, 72 OUT_OF_SCOPE (single-vendor docs in the shared app), 24 UNRESOLVED",
+      "mitigation": "full mode (`pnpm check:enatega:full`) reconciles every lexical site and is the G1 criterion; contract-eng classifies the remaining dynamic sites in docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json, and closing the scoped gap is a tracked task before G1"
     }
   ],
   "artifacts": [

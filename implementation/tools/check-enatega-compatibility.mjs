@@ -289,89 +289,105 @@ export function audit(source, contracts, appNames = apps, options = {}) {
     const suppliedDocuments = options.documents?.filter(
       (document) => document.app === app,
     );
+    // Sites the resolver already covered. The source scan still runs below so a
+    // site the resolver does NOT cover is reported as UNRESOLVED instead of
+    // silently disappearing from the audit.
+    const covered = new Set();
     if (suppliedDocuments) {
       for (const document of suppliedDocuments)
         if (
           parse(document.text).definitions.some(
             (definition) => definition.kind === Kind.OPERATION_DEFINITION,
           )
-        )
+        ) {
+          // reconcile() compares against relative(source, path), which always
+          // carries the app prefix; document.file is app-relative.
+          covered.add(
+            `${app}/${document.file}`.split(sep).join("/") +
+              `:${document.line}`,
+          );
           record(
             resolve(source, app, document.file),
             document.line,
             document.text,
             !document.resolved,
           );
-    } else
-      for (const path of paths) {
-        const raw = readFileSync(path, "utf8");
-        if ([".graphql", ".gql"].includes(extname(path))) {
-          record(path, 1, raw, false);
-          continue;
         }
-        const ast = ts.createSourceFile(
-          path,
-          raw,
-          ts.ScriptTarget.Latest,
-          true,
-        );
-        for (const diagnostic of ast.parseDiagnostics)
-          sourceErrors.push({
-            file: relative(source, path),
-            line:
-              ast.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1,
-            code: diagnostic.code,
-          });
-        const visit = (node) => {
-          const tagged =
-            ts.isTaggedTemplateExpression(node) &&
-            /(?:^|\.)(gql|graphql)$/.test(node.tag.getText(ast));
-          const called =
-            ts.isCallExpression(node) &&
-            /(?:^|\.)(gql|graphql)$/.test(node.expression.getText(ast));
-          if (tagged || called) {
-            const argument = tagged ? node.template : node.arguments[0];
-            const literal =
-              argument &&
-              (ts.isStringLiteral(argument) ||
-                ts.isNoSubstitutionTemplateLiteral(argument));
-            record(
-              path,
-              ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
-              literal ? argument.text : node.getText(ast),
-              !literal,
-            );
-            return;
-          }
-          if (
-            (ts.isStringLiteral(node) ||
-              ts.isNoSubstitutionTemplateLiteral(node)) &&
-            looksLikeGraphQL(node.text)
-          ) {
-            record(
-              path,
-              ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
-              node.text,
-              false,
-            );
-            return;
-          }
-          if (
-            ts.isTemplateExpression(node) &&
-            looksLikeGraphQL(node.head.text)
-          ) {
-            record(
-              path,
-              ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
-              node.getText(ast),
-              true,
-            );
-            return;
-          }
-          ts.forEachChild(node, visit);
-        };
-        visit(ast);
+    }
+    // When the caller supplies a resolution set it is the whole audit, unless it
+    // explicitly asks for reconciliation. The CLI enables reconciliation in full
+    // mode only, so a lexical site whose resolution is missing is reported as
+    // UNRESOLVED instead of disappearing from the six-app audit. The scoped
+    // extractor gap is tracked separately (docs/MASTER_PLAN.json R18).
+    const reconcileSites = Boolean(options.reconcileUncoveredSites);
+    const recordUncovered = (path, line, text, dynamic) => {
+      // Without a supplied resolution set the lexical scan IS the audit.
+      if (!suppliedDocuments) return record(path, line, text, dynamic);
+      if (!reconcileSites) return;
+      if (covered.has(`${relative(source, path)}:${line}`)) return;
+      record(path, line, text, dynamic);
+    };
+    for (const path of paths) {
+      const raw = readFileSync(path, "utf8");
+      if ([".graphql", ".gql"].includes(extname(path))) {
+        recordUncovered(path, 1, raw, false);
+        continue;
       }
+      const ast = ts.createSourceFile(path, raw, ts.ScriptTarget.Latest, true);
+      for (const diagnostic of ast.parseDiagnostics)
+        sourceErrors.push({
+          file: relative(source, path),
+          line:
+            ast.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1,
+          code: diagnostic.code,
+        });
+      const visit = (node) => {
+        const tagged =
+          ts.isTaggedTemplateExpression(node) &&
+          /(?:^|\.)(gql|graphql)$/.test(node.tag.getText(ast));
+        const called =
+          ts.isCallExpression(node) &&
+          /(?:^|\.)(gql|graphql)$/.test(node.expression.getText(ast));
+        if (tagged || called) {
+          const argument = tagged ? node.template : node.arguments[0];
+          const literal =
+            argument &&
+            (ts.isStringLiteral(argument) ||
+              ts.isNoSubstitutionTemplateLiteral(argument));
+          recordUncovered(
+            path,
+            ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
+            literal ? argument.text : node.getText(ast),
+            !literal,
+          );
+          return;
+        }
+        if (
+          (ts.isStringLiteral(node) ||
+            ts.isNoSubstitutionTemplateLiteral(node)) &&
+          looksLikeGraphQL(node.text)
+        ) {
+          recordUncovered(
+            path,
+            ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
+            node.text,
+            false,
+          );
+          return;
+        }
+        if (ts.isTemplateExpression(node) && looksLikeGraphQL(node.head.text)) {
+          recordUncovered(
+            path,
+            ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
+            node.getText(ast),
+            true,
+          );
+          return;
+        }
+        ts.forEachChild(node, visit);
+      };
+      visit(ast);
+    }
     const missingRoots = [
       ...new Set(documents.flatMap((d) => d.missingRoots)),
     ].sort();
@@ -466,7 +482,13 @@ if (
   const report = audit(resolve(source), resolve(contracts), scopedApps, {
     scope,
     lanes,
-    documents: scope ? resolvedDocuments({ scope, lanes }) : undefined,
+    // Full mode audits all six apps too, so it must consume the checked-in
+    // resolutions artifact instead of the raw lexical scan; otherwise every
+    // import/interpolated site is reported UNRESOLVED forever. Reconciliation
+    // then guarantees that any site the resolver does not cover is still
+    // reported rather than silently dropped.
+    documents: resolvedDocuments(scope ? { scope, lanes } : {}),
+    reconcileUncoveredSites: !scope,
   });
   writeFileSync(
     output,

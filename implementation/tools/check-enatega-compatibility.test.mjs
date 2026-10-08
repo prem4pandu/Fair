@@ -248,3 +248,71 @@ test("absent server source, unknown body limit and empty app sets cannot pass", 
     "FAIL",
   );
 });
+
+test("a supplied resolution set is the whole audit unless reconciliation is requested", (t) => {
+  const run = fixture(
+    t,
+    "const a = gql`query { viewer { id } }`;\nconst b = gql`query { viewer { child { id } } }`;",
+  );
+  const report = run({
+    documents: [
+      {
+        app: "app",
+        file: "operations.ts",
+        line: 1,
+        text: "query { viewer { id } }",
+        resolved: true,
+      },
+    ],
+  });
+  assert.equal(report.apps[0].documents.length, 1);
+  assert.equal(report.apps[0].documents[0].status, "VALID_STATIC_DOCUMENT");
+});
+
+test("reconciliation still audits a static site the resolver did not cover", (t) => {
+  const run = fixture(
+    t,
+    "const a = gql`query { viewer { id } }`;\nconst b = gql`query { viewer { child { id } } }`;",
+  );
+  const report = run({
+    documents: [
+      {
+        app: "app",
+        file: "operations.ts",
+        line: 1,
+        text: "query { viewer { id } }",
+        resolved: true,
+      },
+    ],
+    reconcileUncoveredSites: true,
+  });
+  assert.equal(report.apps[0].documents.length, 2);
+  assert.equal(report.apps[0].documents[1].line, 2);
+  assert.equal(report.apps[0].documents[1].status, "VALID_STATIC_DOCUMENT");
+});
+
+test("reconciliation reports a dynamic site the resolver did not cover instead of dropping it", (t) => {
+  const run = fixture(
+    t,
+    "const a = gql`query { viewer { id } }`;\nconst b = gql`query { viewer { child { id ${field} } } }`;",
+  );
+  const report = run({
+    documents: [
+      {
+        app: "app",
+        file: "operations.ts",
+        line: 1,
+        text: "query { viewer { id } }",
+        resolved: true,
+      },
+    ],
+    reconcileUncoveredSites: true,
+  });
+  const uncovered = report.apps[0].documents.filter(
+    (document) => document.status === "UNRESOLVED",
+  );
+  assert.equal(report.apps[0].documents.length, 2);
+  assert.equal(uncovered.length, 1);
+  assert.equal(uncovered[0].line, 2);
+  assert.match(uncovered[0].errors[0].message, /import\/interpolation/);
+});
