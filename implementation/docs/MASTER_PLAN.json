@@ -110,6 +110,16 @@
       "id": "D-F7",
       "default": "All three web apps use the BFF cookie session bridge",
       "owner": false
+    },
+    {
+      "id": "D-G1",
+      "default": "Public-access gate stays HTTP-only; bop-auth is verified on WebSocket only when a client supplies it, and per-subscription authorisation remains the control",
+      "owner": false
+    },
+    {
+      "id": "D-G2",
+      "default": "x-skip-public-auth is not honoured by the server; enforcement is controlled only by PUBLIC_ACCESS_ENFORCED",
+      "owner": false
     }
   ],
   "workstreams": [
@@ -166,16 +176,20 @@
         "services/api/src/kernel/**",
         "services/api/src/rest/**",
         "services/worker/**",
-        "services/api/test/support/**"
+        "services/api/test/support/**",
+        "implementation/services/api/src/app.ts (WS context, error path, CORS allow-list only)"
       ],
       "deliverables": [
-        "metricsGeneral accepted as both query and mutation, returning experience (bearer) and hehe (ISO expiry) with nonce binding and decoy fields",
-        "bop-auth verification on HTTP and WS with x-skip-public-auth bypass and client-compatible error text",
-        "legacy subscriptions-transport-ws frame set on /graphql (plus graphql-transport-ws for our tooling)",
-        "Redis pub/sub subscriptions",
+        "mutation metricsGeneral returning experience (bearer) and hehe (ISO expiry) with nonce binding and all eight decoy fields resolving",
+        "public-access gate on HTTP with no header-based bypass (D-G2); enforcement controlled only by PUBLIC_ACCESS_ENFORCED",
+        "bop-auth verified on WS when a client supplies it; the gate itself stays HTTP-only (D-G1) and per-subscription authorisation remains the control",
+        "legacy subscriptions-transport-ws frame set and graphql-transport-ws both delivering a subscription on /graphql with connectionParams auth",
+        "WS context complete (including ready) and both WS protocols masking unmasked internal errors through the same allow-list as HTTP",
+        "Redis pub/sub delivering across API instances",
         "operation limits proven against the largest real app document",
-        "health/readiness separated",
-        "outbox worker lease/retry/dead-letter hardening"
+        "health/readiness separation and recovery",
+        "outbox worker lease/retry/dead-letter with idempotent consumers",
+        "every services/api/src/kernel/** file at 90/90/85 coverage"
       ],
       "acceptance": [
         "pnpm test",
