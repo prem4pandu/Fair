@@ -261,6 +261,9 @@ export function generate(requirements, typeMap, lanes) {
           `${rootKind}.${rootName}.${argumentName}`,
         );
         const type =
+          typeMap.argumentOverrides?.[
+            `${rootKind}.${rootName}.${argumentName}`
+          ] ??
           variableType ??
           literalType(rootName, argumentName, argument, declarations);
         args.push(`${argumentName}: ${type}`);
@@ -322,6 +325,10 @@ export function generate(requirements, typeMap, lanes) {
           });
         }
       }
+  for (const [inputName, fields] of Object.entries(
+    typeMap.inputOverrides ?? {},
+  ))
+    declarations.inputs.set(inputName, fields);
   for (const type of declarations.objects.keys())
     declarations.scalars.delete(type);
   for (const type of declarations.inputs.keys())
@@ -349,10 +356,11 @@ export function generate(requirements, typeMap, lanes) {
     a.localeCompare(b),
   )) {
     const entries = Object.entries(fields);
+    const exactInput = Object.hasOwn(typeMap.inputOverrides ?? {}, name);
     sections
       .get("core")
       .push(
-        `input ${name} { ${entries.length ? entries.map(([field, type]) => `${field}: ${type.replace(/!+$/g, "")}`).join(" ") : "_unused: String"} }`,
+        `input ${name} { ${entries.length ? entries.map(([field, type]) => `${field}: ${exactInput ? type : type.replace(/!+$/g, "")}`).join(" ") : "_unused: String"} }`,
       );
   }
   for (const [name, fields] of [...declarations.objects].sort(([a], [b]) =>

@@ -111,3 +111,45 @@ test("reports collection-shaped selections without a cardinality override", () =
     generated.review.includes("query.banners: unresolved root cardinality"),
   );
 });
+
+test("applies exact argument and named input overrides", () => {
+  const requirements = deriveFromDocuments([
+    {
+      app: "web",
+      text: "mutation Create($addressInput: AddressInput!) { createAddress(addressInput: $addressInput) { _id } }",
+    },
+  ]);
+  const generated = generate(
+    requirements,
+    {
+      fixed: {},
+      byFieldName: {},
+      byPath: {},
+      typeOverrides: {},
+      ownership: {},
+      argumentOverrides: {
+        "mutation.createAddress.addressInput": "AddressInput!",
+      },
+      inputOverrides: {
+        AddressInput: {
+          _id: "ID",
+          label: "String!",
+          longitude: "String!",
+        },
+      },
+    },
+    {
+      operations: [{ type: "mutation", name: "createAddress", lane: "L4" }],
+    },
+  );
+  const sdl = Object.values(generated.files).join("\n");
+  assert.match(
+    sdl,
+    /input AddressInput\s*{\s*_id: ID\s+label: String!\s+longitude: String!\s*}/,
+  );
+  assert.match(
+    sdl,
+    /createAddress\(addressInput: AddressInput!\): CreateAddressCreateAddress/,
+  );
+  assert.doesNotThrow(() => buildSchema(sdl));
+});

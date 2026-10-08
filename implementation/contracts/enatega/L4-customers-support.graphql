@@ -195,16 +195,16 @@ extend type Query {
 
 extend type Mutation {
   addFavourite(id: String): AddFavouriteAddFavourite
-  createAddress(addressInput: AddressInput): CreateAddressCreateAddress
+  createAddress(addressInput: AddressInput!): CreateAddressCreateAddress
   createMessage(messageInput: MessageInput): CreateMessageCreateMessage
   createSupportTicket(
     ticketInput: SupportTicketInput
   ): CreateSupportTicketCreateSupportTicket
-  deleteAddress(id: ID): DeleteAddressDeleteAddress
-  deleteBulkAddresses(ids: [ID]): DeleteBulkAddressesDeleteBulkAddresses
+  deleteAddress(id: ID!): DeleteAddressDeleteAddress
+  deleteBulkAddresses(ids: [ID!]!): DeleteBulkAddressesDeleteBulkAddresses
   deleteUser(id: ID): DeleteUserDeleteUser
-  editAddress(addressInput: AddressInput): EditAddressEditAddress
-  selectAddress(id: String): SelectAddressSelectAddress
+  editAddress(addressInput: AddressInput!): EditAddressEditAddress
+  selectAddress(id: String!): SelectAddressSelectAddress
   updateSupportTicketStatus(
     input: UpdateSupportTicketInput
   ): UpdateSupportTicketStatusUpdateSupportTicketStatus

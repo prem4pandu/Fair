@@ -168,7 +168,7 @@
             <div>operations marked verified</div>
           </article>
           <article class="card">
-            <div class="value">0</div>
+            <div class="value">1</div>
             <div>formal gates recorded passed</div>
           </article>
         </div>
@@ -178,9 +178,11 @@
           parity, or E2E journeys.
         </p>
         <p class="note">
-          Latest verified checks (2026-10-08 Asia/Kuala_Lumpur): 144 API unit
-          tests, 53 API integration tests, and 10 worker unit tests passed;
-          workspace typecheck, lint, build, and formatting passed.
+          Latest recorded gate run: <code>GP0</code> PASSED at
+          2026-10-08T15:07:41.842Z on commit <code>c814670ecbb2</code> (15/15
+          commands exit 0). Full command output: <code>docs/GATES.json</code>.
+          Test counts and per-command exits are recorded there rather than
+          restated here.
         </p>
       </section>
       <section>
@@ -261,6 +263,7 @@
                 <th>Lane</th>
                 <th>Module</th>
                 <th>Roots</th>
+                <th>Implemented</th>
                 <th>Status</th>
                 <th>Assessment</th>
               </tr>
@@ -270,6 +273,7 @@
                 <th scope="row">L0</th>
                 <td>Transport foundation</td>
                 <td>1</td>
+                <td>1 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   Kernel checkpoints exist; formal G0 evidence and approval
@@ -279,7 +283,8 @@
               <tr>
                 <th scope="row">L1</th>
                 <td>Identity</td>
-                <td>31</td>
+                <td>30</td>
+                <td>8 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -290,6 +295,7 @@
                 <th scope="row">L2</th>
                 <td>Platform configuration</td>
                 <td>54</td>
+                <td>2 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -300,6 +306,7 @@
                 <th scope="row">L3</th>
                 <td>Vendors and catalog</td>
                 <td>75</td>
+                <td>2 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -310,6 +317,7 @@
                 <th scope="row">L4</th>
                 <td>Customers and support</td>
                 <td>22</td>
+                <td>5 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -320,6 +328,7 @@
                 <th scope="row">L5</th>
                 <td>Orders</td>
                 <td>24</td>
+                <td>0 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -330,6 +339,7 @@
                 <th scope="row">L6</th>
                 <td>Dispatch and realtime</td>
                 <td>32</td>
+                <td>0 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -340,6 +350,7 @@
                 <th scope="row">L7</th>
                 <td>Finance</td>
                 <td>11</td>
+                <td>0 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -350,6 +361,7 @@
                 <th scope="row">L8</th>
                 <td>Notifications</td>
                 <td>5</td>
+                <td>0 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -360,6 +372,7 @@
                 <th scope="row">L9</th>
                 <td>Analytics</td>
                 <td>9</td>
+                <td>0 with resolvers</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
                   SDL is present; behavior and required E2E evidence are
@@ -369,7 +382,8 @@
               <tr>
                 <th scope="row">L12</th>
                 <td>Single-vendor mode</td>
-                <td>70</td>
+                <td>71</td>
+                <td>0 with resolvers</td>
                 <td><span class="badge blocked">BLOCKED</span></td>
                 <td>
                   Gated until Wave 5; schema presence is not runtime
@@ -444,7 +458,9 @@
               0 operations marked VERIFIED in the operation evidence registry.
             </li>
             <li>
-              No <code>docs/GATES.json</code> exists, so G0–G5 remain open.
+              Latest recorded gate run: GP0 PASSED at 2026-10-08T15:07:41.842Z
+              on commit c814670ecbb2 (15/15 commands exit 0). Full command
+              output: docs/GATES.json.
             </li>
           </ul>
         </details>
@@ -471,6 +487,10 @@
         <h2>Latest committed checkpoints</h2>
         <ol>
           <li>
+            <code>c814670</code> feat: add Enatega identity addresses and order
+            domain
+          </li>
+          <li>
             <code>f2b5df5</code> docs: publish implementation status report
           </li>
           <li>
@@ -495,10 +515,6 @@
           <li>
             <code>86f6c69</code> feat(L0): add auth limits and subscription
             transport
-          </li>
-          <li>
-            <code>2ba9a1f</code> feat(L0): add public handshake and integration
-            harness
           </li>
         </ol>
       </section>

@@ -18,7 +18,7 @@
   "backendSchema": [
     {
       "file": "enatega/core.graphql",
-      "sha256": "11c193eaace855cc276d7b919ec8bd6aa6f1e02262f388eda7a25516d113e916"
+      "sha256": "24c877c575479d58a0fa5d4961d8f3c27209d3b58fb19daebcd2b27c921c5588"
     },
     {
       "file": "enatega/L1-identity.graphql",
@@ -34,7 +34,7 @@
     },
     {
       "file": "enatega/L4-customers-support.graphql",
-      "sha256": "b68355c0c471d4a3c0a8b14d5592bacbce5d29c026b634df6c2bc49a72522d6b"
+      "sha256": "33f46f465d61c692095c8327f41c7b9091f88906392a81e2c01b103c5cfec9b1"
     },
     {
       "file": "enatega/L5-orders.graphql",

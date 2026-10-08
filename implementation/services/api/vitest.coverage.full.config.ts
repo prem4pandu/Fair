@@ -6,6 +6,11 @@ export default mergeConfig(
   defineConfig({
     test: {
       include: ["test/**/*.spec.ts"],
+      // Coverage instrumentation makes the real-database suites materially
+      // slower than the plain integration run, so the instrumented run gets its
+      // own budget instead of timing out on otherwise healthy tests.
+      testTimeout: 180000,
+      hookTimeout: 240000,
       coverage: {
         provider: "v8",
         include: ["src/**/*.ts"],

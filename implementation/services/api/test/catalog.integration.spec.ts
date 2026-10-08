@@ -304,10 +304,13 @@ describe("real public catalog GraphQL and storage", () => {
       for (const [query, variables] of [
         [outletsQuery, { limit }],
         [itemsQuery, { outletId: owner.outlet, limit }],
-      ] as const)
-        expect((await gql(query, variables)).errors[0].extensions.code).toBe(
-          "BAD_USER_INPUT",
-        );
+      ] as const) {
+        const response = await gql(query, variables);
+        expect(
+          response.errors?.[0]?.extensions.code,
+          `limit=${limit} query=${query.slice(0, 40)} body=${JSON.stringify(response).slice(0, 200)}`,
+        ).toBe("BAD_USER_INPUT");
+      }
     }
   });
   it("enforces unpublished defaults, storage checks, restrict deletion and composite tenant foreign keys", async () => {

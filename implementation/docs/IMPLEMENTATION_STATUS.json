@@ -1,25 +1,160 @@
 {
-  "date": "2026-10-08",
+  "schemaVersion": 1,
+  "generatedBy": "tools/generate-implementation-status.mjs",
+  "authority": "docs/MASTER_END_TO_END_PLAN.md",
   "overall": "IN_PROGRESS",
-  "frontend_baseline": "Complete original six-package Enatega source is tracked under vendor/enatega-ui with licenses and verified manifest; current runnable shells remain NONCOMPLIANT and original source integration is pending",
-  "FB00": "Static source/action baseline and selected identity audits recorded; full semantics/runtime parity/cloud catalog reconciliation pending",
-  "FB01": "Bounded public API/worker/six-app connection foundation implemented, independently reviewed and checked; full foundation gates pending",
-  "FB02": "Password identity/session slice implemented and verified across API and six apps; recovery, OTP/social, MFA/provisioning, native-device and release gates remain IN_PROGRESS",
-  "release": "NOT_APPROVED; four high and four moderate dependency advisories, external providers, signed native devices and later phase gates pending",
-  "customer_identity_presentation": "NONCOMPLIANT product presentation; password backend/BFF/test evidence retained, original Enatega auth UI migration required",
-  "latest_evidence": "docs/FULL_IMPLEMENTATION_REPORT.json",
-  "FB03": "Public catalog storage and GraphQL read slice implemented and independently QA/security reviewed; onboarding, tenant staff writes, publication workflows, hours and media remain IN_PROGRESS",
-  "FB04": "Owned customer addresses and catalog web integration verified with real-stack tests; full discovery/search/favorites and source/native parity remain IN_PROGRESS",
-  "FB05_FB20": "NOT_IMPLEMENTED; no full product/commerce/fleet/provider completion claim",
-  "latest_verification": "190unit/HTTP +30database integration +5clients +36browser; lint/typecheck/build/codegen passed; independent scoped QA/security approved",
-  "frontend_acceptance": "WITHHELD; no simplified screen can satisfy Enatega parity",
-  "frontend_launch_policy": "BLOCK_REPLACEMENT_UI_UNTIL_ORIGINAL_ENATEGA_MIGRATION_VERIFIED",
-  "enatega_alignment": {
-    "owner_rule": "Complete original Enatega UI; backend must implement original workflows and configured URL contracts",
-    "url_contract": "docs/ENATEGA_URL_CONTRACT.json",
-    "schema_gate": "docs/ENATEGA_COMPATIBILITY_REPORT.json",
-    "result": "FAIL; complete original frontend compatibility not achieved",
-    "configuration": "Public configuration/publicConfiguration read slice verified; activation/admin/market/fleet/economics/providers remain IN_PROGRESS",
-    "evidence": "docs/ENATEGA_CONFIGURATION_PACKET.json"
-  }
+  "release": "NOT_APPROVED",
+  "operations": {
+    "total": 334,
+    "withRealResolvers": 18,
+    "withRecordedEvidence": 0,
+    "withoutSdlDeclaration": 71,
+    "byKind": {
+      "query": 159,
+      "mutation": 164,
+      "subscription": 11
+    }
+  },
+  "staticCompatibility": {
+    "status": "PASS",
+    "documents": 439,
+    "validDocuments": 439,
+    "unresolvedDocuments": 0,
+    "missingRoots": 0
+  },
+  "lanes": {
+    "L0": {
+      "name": "Platform kernel",
+      "roots": 1,
+      "withRealResolvers": 1
+    },
+    "L1": {
+      "name": "Identity & sessions",
+      "roots": 30,
+      "withRealResolvers": 8
+    },
+    "L2": {
+      "name": "Platform configuration",
+      "roots": 54,
+      "withRealResolvers": 2
+    },
+    "L3": {
+      "name": "Vendors, catalog & discovery",
+      "roots": 75,
+      "withRealResolvers": 2
+    },
+    "L4": {
+      "name": "Customers, addresses & support",
+      "roots": 22,
+      "withRealResolvers": 5
+    },
+    "L5": {
+      "name": "Orders, pricing & lifecycle",
+      "roots": 24,
+      "withRealResolvers": 0
+    },
+    "L6": {
+      "name": "Dispatch, riders & tracking",
+      "roots": 32,
+      "withRealResolvers": 0
+    },
+    "L7": {
+      "name": "Finance & payments",
+      "roots": 11,
+      "withRealResolvers": 0
+    },
+    "L8": {
+      "name": "Notifications & messaging",
+      "roots": 5,
+      "withRealResolvers": 0
+    },
+    "L9": {
+      "name": "Analytics",
+      "roots": 9,
+      "withRealResolvers": 0
+    },
+    "L12": {
+      "name": "Single-vendor (gated)",
+      "roots": 71,
+      "withRealResolvers": 0
+    }
+  },
+  "gates": [
+    {
+      "id": "GP0",
+      "passed": true,
+      "finishedAt": "2026-10-08T15:07:41.842Z",
+      "commit": "c814670ecbb2ae9fb9eeaf0f6356c2802c5d83bf",
+      "approvals": [],
+      "commands": [
+        {
+          "command": "pnpm install --frozen-lockfile",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm lint",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm format:check",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm typecheck",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm build",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm test",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm test:integration",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm coverage:report",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm check:enatega-ui-source",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm test:enatega-contracts",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm test:operation-evidence",
+          "exitCode": 0
+        },
+        {
+          "command": "node --test tools/*.test.mjs",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm traceability:check",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm check:error-messages",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm e2e:backend",
+          "exitCode": 0
+        }
+      ]
+    }
+  ],
+  "recordedGateRuns": 1,
+  "approvedGates": 0,
+  "notes": [
+    "A resolving schema is not implementation: NOT_IMPLEMENTED roots are counted as unimplemented.",
+    "No gate is approved until an independent reviewer is recorded in docs/GATES.json.",
+    "Static compatibility does not prove resolver behavior, authorization, runtime reachability or UI parity."
+  ]
 }

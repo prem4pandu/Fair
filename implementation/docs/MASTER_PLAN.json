@@ -1,0 +1,1087 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-08",
+  "baselineCommit": "c814670",
+  "authority": "docs/MASTER_END_TO_END_PLAN.md is authoritative for content; this file is authoritative for scheduling, scope assignment and gate commands. docs/OPERATION_TRACEABILITY.md is authoritative for per-operation state.",
+  "objective": "Build the complete backend and integration layer for the six pinned Enatega apps, prove it with unit, real-stack integration, journey, Playwright and native device evidence, and keep per-operation coverage enforced from the first change.",
+  "currentState": {
+    "operationsTotal": 334,
+    "operationsImplemented": 18,
+    "operationsWithRecordedEvidence": 0,
+    "runtimeRootFields": 280,
+    "boundResolvers": 33,
+    "rootsWithoutSdl": 71,
+    "validatedDocuments": 439,
+    "acceptanceWorkflows": 18,
+    "pinnedUiPackages": 6,
+    "redGates": [
+      "pnpm test (packages/identity-contracts operations.test.ts)",
+      "pnpm lint (services/api/src/dispatch/routing.ts:17)",
+      "node --test tools/*.test.mjs (stale docs/IMPLEMENTATION_STATUS.html)",
+      "pnpm e2e:backend (3/4)",
+      "pnpm coverage (per-file thresholds)",
+      "pnpm check:operations (0/334 evidenced)"
+    ],
+    "blockedGates": [
+      "pnpm test:integration (Colima daemon stopped)",
+      "native device E2E (no devices)",
+      "provider sandbox suites (no credentials)"
+    ]
+  },
+  "invariants": [
+    "Integer minor currency units and server-owned pricing",
+    "Zero core-plan food commission",
+    "Immutable balanced financial transactions",
+    "Central order-state validation",
+    "Server-side tenant and actor ownership",
+    "Provider-independent delivery routing",
+    "No card data and no embedded provider secrets in clients",
+    "Sandbox providers explicitly named and disabled in production",
+    "At-least-once outbox with idempotent consumers",
+    "No mock success and no production fallback to upstream endpoints"
+  ],
+  "decisions": [
+    {
+      "id": "D1",
+      "default": "Waves 0-4 deliver the 263 multivendor operations; the 71 single-vendor roots stay NOT_IMPLEMENTED until Wave 5 is approved",
+      "owner": true
+    },
+    {
+      "id": "D4",
+      "default": "Core-plan food commission fixed at 0%; non-core plans not offered",
+      "owner": true
+    },
+    {
+      "id": "D5",
+      "default": "Server emits PENDING/ACCEPTED/ASSIGNED/PICKED/DELIVERED/CANCELLED only",
+      "owner": true
+    },
+    {
+      "id": "D6",
+      "default": "PENDING auto-cancel after ORDER_ACCEPT_TIMEOUT_SECONDS (120); unclaimed ACCEPTED flagged, never auto-cancelled",
+      "owner": true
+    },
+    {
+      "id": "D12",
+      "default": "COD works; STRIPE/PayPal rejected with PROVIDER_UNAVAILABLE until sandbox keys exist",
+      "owner": true
+    },
+    {
+      "id": "D13",
+      "default": "Email/SMS/push through ports; DevOutbox only in development/test",
+      "owner": true
+    },
+    {
+      "id": "D-F1",
+      "default": "Frontend packages installed and run in place with npm from their own lockfiles; per-app untracked .env.local",
+      "owner": false
+    },
+    {
+      "id": "D-F2",
+      "default": "Web uses same-origin HttpOnly BFF cookies; native uses platform secure storage with short-lived access tokens",
+      "owner": false
+    },
+    {
+      "id": "D-F3",
+      "default": "Playwright: chromium required, firefox/webkit best effort",
+      "owner": false
+    },
+    {
+      "id": "D-N1",
+      "default": "Native harness: Maestro on signed builds",
+      "owner": true
+    },
+    {
+      "id": "D-F4",
+      "default": "Vendor web packages install with a per-package .npmrc that relaxes engine-strict under Node 24; pinned manifests untouched",
+      "owner": false
+    },
+    {
+      "id": "D-F5",
+      "default": "Extend the customer-web configuration query with vapidKey as a recorded vendor edit",
+      "owner": false
+    },
+    {
+      "id": "D-F6",
+      "default": "Keep client-side AES-GCM config decryption with the public NEXT_PUBLIC_* key and stop treating it as secrecy",
+      "owner": false
+    },
+    {
+      "id": "D-F7",
+      "default": "All three web apps use the BFF cookie session bridge",
+      "owner": false
+    }
+  ],
+  "workstreams": [
+    {
+      "id": "W0",
+      "name": "Baseline repair and gate instrumentation",
+      "ownerRole": "lead",
+      "wave": 0,
+      "batch": 1,
+      "ops": 0,
+      "depends": [],
+      "scope": [
+        "contracts/*.graphql",
+        "contracts/enatega/**",
+        "tools/**",
+        "services/api/src/dispatch/routing.ts",
+        "e2e/backend/**",
+        "docs/**",
+        "package.json",
+        "turbo.json"
+      ],
+      "deliverables": [
+        "codegen root contract so pnpm test is green",
+        "lint fix in dispatch/routing.ts",
+        "boundaries.spec.ts rewritten for NOT_IMPLEMENTED semantics",
+        "truthful regenerated IMPLEMENTATION_STATUS.html/.json and FULL_IMPLEMENTATION_REPORT.json",
+        "tools/check-error-messages.mjs + test",
+        "traceability:check wiring",
+        "OPERATION_LANES.json self-inconsistency fixed at the generator",
+        "e2e:smoke, test:journeys, coverage:e2e scripts declared",
+        "docs/GATES.json + tools/record-gate.mjs",
+        "Colima started; integration and coverage baselines recorded",
+        "in-flight L5/L6 domain work committed green"
+      ],
+      "acceptance": [
+        "pnpm lint",
+        "pnpm test",
+        "node --test tools/*.test.mjs",
+        "pnpm e2e:backend",
+        "pnpm traceability:check",
+        "pnpm test:integration",
+        "pnpm coverage"
+      ]
+    },
+    {
+      "id": "W1",
+      "name": "Kernel and transport completion",
+      "ownerRole": "backend-kernel",
+      "wave": 1,
+      "batch": 2,
+      "ops": 1,
+      "depends": ["W0"],
+      "scope": [
+        "services/api/src/kernel/**",
+        "services/api/src/rest/**",
+        "services/worker/**",
+        "services/api/test/support/**"
+      ],
+      "deliverables": [
+        "metricsGeneral accepted as both query and mutation, returning experience (bearer) and hehe (ISO expiry) with nonce binding and decoy fields",
+        "bop-auth verification on HTTP and WS with x-skip-public-auth bypass and client-compatible error text",
+        "legacy subscriptions-transport-ws frame set on /graphql (plus graphql-transport-ws for our tooling)",
+        "Redis pub/sub subscriptions",
+        "operation limits proven against the largest real app document",
+        "health/readiness separated",
+        "outbox worker lease/retry/dead-letter hardening"
+      ],
+      "acceptance": [
+        "pnpm test",
+        "pnpm test:integration",
+        "pnpm coverage",
+        "pnpm e2e:smoke"
+      ],
+      "lane": "L0"
+    },
+    {
+      "id": "W2",
+      "name": "Contract and data model freeze",
+      "ownerRole": "backend-contract",
+      "wave": 1,
+      "batch": 2,
+      "ops": 0,
+      "depends": ["W0"],
+      "scope": [
+        "contracts/enatega/**",
+        "services/api/prisma/schema/base.prisma",
+        "services/api/prisma/migrations/**",
+        "services/api/src/kernel/ports.ts",
+        "docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json"
+      ],
+      "deliverables": [
+        "L12 SDL declarations for the 71 undeclared roots",
+        "check:enatega PASS for multivendor and single-vendor scope",
+        "migrations clean on empty and as upgrade from the populated baseline",
+        "ports interfaces frozen and reviewed",
+        "every previously unresolved dynamic document site classified",
+        "vendor baseline/provenance reconciliation: classify every adapter artifact as upstream or Fair-authored, record or revert it, keep check:enatega-ui-source green"
+      ],
+      "acceptance": [
+        "pnpm check:enatega",
+        "pnpm codegen:check",
+        "pnpm test:integration",
+        "pnpm check:operations"
+      ]
+    },
+    {
+      "id": "W3",
+      "name": "L1 identity, roles, staff scopes, MFA, recovery, OTP/social",
+      "ownerRole": "agent-L1",
+      "wave": 2,
+      "batch": 3,
+      "lane": "L1",
+      "ops": 30,
+      "depends": ["W2"],
+      "scope": [
+        "services/api/src/identity/**",
+        "services/api/src/staff/**",
+        "contracts/enatega/L1-identity.graphql",
+        "services/api/prisma/schema/L1-*.prisma",
+        "services/api/test/unit/identity/**",
+        "services/api/test/integration/identity/**"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"]
+    },
+    {
+      "id": "W4",
+      "name": "L2 platform configuration, reference data, maps and media REST",
+      "ownerRole": "agent-L2",
+      "wave": 2,
+      "batch": 3,
+      "lane": "L2",
+      "ops": 54,
+      "depends": ["W2"],
+      "scope": [
+        "services/api/src/platform/**",
+        "services/api/src/rest/maps*",
+        "services/api/src/rest/media*",
+        "contracts/enatega/L2-platform.graphql",
+        "services/api/prisma/schema/L2-*.prisma",
+        "services/api/test/unit/platform/**",
+        "services/api/test/integration/platform/**"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"],
+      "deliverables": [
+        "three maps REST routes with the documented envelope and 503 when unconfigured",
+        "media/<key> serving signed URLs with a refresh story",
+        "uploadImageToS3(image, publicMedia?) with magic-byte validation, size bounds and tenant ownership",
+        "configuration surface supplying display names/currency/toggles and never a secret (no secretKey/clientSecret/twilioAuthToken/SMTP password)"
+      ]
+    },
+    {
+      "id": "W5a",
+      "name": "L3 vendors, outlets, onboarding, publication, hours",
+      "ownerRole": "agent-L3a",
+      "wave": 2,
+      "batch": 3,
+      "lane": "L3",
+      "ops": 38,
+      "depends": ["W2"],
+      "scope": [
+        "services/api/src/vendors/**",
+        "contracts/enatega/L3-vendors-catalog.graphql",
+        "services/api/prisma/schema/L3-*.prisma",
+        "services/api/test/unit/vendors/**",
+        "services/api/test/integration/vendors/**"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"]
+    },
+    {
+      "id": "W6",
+      "name": "L4 customers, addresses, favourites, support, privacy",
+      "ownerRole": "agent-L4",
+      "wave": 2,
+      "batch": 3,
+      "lane": "L4",
+      "ops": 22,
+      "depends": ["W2", "W3"],
+      "scope": [
+        "services/api/src/customers/**",
+        "services/api/src/support/**",
+        "contracts/enatega/L4-customers-support.graphql",
+        "services/api/prisma/schema/L4-*.prisma",
+        "services/api/test/unit/customers/**",
+        "services/api/test/integration/customers/**"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"]
+    },
+    {
+      "id": "W5b",
+      "name": "L3 catalog items, variations, addons, discovery, reviews, coupons",
+      "ownerRole": "agent-L3b",
+      "wave": 2,
+      "batch": 4,
+      "lane": "L3",
+      "ops": 37,
+      "depends": ["W2", "W3"],
+      "scope": [
+        "services/api/src/catalog/**",
+        "services/api/src/discovery/**",
+        "services/api/src/reviews/**",
+        "services/api/src/coupons/**",
+        "services/api/test/unit/catalog/**",
+        "services/api/test/integration/catalog/**"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"]
+    },
+    {
+      "id": "W7",
+      "name": "L5 cart, quotes, pricing policy versions, immutable orders",
+      "ownerRole": "agent-L5",
+      "wave": 2,
+      "batch": 4,
+      "lane": "L5",
+      "ops": 24,
+      "depends": ["W6"],
+      "scope": [
+        "services/api/src/orders/**",
+        "services/api/src/pricing/**",
+        "contracts/enatega/L5-orders.graphql",
+        "services/api/prisma/schema/L5-*.prisma",
+        "services/api/test/unit/orders/**",
+        "services/api/test/integration/orders/**"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"]
+    },
+    {
+      "id": "W12",
+      "name": "Customer web integration",
+      "ownerRole": "agent-FE-web",
+      "wave": 2,
+      "batch": 4,
+      "ops": 0,
+      "depends": ["W2", "W3", "W4", "W6"],
+      "scope": ["vendor/enatega-ui/enatega-multivendor-web/**"],
+      "deliverables": [
+        "package audit in the shape of docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md §2 and 30-frontend-integration.md written and reviewed first",
+        "no upstream origin reachable from the built bundle; validated configured origins",
+        "CSP connect-src derived from configuration",
+        "secure session bridge replacing client long-lived tokens",
+        "Clarity/EmailJS/Firebase/Maps gated by configuration",
+        "vapidKey supplied so web push can work (D-F5)",
+        "every vendor edit recorded for SOURCE_PROVENANCE allowedModifications",
+        "all audited routes load against the real stack"
+      ],
+      "acceptance": [
+        "vendor build",
+        "pnpm check:enatega-ui-source",
+        "pnpm e2e (customer-web project)"
+      ]
+    },
+    {
+      "id": "W13",
+      "name": "Admin web and single-vendor admin integration",
+      "ownerRole": "agent-FE-admin",
+      "wave": 2,
+      "batch": 4,
+      "ops": 0,
+      "depends": ["W2", "W3", "W4", "W5a"],
+      "scope": [
+        "vendor/enatega-ui/enatega-multivendor-admin/**",
+        "vendor/enatega-ui/enatega-singlevendor-admin/**"
+      ],
+      "acceptance": [
+        "vendor builds",
+        "pnpm check:enatega-ui-source",
+        "pnpm e2e (admin-web project)"
+      ],
+      "deliverables": [
+        "package audit and 30-frontend-integration.md first",
+        "no upstream origin or credential reachable from the built bundle",
+        "provider scripts gated without changing presentation",
+        "recorded-edit list handed to the lead"
+      ]
+    },
+    {
+      "id": "W8",
+      "name": "L6 dispatch, own fleet, assignment, tracking, chat, realtime",
+      "ownerRole": "agent-L6",
+      "wave": 2,
+      "batch": 5,
+      "lane": "L6",
+      "ops": 32,
+      "depends": ["W7"],
+      "scope": [
+        "services/api/src/dispatch/**",
+        "services/api/src/tracking/**",
+        "services/api/src/chat/**",
+        "contracts/enatega/L6-dispatch.graphql",
+        "services/api/prisma/schema/L6-*.prisma",
+        "services/api/test/unit/dispatch/**",
+        "services/api/test/integration/dispatch/**"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"],
+      "deliverables": [
+        "updateRiderLocation usable from the rider native background task with hand-rolled headers"
+      ]
+    },
+    {
+      "id": "W9",
+      "name": "L7 payments, Stripe REST, ledger, refunds, settlements",
+      "ownerRole": "agent-L7",
+      "wave": 2,
+      "batch": 5,
+      "lane": "L7",
+      "ops": 11,
+      "depends": ["W7"],
+      "scope": [
+        "services/api/src/finance/**",
+        "services/api/src/payments/**",
+        "services/api/src/rest/stripe*",
+        "contracts/enatega/L7-finance.graphql",
+        "services/api/prisma/schema/L7-*.prisma",
+        "services/api/test/unit/finance/**",
+        "services/api/test/integration/finance/**"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"]
+    },
+    {
+      "id": "W14a",
+      "name": "Customer mobile integration",
+      "ownerRole": "agent-FE-app",
+      "wave": 2,
+      "batch": 5,
+      "ops": 0,
+      "depends": ["W2", "W3", "W6"],
+      "scope": ["vendor/enatega-ui/enatega-multivendor-app/**"],
+      "acceptance": [
+        "Expo dev build runs against local backend",
+        "pnpm check:enatega-ui-source",
+        "no upstream origin in built bundle"
+      ],
+      "deliverables": [
+        "package audit and 30-frontend-integration.md first",
+        "no upstream origin or credential reachable from the built bundle",
+        "native permissions, deep links and secure storage preserved",
+        "recorded-edit list handed to the lead"
+      ]
+    },
+    {
+      "id": "W14b",
+      "name": "Store and rider mobile integration",
+      "ownerRole": "agent-FE-mobile2",
+      "wave": 2,
+      "batch": 5,
+      "ops": 0,
+      "depends": ["W2", "W3", "W5a", "W8"],
+      "scope": [
+        "vendor/enatega-ui/enatega-multivendor-store/**",
+        "vendor/enatega-ui/enatega-multivendor-rider/**"
+      ],
+      "acceptance": [
+        "Expo dev builds run against local backend",
+        "pnpm check:enatega-ui-source",
+        "no upstream origin in built bundles"
+      ],
+      "deliverables": [
+        "package audit and 30-frontend-integration.md first",
+        "no upstream origin or credential reachable from the built bundle",
+        "native permissions and foreground-service location preserved",
+        "recorded-edit list handed to the lead"
+      ]
+    },
+    {
+      "id": "W10",
+      "name": "L8 notifications, messaging ports, worker jobs",
+      "ownerRole": "agent-L8",
+      "wave": 2,
+      "batch": 6,
+      "lane": "L8",
+      "ops": 5,
+      "depends": ["W8"],
+      "scope": [
+        "services/api/src/notifications/**",
+        "services/worker/src/jobs/notifications/**",
+        "contracts/enatega/L8-notifications.graphql",
+        "services/api/prisma/schema/L8-*.prisma"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"],
+      "deliverables": [
+        "saveRestaurantToken and saveNotificationTokenWeb roots",
+        "Live Activity session roots (registerLiveActivitySession, removeLiveActivitySession)"
+      ]
+    },
+    {
+      "id": "W11",
+      "name": "L9 dashboards, reports, analytics",
+      "ownerRole": "agent-L9",
+      "wave": 2,
+      "batch": 6,
+      "lane": "L9",
+      "ops": 9,
+      "depends": ["W9", "W7"],
+      "scope": [
+        "services/api/src/analytics/**",
+        "contracts/enatega/L9-analytics.graphql",
+        "services/api/prisma/schema/L9-*.prisma"
+      ],
+      "acceptance": ["pnpm test", "pnpm test:integration", "pnpm coverage"]
+    },
+    {
+      "id": "W15",
+      "name": "Cross-lane journey suites",
+      "ownerRole": "agent-E2E",
+      "wave": 3,
+      "batch": 6,
+      "ops": 0,
+      "depends": ["W7", "W8", "W9", "W10", "W11"],
+      "scope": ["services/api/test/journeys/**"],
+      "acceptance": ["pnpm test:journeys"]
+    },
+    {
+      "id": "W16",
+      "name": "Playwright web E2E suites",
+      "ownerRole": "agent-E2E",
+      "wave": 3,
+      "batch": 7,
+      "ops": 0,
+      "depends": ["W12", "W13", "W15"],
+      "scope": [
+        "e2e/**",
+        "playwright.config.ts",
+        "playwright.backend.config.ts"
+      ],
+      "deliverables": [
+        "customer-web, admin-web and single-vendor suites with fixtures, seeding and per-worker data isolation",
+        "real-stack runs with upstream-host network guard",
+        "negative cases per acceptance workflow",
+        "accessibility and responsive parity spec",
+        "operation reachability parity spec"
+      ],
+      "acceptance": ["pnpm e2e", "pnpm e2e:smoke", "pnpm coverage:e2e"]
+    },
+    {
+      "id": "W17",
+      "name": "Coverage closure",
+      "ownerRole": "agent-CQ",
+      "wave": 3,
+      "batch": 7,
+      "ops": 0,
+      "depends": ["W15", "W16"],
+      "scope": ["services/api/test/**", "services/worker/test/**"],
+      "deliverables": [
+        "per-file 90/90/85 for kernel and modules",
+        "worker thresholds",
+        "API lines >= 80% under E2E",
+        "32-coverage-closure.md plan"
+      ],
+      "acceptance": ["pnpm coverage", "pnpm coverage:e2e"],
+      "day0Debt": {
+        "measuredAt": "2026-10-08",
+        "command": "pnpm coverage",
+        "global": {
+          "lines": 88.88,
+          "statements": 87.51,
+          "functions": 91.66,
+          "branches": 80.89
+        },
+        "filesWithViolations": 27,
+        "failedChecks": 44,
+        "groups": {
+          "kernel (W1)": [
+            "auth/sessions.ts 0% lines",
+            "ports.ts 0% lines",
+            "main.ts 0% lines",
+            "ws/server.ts 51.28% lines / 47.05% functions / 0% branches",
+            "ws/legacy-protocol.ts 74.78% lines / 58.73% branches",
+            "pubsub.ts 69.69% branches",
+            "ids.ts 61.53% branches",
+            "geo.ts 79.71% branches",
+            "public-access/gate.ts 80.48% branches",
+            "pagination.ts 86.66% lines / 84.61% branches",
+            "tokens.ts 83.33% branches",
+            "time.ts 83.33% branches",
+            "schema.ts 75% branches",
+            "http-status.plugin.ts 75% branches",
+            "outbox.ts 88.23% lines"
+          ],
+          "orders (W7)": [
+            "state-machine.ts 60% functions / 77.77% branches",
+            "checkout.ts 77.41% lines / 77.5% branches",
+            "persistence.ts 86.66% lines / 79.1% branches"
+          ]
+        },
+        "rule": "Closure is required by G3; a lane that lowers coverage of a file it touches fails its G2 gate immediately."
+      }
+    },
+    {
+      "id": "W18",
+      "name": "Provider adapters and sandbox evidence",
+      "ownerRole": "agent-providers",
+      "wave": 4,
+      "batch": 8,
+      "ops": 0,
+      "depends": ["W9", "W10"],
+      "scope": [
+        "services/api/src/payments/providers/**",
+        "services/api/src/dispatch/providers/**",
+        "services/api/src/platform/providers/**",
+        "services/worker/src/jobs/providers/**"
+      ],
+      "acceptance": [
+        "provider sandbox suites",
+        "pnpm test",
+        "pnpm test:integration"
+      ]
+    },
+    {
+      "id": "W19",
+      "name": "Native device E2E",
+      "ownerRole": "agent-native",
+      "wave": 4,
+      "batch": 8,
+      "ops": 0,
+      "depends": ["W14a", "W14b"],
+      "scope": [
+        "e2e-native/**",
+        "docs/superpowers/plans/2026-10-08-enatega-backend/31-native-device-e2e.md"
+      ],
+      "acceptance": [
+        "signed Android and iOS runs per mobile app",
+        "device artifacts recorded"
+      ]
+    },
+    {
+      "id": "W20",
+      "name": "Hardening: security, load, restore, observability",
+      "ownerRole": "agent-hardening",
+      "wave": 4,
+      "batch": 8,
+      "ops": 0,
+      "depends": ["W17"],
+      "scope": [
+        "docs/security/**",
+        "docs/HARDENING_EVIDENCE.json",
+        "services/api/test/load/**"
+      ],
+      "acceptance": [
+        "dependency audit no high/critical",
+        "load and outage results",
+        "backup restore proof",
+        "redaction review"
+      ]
+    },
+    {
+      "id": "W21",
+      "name": "Single-vendor mode (L12)",
+      "ownerRole": "agent-L12",
+      "wave": 5,
+      "batch": 9,
+      "lane": "L12",
+      "ops": 71,
+      "depends": ["W2", "W16"],
+      "scope": [
+        "services/api/src/singlevendor/**",
+        "contracts/enatega/L12-single-vendor.graphql",
+        "services/api/prisma/schema/L12-*.prisma"
+      ],
+      "acceptance": [
+        "pnpm check:enatega (single-vendor scope)",
+        "pnpm test",
+        "pnpm test:integration",
+        "L12 Playwright suite"
+      ]
+    },
+    {
+      "id": "W22",
+      "name": "Release package and owner acceptance",
+      "ownerRole": "lead",
+      "wave": 5,
+      "batch": 9,
+      "ops": 0,
+      "depends": ["W18", "W19", "W20", "W21"],
+      "scope": ["docs/**", "docs/GATES.json"],
+      "acceptance": [
+        "all gates recorded with real output",
+        "regenerated status documents",
+        "owner release decision recorded"
+      ]
+    },
+    {
+      "id": "W23",
+      "name": "Independent QA review",
+      "ownerRole": "reviewer-QA",
+      "wave": 2,
+      "batch": 3,
+      "ops": 0,
+      "depends": [],
+      "scope": [],
+      "acceptance": ["approval recorded per lane in docs/GATES.json"]
+    },
+    {
+      "id": "W24",
+      "name": "Independent security and architecture review",
+      "ownerRole": "reviewer-SEC",
+      "wave": 2,
+      "batch": 3,
+      "ops": 0,
+      "depends": [],
+      "scope": [],
+      "acceptance": ["approval recorded per gate in docs/GATES.json"]
+    },
+    {
+      "id": "W25",
+      "name": "Documentation and traceability upkeep",
+      "ownerRole": "lead",
+      "wave": 0,
+      "batch": 1,
+      "ops": 0,
+      "depends": [],
+      "scope": [
+        "docs/GATES.json",
+        "docs/IMPLEMENTATION_STATUS.json",
+        "docs/IMPLEMENTATION_STATUS.html",
+        "docs/OPERATION_TRACEABILITY.md"
+      ],
+      "acceptance": ["pnpm traceability:check", "node --test tools/*.test.mjs"]
+    }
+  ],
+  "batches": [
+    {
+      "id": 1,
+      "writers": ["W0", "W25"],
+      "gate": "GP0"
+    },
+    {
+      "id": 2,
+      "writers": ["W1", "W2"],
+      "gate": "G1"
+    },
+    {
+      "id": 3,
+      "writers": ["W3", "W4", "W5a", "W6"],
+      "gate": "G2 per lane",
+      "reviewers": ["W23", "W24"]
+    },
+    {
+      "id": 4,
+      "writers": ["W5b", "W7", "W12", "W13"],
+      "gate": "G2 + frontend smoke",
+      "reviewers": ["W23", "W24"]
+    },
+    {
+      "id": 5,
+      "writers": ["W8", "W9", "W14a", "W14b"],
+      "gate": "G2 + native build",
+      "reviewers": ["W23", "W24"]
+    },
+    {
+      "id": 6,
+      "writers": ["W10", "W11", "W15"],
+      "gate": "G2 + journeys",
+      "reviewers": ["W23", "W24"]
+    },
+    {
+      "id": 7,
+      "writers": ["W16", "W17"],
+      "gate": "G3",
+      "reviewers": ["W23", "W24"]
+    },
+    {
+      "id": 8,
+      "writers": ["W18", "W19", "W20"],
+      "gate": "G4",
+      "reviewers": ["W23", "W24"]
+    },
+    {
+      "id": 9,
+      "writers": ["W21", "W22"],
+      "gate": "G5",
+      "reviewers": ["W23", "W24"]
+    }
+  ],
+  "serializationPoints": [
+    "services/api/prisma/migrations/** (lead authors from lane SQL requests)",
+    "contracts/enatega/core.graphql and contracts/*.graphql (lead)",
+    "SOURCE_PROVENANCE.json and vendor/enatega-ui/SOURCE_MANIFEST.json (lead only, after each frontend batch)",
+    "package.json, pnpm-lock.yaml, turbo.json, pnpm-workspace.yaml, tools/** (lead)",
+    "docs/GATES.json, docs/IMPLEMENTATION_STATUS.*, docs/OPERATION_TRACEABILITY.md (lead)"
+  ],
+  "gates": [
+    {
+      "id": "GP0",
+      "requires": ["W0"],
+      "commands": [
+        "pnpm install --frozen-lockfile",
+        "pnpm lint",
+        "pnpm format:check",
+        "pnpm typecheck",
+        "pnpm build",
+        "pnpm test",
+        "pnpm test:integration",
+        "pnpm coverage:report",
+        "pnpm check:enatega-ui-source",
+        "pnpm test:enatega-contracts",
+        "pnpm test:operation-evidence",
+        "node --test tools/*.test.mjs",
+        "pnpm traceability:check",
+        "pnpm check:error-messages",
+        "pnpm e2e:backend"
+      ],
+      "approvals": ["lead", "reviewer-QA", "reviewer-SEC"],
+      "coverageScope": "GP0 requires the coverage report to be produced and recorded. The strict per-file thresholds (90/90/85) are enforced per lane at G2 and closed by W17 at G3, because the kernel is still being completed in W1 and day-0 thresholds would measure unfinished code."
+    },
+    {
+      "id": "G0",
+      "requires": ["GP0", "W1"],
+      "commands": ["pnpm e2e:smoke"],
+      "approvals": ["lead", "reviewer-QA"]
+    },
+    {
+      "id": "G1",
+      "requires": ["G0", "W2"],
+      "commands": [
+        "pnpm check:enatega",
+        "pnpm codegen:check",
+        "pnpm test:integration",
+        "pnpm check:operations"
+      ],
+      "approvals": ["lead", "reviewer-SEC"]
+    },
+    {
+      "id": "G2",
+      "requires": ["G1"],
+      "commands": [
+        "pnpm test",
+        "pnpm test:integration",
+        "pnpm coverage",
+        "pnpm e2e (lane specs)"
+      ],
+      "approvals": ["reviewer-QA", "reviewer-SEC"]
+    },
+    {
+      "id": "G3",
+      "requires": ["G2 all lanes", "W15", "W16", "W17"],
+      "commands": [
+        "pnpm coverage",
+        "pnpm test:journeys",
+        "pnpm e2e",
+        "pnpm check:operations --require-complete",
+        "pnpm coverage:e2e"
+      ],
+      "approvals": ["reviewer-QA", "reviewer-SEC"]
+    },
+    {
+      "id": "G4",
+      "requires": ["G3", "W18", "W19", "W20"],
+      "commands": [
+        "provider sandbox suites",
+        "native device runs",
+        "pnpm audit",
+        "load suite",
+        "backup restore proof"
+      ],
+      "approvals": ["reviewer-QA", "reviewer-SEC", "owner"]
+    },
+    {
+      "id": "G5",
+      "requires": ["G4", "W21", "W22"],
+      "commands": [
+        "pnpm check:enatega --scope singlevendor",
+        "pnpm e2e (single-vendor project)"
+      ],
+      "approvals": ["reviewer-QA", "reviewer-SEC", "owner"]
+    }
+  ],
+  "coveragePolicy": {
+    "kernelAndModules": {
+      "lines": 90,
+      "functions": 90,
+      "branches": 85,
+      "perFile": true
+    },
+    "worker": {
+      "lines": 90,
+      "functions": 90,
+      "branches": 85,
+      "perFile": true
+    },
+    "apiUnderE2E": {
+      "lines": 80
+    },
+    "tools": "one test per generator/checker",
+    "sameChangeRule": "coverage ships with the implementation; a lane that lowers a covered file's coverage fails its gate. Deferral requires a named W17 task with the exact file list and failing threshold.",
+    "commands": [
+      "pnpm coverage",
+      "pnpm coverage:e2e",
+      "node --test tools/*.test.mjs"
+    ]
+  },
+  "testBlueprint": {
+    "layers": [
+      "unit",
+      "integration (real PostGIS/Redis, exact app documents)",
+      "contract",
+      "journeys",
+      "Playwright web E2E",
+      "native device E2E",
+      "provider sandbox"
+    ],
+    "playwrightProjects": [
+      "customer-web",
+      "admin-web",
+      "single-vendor",
+      "mobile-web (smoke only, not a native gate)",
+      "parity"
+    ],
+    "mandatoryPerOperation": [
+      "positive",
+      "auth failure",
+      "ownership failure",
+      "validation failure",
+      "lane business rules"
+    ],
+    "evidenceFields": [
+      "workflowId",
+      "target",
+      "sourceRouteOrScreen",
+      "operationDocumentSource",
+      "operationName",
+      "root",
+      "backendContract",
+      "actorAndTenant",
+      "positiveTest",
+      "negativeTests",
+      "actualCommand",
+      "resultArtifact",
+      "independentReviewer"
+    ],
+    "guardrails": [
+      "no upstream host requests",
+      "no mocks in integration or E2E",
+      "retries stay 0 unless justified",
+      "quarantined spec is a blocker"
+    ]
+  },
+  "blockers": [
+    {
+      "item": "Colima/Docker daemon stopped",
+      "affects": ["pnpm test:integration", "pnpm coverage", "pnpm e2e"],
+      "neededFrom": "owner",
+      "unblockedWork": "all non-database implementation"
+    },
+    {
+      "item": "Payment provider account, sandbox keys, webhook secret, Connect",
+      "affects": ["W9", "W18", "payment-webhook", "refund"],
+      "neededFrom": "owner",
+      "unblockedWork": "COD path, ledger, order lifecycle"
+    },
+    {
+      "item": "Courier provider market/API version/credentials",
+      "affects": ["W18", "delivery-webhook"],
+      "neededFrom": "owner",
+      "unblockedWork": "own-fleet dispatch"
+    },
+    {
+      "item": "Google Maps server key",
+      "affects": ["L2 maps REST", "distance/ETA"],
+      "neededFrom": "owner",
+      "unblockedWork": "owned text/coordinate addresses"
+    },
+    {
+      "item": "Push/email/SMS credentials, object storage bucket",
+      "affects": ["W10", "W18"],
+      "neededFrom": "owner",
+      "unblockedWork": "DevOutbox in dev/test"
+    },
+    {
+      "item": "Android/iOS devices, signing accounts, full Xcode",
+      "affects": ["W19", "G4"],
+      "neededFrom": "owner",
+      "unblockedWork": "web E2E and all device-free lanes"
+    },
+    {
+      "item": "SLO/hosting/retention/budget/domain inputs",
+      "affects": ["W20", "W22"],
+      "neededFrom": "owner",
+      "unblockedWork": "all implementation"
+    },
+    {
+      "item": "FairBite-owned EAS projects, signing identities, Firebase native binding files and provider keys for the three mobile apps (today Enatega's)",
+      "affects": ["W14a", "W14b", "W19", "G4"],
+      "neededFrom": "owner",
+      "unblockedWork": "all web work, all backend work, device-free mobile integration"
+    }
+  ],
+  "risks": [
+    {
+      "id": "R1",
+      "risk": "334 operations vs 18 implemented",
+      "mitigation": "lane batches with per-operation evidence; generated traceability matrix"
+    },
+    {
+      "id": "R2",
+      "risk": "vendor frontend install/build under Node 24 and npm lockfiles",
+      "mitigation": "D-F1 per-app npm in place; verified in W12 before other frontend lanes"
+    },
+    {
+      "id": "R3",
+      "risk": "concurrent vendor edits vs single manifest file",
+      "mitigation": "lead-serialised provenance and manifest regeneration; at most 2 frontend writers per batch"
+    },
+    {
+      "id": "R4",
+      "risk": "provider and device inputs absent",
+      "mitigation": "honest PROVIDER_UNAVAILABLE and blocked gate status"
+    },
+    {
+      "id": "R5",
+      "risk": "schema-complete code mistaken for progress",
+      "mitigation": "NOT_IMPLEMENTED default; status generated from gate output only"
+    },
+    {
+      "id": "R6",
+      "risk": "silent interpretation in domain rules (e.g. discount clamping)",
+      "mitigation": "lane review confirms each rule against upstream documents"
+    },
+    {
+      "id": "R7",
+      "risk": "Playwright flake against upstream DOM",
+      "mitigation": "page objects from pinned markup, retries 0, quarantine is a blocker"
+    },
+    {
+      "id": "R8",
+      "risk": "migration drift across parallel lanes",
+      "mitigation": "lead-authored migrations; upgrade-from-baseline is a gate"
+    },
+    {
+      "id": "R9",
+      "risk": "dependency advisories (4 high, 4 moderate recorded)",
+      "mitigation": "W20 bumps and re-audit at G4"
+    },
+    {
+      "id": "R10",
+      "risk": "documentation drift (already occurred)",
+      "mitigation": "generated status docs and stale-file tests"
+    },
+    {
+      "id": "R11",
+      "risk": "vendor tree contains unrecorded adapter edits; provenance currently unprovable",
+      "mitigation": "W2 reconciles and records or reverts every Fair-authored artifact before frontend edits"
+    },
+    {
+      "id": "R12",
+      "risk": "vendor web installs fail under Node 24 (engine-strict)",
+      "mitigation": "D-F4 install recipe verified in W12 first"
+    },
+    {
+      "id": "R13",
+      "risk": "upstream credentials and hosts remain live in the tree",
+      "mitigation": "gated/removed by the owning frontend lane; Playwright network guard fails any upstream-host request"
+    },
+    {
+      "id": "R14",
+      "risk": "metricsGeneral and legacy-WS incompatibility blocks every app",
+      "mitigation": "W1 owns it as the first transport gate; e2e:smoke proves both operation types and both WS frame sets"
+    },
+    {
+      "id": "R15",
+      "risk": "signed media, Live Activity and background-location contracts missed by a GraphQL-only plan",
+      "mitigation": "capability checklist in docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md §5 drives W4/W8/W10"
+    },
+    {
+      "id": "R16",
+      "risk": "27 files fail the per-file coverage thresholds (44 failed checks) at day 0",
+      "mitigation": "GP0 records the report only; W1 (kernel) and W7 (orders) close their own files at G2 and W17 closes the rest by G3"
+    }
+  ],
+  "artifacts": [
+    "docs/MASTER_END_TO_END_PLAN.md",
+    "docs/MASTER_PLAN.json",
+    "docs/OPERATION_TRACEABILITY.md",
+    "docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md",
+    "docs/GATES.json (created in W0)"
+  ]
+}

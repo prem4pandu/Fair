@@ -11,7 +11,10 @@ const exact = {
   // L1 identity and sessions
   login: "L1",
   ownerLogin: "L1",
-  ownerLogout: "L1",
+  // ownerLogout is deliberately NOT pinned: only the single-vendor admin calls it
+  // (inventory apps: ["svadmin(sv)"]), so the "single-vendor-only => L12" rule
+  // below owns it until Wave 5. Pinning it to L1 would schedule a
+  // single-vendor-only flow inside the multivendor build.
   riderLogin: "L1",
   restaurantLogin: "L1",
   refreshToken: "L1",

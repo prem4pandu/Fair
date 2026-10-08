@@ -1,0 +1,191 @@
+// Lane L5 — immutable order snapshots and lifecycle state.
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  ASSIGNED
+  PICKED
+  DELIVERED
+  CANCELLED
+}
+
+enum OrderPaymentMethod {
+  COD
+  STRIPE
+  PAYPAL
+}
+
+enum OrderPaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+model Order {
+  id                  String               @id @db.Uuid
+  orderId             String               @unique @db.VarChar(40)
+  orderNumber         BigInt               @unique
+  tenantId            String               @db.Uuid
+  userId              String               @db.Uuid
+  restaurantId        String               @db.Uuid
+  vendorId            String?              @db.Uuid
+  zoneId              String?              @db.Uuid
+  riderId             String?              @db.Uuid
+  status              OrderStatus          @default(PENDING)
+  isPickedUp          Boolean
+  paymentMethod       OrderPaymentMethod
+  paymentStatus       OrderPaymentStatus   @default(PENDING)
+  paymentReference    String?              @db.VarChar(255)
+  currencyCode        String               @db.VarChar(3)
+  currencySymbol      String               @db.VarChar(8)
+  currencyExponent    Int                  @db.SmallInt
+  itemsMinor          BigInt
+  discountMinor       BigInt
+  deliveryMinor       BigInt
+  taxMinor            BigInt
+  tipMinor            BigInt
+  totalMinor          BigInt
+  paidMinor           BigInt               @default(0)
+  taxBasisPoints      Int
+  couponId            String?              @db.Uuid
+  couponTitle         String?              @db.VarChar(100)
+  couponBasisPoints   Int?
+  distanceMeters      Int?
+  instructions        String               @default("") @db.VarChar(500)
+  reason              String?              @db.VarChar(200)
+  isRinged            Boolean              @default(true)
+  isRiderRinged       Boolean              @default(true)
+  addressId           String?              @db.Uuid
+  addressLabel        String               @db.VarChar(64)
+  addressText         String               @db.VarChar(500)
+  addressDetails      String               @default("") @db.VarChar(500)
+  addressLongitude    Float?
+  addressLatitude     Float?
+  restaurantName      String               @db.VarChar(200)
+  restaurantSlug      String?              @db.VarChar(200)
+  restaurantImage     String?              @db.VarChar(2048)
+  restaurantAddress   String?              @db.VarChar(500)
+  restaurantShopType  String?              @db.VarChar(64)
+  restaurantLongitude Float
+  restaurantLatitude  Float
+  customerName        String               @db.VarChar(200)
+  customerEmail       String?              @db.VarChar(254)
+  customerPhone       String?              @db.VarChar(32)
+  riderName           String?              @db.VarChar(200)
+  riderUsername       String?              @db.VarChar(100)
+  riderPhone          String?              @db.VarChar(32)
+  orderDate           DateTime             @db.Timestamptz(3)
+  expectedTime        DateTime?            @db.Timestamptz(3)
+  visibleAt           DateTime?            @db.Timestamptz(3)
+  acceptDeadlineAt    DateTime?            @db.Timestamptz(3)
+  acceptedAt          DateTime?            @db.Timestamptz(3)
+  assignedAt          DateTime?            @db.Timestamptz(3)
+  pickedAt            DateTime?            @db.Timestamptz(3)
+  deliveredAt         DateTime?            @db.Timestamptz(3)
+  cancelledAt         DateTime?            @db.Timestamptz(3)
+  paidAt              DateTime?            @db.Timestamptz(3)
+  preparationTime     DateTime?            @db.Timestamptz(3)
+  selectedPrepTime    Int?                 @db.SmallInt
+  completionTime      DateTime?            @db.Timestamptz(3)
+  version             Int                  @default(1)
+  createdAt           DateTime             @default(now()) @db.Timestamptz(3)
+  updatedAt           DateTime             @default(now()) @db.Timestamptz(3)
+  items               OrderItem[]
+  history             OrderStatusHistory[]
+  eta                 OrderEta?
+
+  @@index([tenantId, userId, createdAt(sort: Desc)])
+  @@index([tenantId, restaurantId, createdAt(sort: Desc)])
+  @@index([tenantId, riderId, status])
+  @@index([tenantId, status, acceptDeadlineAt])
+}
+
+model OrderItem {
+  id                       String           @id @db.Uuid
+  orderId                  String           @db.Uuid
+  position                 Int              @db.SmallInt
+  foodId                   String           @db.Uuid
+  title                    String           @db.VarChar(200)
+  description              String?          @db.VarChar(1000)
+  image                    String?          @db.VarChar(2048)
+  quantity                 Int              @db.SmallInt
+  specialInstructions      String           @default("") @db.VarChar(500)
+  variationId              String           @db.Uuid
+  variationTitle           String           @db.VarChar(200)
+  variationPriceMinor      BigInt
+  variationDiscountedMinor BigInt           @default(0)
+  unitPriceMinor           BigInt
+  lineTotalMinor           BigInt
+  createdAt                DateTime         @default(now()) @db.Timestamptz(3)
+  order                    Order            @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  addons                   OrderItemAddon[]
+
+  @@unique([orderId, position])
+  @@index([foodId])
+}
+
+model OrderItemAddon {
+  id              String            @id @db.Uuid
+  orderItemId     String            @db.Uuid
+  position        Int               @db.SmallInt
+  addonId         String            @db.Uuid
+  title           String            @db.VarChar(200)
+  description     String?           @db.VarChar(1000)
+  quantityMinimum Int               @db.SmallInt
+  quantityMaximum Int               @db.SmallInt
+  item            OrderItem         @relation(fields: [orderItemId], references: [id], onDelete: Restrict)
+  options         OrderItemOption[]
+
+  @@unique([orderItemId, position])
+}
+
+model OrderItemOption {
+  id               String         @id @db.Uuid
+  orderItemAddonId String         @db.Uuid
+  position         Int            @db.SmallInt
+  optionId         String         @db.Uuid
+  title            String         @db.VarChar(200)
+  description      String?        @db.VarChar(1000)
+  priceMinor       BigInt
+  addon            OrderItemAddon @relation(fields: [orderItemAddonId], references: [id], onDelete: Restrict)
+
+  @@unique([orderItemAddonId, position])
+}
+
+model OrderStatusHistory {
+  id         String       @id @db.Uuid
+  orderId    String       @db.Uuid
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  actorType  String       @db.VarChar(16)
+  actorId    String       @db.VarChar(64)
+  reason     String?      @db.VarChar(200)
+  riderId    String?      @db.Uuid
+  version    Int
+  createdAt  DateTime     @default(now()) @db.Timestamptz(3)
+  order      Order        @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@unique([orderId, version])
+  @@index([orderId, createdAt])
+}
+
+model OrderEta {
+  orderId              String    @id @db.Uuid
+  phase                String    @db.VarChar(32)
+  source               String    @db.VarChar(32)
+  readyAt              DateTime? @db.Timestamptz(3)
+  baseArrivalAt        DateTime? @db.Timestamptz(3)
+  estimatedArrivalAt   DateTime? @db.Timestamptz(3)
+  windowStartAt        DateTime? @db.Timestamptz(3)
+  windowEndAt          DateTime? @db.Timestamptz(3)
+  durationSeconds      Int?
+  distanceMeters       Int?
+  encodedPolyline      String?
+  originLatitude       Float?
+  originLongitude      Float?
+  destinationLatitude  Float?
+  destinationLongitude Float?
+  calculatedAt         DateTime  @db.Timestamptz(3)
+  lastLocationAt       DateTime? @db.Timestamptz(3)
+  version              Int       @default(1)
+  order                Order     @relation(fields: [orderId], references: [id], onDelete: Restrict)
+}

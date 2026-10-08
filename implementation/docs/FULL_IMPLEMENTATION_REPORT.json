@@ -1,4 +1,13 @@
 {
+  "status": "SUPERSEDED",
+  "historicalCheckpoint": "2026-10-08T16:18+08:00 Asia/Kuala_Lumpur",
+  "supersededBy": [
+    "docs/MASTER_END_TO_END_PLAN.md",
+    "docs/IMPLEMENTATION_STATUS.json (generated)",
+    "docs/GATES.json (recorded gate runs)",
+    "docs/OPERATION_TRACEABILITY.md (generated)"
+  ],
+  "warning": "Historical checkpoint only. The counts, app statuses and blockers below were true when written and are NOT current. Do not quote them as present state. It also references replacement frontend shells that were removed; the product UI is the pinned vendor/enatega-ui source.",
   "date": "2026-10-08",
   "overall": "IN_PROGRESS; product UI NONCOMPLIANT pending full original Enatega source migration",
   "workspace": "/Users/premkumarmamidi/Development/Fair/implementation",

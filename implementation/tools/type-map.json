@@ -57,6 +57,23 @@
     "query.getDashboardOrders": "DashboardOrders",
     "query.getDashboardSales": "DashboardSales"
   },
+  "argumentOverrides": {
+    "mutation.createAddress.addressInput": "AddressInput!",
+    "mutation.deleteAddress.id": "ID!",
+    "mutation.deleteBulkAddresses.ids": "[ID!]!",
+    "mutation.editAddress.addressInput": "AddressInput!",
+    "mutation.selectAddress.id": "String!"
+  },
+  "inputOverrides": {
+    "AddressInput": {
+      "_id": "ID",
+      "label": "String!",
+      "deliveryAddress": "String!",
+      "details": "String!",
+      "longitude": "String!",
+      "latitude": "String!"
+    }
+  },
   "typeOverrides": {
     "LoginLogin.addresses": "[Address]",
     "LoginLogin.emailIsVerified": "Boolean",

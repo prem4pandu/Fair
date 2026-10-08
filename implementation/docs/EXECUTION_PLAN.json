@@ -1,4 +1,13 @@
 {
+  "status": "SUPERSEDED",
+  "historicalCheckpoint": "2026-10-08T16:20+08:00 Asia/Kuala_Lumpur",
+  "supersededBy": [
+    "docs/MASTER_END_TO_END_PLAN.md",
+    "docs/IMPLEMENTATION_STATUS.json (generated)",
+    "docs/GATES.json (recorded gate runs)",
+    "docs/OPERATION_TRACEABILITY.md (generated)"
+  ],
+  "warning": "Historical checkpoint only. The counts, app statuses and blockers below were true when written and are NOT current. Do not quote them as present state. Its phase scheduling is superseded; FB00-FB20 gates remain in scope as business capability names.",
   "date": "2026-10-08",
   "execution": "Multiple independent Codex agents; no local AI",
   "source_session": "https://chatgpt.com/local/01a115d1-c437-7040-ba6a-47ee7d3100ac",

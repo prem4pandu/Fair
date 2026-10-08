@@ -21,7 +21,15 @@
     "coverage": "pnpm --filter @fairbite/api exec vitest run --config vitest.coverage.full.config.ts --coverage",
     "e2e:backend": "pnpm --filter @fairbite/api build && playwright test --config playwright.backend.config.ts",
     "check:operations": "node tools/check-operation-evidence.mjs --evidence docs/OPERATION_TEST_EVIDENCE.json --require-complete",
-    "test:operation-evidence": "node --test tools/check-operation-evidence.test.mjs"
+    "test:operation-evidence": "node --test tools/check-operation-evidence.test.mjs",
+    "traceability": "node tools/generate-operation-traceability.mjs",
+    "traceability:check": "node tools/generate-operation-traceability.mjs --check",
+    "check:error-messages": "node tools/check-error-messages.mjs",
+    "record-gate": "node tools/record-gate.mjs",
+    "e2e:smoke": "node tools/pending-gate.mjs e2e:smoke",
+    "e2e": "node tools/pending-gate.mjs e2e",
+    "test:journeys": "node tools/pending-gate.mjs test:journeys",
+    "coverage:e2e": "node tools/pending-gate.mjs coverage:e2e"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "7.4.5",

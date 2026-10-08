@@ -26,6 +26,13 @@ const updateQuery = `mutation($id:ID!,$input:CustomerAddressInput!){updateCustom
 const selectQuery = `mutation($id:ID!){selectCustomerAddress(id:$id){${fields}}}`;
 const deleteQuery =
   "mutation($id:ID!){deleteCustomerAddress(id:$id){accepted}}";
+const enategaFields =
+  "_id addresses{_id id label deliveryAddress details location{coordinates} selected}";
+const createEnategaQuery = `mutation CreateAddress($addressInput:AddressInput!){createAddress(addressInput:$addressInput){${enategaFields}}}`;
+const editEnategaQuery = `mutation EditAddress($addressInput:AddressInput!){editAddress(addressInput:$addressInput){${enategaFields}}}`;
+const selectEnategaQuery = `mutation SelectAddress($id:String!){selectAddress(id:$id){${enategaFields}}}`;
+const deleteEnategaQuery = `mutation DeleteAddress($id:ID!){deleteAddress(id:$id){${enategaFields}}}`;
+const deleteBulkEnategaQuery = `mutation DeleteBulkAddresses($ids:[ID!]!){deleteBulkAddresses(ids:$ids){${enategaFields}}}`;
 const input = {
   label: "Home",
   deliveryAddress: "Synthetic street",
@@ -108,6 +115,80 @@ afterAll(async () => {
   await db?.stop();
 });
 describe("customer addresses through real GraphQL and PostgreSQL", () => {
+  it("serves the pinned Enatega address mutations with their exact variable shapes", async () => {
+    const owner = await customer();
+    const addressInput = {
+      label: "Home",
+      deliveryAddress: "1 Jalan Test",
+      details: "Lobby",
+      longitude: "101.6869",
+      latitude: "3.139",
+    };
+    const created = await gql(
+      createEnategaQuery,
+      { addressInput },
+      owner.accessToken,
+    );
+    expect(created.errors).toBeUndefined();
+    expect(created.data.createAddress._id).toBe(owner.user.id);
+    expect(created.data.createAddress.addresses).toHaveLength(1);
+    const address = created.data.createAddress.addresses[0];
+    expect(address).toMatchObject({
+      id: address._id,
+      label: "Home",
+      location: { coordinates: [101.6869, 3.139] },
+      selected: false,
+    });
+
+    const selected = await gql(
+      selectEnategaQuery,
+      { id: address._id },
+      owner.accessToken,
+    );
+    expect(selected.errors).toBeUndefined();
+    expect(selected.data.selectAddress.addresses[0].selected).toBe(true);
+
+    const edited = await gql(
+      editEnategaQuery,
+      { addressInput: { ...addressInput, _id: address._id, label: "Office" } },
+      owner.accessToken,
+    );
+    expect(edited.errors).toBeUndefined();
+    expect(edited.data.editAddress.addresses[0]).toMatchObject({
+      _id: address._id,
+      label: "Office",
+      selected: true,
+    });
+
+    const second = await gql(
+      createEnategaQuery,
+      { addressInput: { ...addressInput, label: "Other" } },
+      owner.accessToken,
+    );
+    expect(second.errors).toBeUndefined();
+    const secondId = second.data.createAddress.addresses.find(
+      (candidate: { label: string }) => candidate.label === "Other",
+    )._id;
+    const bulkDeleted = await gql(
+      deleteBulkEnategaQuery,
+      { ids: [secondId] },
+      owner.accessToken,
+    );
+    expect(bulkDeleted.errors).toBeUndefined();
+    expect(bulkDeleted.data.deleteBulkAddresses.addresses).toHaveLength(1);
+
+    const deleted = await gql(
+      deleteEnategaQuery,
+      { id: address._id },
+      owner.accessToken,
+    );
+    expect(deleted.errors).toBeUndefined();
+    expect(deleted.data.deleteAddress).toEqual({
+      _id: owner.user.id,
+      addresses: [],
+    });
+  });
+
   it("authenticates real sessions and persists trimmed data, updates, selection and deletion", async () => {
     const owner = await customer();
     const address = await create(owner.accessToken, {

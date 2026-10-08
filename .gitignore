@@ -14,3 +14,8 @@ upstream/
 .env
 .env.*
 !.env.example
+
+# OS metadata and local package store
+.DS_Store
+**/.DS_Store
+.pnpm-store/
