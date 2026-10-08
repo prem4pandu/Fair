@@ -119,6 +119,126 @@ afterAll(async () => {
   await db?.stop();
 });
 describe("real GraphQL password identity", () => {
+  it("serves Enatega customer onboarding, login and authenticated profile roots", async () => {
+    const email = `enatega-${randomUUID()}@example.com`;
+    const created = await gql(
+      `mutation($input:CreateUserUserInputInput){
+        createUser(userInput:$input){userId token tokenExpiration name email emailIsVerified isNewUser}
+      }`,
+      {
+        input: {
+          email,
+          password,
+          name: "Enatega customer",
+        },
+      },
+    );
+    expect(created.errors).toBeUndefined();
+    expect(created.data.createUser).toMatchObject({
+      name: "Enatega customer",
+      email,
+      emailIsVerified: false,
+      isNewUser: true,
+    });
+    expect(created.data.createUser.tokenExpiration).toMatch(/^\d+$/);
+
+    const profile = await gql(
+      `query { profile { _id name email emailIsVerified isActive userType addresses { deliveryAddress } } }`,
+      {},
+      created.data.createUser.token,
+    );
+    expect(profile.errors).toBeUndefined();
+    expect(profile.data.profile).toMatchObject({
+      _id: created.data.createUser.userId,
+      name: "Enatega customer",
+      email,
+      emailIsVerified: false,
+      isActive: true,
+      userType: "CUSTOMER",
+      addresses: [],
+    });
+
+    const login = await gql(
+      `mutation($email:String,$password:String,$type:String){
+        login(email:$email,password:$password,type:$type){userId token name email isNewUser isActive}
+      }`,
+      { email, password, type: "email" },
+    );
+    expect(login.errors).toBeUndefined();
+    expect(login.data.login).toMatchObject({
+      userId: created.data.createUser.userId,
+      name: "Enatega customer",
+      email,
+      isNewUser: false,
+      isActive: true,
+    });
+  });
+
+  it("binds Enatega owner, restaurant and rider roots to their application grants", async () => {
+    const owner = await seed("ADMIN", "ADMIN");
+    const merchant = await seed("MERCHANT_STAFF", "MERCHANT");
+    const rider = await seed("RIDER", "RIDER");
+    const ownerResult = await gql(
+      `mutation($email:String,$password:String){
+        ownerLogin(email:$email,password:$password){userId token refreshToken userType permissions}
+      }`,
+      { email: owner.email, password },
+    );
+    expect(ownerResult.errors).toBeUndefined();
+    expect(ownerResult.data.ownerLogin).toMatchObject({
+      userId: owner.id,
+      userType: "ADMIN",
+      permissions: ["ADMIN"],
+    });
+    expect(
+      (
+        await gql(
+          `query($permission:String){hasOwnerPermission(permission:$permission)}`,
+          { permission: "restaurants" },
+          ownerResult.data.ownerLogin.token,
+        )
+      ).data.hasOwnerPermission,
+    ).toBe(true);
+    const refreshed = await gql(
+      `mutation($refreshToken:String,$userType:String){
+        refreshToken(refreshToken:$refreshToken,userType:$userType){userId token refreshToken}
+      }`,
+      {
+        refreshToken: ownerResult.data.ownerLogin.refreshToken,
+        userType: "ADMIN",
+      },
+    );
+    expect(refreshed.errors).toBeUndefined();
+    expect(refreshed.data.refreshToken.userId).toBe(owner.id);
+
+    const merchantResult = await gql(
+      `mutation($username:String,$password:String){restaurantLogin(username:$username,password:$password){restaurantId token}}`,
+      { username: merchant.email, password },
+    );
+    expect(merchantResult.errors).toBeUndefined();
+    expect(merchantResult.data.restaurantLogin.restaurantId).toBe(merchant.id);
+
+    const riderResult = await gql(
+      `mutation($username:String,$password:String){riderLogin(username:$username,password:$password){userId token}}`,
+      { username: rider.email, password },
+    );
+    expect(riderResult.errors).toBeUndefined();
+    expect(riderResult.data.riderLogin.userId).toBe(rider.id);
+  });
+
+  it("rejects unsupported Enatega social onboarding without creating an account", async () => {
+    const result = await gql(
+      `mutation($input:CreateUserUserInputInput){createUser(userInput:$input){userId}}`,
+      { input: { appleId: "provider-id", name: "No fake user" } },
+    );
+    expect(result.errors[0].extensions.code).toBe("NOT_IMPLEMENTED");
+    expect(
+      await pool.query('SELECT 1 FROM "IdentityUser" WHERE "displayName"=$1', [
+        "No fake user",
+      ]),
+    ).toMatchObject({ rowCount: 0 });
+  });
+
   it("creates only unverified customers with hash-only sessions; duplicate and role injection rejected", async () => {
     const session = await register();
     const claims = decodeJwt(session.accessToken);

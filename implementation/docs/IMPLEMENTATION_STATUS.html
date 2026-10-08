@@ -177,6 +177,11 @@
           behavior, authorization, runtime reachability, subscriptions, UI
           parity, or E2E journeys.
         </p>
+        <p class="note">
+          Latest verified checks (2026-10-08 Asia/Kuala_Lumpur): 144 API unit
+          tests, 53 API integration tests, and 10 worker unit tests passed;
+          workspace typecheck, lint, build, and formatting passed.
+        </p>
       </section>
       <section>
         <h2>Phase status</h2>
@@ -204,14 +209,19 @@
                 <th scope="row">1</th>
                 <td>Contract and data model</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
-                <td>Upgrade migration and formal G1 record remain open.</td>
+                <td>
+                  Forward migrations exist; formal G1 evidence and approval
+                  remain open.
+                </td>
               </tr>
               <tr>
                 <th scope="row">2</th>
                 <td>L1–L9 domains</td>
                 <td><span class="badge in-progress">IN PROGRESS</span></td>
                 <td>
-                  Operation behavior and per-operation tests remain incomplete.
+                  Identity, configuration, catalog, addresses, and order-domain
+                  slices exist; most operation behavior and per-operation tests
+                  remain incomplete.
                 </td>
               </tr>
               <tr>
@@ -461,6 +471,9 @@
         <h2>Latest committed checkpoints</h2>
         <ol>
           <li>
+            <code>f2b5df5</code> docs: publish implementation status report
+          </li>
+          <li>
             <code>463f2d5</code> feat: expand Enatega backend contracts and
             runtime configuration
           </li>
@@ -486,9 +499,6 @@
           <li>
             <code>2ba9a1f</code> feat(L0): add public handshake and integration
             harness
-          </li>
-          <li>
-            <code>d489fe6</code> feat(L0): add kernel codecs and error contracts
           </li>
         </ol>
       </section>

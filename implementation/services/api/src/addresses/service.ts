@@ -15,6 +15,15 @@ export interface CustomerAddress {
   latitude: number;
   selected: boolean;
 }
+export interface EnategaAddress {
+  _id: string;
+  id: string;
+  label: string;
+  deliveryAddress: string;
+  details: string;
+  location: { coordinates: [number, number] };
+  selected: boolean;
+}
 const fields =
   'id, label, "deliveryAddress", details, longitude, latitude, selected';
 function error(code: string, message: string): never {
@@ -65,6 +74,41 @@ export function addressInput(
     latitude: coordinate("latitude", 90),
   };
 }
+export function enategaAddressInput(value: unknown): {
+  id?: string;
+  input: Omit<CustomerAddress, "id" | "selected">;
+} {
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    return error("BAD_USER_INPUT", "Invalid address input");
+  const source = value as Record<string, unknown>;
+  const allowed = new Set([
+    "_id",
+    "label",
+    "deliveryAddress",
+    "details",
+    "longitude",
+    "latitude",
+  ]);
+  if (Object.keys(source).some((key) => !allowed.has(key)))
+    return error("BAD_USER_INPUT", "Invalid address input");
+  const coordinate = (key: "longitude" | "latitude") => {
+    const raw = source[key];
+    if (typeof raw === "number") return raw;
+    if (typeof raw !== "string" || raw.trim() === "") return raw;
+    return Number(raw);
+  };
+  const id = source._id === undefined ? undefined : addressId(source._id);
+  return {
+    ...(id ? { id } : {}),
+    input: addressInput({
+      label: source.label,
+      deliveryAddress: source.deliveryAddress,
+      details: source.details,
+      longitude: coordinate("longitude"),
+      latitude: coordinate("latitude"),
+    }),
+  };
+}
 function publicAddress(row: CustomerAddress): CustomerAddress {
   return {
     id: row.id,
@@ -73,6 +117,17 @@ function publicAddress(row: CustomerAddress): CustomerAddress {
     details: row.details,
     longitude: row.longitude,
     latitude: row.latitude,
+    selected: row.selected,
+  };
+}
+export function enategaAddress(row: CustomerAddress): EnategaAddress {
+  return {
+    _id: row.id,
+    id: row.id,
+    label: row.label,
+    deliveryAddress: row.deliveryAddress,
+    details: row.details,
+    location: { coordinates: [row.longitude, row.latitude] },
     selected: row.selected,
   };
 }
@@ -199,5 +254,57 @@ export class AddressesService {
       );
       return publicAddress(result.rows[0]);
     });
+  }
+
+  async deleteBulk(ids: unknown, context: IdentityContext) {
+    const { id: owner } = await this.authority.authorize(context);
+    if (!Array.isArray(ids) || ids.length < 1 || ids.length > 50)
+      return error("BAD_USER_INPUT", "Invalid address input");
+    const targets = [...new Set(ids.map(addressId))];
+    return this.transaction(owner, async (client) => {
+      await client.query(
+        'DELETE FROM "CustomerAddress" WHERE "userId"=$1::uuid AND id = ANY($2::uuid[])',
+        [owner, targets],
+      );
+      const result = await client.query(
+        `SELECT ${fields} FROM "CustomerAddress" WHERE "userId"=$1::uuid ORDER BY id LIMIT 50`,
+        [owner],
+      );
+      return {
+        _id: owner,
+        addresses: (result.rows as CustomerAddress[]).map(enategaAddress),
+      };
+    });
+  }
+
+  async enategaProfile(context: IdentityContext) {
+    const user = await this.authority.authorize(context);
+    const addresses = await this.list(context);
+    return { _id: user.id, addresses: addresses.map(enategaAddress) };
+  }
+
+  async createEnatega(value: unknown, context: IdentityContext) {
+    const parsed = enategaAddressInput(value);
+    if (parsed.id)
+      return error("BAD_USER_INPUT", "New addresses cannot include an id");
+    await this.create(parsed.input, context);
+    return this.enategaProfile(context);
+  }
+
+  async editEnatega(value: unknown, context: IdentityContext) {
+    const parsed = enategaAddressInput(value);
+    if (!parsed.id) return error("BAD_USER_INPUT", "Address id is required");
+    await this.update(parsed.id, parsed.input, context);
+    return this.enategaProfile(context);
+  }
+
+  async deleteEnatega(id: unknown, context: IdentityContext) {
+    await this.delete(id, context);
+    return this.enategaProfile(context);
+  }
+
+  async selectEnatega(id: unknown, context: IdentityContext) {
+    await this.select(id, context);
+    return this.enategaProfile(context);
   }
 }

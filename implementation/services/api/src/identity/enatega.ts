@@ -12,6 +12,13 @@ export type EnategaPasswordLogin = {
   notificationToken?: unknown;
 };
 
+export type EnategaCreateUser = {
+  email?: unknown;
+  password?: unknown;
+  name?: unknown;
+  appleId?: unknown;
+};
+
 const applicationByPrincipal: Readonly<Record<string, Application>> = {
   customer: "CUSTOMER",
   email: "CUSTOMER",
@@ -36,7 +43,7 @@ function expiration(token: string): string {
 }
 
 /** Maps the internal session without exposing the opaque refresh token to customer clients. */
-export function toEnategaCustomerSession(session: Session) {
+export function toEnategaCustomerSession(session: Session, isNewUser = false) {
   return {
     userId: session.user.id,
     token: session.accessToken,
@@ -48,7 +55,7 @@ export function toEnategaCustomerSession(session: Session) {
     phoneIsVerified: false,
     picture: null,
     addresses: [],
-    isNewUser: false,
+    isNewUser,
     userTypeId: session.user.roles[0] ?? null,
     isActive: true,
   };
@@ -86,6 +93,29 @@ export class EnategaIdentityAdapter {
       context,
     );
     return toEnategaCustomerSession(session);
+  }
+
+  async createUser(input: EnategaCreateUser, context: IdentityContext) {
+    if (input.appleId != null)
+      return authError(
+        "NOT_IMPLEMENTED",
+        "Apple authentication is unavailable",
+      );
+    if (
+      typeof input.email !== "string" ||
+      typeof input.password !== "string" ||
+      typeof input.name !== "string"
+    )
+      return authError("BAD_USER_INPUT", "Invalid request");
+    const session = await this.identity.register(
+      {
+        email: input.email,
+        password: input.password,
+        displayName: input.name,
+      },
+      context,
+    );
+    return toEnategaCustomerSession(session, true);
   }
 
   async ownerLogin(
@@ -131,5 +161,53 @@ export class EnategaIdentityAdapter {
       context,
     );
     return { userId: session.user.id, token: session.accessToken };
+  }
+
+  async refreshToken(
+    refreshToken: unknown,
+    userType: unknown,
+    context: IdentityContext,
+  ) {
+    const application =
+      typeof userType === "string" && userType.trim().toUpperCase() === "ADMIN"
+        ? "ADMIN"
+        : applicationForEnategaPrincipal(userType);
+    const session = await this.identity.refresh(
+      refreshToken,
+      application,
+      context,
+    );
+    return application === "ADMIN"
+      ? toEnategaOwnerSession(session)
+      : toEnategaCustomerSession(session);
+  }
+
+  async profile(context: IdentityContext) {
+    const user = await this.identity.me("CUSTOMER", context);
+    return {
+      _id: user.id,
+      name: user.displayName,
+      email: user.email,
+      emailIsVerified: user.emailVerificationStatus === "VERIFIED",
+      phone: null,
+      phoneIsVerified: false,
+      addresses: [],
+      favourite: null,
+      notificationToken: null,
+      isOfferNotification: false,
+      isOrderNotification: false,
+      isActive: true,
+      userType: user.roles[0] ?? null,
+      stripe_plan_id: null,
+    };
+  }
+
+  async hasOwnerPermission(permission: unknown, context: IdentityContext) {
+    if (typeof permission !== "string" || permission.trim().length === 0)
+      return authError("BAD_USER_INPUT", "Invalid request");
+    const user = await this.identity.me("ADMIN", context);
+    return (
+      user.roles.includes("ADMIN") || user.roles.includes(permission.trim())
+    );
   }
 }

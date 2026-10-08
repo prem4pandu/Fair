@@ -35,4 +35,39 @@ export class AddressesResolver {
   ) {
     return this.service.select(id, ctx);
   }
+
+  @Mutation("createAddress") createEnatega(
+    @Args("addressInput") input: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.service.createEnatega(input, ctx);
+  }
+
+  @Mutation("editAddress") editEnatega(
+    @Args("addressInput") input: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.service.editEnatega(input, ctx);
+  }
+
+  @Mutation("deleteAddress") deleteEnatega(
+    @Args("id") id: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.service.deleteEnatega(id, ctx);
+  }
+
+  @Mutation("deleteBulkAddresses") deleteBulkEnatega(
+    @Args("ids") ids: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.service.deleteBulk(ids, ctx);
+  }
+
+  @Mutation("selectAddress") selectEnatega(
+    @Args("id") id: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.service.selectEnatega(id, ctx);
+  }
 }

@@ -125,4 +125,98 @@ describe("Enatega identity compatibility adapters", () => {
     ).rejects.toMatchObject({ extensions: { code: "BAD_USER_INPUT" } });
     expect(login).not.toHaveBeenCalled();
   });
+
+  it("registers an Enatega customer through hardened customer onboarding", async () => {
+    const session = await fixture();
+    const register = vi.fn().mockResolvedValue(session);
+    const adapter = new EnategaIdentityAdapter({ register } as never);
+    const result = await adapter.createUser(
+      {
+        email: "person@example.com",
+        password: "actual-test-password-12",
+        name: "Person",
+      },
+      { ip: "127.0.0.1" },
+    );
+    expect(register).toHaveBeenCalledWith(
+      {
+        email: "person@example.com",
+        password: "actual-test-password-12",
+        displayName: "Person",
+      },
+      { ip: "127.0.0.1" },
+    );
+    expect(result).toMatchObject({
+      userId: session.user.id,
+      isNewUser: true,
+      emailIsVerified: true,
+    });
+    expect(result).not.toHaveProperty("refreshToken");
+  });
+
+  it("rejects unsupported Apple onboarding instead of fabricating provider success", async () => {
+    const register = vi.fn();
+    const adapter = new EnategaIdentityAdapter({ register } as never);
+    await expect(
+      adapter.createUser(
+        { appleId: "provider-id", name: "Person" },
+        { ip: "127.0.0.1" },
+      ),
+    ).rejects.toMatchObject({ extensions: { code: "NOT_IMPLEMENTED" } });
+    expect(register).not.toHaveBeenCalled();
+  });
+
+  it("rotates the admin refresh token and preserves the owner response contract", async () => {
+    const session = await fixture();
+    const refresh = vi.fn().mockResolvedValue(session);
+    const adapter = new EnategaIdentityAdapter({ refresh } as never);
+    const result = await adapter.refreshToken(session.refreshToken, "ADMIN", {
+      ip: "127.0.0.1",
+    });
+    expect(refresh).toHaveBeenCalledWith(session.refreshToken, "ADMIN", {
+      ip: "127.0.0.1",
+    });
+    expect(result).toMatchObject({
+      userId: session.user.id,
+      refreshToken: session.refreshToken,
+      userType: "ADMIN",
+    });
+  });
+
+  it("maps the authenticated customer profile without private session data", async () => {
+    const me = vi.fn().mockResolvedValue({
+      id: "user-id",
+      email: "person@example.com",
+      displayName: "Person",
+      roles: ["CUSTOMER"],
+      emailVerificationStatus: "UNVERIFIED",
+    });
+    const adapter = new EnategaIdentityAdapter({ me } as never);
+    const result = await adapter.profile({
+      ip: "127.0.0.1",
+      authorization: "Bearer token",
+    });
+    expect(me).toHaveBeenCalledWith("CUSTOMER", expect.any(Object));
+    expect(result).toMatchObject({
+      _id: "user-id",
+      email: "person@example.com",
+      emailIsVerified: false,
+      addresses: [],
+      isActive: true,
+      userType: "CUSTOMER",
+    });
+    expect(result).not.toHaveProperty("token");
+  });
+
+  it("requires an admin identity before evaluating owner permissions", async () => {
+    const me = vi.fn().mockResolvedValue({ roles: ["ADMIN"] });
+    const adapter = new EnategaIdentityAdapter({ me } as never);
+    await expect(
+      adapter.hasOwnerPermission("restaurants", { ip: "127.0.0.1" }),
+    ).resolves.toBe(true);
+    expect(me).toHaveBeenCalledWith("ADMIN", expect.any(Object));
+    await expect(
+      adapter.hasOwnerPermission("", { ip: "127.0.0.1" }),
+    ).rejects.toMatchObject({ extensions: { code: "BAD_USER_INPUT" } });
+  });
 });
