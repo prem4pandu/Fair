@@ -1,0 +1,61 @@
+enum LoginApplication {
+  CUSTOMER
+  MERCHANT
+  RIDER
+  ADMIN
+}
+enum IdentityRole {
+  CUSTOMER
+  MERCHANT_STAFF
+  RIDER
+  ADMIN
+}
+enum EmailVerificationStatus {
+  UNVERIFIED
+  VERIFIED
+}
+input CustomerRegistrationInput {
+  email: String!
+  password: String!
+  displayName: String!
+}
+input PasswordLoginInput {
+  email: String!
+  password: String!
+  application: LoginApplication!
+}
+input SessionLogoutInput {
+  refreshToken: String!
+}
+input SessionRefreshInput {
+  refreshToken: String!
+  application: LoginApplication!
+}
+type IdentityUser {
+  id: ID!
+  email: String!
+  displayName: String!
+  roles: [IdentityRole!]!
+  emailVerificationStatus: EmailVerificationStatus!
+}
+type SessionPayload {
+  application: LoginApplication!
+  accessToken: String!
+  refreshToken: String!
+  accessTokenExpiresInSeconds: Int!
+  refreshTokenExpiresInSeconds: Int!
+  user: IdentityUser!
+}
+type MutationAcknowledgement {
+  accepted: Boolean!
+}
+extend type Query {
+  me(application: LoginApplication!): IdentityUser!
+}
+type Mutation {
+  registerCustomer(input: CustomerRegistrationInput!): SessionPayload!
+  loginPassword(input: PasswordLoginInput!): SessionPayload!
+  refreshSession(input: SessionRefreshInput!): SessionPayload!
+  logoutSession(input: SessionLogoutInput!): MutationAcknowledgement!
+  logoutAllSessions(application: LoginApplication!): MutationAcknowledgement!
+}

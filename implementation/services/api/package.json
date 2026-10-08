@@ -4,8 +4,8 @@
   "name": "@fairbite/api",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit",
+    "build": "prisma generate && tsc -p tsconfig.build.json",
+    "typecheck": "prisma generate && tsc --noEmit",
     "test": "vitest run --config vitest.config.ts",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "start": "node dist/main.js",
@@ -33,7 +33,10 @@
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
     "zod": "4.1.11",
-    "express": "5.2.1"
+    "express": "5.2.1",
+    "@fairbite/identity-contracts": "workspace:*",
+    "argon2": "0.44.0",
+    "jose": "6.1.0"
   },
   "devDependencies": {
     "@nestjs/testing": "12.1.2",

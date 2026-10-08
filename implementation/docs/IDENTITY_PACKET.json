@@ -1,0 +1,33 @@
+{
+  "id": "FB02-PASSWORD-01",
+  "state": "FROZEN",
+  "scope": "Password/customer registration and role-bound sessions; no reset/OTP/social/MFA/provisioning/provider success",
+  "contracts": "contracts/identity.graphql",
+  "technical_decisions": {
+    "password": "12..128 JS UTF16 code units; preserve bytes/no trimming; Argon2id64MiB3passes1lane",
+    "email": "trim NFKC lowercase then validate normalized email <=254",
+    "access_ttl_seconds": 300,
+    "refresh_ttl_seconds": 2592000,
+    "keys": "Distinct canonical base64url32bytes configured ACCESS_TOKEN_SECRET and REFRESH_TOKEN_PEPPER; require when PASSWORD_AUTH_ENABLED=true, no defaults",
+    "issuer": "fairbite-api",
+    "audience": "fairbite-apps",
+    "role_binding": "Customer registration creates onlyCUSTOMER; login app fixed perclient. Requested app cannot grant roles; currentDB role+eligibility rechecked login/refresh/me. Merchant/rider privileges not provisioned publicly; production privileged password-only auth denied until MFA/provisioning packet",
+    "eligibility": "Identity-owned authorizedApplication grants for existing privileged accounts; only real synthetic DB fixtures in tests until reviewed operator/onboarding flow. No merchant membership/capability claimed by identity grant",
+    "registration": "Returns unverified customer session; never emailverified; duplicate yields bounded ACCOUNT_EXISTS explicit compatibility no enumeration-resistance claim",
+    "refresh": "Hash only; atomic rotation and replay revoke entire family incl newest access. Originalapplication preserved. Logout presented token revokes wholefamily, logoutAll ownfamilies",
+    "rate_limit": "Real Redis shared atomic counters HMAC opaqueIP/email keys; perIP60/60sec + peraccount10/60sec; hashwork global bounded concurrency2, failclosed on Redis errors. Test configurable lowlimits without weakeningprod. Count each authmutation/alias; one mutation rootfield perrequest; no untrusted forwardedIP",
+    "web": "Same-origin POST BFF Origin+Host exact checks boundedbody, hostonly HttpOnly SameSite=Lax Secure __Host-cookies inprod explicit devnames. No tokens in HTML/browserJSON/localStorage. Loginapp serverfixed; merchant/admin registration unavailable. Authenticated account/read and logout, explicit refresh; no invisible distributed refresh races",
+    "mobile": "Access memory; refresh ExpoSecureStore endpoint+application scoped. Serialize refresh and logout invalidate in-flight completions. Web-export authentication disabled honestly pending browser-BFF transport; native-device gatepending",
+    "production": "Password feature off by default; require explicit opt-in and validkeys. Existing sessions always check account/role/grant DB. Admin/merchant/rider password login failclosed inproduction until MFA/policy reviewed",
+    "application_binding": "Refresh input, me and logoutAll require fixed caller application; compare signed session application server-side before authorization or rotation. Session output includes application; clients strictly match fixed app. Logout accepts any presented token only to revoke its family. Memoized authorization cannot cross applications."
+  },
+  "acceptance": [
+    "RealPG user/credential/hash-only family/session persistence and migration constraints",
+    "Roleinjection,wrongapp,inactiveuser,grantremoval,currentroleloss denied",
+    "Refresh replay/concurrency newestaccessinvalid; logout old token familyrevocation",
+    "RealRedis sharedlimits and outagefailclosed; GraphQL aliases cannot bypass",
+    "All3web actual login/account/logout with seededeligible roleaccounts; customerregistration; CSRF/wrongrole/outage; no browsertokenexposure",
+    "Mobile securestorage/sessionrace/parser tests; actual native E2E remainsblocked",
+    "Independent QA/security review after implementation"
+  ]
+}

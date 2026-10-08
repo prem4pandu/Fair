@@ -3,7 +3,7 @@
   "overall": "IN_PROGRESS",
   "FB00": "Static source/action baseline and selected identity audits recorded; full semantics/runtime parity/cloud catalog reconciliation pending",
   "FB01": "Bounded public API/worker/six-app connection foundation implemented, independently reviewed and checked; full foundation gates pending",
-  "FB02": "Selected source identity audits and contract candidates only; NOT_IMPLEMENTED",
+  "FB02": "Password identity/session slice implemented and verified across API and six apps; recovery, OTP/social, MFA/provisioning, native-device and release gates remain IN_PROGRESS",
   "FB03_FB20": "NOT_IMPLEMENTED in fresh workspace",
-  "release": "NOT_APPROVED; dependency advisories, providers, native devices and infrastructure gates pending"
+  "release": "NOT_APPROVED; four high and four moderate dependency advisories, external providers, signed native devices and later phase gates pending"
 }

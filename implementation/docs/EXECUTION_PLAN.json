@@ -25,8 +25,8 @@
       "id": "FB02",
       "scope": "Identity, roles, staff scopes and secure sessions",
       "dependencies": ["FB01"],
-      "functionality": "NOT_STARTED",
-      "verification": "NOT_RUN",
+      "functionality": "IN_PROGRESS",
+      "verification": "PASSWORD_SLICE_VERIFIED",
       "release_gates": "PENDING"
     },
     {

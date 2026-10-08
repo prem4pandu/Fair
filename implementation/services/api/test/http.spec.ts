@@ -16,6 +16,15 @@ const env = {
   REDIS_URL: "redis://localhost:1",
 };
 describe("foundation HTTP boundaries", () => {
+  it("keeps password operations disabled by default while serving foundation", async () => {
+    app = await createApp(readConfig(env));
+    const response = await request(app.getHttpServer()).post("/graphql").send({
+      query:
+        'mutation { registerCustomer(input:{email:"disabled@example.com",password:"valid-test-password",displayName:"Disabled"}) {user{id}} }',
+    });
+    expect(response.body.errors[0].extensions.code).toBe("AUTH_DISABLED");
+    await request(app.getHttpServer()).get("/health/live").expect(200);
+  });
   it("serves live and GraphQL while failing readiness on unavailable dependencies", async () => {
     app = await createApp(readConfig(env));
     await request(app.getHttpServer()).get("/health/live").expect(200);

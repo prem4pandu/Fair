@@ -20,8 +20,8 @@ export default async function Status() {
         )}
         <p>
           Checks the public service information query with a three-second
-          timeout. Application workflows and role authentication remain
-          unverified.
+          timeout. This public query does not verify authenticated sessions or
+          product workflows.
         </p>
       </section>
     </>

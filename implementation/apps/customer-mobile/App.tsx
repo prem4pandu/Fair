@@ -1,3 +1,4 @@
+import { IdentityPanel } from "./identity-panel";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -70,13 +71,14 @@ export default function App() {
           Discover places to eat and manage your orders as customer workflows
           are implemented.
         </Text>
+        <IdentityPanel />
         <View style={styles.card}>
           <Text accessibilityRole="header" style={styles.title}>
             Connection foundation
           </Text>
           <Text style={styles.body}>
             This application currently provides a public backend connection
-            check. Product workflows are still in development.
+            check. Commerce and delivery workflows are still in development.
           </Text>
           <Text accessibilityLiveRegion="polite" style={styles.status}>
             {message}

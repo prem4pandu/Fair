@@ -28,10 +28,46 @@ const schema = z
     PORT: z.coerce.number().int().min(1).max(65535).default(4100),
     DATABASE_URL: connection(["postgres:", "postgresql:"]),
     REDIS_URL: connection(["redis:", "rediss:"]),
+    PASSWORD_AUTH_ENABLED: z
+      .enum(["true", "false"])
+      .default("false")
+      .transform((value) => value === "true"),
+    ACCESS_TOKEN_SECRET: z.string().optional(),
+    REFRESH_TOKEN_PEPPER: z.string().optional(),
     CORS_ORIGINS: z.string().default(""),
   })
   .superRefine((value, context) => {
-    if (value.APP_ENV === "production") {
+    if (value.PASSWORD_AUTH_ENABLED) {
+      for (const key of [
+        "ACCESS_TOKEN_SECRET",
+        "REFRESH_TOKEN_PEPPER",
+      ] as const) {
+        const secret = value[key];
+        if (
+          !secret ||
+          !/^[A-Za-z0-9_-]{43}$/.test(secret) ||
+          Buffer.from(secret, "base64url").length !== 32 ||
+          Buffer.from(secret, "base64url").toString("base64url") !== secret
+        )
+          context.addIssue({
+            code: "custom",
+            path: [key],
+            message: "Canonical 32-byte key required",
+          });
+      }
+      if (value.ACCESS_TOKEN_SECRET === value.REFRESH_TOKEN_PEPPER)
+        context.addIssue({
+          code: "custom",
+          path: ["REFRESH_TOKEN_PEPPER"],
+          message: "Keys must differ",
+        });
+    }
+    if (
+      value.APP_ENV === "production" &&
+      connection(["postgres:", "postgresql:"]).safeParse(value.DATABASE_URL)
+        .success &&
+      connection(["redis:", "rediss:"]).safeParse(value.REDIS_URL).success
+    ) {
       if (new URL(value.REDIS_URL).protocol !== "rediss:")
         context.addIssue({
           code: "custom",

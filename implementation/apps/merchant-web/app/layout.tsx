@@ -23,13 +23,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <nav aria-label="Main navigation">
             <Link href="/">Home</Link>
             <Link href="/status">Service status</Link>
+            <Link href="/login">Sign in</Link>
+            <Link href="/account">Account</Link>
           </nav>
         </header>
         <main id="main" tabIndex={-1}>
           {children}
         </main>
         <footer>
-          Public foundation · Role authentication is not implemented.
+          Password identity checkpoint · Product workflows remain in
+          development.
         </footer>
       </body>
     </html>

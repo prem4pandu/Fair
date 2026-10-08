@@ -22,6 +22,8 @@ import {
   type FragmentDefinitionNode,
   type ValidationRule,
 } from "graphql";
+import { IdentityService } from "./identity/service.js";
+import { IdentityResolver } from "./identity/resolver.js";
 import type { Config } from "./config.js";
 export const boundedOperation: ValidationRule = (context) => ({
   Document(node) {
@@ -30,6 +32,8 @@ export const boundedOperation: ValidationRule = (context) => ({
       if (definition.kind === Kind.FRAGMENT_DEFINITION)
         fragments.set(definition.name.value, definition);
     let fields = 0;
+    let mutationRoots = 0;
+    let isMutation = false;
     let exceeded = node.definitions.length > 10;
     const walk = (
       selection: SelectionSetNode,
@@ -43,6 +47,7 @@ export const boundedOperation: ValidationRule = (context) => ({
       for (const entry of selection.selections) {
         if (entry.kind === Kind.FIELD) {
           fields++;
+          if (isMutation && depth === 1) mutationRoots++;
           if (entry.selectionSet) walk(entry.selectionSet, depth + 1, seen);
         } else if (entry.kind === Kind.INLINE_FRAGMENT)
           walk(entry.selectionSet, depth, seen);
@@ -63,13 +68,18 @@ export const boundedOperation: ValidationRule = (context) => ({
       }
     };
     for (const definition of node.definitions)
-      if (definition.kind === Kind.OPERATION_DEFINITION)
+      if (definition.kind === Kind.OPERATION_DEFINITION) {
+        isMutation = definition.operation === "mutation";
+        mutationRoots = 0;
         walk(definition.selectionSet, 1, new Set());
+        if (mutationRoots > 1) exceeded = true;
+      }
     if (exceeded)
       context.reportError(new GraphQLError("Operation exceeds allowed limits"));
   },
 });
 export async function createApp(config: Config) {
+  const identity = new IdentityService(config);
   const database = new Pool({
     connectionString: config.DATABASE_URL,
     max: 3,
@@ -106,6 +116,7 @@ export async function createApp(config: Config) {
     async onApplicationShutdown() {
       redis.disconnect();
       await database.end();
+      await identity.close();
     }
   }
   @Controller("health")
@@ -135,30 +146,60 @@ export async function createApp(config: Config) {
       GraphQLModule.forRoot<ApolloDriverConfig>({
         driver: ApolloDriver,
         path: "/graphql",
-        context: () => {
+        context: ({ req }: { req: Request }) => {
           let result: Promise<boolean> | undefined;
-          return { ready: () => (result ??= ready()) };
+          return {
+            ready: () => (result ??= ready()),
+            ip: req.socket.remoteAddress ?? "unknown",
+            authorization: req.headers.authorization,
+          };
         },
-        typeDefs: readFileSync(
-          new URL("../../../contracts/foundation.graphql", import.meta.url),
-          "utf8",
-        ),
+        typeDefs: [
+          readFileSync(
+            new URL("../../../contracts/foundation.graphql", import.meta.url),
+            "utf8",
+          ),
+          readFileSync(
+            new URL("../../../contracts/identity.graphql", import.meta.url),
+            "utf8",
+          ),
+        ],
         playground: false,
         introspection: config.APP_ENV !== "production",
         validationRules: [boundedOperation],
-        formatError: (formatted) => ({
-          message:
-            config.APP_ENV === "production"
-              ? "GraphQL request failed"
-              : formatted.message,
-          extensions: {
-            code: formatted.extensions?.code ?? "INTERNAL_SERVER_ERROR",
-          },
-        }),
+        formatError: (formatted) => {
+          const code = String(
+            formatted.extensions?.code ?? "INTERNAL_SERVER_ERROR",
+          );
+          const messages: Record<string, string> = {
+            BAD_USER_INPUT: "Invalid request",
+            AUTHENTICATION_FAILED: "Authentication required",
+            FORBIDDEN: "Access denied",
+            RATE_LIMITED: "Too many authentication attempts",
+            SERVICE_UNAVAILABLE: "Authentication service unavailable",
+            AUTH_DISABLED: "Password authentication is unavailable",
+            ACCOUNT_EXISTS: "Account already exists",
+          };
+          return {
+            message: Object.hasOwn(messages, code)
+              ? messages[code]
+              : "GraphQL request failed",
+            extensions: {
+              code: Object.hasOwn(messages, code)
+                ? code
+                : "INTERNAL_SERVER_ERROR",
+            },
+          };
+        },
       }),
     ],
     controllers: [HealthController],
-    providers: [FoundationResolver, DependencyLifecycle],
+    providers: [
+      FoundationResolver,
+      DependencyLifecycle,
+      IdentityResolver,
+      { provide: IdentityService, useValue: identity },
+    ],
   })
   class FoundationModule {}
   const app = await NestFactory.create(FoundationModule, {

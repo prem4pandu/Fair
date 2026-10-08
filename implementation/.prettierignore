@@ -12,3 +12,4 @@ test-results
 dist-verified/
 .toolchain/
 docs/artifacts/
+dist-identity/

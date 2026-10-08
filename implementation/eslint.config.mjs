@@ -11,6 +11,7 @@ export default tseslint.config(
       "**/.toolchain/**",
       "**/dist-verified/**",
       "**/dist-native/**",
+      "**/dist-identity/**",
       "**/playwright-report/**",
       "**/test-results/**",
     ],

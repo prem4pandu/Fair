@@ -15,7 +15,9 @@
     "react-dom": "19.2.0",
     "react-native": "0.83.2",
     "react-native-web": "^0.21.0",
-    "expo-status-bar": "~55.0.4"
+    "expo-status-bar": "~55.0.4",
+    "@fairbite/identity-contracts": "workspace:*",
+    "expo-secure-store": "~55.0.18"
   },
   "devDependencies": {
     "@types/react": "^19.2.0",

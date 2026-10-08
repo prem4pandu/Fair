@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-08",
+  "packet": "FB02 password identity and secure-session slice",
+  "status": "IN_PROGRESS",
+  "implemented": [
+    "Customer password registration and unverified account state",
+    "Application-bound password login, refresh, current-user and logout",
+    "Argon2id password hashing, short-lived signed access tokens and absolute refresh families",
+    "Redis rate limits and process-wide password-work concurrency bound",
+    "Same-origin web BFF with secure production cookies and native memory/SecureStore sessions",
+    "Role and application binding across API, web and native consumers"
+  ],
+  "verification": {
+    "unit_http": "130 passed across 10 packages",
+    "api_integration": "17 passed against real PostgreSQL/PostGIS and Redis",
+    "client_integration": "5 passed against real API, PostgreSQL/PostGIS and Redis",
+    "browser_e2e": "22 passed across foundation, development identity and controlled localhost TLS production boundaries",
+    "quality": "format, lint, GraphQL codegen drift, 10-package typecheck and 10-package build passed",
+    "mobile": "66 unit tests passed and web exports built; signed iOS/Android device E2E remains open"
+  },
+  "review": {
+    "implementation": "bounded backend, web and mobile ownership",
+    "independent": "cross-lane API, consumer, QA and security reviews completed; found defects were fixed and relevant checks rerun"
+  },
+  "open_gates": [
+    "Password authentication remains disabled by default pending deployment secrets and explicit enablement",
+    "Privileged production password login remains denied pending MFA and provisioning",
+    "Recovery, OTP, social login, MFA and staff provisioning are not implemented",
+    "Signed Android and iOS device E2E is not available in the current toolchain",
+    "Dependency audit reports four high and four moderate advisories; no waiver is recorded",
+    "No external production deployment or public certificate was tested"
+  ]
+}
