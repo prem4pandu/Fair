@@ -15,6 +15,7 @@ const relative = (from, to) => nativeRelative(from, to).split(sep).join("/");
 import { fileURLToPath } from "node:url";
 import { runInNewContext } from "node:vm";
 import { createHash } from "node:crypto";
+import { resolvedDocuments } from "./derive-type-requirements.mjs";
 
 export const apps = [
   "enatega-multivendor-web",
@@ -138,7 +139,19 @@ function readValidationRule(contracts) {
 }
 
 export function audit(source, contracts, appNames = apps, options = {}) {
-  const schemaFiles = files(contracts, [".graphql"]);
+  let schemaFiles = files(contracts, [".graphql"]);
+  const generatedDirectory = resolve(contracts, "enatega");
+  if (existsSync(generatedDirectory)) {
+    schemaFiles = files(generatedDirectory, [".graphql"]);
+    if (schemaFiles.some((path) => path.endsWith("/core.graphql")))
+      schemaFiles = schemaFiles.filter(
+        (path) => !path.endsWith("/kernel.graphql"),
+      );
+    if (options.scope === "multivendor")
+      schemaFiles = schemaFiles.filter(
+        (path) => !path.endsWith("/L12-single-vendor.graphql"),
+      );
+  }
   if (!schemaFiles.length) throw new Error("No backend SDL files found");
   const schema = buildSchema(
     schemaFiles.map((path) => readFileSync(path, "utf8")).join("\n"),
@@ -214,6 +227,26 @@ export function audit(source, contracts, appNames = apps, options = {}) {
               )
                 document.missingRoots.push(`${operation.operation}.${root}`);
           }
+          const rootsInScope = document.operations
+            .flatMap((operation) =>
+              operation.roots.map((root) => `${operation.kind}.${root}`),
+            )
+            .filter(
+              (root) => root !== "query.__schema" && root !== "query.__type",
+            );
+          if (
+            options.scope === "multivendor" &&
+            rootsInScope.length > 0 &&
+            rootsInScope.every((root) => lanes[root] === "L12")
+          ) {
+            document.status = "OUT_OF_SCOPE";
+            document.errors = [];
+            document.missingRoots = rootsInScope.filter(
+              (root) => lanes[root] === "L12",
+            );
+            documents.push(document);
+            return;
+          }
           document.errors = validate(schema, ast, undefined, {
             maxErrors: 10000,
           }).map((error) => ({
@@ -253,67 +286,92 @@ export function audit(source, contracts, appNames = apps, options = {}) {
       }
       documents.push(document);
     }
-    for (const path of paths) {
-      const raw = readFileSync(path, "utf8");
-      if ([".graphql", ".gql"].includes(extname(path))) {
-        record(path, 1, raw, false);
-        continue;
-      }
-      const ast = ts.createSourceFile(path, raw, ts.ScriptTarget.Latest, true);
-      for (const diagnostic of ast.parseDiagnostics)
-        sourceErrors.push({
-          file: relative(source, path),
-          line:
-            ast.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1,
-          code: diagnostic.code,
-        });
-      const visit = (node) => {
-        const tagged =
-          ts.isTaggedTemplateExpression(node) &&
-          /(?:^|\.)(gql|graphql)$/.test(node.tag.getText(ast));
-        const called =
-          ts.isCallExpression(node) &&
-          /(?:^|\.)(gql|graphql)$/.test(node.expression.getText(ast));
-        if (tagged || called) {
-          const argument = tagged ? node.template : node.arguments[0];
-          const literal =
-            argument &&
-            (ts.isStringLiteral(argument) ||
-              ts.isNoSubstitutionTemplateLiteral(argument));
-          record(
-            path,
-            ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
-            literal ? argument.text : node.getText(ast),
-            !literal,
-          );
-          return;
-        }
+    const suppliedDocuments = options.documents?.filter(
+      (document) => document.app === app,
+    );
+    if (suppliedDocuments) {
+      for (const document of suppliedDocuments)
         if (
-          (ts.isStringLiteral(node) ||
-            ts.isNoSubstitutionTemplateLiteral(node)) &&
-          looksLikeGraphQL(node.text)
-        ) {
+          parse(document.text).definitions.some(
+            (definition) => definition.kind === Kind.OPERATION_DEFINITION,
+          )
+        )
           record(
-            path,
-            ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
-            node.text,
-            false,
+            resolve(source, app, document.file),
+            document.line,
+            document.text,
+            !document.resolved,
           );
-          return;
+    } else
+      for (const path of paths) {
+        const raw = readFileSync(path, "utf8");
+        if ([".graphql", ".gql"].includes(extname(path))) {
+          record(path, 1, raw, false);
+          continue;
         }
-        if (ts.isTemplateExpression(node) && looksLikeGraphQL(node.head.text)) {
-          record(
-            path,
-            ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
-            node.getText(ast),
-            true,
-          );
-          return;
-        }
-        ts.forEachChild(node, visit);
-      };
-      visit(ast);
-    }
+        const ast = ts.createSourceFile(
+          path,
+          raw,
+          ts.ScriptTarget.Latest,
+          true,
+        );
+        for (const diagnostic of ast.parseDiagnostics)
+          sourceErrors.push({
+            file: relative(source, path),
+            line:
+              ast.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1,
+            code: diagnostic.code,
+          });
+        const visit = (node) => {
+          const tagged =
+            ts.isTaggedTemplateExpression(node) &&
+            /(?:^|\.)(gql|graphql)$/.test(node.tag.getText(ast));
+          const called =
+            ts.isCallExpression(node) &&
+            /(?:^|\.)(gql|graphql)$/.test(node.expression.getText(ast));
+          if (tagged || called) {
+            const argument = tagged ? node.template : node.arguments[0];
+            const literal =
+              argument &&
+              (ts.isStringLiteral(argument) ||
+                ts.isNoSubstitutionTemplateLiteral(argument));
+            record(
+              path,
+              ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
+              literal ? argument.text : node.getText(ast),
+              !literal,
+            );
+            return;
+          }
+          if (
+            (ts.isStringLiteral(node) ||
+              ts.isNoSubstitutionTemplateLiteral(node)) &&
+            looksLikeGraphQL(node.text)
+          ) {
+            record(
+              path,
+              ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
+              node.text,
+              false,
+            );
+            return;
+          }
+          if (
+            ts.isTemplateExpression(node) &&
+            looksLikeGraphQL(node.head.text)
+          ) {
+            record(
+              path,
+              ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
+              node.getText(ast),
+              true,
+            );
+            return;
+          }
+          ts.forEachChild(node, visit);
+        };
+        visit(ast);
+      }
     const missingRoots = [
       ...new Set(documents.flatMap((d) => d.missingRoots)),
     ].sort();
@@ -402,9 +460,13 @@ if (
     );
   const lanesPath = resolve("docs/OPERATION_LANES.json");
   const lanes = scope ? JSON.parse(readFileSync(lanesPath, "utf8")) : undefined;
-  const report = audit(resolve(source), resolve(contracts), apps, {
+  const scopedApps = scope
+    ? apps.filter((app) => app !== "enatega-singlevendor-admin")
+    : apps;
+  const report = audit(resolve(source), resolve(contracts), scopedApps, {
     scope,
     lanes,
+    documents: scope ? resolvedDocuments({ scope, lanes }) : undefined,
   });
   writeFileSync(
     output,

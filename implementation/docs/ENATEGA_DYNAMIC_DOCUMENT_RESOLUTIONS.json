@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "source": "vendor/enatega-ui pinned d9eb29e",
+  "supplementalDocuments": [
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "exportName": "cities",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "lane": "L2"
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "exportName": "restaurantList",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "lane": "L3"
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "exportName": "getTaxation",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "lane": "L2"
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "exportName": "topRatedVendorsInfoPreview",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "lane": "L3"
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/mutations.js",
+      "exportName": "createActivity",
+      "sourceSha256": "8b2cd751ac6a5c16b8bd1b3e27581db013588af558f539794b313f28f4c8d178",
+      "lane": "L2"
+    },
+    {
+      "app": "enatega-multivendor-admin",
+      "file": "lib/api/graphql/mutations/taxations/index.ts",
+      "exportName": "createTaxation",
+      "sourceSha256": "2f5f53b272cbadb5ec676189cc9bdfe1690e9d287e3a4461cdec41b749b8b555",
+      "lane": "L2"
+    },
+    {
+      "app": "enatega-multivendor-admin",
+      "file": "lib/api/graphql/mutations/taxations/index.ts",
+      "exportName": "editTaxation",
+      "sourceSha256": "2f5f53b272cbadb5ec676189cc9bdfe1690e9d287e3a4461cdec41b749b8b555",
+      "lane": "L2"
+    }
+  ],
+  "resolutions": [
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/context/User/User.context.tsx",
+      "line": 56,
+      "exportName": "SUBSCRIPTION_ORDERS",
+      "sourceSha256": "d39f8fddfcf75ac59d1d597fe30478ce9806cdc7aeb1f0c60ef806308ce56003",
+      "lane": "L5",
+      "text": "subscription OrderStatusChanged($userId: String!) { orderStatusChanged(userId: $userId) { userId origin order { _id orderId restaurant { _id name image slug shopType address location { coordinates } } deliveryAddress { location { coordinates } deliveryAddress } items { _id title food description quantity variation { _id title price discounted } addons { _id options { _id title description price } title description quantityMinimum quantityMaximum } } user { _id name phone } rider { _id name } review { _id } paymentMethod paidAmount orderAmount orderStatus deliveryCharges tipping taxationAmount orderDate expectedTime isPickedUp createdAt completionTime preparationTime acceptedAt assignedAt pickedAt deliveredAt cancelledAt eta { phase source readyAt baseArrivalAt estimatedArrivalAt windowStartAt windowEndAt durationSeconds distanceMeters encodedPolyline calculatedAt lastLocationAt version } } } }"
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/context/User/User.context.tsx",
+      "line": 59,
+      "exportName": "SAVE_NOTIFICATION_TOKEN_WEB",
+      "sourceSha256": "d39f8fddfcf75ac59d1d597fe30478ce9806cdc7aeb1f0c60ef806308ce56003",
+      "lane": "L8",
+      "text": "mutation SaveNotificationTokenWeb($token: String!) { saveNotificationTokenWeb(token: $token) { success message } }"
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/ui/screen-components/un-protected/Home/Cities/CitilesTiles/CitiesTiles.tsx",
+      "line": 24,
+      "exportName": "CITIES",
+      "sourceSha256": "a2b2e546ef4299db0b0165dc2f7725c846ce4f56f55ed3348af7646d96cfeefd",
+      "lane": "L2",
+      "text": "query getCitiesByCountry($id: ID) { getCitiesByCountry(id: $id) { id name cities { id name latitude longitude } } }"
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/ui/screen-components/un-protected/Home/Cities/index.tsx",
+      "line": 11,
+      "exportName": "COUNTRIES",
+      "sourceSha256": "5324d5c2db08fedc8fd3e6a49ab66b1c8c0b270eb80d007387f21dec5722de0c",
+      "lane": "L2",
+      "text": "query getCountries { getCountries { _id name flag } }"
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/ui/screens/protected/profile/order-history/index.tsx",
+      "line": 20,
+      "exportName": "ORDER_STATUS_CHANGED",
+      "sourceSha256": "dc31255540059da0723e204b2779b41840d386f76f2a0bf12aaf6eabee43db11",
+      "lane": "L5",
+      "text": "subscription OrderStatusChanged($userId: String!) { orderStatusChanged(userId: $userId) { userId origin order { _id orderId restaurant { _id name image slug shopType address location { coordinates } } deliveryAddress { location { coordinates } deliveryAddress } items { _id title food description quantity variation { _id title price discounted } addons { _id options { _id title description price } title description quantityMinimum quantityMaximum } } user { _id name phone } rider { _id name } review { _id } paymentMethod paidAmount orderAmount orderStatus deliveryCharges tipping taxationAmount orderDate expectedTime isPickedUp createdAt completionTime preparationTime acceptedAt assignedAt pickedAt deliveredAt cancelledAt eta { phase source readyAt baseArrivalAt estimatedArrivalAt windowStartAt windowEndAt durationSeconds distanceMeters encodedPolyline calculatedAt lastLocationAt version } } } }"
+    }
+  ]
+}

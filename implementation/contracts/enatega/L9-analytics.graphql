@@ -1,0 +1,153 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type GetDashboardOrdersByTypeGetDashboardOrdersByType {
+  label: String
+  value: String
+}
+
+type GetDashboardSalesByTypeGetDashboardSalesByType {
+  label: String
+  value: String
+}
+
+type GetDashboardUsersByYearGetDashboardUsersByYear {
+  percentageChange: GetDashboardUsersByYearPercentageChange
+  restaurantsCount: Int
+  ridersCount: Int
+  usersCount: Int
+  vendorsCount: Int
+}
+
+type GetDashboardUsersByYearPercentageChange {
+  restaurantsPercent: String
+  ridersPercent: String
+  usersPercent: String
+  vendorsPercent: String
+}
+
+type GetDashboardUsersGetDashboardUsers {
+  restaurantsCount: Int
+  ridersCount: Int
+  usersCount: Int
+  vendorsCount: Int
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodAll {
+  _type: String
+  data: GetRestaurantDashboardOrderSalesDetailsByPaymentMethodAllData
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodAllData {
+  total_delivery_fee: String
+  total_orders: String
+  total_sales: String
+  total_sales_without_delivery: String
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodCard {
+  _type: String
+  data: GetRestaurantDashboardOrderSalesDetailsByPaymentMethodCardData
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodCardData {
+  total_delivery_fee: String
+  total_orders: String
+  total_sales: String
+  total_sales_without_delivery: String
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodCod {
+  _type: String
+  data: GetRestaurantDashboardOrderSalesDetailsByPaymentMethodCodData
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodCodData {
+  total_delivery_fee: String
+  total_orders: String
+  total_sales: String
+  total_sales_without_delivery: String
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodDelivery {
+  total_orders: String
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodGetRestaurantDashboardOrderSalesDetailsByPaymentMethod {
+  all: GetRestaurantDashboardOrderSalesDetailsByPaymentMethodAll
+  card: GetRestaurantDashboardOrderSalesDetailsByPaymentMethodCard
+  cod: GetRestaurantDashboardOrderSalesDetailsByPaymentMethodCod
+  delivery: GetRestaurantDashboardOrderSalesDetailsByPaymentMethodDelivery
+  delivery_orders: String
+  delivery_total_orders: String
+  pickup: GetRestaurantDashboardOrderSalesDetailsByPaymentMethodPickup
+  pickup_orders: String
+  pickup_total_orders: String
+  total_delivery_fee: String
+  total_orders: String
+  total_sales: String
+  total_sales_without_delivery: String
+}
+
+type GetRestaurantDashboardOrderSalesDetailsByPaymentMethodPickup {
+  total_orders: String
+}
+
+type GetRestaurantDashboardOrdersSalesStatsGetRestaurantDashboardOrdersSalesStats {
+  totalCardOrders: String
+  totalCODOrders: String
+  totalOrders: String
+  totalSales: String
+}
+
+type GetRestaurantDashboardSalesOrderCountDetailsByYearGetRestaurantDashboardSalesOrderCountDetailsByYear {
+  ordersCount: Int
+  salesAmount: Float
+}
+
+type GetVendorDashboardGrowthDetailsByYearGetVendorDashboardGrowthDetailsByYear {
+  totalOrders: String
+  totalRestaurants: String
+  totalSales: String
+}
+
+type GetVendorDashboardStatsCardDetailsGetVendorDashboardStatsCardDetails {
+  totalDeliveries: String
+  totalOrders: String
+  totalRestaurants: String
+  totalSales: String
+}
+
+extend type Query {
+  getDashboardOrdersByType: GetDashboardOrdersByTypeGetDashboardOrdersByType
+  getDashboardSalesByType: GetDashboardSalesByTypeGetDashboardSalesByType
+  getDashboardUsers: GetDashboardUsersGetDashboardUsers
+  getDashboardUsersByYear(
+    year: Int
+  ): GetDashboardUsersByYearGetDashboardUsersByYear
+  getRestaurantDashboardOrderSalesDetailsByPaymentMethod(
+    dateKeyword: String
+    ending_date: String
+    restaurant: String
+    starting_date: String
+  ): GetRestaurantDashboardOrderSalesDetailsByPaymentMethodGetRestaurantDashboardOrderSalesDetailsByPaymentMethod
+  getRestaurantDashboardOrdersSalesStats(
+    dateKeyword: String
+    ending_date: String
+    restaurant: String
+    starting_date: String
+  ): GetRestaurantDashboardOrdersSalesStatsGetRestaurantDashboardOrdersSalesStats
+  getRestaurantDashboardSalesOrderCountDetailsByYear(
+    restaurant: String
+    year: Int
+  ): GetRestaurantDashboardSalesOrderCountDetailsByYearGetRestaurantDashboardSalesOrderCountDetailsByYear
+  getVendorDashboardGrowthDetailsByYear(
+    vendorId: String
+    year: Int
+  ): GetVendorDashboardGrowthDetailsByYearGetVendorDashboardGrowthDetailsByYear
+  getVendorDashboardStatsCardDetails(
+    dateKeyword: String
+    ending_date: String
+    starting_date: String
+    vendorId: String
+  ): GetVendorDashboardStatsCardDetailsGetVendorDashboardStatsCardDetails
+}

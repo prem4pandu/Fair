@@ -1,0 +1,56 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type MarkWebNotificationsAsReadMarkWebNotificationsAsRead {
+  _id: ID
+  body: String
+  createdAt: String
+  navigateTo: String
+  read: String
+}
+
+type NotificationsNotifications {
+  _id: ID
+  body: String
+  createdAt: String
+  title: String
+}
+
+type NotificationsPaginatedData {
+  _id: ID
+  body: String
+  createdAt: String
+  title: String
+}
+
+type NotificationsPaginatedNotificationsPaginated {
+  currentPage: String
+  data: NotificationsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type WebNotificationsWebNotifications {
+  _id: ID
+  body: String
+  createdAt: String
+  navigateTo: String
+  read: String
+}
+
+extend type Query {
+  notifications: NotificationsNotifications
+  notificationsPaginated(
+    limit: Int
+    page: Int
+    search: String
+  ): NotificationsPaginatedNotificationsPaginated
+  webNotifications: WebNotificationsWebNotifications
+}
+
+extend type Mutation {
+  markWebNotificationsAsRead: MarkWebNotificationsAsReadMarkWebNotificationsAsRead
+  sendNotificationUser(
+    notificationBody: String
+    notificationTitle: String
+  ): String
+}

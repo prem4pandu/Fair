@@ -1,0 +1,217 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type AddFavouriteAddFavourite {
+  _id: ID
+  addresses: Address
+}
+
+type Address {
+  _id: ID
+  deliveryAddress: String
+  details: String
+  id: ID
+  label: String
+  location: Location
+  selected: Boolean
+}
+
+type CreateAddressCreateAddress {
+  _id: ID
+  addresses: Address
+}
+
+type CreateMessageCreateMessage {
+  _id: ID
+  content: String
+  createdAt: String
+  isRead: Boolean
+  senderType: String
+  ticket: String
+  updatedAt: String
+}
+
+type CreateSupportTicketCreateSupportTicket {
+  _id: ID
+  category: String
+  createdAt: String
+  description: String
+  orderId: String
+  otherDetails: String
+  status: String
+  title: String
+  updatedAt: String
+  user: User
+}
+
+type DeleteAddressDeleteAddress {
+  _id: ID
+  addresses: Address
+}
+
+type DeleteBulkAddressesDeleteBulkAddresses {
+  _id: ID
+  addresses: Address
+}
+
+type DeleteUserDeleteUser {
+  _id: ID
+}
+
+type EditAddressEditAddress {
+  _id: ID
+  addresses: Address
+}
+
+type GetSingleSupportTicketGetSingleSupportTicket {
+  _id: ID
+  category: String
+  createdAt: String
+  description: String
+  orderId: String
+  otherDetails: String
+  status: String
+  title: String
+  updatedAt: String
+  user: User
+}
+
+type GetSingleUserSupportTicketsGetSingleUserSupportTickets {
+  currentPage: String
+  docsCount: Int
+  tickets: GetSingleUserSupportTicketsTickets
+  totalPages: Int
+}
+
+type GetSingleUserSupportTicketsTickets {
+  _id: ID
+  category: String
+  createdAt: String
+  description: String
+  orderId: String
+  otherDetails: String
+  status: String
+  title: String
+  updatedAt: String
+  user: User
+}
+
+type GetTicketMessagesGetTicketMessages {
+  docsCount: Int
+  messages: GetTicketMessagesMessages
+  page: Int
+  ticket: GetTicketMessagesTicket
+  totalPages: Int
+}
+
+type GetTicketMessagesMessages {
+  _id: ID
+  content: String
+  createdAt: String
+  isRead: Boolean
+  senderType: String
+  updatedAt: String
+}
+
+type GetTicketMessagesTicket {
+  _id: ID
+  status: String
+  title: String
+  user: User
+}
+
+type GetTicketUsersGetTicketUsers {
+  currentPage: String
+  docsCount: Int
+  totalPages: Int
+  users: User
+}
+
+type GetTicketUsersWithLatestGetTicketUsersWithLatest {
+  currentPage: String
+  docsCount: Int
+  totalPages: Int
+  users: User
+}
+
+type GetTicketUsersWithLatestUsersLatestTicket {
+  _id: ID
+  category: String
+  createdAt: String
+  description: String
+  orderId: String
+  otherDetails: String
+  status: String
+  title: String
+  updatedAt: String
+}
+
+type SelectAddressSelectAddress {
+  _id: ID
+  addresses: Address
+}
+
+type UpdateSupportTicketStatusUpdateSupportTicketStatus {
+  _id: ID
+  status: String
+  updatedAt: String
+}
+
+type UpdateUserNotesUpdateUserNotes {
+  _id: ID
+  notes: String
+}
+
+type UpdateUserStatusUpdateUserStatus {
+  _id: ID
+  status: String
+}
+
+extend type Query {
+  getSingleSupportTicket(
+    ticketId: ID
+  ): GetSingleSupportTicketGetSingleSupportTicket
+  getSingleUserSupportTickets(
+    input: SingleUserSupportTicketsInput
+  ): GetSingleUserSupportTicketsGetSingleUserSupportTickets
+  getTicketMessages(
+    input: TicketMessagesInput
+  ): GetTicketMessagesGetTicketMessages
+  getTicketUsers(input: FiltersInput): GetTicketUsersGetTicketUsers
+  getTicketUsersWithLatest(
+    input: FiltersInput
+  ): GetTicketUsersWithLatestGetTicketUsersWithLatest
+  ordersByUser(limit: Int, page: Int, userId: ID): OrdersByUserOrdersByUser
+  user(id: ID): User
+  userFavourite(latitude: Float, longitude: Float): UserFavouriteUserFavourite
+  users: User
+  usersPaginated(
+    limit: Int
+    page: Int
+    registrationMethod: String
+    search: String
+    status: String
+  ): UsersPaginatedUsersPaginated
+}
+
+extend type Mutation {
+  addFavourite(id: String): AddFavouriteAddFavourite
+  createAddress(addressInput: AddressInput): CreateAddressCreateAddress
+  createMessage(messageInput: MessageInput): CreateMessageCreateMessage
+  createSupportTicket(
+    ticketInput: SupportTicketInput
+  ): CreateSupportTicketCreateSupportTicket
+  deleteAddress(id: ID): DeleteAddressDeleteAddress
+  deleteBulkAddresses(ids: [ID]): DeleteBulkAddressesDeleteBulkAddresses
+  deleteUser(id: ID): DeleteUserDeleteUser
+  editAddress(addressInput: AddressInput): EditAddressEditAddress
+  selectAddress(id: String): SelectAddressSelectAddress
+  updateSupportTicketStatus(
+    input: UpdateSupportTicketInput
+  ): UpdateSupportTicketStatusUpdateSupportTicketStatus
+  updateUserNotes(id: ID, notes: String): UpdateUserNotesUpdateUserNotes
+  updateUserStatus(
+    id: ID
+    reason: String
+    status: String
+  ): UpdateUserStatusUpdateUserStatus
+}

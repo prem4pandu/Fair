@@ -1,0 +1,288 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type CommissionRateCommissionRate {
+  currentPage: String
+  nextPage: String
+  prevPage: String
+  restaurant: Restaurant
+  totalCount: Int
+  totalPages: Int
+}
+
+type CreateWithdrawRequestCreateWithdrawRequest {
+  _id: ID
+  createdAt: String
+  requestAmount: Float
+  requestId: ID
+  requestTime: String
+  status: String
+}
+
+type EarningsData {
+  earnings: EarningsDataEarnings
+  grandTotalEarnings: EarningsDataGrandTotalEarnings
+}
+
+type EarningsDataEarnings {
+  _id: ID
+  createdAt: String
+  orderId: String
+  orderType: String
+  paymentMethod: String
+  platformEarnings: EarningsDataEarningsPlatformEarnings
+  riderEarnings: EarningsDataEarningsRiderEarnings
+  storeEarnings: EarningsDataEarningsStoreEarnings
+  updatedAt: String
+}
+
+type EarningsDataEarningsPlatformEarnings {
+  deliveryCommission: String
+  marketplaceCommission: String
+  platformFee: String
+  tax: Float
+  totalEarnings: String
+}
+
+type EarningsDataEarningsRiderEarnings {
+  deliveryFee: String
+  riderId: EarningsDataEarningsRiderEarningsRiderId
+  tip: String
+  totalEarnings: String
+}
+
+type EarningsDataEarningsRiderEarningsRiderId {
+  _id: ID
+  name: String
+  username: String
+}
+
+type EarningsDataEarningsStoreEarnings {
+  orderAmount: Float
+  storeId: EarningsDataEarningsStoreEarningsStoreId
+  totalEarnings: String
+}
+
+type EarningsDataEarningsStoreEarningsStoreId {
+  _id: ID
+  name: String
+  username: String
+}
+
+type EarningsDataGrandTotalEarnings {
+  platformTotal: String
+  riderTotal: String
+  storeTotal: String
+}
+
+type EarningsEarnings {
+  data: EarningsData
+  message: String
+  pagination: PaginationTotal
+  success: Boolean
+}
+
+type StoreCurrentWithdrawRequestStoreCurrentWithdrawRequest {
+  _id: ID
+  createdAt: String
+  requestAmount: Float
+  status: String
+}
+
+type StoreEarningsGraphEarnings {
+  _id: ID
+  earningsArray: StoreEarningsGraphEarningsEarningsArray
+  totalEarningsSum: String
+}
+
+type StoreEarningsGraphEarningsEarningsArray {
+  date: String
+  orderDetails: StoreEarningsGraphEarningsEarningsArrayOrderDetails
+  totalEarnings: String
+  totalOrderAmount: Float
+}
+
+type StoreEarningsGraphEarningsEarningsArrayOrderDetails {
+  orderId: String
+  orderType: String
+  paymentMethod: String
+}
+
+type StoreEarningsGraphStoreEarningsGraph {
+  earnings: StoreEarningsGraphEarnings
+  totalCount: Int
+}
+
+type TransactionHistoryData {
+  _id: ID
+  amountCurrency: Float
+  amountTransferred: Float
+  createdAt: String
+  rider: Rider
+  status: String
+  store: TransactionHistoryDataStore
+  toBank: TransactionHistoryDataToBank
+  transactionId: ID
+  userId: ID
+  userType: String
+}
+
+type TransactionHistoryDataStore {
+  _id: ID
+  address: String
+  city: String
+  isActive: Boolean
+  isAvailable: Boolean
+  name: String
+  phone: String
+  postCode: String
+  rating: Float
+  reviewAverage: String
+  slug: String
+  stripeDetailsSubmitted: String
+  unique_restaurant_id: String
+}
+
+type TransactionHistoryDataToBank {
+  accountCode: String
+  accountName: String
+  accountNumber: String
+  bankName: String
+}
+
+type TransactionHistoryTransactionHistory {
+  data: TransactionHistoryData
+  pagination: PaginationTotal
+}
+
+type UpdateCommissionUpdateCommission {
+  _id: ID
+  commissionRate: Float
+}
+
+type UpdateWithdrawReqStatusData {
+  _id: ID
+  createdAt: String
+  requestAmount: Float
+  requestId: ID
+  requestTime: String
+  rider: Rider
+  status: String
+  store: UpdateWithdrawReqStatusDataStore
+}
+
+type UpdateWithdrawReqStatusDataStore {
+  _id: ID
+  address: String
+  bussinessDetails: BussinessDetails
+  commissionRate: Float
+  image: String
+  logo: String
+  slug: String
+  stripeDetailsSubmitted: String
+  unique_restaurant_id: String
+  username: String
+}
+
+type UpdateWithdrawReqStatusUpdateWithdrawReqStatus {
+  data: UpdateWithdrawReqStatusData
+  message: String
+  success: Boolean
+}
+
+type WithdrawRequestsData {
+  _id: ID
+  createdAt: String
+  requestAmount: Float
+  requestId: ID
+  requestTime: String
+  rider: Rider
+  status: String
+  store: WithdrawRequestsDataStore
+}
+
+type WithdrawRequestsDataStore {
+  _id: ID
+  address: String
+  bussinessDetails: BussinessDetails
+  commissionRate: Float
+  image: String
+  logo: String
+  slug: String
+  stripeDetailsSubmitted: String
+  unique_restaurant_id: String
+  username: String
+}
+
+type WithdrawRequestsWithdrawRequests {
+  data: WithdrawRequestsData
+  message: String
+  pagination: PaginationTotal
+  success: Boolean
+}
+
+extend type Query {
+  commissionRate(
+    limit: Int
+    page: Int
+    search: String
+    sortBy: CommissionRateSortField
+    sortOrder: CommissionRateSortOrder
+  ): CommissionRateCommissionRate
+  earnings(
+    dateFilter: DateFilter
+    orderType: OrderTypeEnum
+    pagination: PaginationInput
+    paymentMethod: PaymentMethodEnum
+    search: String
+    userId: String
+    userType: UserTypeEnum
+  ): EarningsEarnings
+  riderCurrentWithdrawRequest(
+    riderId: String
+  ): RiderCurrentWithdrawRequestRiderCurrentWithdrawRequest
+  riderEarningsGraph(
+    endDate: String
+    limit: Int
+    page: Int
+    riderId: ID
+    startDate: String
+  ): RiderEarningsGraphRiderEarningsGraph
+  storeCurrentWithdrawRequest(
+    storeId: String
+  ): StoreCurrentWithdrawRequestStoreCurrentWithdrawRequest
+  storeEarningsGraph(
+    endDate: String
+    limit: Int
+    page: Int
+    startDate: String
+    storeId: ID
+  ): StoreEarningsGraphStoreEarningsGraph
+  transactionHistory(
+    dateFilter: TransactionHistoryDateFilterInput
+    pagination: TransactionHistoryPaginationInput
+    search: String
+    userId: String
+    userType: UserTypeEnum
+  ): TransactionHistoryTransactionHistory
+  withdrawRequests(
+    pagination: WithdrawRequestsPaginationInput
+    search: String
+    userId: String
+    userType: UserTypeEnum
+  ): WithdrawRequestsWithdrawRequests
+}
+
+extend type Mutation {
+  createWithdrawRequest(
+    requestAmount: Float
+    userId: String
+  ): CreateWithdrawRequestCreateWithdrawRequest
+  updateCommission(
+    commissionRate: Float
+    id: String
+  ): UpdateCommissionUpdateCommission
+  updateWithdrawReqStatus(
+    id: ID
+    status: String
+  ): UpdateWithdrawReqStatusUpdateWithdrawReqStatus
+}

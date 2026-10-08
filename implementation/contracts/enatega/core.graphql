@@ -1,0 +1,321 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+directive @client on FIELD
+
+type MetricsGeneral {
+  excellence: String
+  topgun: String
+  experience: String!
+  skydiver: String
+  rider: String
+  haha: String
+  hehe: String!
+  huhu: String
+  yoyo: String
+  turu: String
+}
+
+type Query {
+  _kernel: String
+}
+
+type Mutation {
+  metricsGeneral: MetricsGeneral!
+}
+
+type Subscription {
+  _kernel: String
+}
+
+scalar CommissionRateSortField
+
+scalar CommissionRateSortOrder
+
+scalar DateFilter
+
+scalar DeleteTypeEnum
+
+scalar FetchShopTypeFilter
+
+scalar OrderTypeEnum
+
+scalar PaymentMethodEnum
+
+scalar UserTypeEnum
+
+input AddonInput {
+  _unused: String
+}
+
+input AddressInput {
+  _unused: String
+}
+
+input AmplitudeApiKeyConfigurationInput {
+  _unused: String
+}
+
+input AppConfigurationsInput {
+  _unused: String
+}
+
+input AppTypeInput {
+  _unused: String
+}
+
+input BannerInput {
+  _unused: String
+}
+
+input BussinessDetailsInput {
+  _unused: String
+}
+
+input CategoryInput {
+  _unused: String
+}
+
+input ChatMessageInput {
+  _unused: String
+}
+
+input CircleBoundsInput {
+  _unused: String
+}
+
+input CloudinaryConfigurationInput {
+  _unused: String
+}
+
+input CoordinatesInput {
+  _unused: String
+}
+
+input CouponInput {
+  _unused: String
+}
+
+input CreateOptionInput {
+  _unused: String
+}
+
+input CreateShopTypeInput {
+  _unused: String
+}
+
+input CreateUserUserInputInput {
+  appleId: String
+  email: String
+  emailIsVerified: Boolean
+  isPhoneExists: Boolean
+  name: String
+  notificationToken: String
+  password: String
+  phone: String
+}
+
+input CuisineInput {
+  _unused: String
+}
+
+input CurrencyConfigurationInput {
+  _unused: String
+}
+
+input DayScheduleInput {
+  _unused: String
+}
+
+input DeliveryCostConfigurationInput {
+  _unused: String
+}
+
+input editAddonInput {
+  _unused: String
+}
+
+input editOptionInput {
+  _unused: String
+}
+
+input EmailConfigurationInput {
+  _unused: String
+}
+
+input FetchUniqueShopTypeInput {
+  _unused: String
+}
+
+input FiltersInput {
+  _unused: String
+}
+
+input FirebaseConfigurationInput {
+  _unused: String
+}
+
+input FoodInput {
+  _unused: String
+}
+
+input FormEmailConfigurationInput {
+  _unused: String
+}
+
+input GoogleApiKeyConfigurationInput {
+  _unused: String
+}
+
+input GoogleClientIDConfigurationInput {
+  _unused: String
+}
+
+input LicenseDetailsInput {
+  _unused: String
+}
+
+input MessageInput {
+  _unused: String
+}
+
+input OrderInput {
+  _unused: String
+}
+
+input PaginationInput {
+  pageNo: Int
+  pageSize: Int
+}
+
+input PaypalConfigurationInput {
+  _unused: String
+}
+
+input RestaurantInput {
+  _unused: String
+}
+
+input RestaurantProfileInput {
+  _unused: String
+}
+
+input ReviewOrderReviewInputInput {
+  description: String
+  order: String
+  rating: Int
+  comments: String
+}
+
+input RiderInput {
+  _unused: String
+}
+
+input SendGridConfigurationInput {
+  _unused: String
+}
+
+input SentryConfigurationInput {
+  _unused: String
+}
+
+input SingleUserSupportTicketsInput {
+  _unused: String
+}
+
+input StaffInput {
+  _unused: String
+}
+
+input StripeConfigurationInput {
+  _unused: String
+}
+
+input SubCategoryInput {
+  _unused: String
+}
+
+input SupportTicketInput {
+  _unused: String
+}
+
+input TaxationInput {
+  _unused: String
+}
+
+input TicketMessagesInput {
+  _unused: String
+}
+
+input TimingsInput {
+  _unused: String
+}
+
+input TippingInput {
+  _unused: String
+}
+
+input TransactionHistoryDateFilterInput {
+  ending_date: String
+  starting_date: String
+}
+
+input TransactionHistoryPaginationInput {
+  pageNo: Int
+  pageSize: Int
+}
+
+input TwilioConfigurationInput {
+  _unused: String
+}
+
+input UpdateShopTypeInput {
+  _unused: String
+}
+
+input UpdateSupportTicketInput {
+  _unused: String
+}
+
+input UpdateUserUpdateUserInputInput {
+  emailIsVerified: Boolean
+  name: String
+  phone: String
+  phoneIsVerified: Boolean
+}
+
+input VehicleDetailsInput {
+  _unused: String
+}
+
+input VendorInput {
+  _unused: String
+}
+
+input VerificationConfigurationInput {
+  _unused: String
+}
+
+input WebConfigurationInput {
+  _unused: String
+}
+
+input WithdrawRequestsPaginationInput {
+  pageNo: Int
+  pageSize: Int
+}
+
+input ZoneInput {
+  _unused: String
+}
+
+type Location {
+  coordinates: [Float]
+}
+
+type PaginationTotal {
+  total: String
+}
+
+type Polygon {
+  coordinates: [[[Float]]]
+}

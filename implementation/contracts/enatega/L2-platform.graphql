@@ -1,0 +1,599 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type AuditLogsAuditLogs {
+  _id: ID
+  action: String
+  admin: AuditLogsAuditLogsAdmin
+  auditLogs: AuditLogsAuditLogs
+  changes: String
+  currentPage: String
+  targetId: ID
+  targetType: String
+  timestamp: String
+  totalCount: Int
+  totalPages: Int
+}
+
+type AuditLogsAuditLogsAdmin {
+  _id: ID
+  email: String
+}
+
+type Banner {
+  _id: ID
+  action: String
+  description: String
+  file: String
+  parameters: String
+  screen: String
+  shopType: String
+  slug: String
+  title: String
+}
+
+type ConfigurationConfiguration {
+  _id: ID
+  androidClientID: String
+  apiSentryUrl: String
+  appAmplitudeApiKey: String
+  appId: ID
+  authDomain: String
+  clientId: ID
+  cloudinaryApiKey: String
+  cloudinaryUploadUrl: String
+  costType: String
+  currency: String
+  currencySymbol: String
+  customerAppSentryUrl: String
+  customerDemoZoneId: ID
+  dashboardSentryUrl: String
+  deliveryRate: Float
+  email: String
+  emailName: String
+  enableCustomerDemoMode: String
+  enableEmail: String
+  expoClientID: String
+  firebaseKey: String
+  formEmail: String
+  googleColor: String
+  googleMapLibraries: String
+  iOSClientID: String
+  isPaidVersion: Boolean
+  measurementId: ID
+  msgSenderId: ID
+  privacyPolicy: String
+  projectId: ID
+  publishableKey: String
+  restaurantAppSentryUrl: String
+  riderAppSentryUrl: String
+  sandbox: String
+  sendGridEmail: String
+  sendGridEmailName: String
+  sendGridEnabled: Boolean
+  skipEmailVerification: String
+  skipMobileVerification: String
+  skipWhatsAppOTP: String
+  storageBucket: String
+  termsAndConditions: String
+  testOtp: String
+  twilioAccountSid: String
+  twilioEnabled: Boolean
+  twilioPhoneNumber: String
+  twilioWhatsAppNumber: String
+  vapidKey: String
+  webAmplitudeApiKey: String
+  webClientID: String
+  webSentryUrl: String
+}
+
+type CreateBannerCreateBanner {
+  _id: ID
+  action: String
+  description: String
+  file: String
+  parameters: String
+  screen: String
+  title: String
+}
+
+type CreateCuisineCreateCuisine {
+  _id: ID
+  description: String
+  image: String
+  name: String
+  shopType: String
+}
+
+type CreateShopTypeCreateShopType {
+  _id: ID
+  image: String
+  isActive: Boolean
+  name: String
+}
+
+type CreateTaxationCreateTaxation {
+  _id: ID
+  enabled: Boolean
+  taxationCharges: Float
+}
+
+type CreateTippingCreateTipping {
+  _id: ID
+  enabled: Boolean
+  tipVariations: String
+}
+
+type CreateZoneCreateZone {
+  _id: ID
+  description: String
+  isActive: Boolean
+  location: Location
+  title: String
+}
+
+type Cuisine {
+  _id: ID
+  description: String
+  image: String
+  name: String
+  shopType: String
+}
+
+type CuisinesPaginatedCuisinesPaginated {
+  currentPage: String
+  data: CuisinesPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type CuisinesPaginatedData {
+  _id: ID
+  description: String
+  image: String
+  name: String
+  shopType: String
+}
+
+type DeleteShopTypeDeleteShopType {
+  _id: ID
+  image: String
+  isActive: Boolean
+  name: String
+}
+
+type DeleteZoneDeleteZone {
+  _id: ID
+  description: String
+  isActive: Boolean
+  location: Location
+  title: String
+}
+
+type EditBannerEditBanner {
+  _id: ID
+  action: String
+  description: String
+  file: String
+  parameters: String
+  screen: String
+  title: String
+}
+
+type EditCuisineEditCuisine {
+  _id: ID
+  description: String
+  image: String
+  name: String
+  shopType: String
+}
+
+type EditTaxationEditTaxation {
+  _id: ID
+  enabled: Boolean
+  taxationCharges: Float
+}
+
+type EditTippingEditTipping {
+  _id: ID
+  enabled: Boolean
+  tipVariations: String
+}
+
+type EditZoneEditZone {
+  _id: ID
+  description: String
+  isActive: Boolean
+  location: Location
+  title: String
+}
+
+type FetchAllShopTypesData {
+  _id: ID
+  image: String
+  name: String
+  slug: String
+}
+
+type FetchAllShopTypesFetchAllShopTypes {
+  data: FetchAllShopTypesData
+}
+
+type FetchShopTypeByUniqueFetchShopTypeByUnique {
+  _id: ID
+  image: String
+  isActive: Boolean
+  name: String
+}
+
+type FetchShopTypesData {
+  _id: ID
+  image: String
+  isActive: Boolean
+  name: String
+}
+
+type FetchShopTypesFetchShopTypes {
+  data: FetchShopTypesData
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  page: Int
+  pageSize: String
+  total: String
+  totalPages: Int
+}
+
+type GetCitiesByCountryCities {
+  id: ID
+  latitude: Float
+  longitude: Float
+  name: String
+}
+
+type GetCitiesByCountryGetCitiesByCountry {
+  cities: GetCitiesByCountryCities
+  id: ID
+  name: String
+}
+
+type GetCountriesGetCountries {
+  _id: ID
+  flag: String
+  name: String
+}
+
+type GetCountryByIsoCities {
+  id: ID
+  latitude: Float
+  longitude: Float
+  name: String
+}
+
+type GetCountryByIsoGetCountryByIso {
+  cities: GetCountryByIsoCities
+}
+
+type GetVersionsCustomerAppVersion {
+  android: String
+  ios: String
+}
+
+type GetVersionsGetVersions {
+  customerAppVersion: GetVersionsCustomerAppVersion
+  restaurantAppVersion: GetVersionsRestaurantAppVersion
+  riderAppVersion: GetVersionsRiderAppVersion
+}
+
+type GetVersionsRestaurantAppVersion {
+  android: String
+  ios: String
+}
+
+type GetVersionsRiderAppVersion {
+  android: String
+  ios: String
+}
+
+type PublicConfigurationPublicConfiguration {
+  _id: ID
+  appAmplitudeApiKey: String
+  costType: String
+  currency: String
+  currencySymbol: String
+  customerAppSentryUrl: String
+  deliveryRate: Float
+  privacyPolicy: String
+  publishableKey: String
+  skipEmailVerification: String
+  skipMobileVerification: String
+  termsAndConditions: String
+  twilioEnabled: Boolean
+}
+
+type SaveAmplitudeApiKeyConfigurationSaveAmplitudeApiKeyConfiguration {
+  _id: ID
+  appAmplitudeApiKey: String
+  webAmplitudeApiKey: String
+}
+
+type SaveAppConfigurationsSaveAppConfigurations {
+  _id: ID
+  customerDemoZoneId: ID
+  enableCustomerDemoMode: String
+  privacyPolicy: String
+  termsAndConditions: String
+  testOtp: String
+}
+
+type SaveCloudinaryConfigurationSaveCloudinaryConfiguration {
+  _id: ID
+  cloudinaryApiKey: String
+  cloudinaryUploadUrl: String
+}
+
+type SaveCurrencyConfigurationSaveCurrencyConfiguration {
+  _id: ID
+  currency: String
+  currencySymbol: String
+}
+
+type SaveDeliveryRateConfigurationSaveDeliveryRateConfiguration {
+  _id: ID
+  costType: String
+  deliveryRate: Float
+}
+
+type SaveEmailConfigurationSaveEmailConfiguration {
+  _id: ID
+  email: String
+  emailName: String
+  enableEmail: String
+}
+
+type SaveFirebaseConfigurationSaveFirebaseConfiguration {
+  _id: ID
+  appId: ID
+  authDomain: String
+  firebaseKey: String
+  measurementId: ID
+  msgSenderId: ID
+  projectId: ID
+  storageBucket: String
+  vapidKey: String
+}
+
+type SaveFormEmailConfigurationSaveFormEmailConfiguration {
+  _id: ID
+  formEmail: String
+}
+
+type SaveGoogleApiKeyConfigurationSaveGoogleApiKeyConfiguration {
+  _id: ID
+  googleMapsApiKey: String
+}
+
+type SaveGoogleClientIDConfigurationSaveGoogleClientIDConfiguration {
+  _id: ID
+  androidClientID: String
+  expoClientID: String
+  iOSClientID: String
+  webClientID: String
+}
+
+type SavePaypalConfigurationSavePaypalConfiguration {
+  _id: ID
+  clientId: ID
+  sandbox: String
+}
+
+type SaveSendGridConfigurationSaveSendGridConfiguration {
+  _id: ID
+  sendGridEmail: String
+  sendGridEmailName: String
+  sendGridEnabled: Boolean
+}
+
+type SaveSentryConfigurationSaveSentryConfiguration {
+  _id: ID
+  apiSentryUrl: String
+  customerAppSentryUrl: String
+  dashboardSentryUrl: String
+  restaurantAppSentryUrl: String
+  riderAppSentryUrl: String
+  webSentryUrl: String
+}
+
+type SaveStripeConfigurationSaveStripeConfiguration {
+  _id: ID
+  publishableKey: String
+}
+
+type SaveTwilioConfigurationSaveTwilioConfiguration {
+  _id: ID
+  twilioAccountSid: String
+  twilioEnabled: Boolean
+  twilioPhoneNumber: String
+  twilioWhatsAppNumber: String
+}
+
+type SaveVerificationsToggleSaveVerificationsToggle {
+  skipEmailVerification: String
+  skipMobileVerification: String
+  skipWhatsAppOTP: String
+}
+
+type SaveWebConfigurationSaveWebConfiguration {
+  _id: ID
+  googleColor: String
+  googleMapLibraries: String
+}
+
+type TaxesTaxes {
+  _id: ID
+  enabled: Boolean
+  taxationCharges: Float
+}
+
+type TipsTips {
+  _id: ID
+  enabled: Boolean
+  tipVariations: String
+}
+
+type UpdateShopTypeUpdateShopType {
+  _id: ID
+  image: String
+  isActive: Boolean
+  name: String
+}
+
+type UploadImageToS3UploadImageToS3 {
+  imageUrl: String
+}
+
+type UploadTokenUploadToken {
+  _id: ID
+  pushToken: String
+}
+
+type Zone {
+  _id: ID
+  description: String
+  isActive: Boolean
+  location: Location
+  tax: Float
+  title: String
+}
+
+type ZonesPaginatedData {
+  _id: ID
+  description: String
+  isActive: Boolean
+  location: Location
+  title: String
+}
+
+type ZonesPaginatedZonesPaginated {
+  currentPage: String
+  data: ZonesPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+extend type Query {
+  auditLogs(limit: Int, page: Int): AuditLogsAuditLogs
+  banners: Banner
+  configuration: ConfigurationConfiguration
+  cuisines: Cuisine
+  cuisinesPaginated(
+    limit: Int
+    page: Int
+    search: String
+    shopType: String
+  ): CuisinesPaginatedCuisinesPaginated
+  fetchAllShopTypes: FetchAllShopTypesFetchAllShopTypes
+  fetchShopTypeByUnique(
+    dto: FetchUniqueShopTypeInput
+  ): FetchShopTypeByUniqueFetchShopTypeByUnique
+  fetchShopTypes(
+    filter: FetchShopTypeFilter
+    pagination: PaginationInput
+  ): FetchShopTypesFetchShopTypes
+  getCitiesByCountry(id: ID): GetCitiesByCountryGetCitiesByCountry
+  getCountries: GetCountriesGetCountries
+  getCountryByIso(iso: String): GetCountryByIsoGetCountryByIso
+  getVersions: GetVersionsGetVersions
+  publicConfiguration: PublicConfigurationPublicConfiguration
+  taxes: TaxesTaxes
+  tips: TipsTips
+  zones: Zone
+  zonesPaginated(
+    isActive: Boolean
+    limit: Int
+    page: Int
+    search: String
+  ): ZonesPaginatedZonesPaginated
+}
+
+extend type Mutation {
+  createActivity(
+    details: String
+    groupId: String
+    module: String
+    screenPath: String
+    type: String
+  ): String
+  createBanner(bannerInput: BannerInput): CreateBannerCreateBanner
+  createCuisine(cuisineInput: CuisineInput): CreateCuisineCreateCuisine
+  createShopType(dto: CreateShopTypeInput): CreateShopTypeCreateShopType
+  createTaxation(taxationInput: TaxationInput): CreateTaxationCreateTaxation
+  createTipping(tippingInput: TippingInput): CreateTippingCreateTipping
+  createZone(zone: ZoneInput): CreateZoneCreateZone
+  deleteBanner(id: String): String
+  deleteCuisine(id: String): String
+  deleteShopType(id: String, type: DeleteTypeEnum): DeleteShopTypeDeleteShopType
+  deleteZone(id: String): DeleteZoneDeleteZone
+  editBanner(bannerInput: BannerInput): EditBannerEditBanner
+  editCuisine(cuisineInput: CuisineInput): EditCuisineEditCuisine
+  editTaxation(taxationInput: TaxationInput): EditTaxationEditTaxation
+  editTipping(tippingInput: TippingInput): EditTippingEditTipping
+  editZone(zone: ZoneInput): EditZoneEditZone
+  saveAmplitudeApiKeyConfiguration(
+    configurationInput: AmplitudeApiKeyConfigurationInput
+  ): SaveAmplitudeApiKeyConfigurationSaveAmplitudeApiKeyConfiguration
+  saveAppConfigurations(
+    configurationInput: AppConfigurationsInput
+  ): SaveAppConfigurationsSaveAppConfigurations
+  saveCloudinaryConfiguration(
+    configurationInput: CloudinaryConfigurationInput
+  ): SaveCloudinaryConfigurationSaveCloudinaryConfiguration
+  saveCurrencyConfiguration(
+    configurationInput: CurrencyConfigurationInput
+  ): SaveCurrencyConfigurationSaveCurrencyConfiguration
+  saveDeliveryRateConfiguration(
+    configurationInput: DeliveryCostConfigurationInput
+  ): SaveDeliveryRateConfigurationSaveDeliveryRateConfiguration
+  saveEmailConfiguration(
+    configurationInput: EmailConfigurationInput
+  ): SaveEmailConfigurationSaveEmailConfiguration
+  saveFirebaseConfiguration(
+    configurationInput: FirebaseConfigurationInput
+  ): SaveFirebaseConfigurationSaveFirebaseConfiguration
+  saveFormEmailConfiguration(
+    configurationInput: FormEmailConfigurationInput
+  ): SaveFormEmailConfigurationSaveFormEmailConfiguration
+  saveGoogleApiKeyConfiguration(
+    configurationInput: GoogleApiKeyConfigurationInput
+  ): SaveGoogleApiKeyConfigurationSaveGoogleApiKeyConfiguration
+  saveGoogleClientIDConfiguration(
+    configurationInput: GoogleClientIDConfigurationInput
+  ): SaveGoogleClientIDConfigurationSaveGoogleClientIDConfiguration
+  savePaypalConfiguration(
+    configurationInput: PaypalConfigurationInput
+  ): SavePaypalConfigurationSavePaypalConfiguration
+  saveSendGridConfiguration(
+    configurationInput: SendGridConfigurationInput
+  ): SaveSendGridConfigurationSaveSendGridConfiguration
+  saveSentryConfiguration(
+    configurationInput: SentryConfigurationInput
+  ): SaveSentryConfigurationSaveSentryConfiguration
+  saveStripeConfiguration(
+    configurationInput: StripeConfigurationInput
+  ): SaveStripeConfigurationSaveStripeConfiguration
+  saveTwilioConfiguration(
+    configurationInput: TwilioConfigurationInput
+  ): SaveTwilioConfigurationSaveTwilioConfiguration
+  saveVerificationsToggle(
+    configurationInput: VerificationConfigurationInput
+  ): SaveVerificationsToggleSaveVerificationsToggle
+  saveWebConfiguration(
+    configurationInput: WebConfigurationInput
+  ): SaveWebConfigurationSaveWebConfiguration
+  setVersions(
+    customerAppVersion: AppTypeInput
+    restaurantAppVersion: AppTypeInput
+    riderAppVersion: AppTypeInput
+  ): String
+  updateShopType(dto: UpdateShopTypeInput): UpdateShopTypeUpdateShopType
+  uploadImageToS3(image: String): UploadImageToS3UploadImageToS3
+  uploadToken(id: String, pushToken: String): UploadTokenUploadToken
+}

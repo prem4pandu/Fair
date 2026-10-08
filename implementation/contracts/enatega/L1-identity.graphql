@@ -1,0 +1,349 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type CreateStaffCreateStaff {
+  _id: ID
+  email: String
+  isActive: Boolean
+  name: String
+  permissions: [String]
+  phone: String
+  userType: String
+}
+
+type CreateUserCreateUser {
+  email: String
+  emailIsVerified: String
+  isNewUser: Boolean
+  name: String
+  phone: String
+  phoneIsVerified: String
+  picture: String
+  token: String
+  tokenExpiration: String
+  userId: ID
+  userTypeId: ID
+}
+
+type DeactivateDeactivate {
+  _id: ID
+  email: String
+  isActive: Boolean
+  name: String
+}
+
+type DeleteStaffDeleteStaff {
+  _id: ID
+}
+
+type EditStaffEditStaff {
+  _id: ID
+  email: String
+  isActive: Boolean
+  name: String
+  permissions: [String]
+  phone: String
+  userType: String
+}
+
+type ForgotPasswordForgotPassword {
+  result: String
+}
+
+type LoginLogin {
+  addresses: Address
+  email: String
+  emailIsVerified: String
+  isActive: Boolean
+  isNewUser: Boolean
+  name: String
+  phone: String
+  phoneIsVerified: String
+  picture: String
+  token: String
+  tokenExpiration: String
+  userId: ID
+  userTypeId: ID
+}
+
+type Owner {
+  _id: ID
+  email: String
+  isActive: Boolean
+}
+
+type OwnerLoginOwnerLogin {
+  email: String
+  image: String
+  name: String
+  permissions: [String]
+  refreshToken: String
+  refreshTokenExpiration: String
+  restaurants: Restaurant
+  token: String
+  tokenExpiration: String
+  userId: ID
+  userType: String
+  userTypeId: ID
+}
+
+type OwnerSessionOwnerSession {
+  email: String
+  image: String
+  isActive: Boolean
+  name: String
+  permissions: [String]
+  refreshToken: String
+  refreshTokenExpiration: String
+  restaurants: Restaurant
+  token: String
+  tokenExpiration: String
+  userId: ID
+  userType: String
+  userTypeId: ID
+}
+
+type ProfileProfile {
+  _id: ID
+  addresses: Address
+  email: String
+  emailIsVerified: String
+  favourite: String
+  isActive: Boolean
+  isOfferNotification: Boolean
+  isOrderNotification: Boolean
+  name: String
+  notificationToken: String
+  phone: String
+  phoneIsVerified: String
+  stripe_plan_id: String
+  userType: String
+}
+
+type PushTokenPushToken {
+  _id: ID
+  notificationToken: String
+}
+
+type RefreshTokenRefreshToken {
+  refreshToken: String
+  refreshTokenExpiration: String
+  token: String
+  tokenExpiration: String
+  userId: ID
+}
+
+type ResetPasswordResetPassword {
+  result: String
+}
+
+type ResetUserSessionResetUserSession {
+  _id: ID
+}
+
+type SaveNotificationTokenWebSaveNotificationTokenWeb {
+  message: String
+  success: Boolean
+}
+
+type SaveRestaurantTokenSaveRestaurantToken {
+  _id: ID
+  enableNotification: String
+  notificationToken: String
+}
+
+type SendOtpToEmailSendOtpToEmail {
+  result: String
+}
+
+type SendOtpToPhoneNumberSendOtpToPhoneNumber {
+  result: String
+}
+
+type Staff {
+  _id: ID
+  email: String
+  isActive: Boolean
+  name: String
+  permissions: [String]
+  phone: String
+}
+
+type StaffsPaginatedData {
+  _id: ID
+  email: String
+  isActive: Boolean
+  name: String
+  permissions: [String]
+  phone: String
+}
+
+type StaffsPaginatedStaffsPaginated {
+  currentPage: String
+  data: StaffsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type UpdateNotificationStatusUpdateNotificationStatus {
+  _id: ID
+  isOfferNotification: Boolean
+  isOrderNotification: Boolean
+  name: String
+  notificationToken: String
+  phone: String
+}
+
+type UpdateUserUpdateUser {
+  _id: ID
+  emailIsVerified: String
+  name: String
+  phone: String
+  phoneIsVerified: String
+}
+
+type User {
+  _id: ID
+  addresses: Address
+  createdAt: String
+  email: String
+  emailIsVerified: String
+  favourite: String
+  id: ID
+  isActive: Boolean
+  isOfferNotification: Boolean
+  isOrderNotification: Boolean
+  lastLogin: String
+  latestTicket: GetTicketUsersWithLatestUsersLatestTicket
+  name: String
+  notes: String
+  notificationToken: String
+  phone: String
+  phoneIsVerified: String
+  status: String
+  updatedAt: String
+  userType: String
+}
+
+type UserFavouriteUserFavourite {
+  _id: ID
+  addons: Addon
+  address: String
+  categories: Category
+  deliveryTime: String
+  image: String
+  isActive: Boolean
+  isAvailable: Boolean
+  location: Location
+  minimumOrder: Float
+  name: String
+  openingTimes: OpeningTimes
+  options: Option
+  orderId: String
+  orderPrefix: String
+  rating: Float
+  reviewAverage: String
+  reviewCount: Int
+  reviewData: ReviewData
+  shopType: String
+  slug: String
+  tax: Float
+}
+
+type UsersPaginatedData {
+  _id: ID
+  addresses: Address
+  createdAt: String
+  email: String
+  lastLogin: String
+  name: String
+  notes: String
+  phone: String
+  status: String
+  userType: String
+}
+
+type UsersPaginatedUsersPaginated {
+  currentPage: String
+  data: UsersPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type VerifyOtpVerifyOtp {
+  result: String
+}
+
+extend type Query {
+  appleAuthNonce: String
+  hasOwnerPermission(permission: String): Boolean
+  ownerSession: OwnerSessionOwnerSession
+  profile: ProfileProfile
+  staffs: Staff
+  staffsPaginated(
+    isActive: Boolean
+    limit: Int
+    page: Int
+    search: String
+  ): StaffsPaginatedStaffsPaginated
+}
+
+extend type Mutation {
+  Deactivate(email: String, isActive: Boolean): DeactivateDeactivate
+  changePassword(newPassword: String, oldPassword: String): String
+  createStaff(staffInput: StaffInput): CreateStaffCreateStaff
+  createUser(userInput: CreateUserUserInputInput): CreateUserCreateUser
+  deleteStaff(id: String): DeleteStaffDeleteStaff
+  editStaff(staffInput: StaffInput): EditStaffEditStaff
+  emailExist(email: String): Boolean
+  forgotPassword(email: String): ForgotPasswordForgotPassword
+  login(
+    appleId: String
+    appleNonce: String
+    email: String
+    idToken: String
+    isActive: Boolean
+    name: String
+    notificationToken: String
+    password: String
+    type: String
+  ): LoginLogin
+  ownerLogin(email: String, password: String): OwnerLoginOwnerLogin
+  phoneExist(phone: String): Boolean
+  pushToken(token: String): PushTokenPushToken
+  refreshToken(refreshToken: String, userType: String): RefreshTokenRefreshToken
+  resetPassword(
+    email: String
+    otp: String
+    password: String
+    token: String
+  ): ResetPasswordResetPassword
+  resetUserSession(userId: ID): ResetUserSessionResetUserSession
+  restaurantLogin(
+    notificationToken: String
+    password: String
+    username: String
+  ): RestaurantLoginRestaurantLogin
+  riderLogin(
+    notificationToken: String
+    password: String
+    timeZone: String
+    username: String
+  ): RiderLoginRiderLogin
+  saveNotificationTokenWeb(
+    token: String
+  ): SaveNotificationTokenWebSaveNotificationTokenWeb
+  saveRestaurantToken(
+    isEnabled: Boolean
+    token: String
+  ): SaveRestaurantTokenSaveRestaurantToken
+  sendOtpToEmail(email: String): SendOtpToEmailSendOtpToEmail
+  sendOtpToPhoneNumber(phone: String): SendOtpToPhoneNumberSendOtpToPhoneNumber
+  updateNotificationStatus(
+    offerNotification: Boolean
+    orderNotification: Boolean
+  ): UpdateNotificationStatusUpdateNotificationStatus
+  updateUser(
+    updateUserInput: UpdateUserUpdateUserInputInput
+  ): UpdateUserUpdateUser
+  verifyOtp(email: String, otp: String, phone: String): VerifyOtpVerifyOtp
+}

@@ -1,0 +1,1120 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type Addon {
+  _id: ID
+  description: String
+  options: String
+  quantityMaximum: String
+  quantityMinimum: String
+  title: String
+}
+
+type AttachedCuisinesAttachedCuisines {
+  _id: ID
+  description: String
+  image: String
+  name: String
+  shopType: String
+}
+
+type BussinessDetails {
+  accountCode: String
+  accountName: String
+  accountNumber: String
+  bankName: String
+  bussinessRegNo: String
+  companyRegNo: String
+  taxRate: Float
+}
+
+type Category {
+  _id: ID
+  createdAt: String
+  foods: Food
+  image: String
+  title: String
+  updatedAt: String
+}
+
+type Coupon {
+  _id: ID
+  coupon: Coupon
+  discount: Float
+  enabled: Boolean
+  endDate: String
+  lifeTimeActive: String
+  message: String
+  startDate: String
+  success: Boolean
+  title: String
+}
+
+type CouponsPaginatedCouponsPaginated {
+  currentPage: String
+  data: CouponsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type CouponsPaginatedData {
+  _id: ID
+  discount: Float
+  enabled: Boolean
+  endDate: String
+  lifeTimeActive: String
+  startDate: String
+  title: String
+}
+
+type CreateAddonsCreateAddons {
+  _id: ID
+  addons: Addon
+}
+
+type CreateCategoryCreateCategory {
+  _id: ID
+  categories: Category
+}
+
+type CreateCouponCreateCoupon {
+  _id: ID
+  discount: Float
+  enabled: Boolean
+  endDate: String
+  lifeTimeActive: String
+  startDate: String
+  title: String
+}
+
+type CreateFoodCreateFood {
+  _id: ID
+  categories: Category
+}
+
+type CreateOptionsCreateOptions {
+  _id: ID
+  options: Option
+}
+
+type CreateRestaurantCouponCreateRestaurantCoupon {
+  _id: ID
+  discount: Float
+  enabled: Boolean
+  title: String
+}
+
+type CreateRestaurantCreateRestaurant {
+  _id: ID
+  address: String
+  commissionRate: Float
+  cuisines: [String]
+  deliveryTime: String
+  image: String
+  isActive: Boolean
+  location: Location
+  logo: String
+  minimumOrder: Float
+  name: String
+  orderId: String
+  orderPrefix: String
+  owner: Owner
+  phone: String
+  shopType: String
+  slug: String
+  tax: Float
+  username: String
+}
+
+type CreateVendorCreateVendor {
+  _id: ID
+  email: String
+  firstName: String
+  image: String
+  lastName: String
+  name: String
+  phoneNumber: String
+}
+
+type DeleteAddonDeleteAddon {
+  _id: ID
+  addons: Addon
+}
+
+type DeleteCategoryDeleteCategory {
+  _id: ID
+  categories: Category
+}
+
+type DeleteFoodDeleteFood {
+  _id: ID
+}
+
+type DeleteOptionDeleteOption {
+  _id: ID
+  options: Option
+}
+
+type DeleteRestaurantDeleteRestaurant {
+  _id: ID
+  isActive: Boolean
+}
+
+type DuplicateRestaurantDuplicateRestaurant {
+  _id: ID
+  address: String
+  commissionRate: Float
+  cuisines: [String]
+  deliveryTime: String
+  image: String
+  isActive: Boolean
+  location: Location
+  logo: String
+  minimumOrder: Float
+  name: String
+  orderId: String
+  orderPrefix: String
+  owner: Owner
+  shopType: String
+  slug: String
+  tax: Float
+  username: String
+}
+
+type EditAddonEditAddon {
+  _id: ID
+  addons: Addon
+}
+
+type EditCategoryEditCategory {
+  _id: ID
+  categories: Category
+}
+
+type EditCouponEditCoupon {
+  _id: ID
+  discount: Float
+  enabled: Boolean
+  endDate: String
+  lifeTimeActive: String
+  startDate: String
+  title: String
+}
+
+type EditFoodEditFood {
+  _id: ID
+  categories: Category
+}
+
+type EditOptionEditOption {
+  _id: ID
+  options: Option
+}
+
+type EditRestaurantCouponEditRestaurantCoupon {
+  _id: ID
+  discount: Float
+  enabled: Boolean
+  title: String
+}
+
+type EditRestaurantEditRestaurant {
+  _id: ID
+  address: String
+  image: String
+  isAvailable: Boolean
+  location: Location
+  logo: String
+  minimumOrder: Float
+  name: String
+  openingTimes: OpeningTimes
+  orderId: String
+  orderPrefix: String
+  phone: String
+  shopType: String
+  slug: String
+  tax: Float
+  username: String
+}
+
+type EditVendorEditVendor {
+  _id: ID
+  email: String
+  firstName: String
+  image: String
+  lastName: String
+  name: String
+  phoneNumber: String
+}
+
+type FetchCategoryDetailsByStoreIdFetchCategoryDetailsByStoreId {
+  id: ID
+  items: OrderItem
+  label: String
+  url: String
+}
+
+type FetchCategoryDetailsByStoreIdForMobileFetchCategoryDetailsByStoreIdForMobile {
+  category_name: String
+  food_id: String
+  id: ID
+  url: String
+}
+
+type Food {
+  _id: ID
+  createdAt: String
+  description: String
+  image: String
+  isActive: Boolean
+  isOutOfStock: Boolean
+  subCategory: String
+  title: String
+  updatedAt: String
+  variations: Variation
+}
+
+type GetClonedRestaurantsGetClonedRestaurants {
+  _id: ID
+  address: String
+  commissionRate: Float
+  deliveryTime: String
+  image: String
+  isActive: Boolean
+  minimumOrder: Float
+  name: String
+  orderPrefix: String
+  owner: Owner
+  shopType: String
+  slug: String
+  tax: Float
+  unique_restaurant_id: String
+  username: String
+}
+
+type GetClonedRestaurantsPaginatedData {
+  _id: ID
+  address: String
+  commissionRate: Float
+  deliveryTime: String
+  image: String
+  isActive: Boolean
+  minimumOrder: Float
+  name: String
+  orderPrefix: String
+  owner: Owner
+  shopType: String
+  slug: String
+  tax: Float
+  unique_restaurant_id: String
+  username: String
+}
+
+type GetClonedRestaurantsPaginatedGetClonedRestaurantsPaginated {
+  currentPage: String
+  data: GetClonedRestaurantsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type GetRestaurantDeliveryZoneInfoCircleBounds {
+  radius: String
+}
+
+type GetRestaurantDeliveryZoneInfoGetRestaurantDeliveryZoneInfo {
+  address: String
+  boundType: String
+  circleBounds: GetRestaurantDeliveryZoneInfoCircleBounds
+  city: String
+  deliveryBounds: Polygon
+  location: Location
+  postCode: String
+}
+
+type GetStoreDetailsByVendorIdGetStoreDetailsByVendorId {
+  _id: ID
+  deliveryCount: Int
+  pickUpCount: Int
+  restaurantName: String
+  totalOrders: String
+  totalSales: String
+}
+
+type GetStoreDetailsByVendorIdPaginatedData {
+  _id: ID
+  deliveryCount: Int
+  pickUpCount: Int
+  restaurantName: String
+  totalOrders: String
+  totalSales: String
+}
+
+type GetStoreDetailsByVendorIdPaginatedGetStoreDetailsByVendorIdPaginated {
+  currentPage: String
+  data: GetStoreDetailsByVendorIdPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type GetVendorGetVendor {
+  _id: ID
+  email: String
+  firstName: String
+  image: String
+  lastName: String
+  name: String
+  phoneNumber: String
+  restaurants: Restaurant
+  userType: String
+}
+
+type MostOrderedRestaurantsMostOrderedRestaurants {
+  _id: ID
+  categories: Category
+  deliveryTime: String
+  image: String
+  name: String
+  reviewData: ReviewData
+  shopType: String
+  tax: Float
+}
+
+type NearByRestaurantsCuisinesNearByRestaurantsCuisines {
+  _id: ID
+  description: String
+  image: String
+  name: String
+  shopType: String
+}
+
+type NearByRestaurantsNearByRestaurants {
+  offers: NearByRestaurantsOffers
+  restaurants: Restaurant
+  sections: NearByRestaurantsSections
+}
+
+type NearByRestaurantsOffers {
+  _id: ID
+  name: String
+  restaurants: String
+  tag: String
+}
+
+type NearByRestaurantsPreviewNearByRestaurantsPreview {
+  offers: NearByRestaurantsPreviewOffers
+  restaurants: RestaurantPreview
+  sections: NearByRestaurantsPreviewSections
+}
+
+type NearByRestaurantsPreviewOffers {
+  _id: ID
+  name: String
+  restaurants: String
+  tag: String
+}
+
+type NearByRestaurantsPreviewSections {
+  _id: ID
+  name: String
+  restaurants: String
+}
+
+type NearByRestaurantsRestaurantsReviewDataReviewsOrder {
+  _id: ID
+  items: OrderItem
+  orderId: String
+  user: User
+}
+
+type NearByRestaurantsSections {
+  _id: ID
+  name: String
+  restaurants: String
+}
+
+type OpeningTimes {
+  day: String
+  times: Timings
+}
+
+type Option {
+  _id: ID
+  description: String
+  id: ID
+  isOutOfStock: Boolean
+  price: Float
+  title: String
+}
+
+type PopularFoodItemsPopularFoodItems {
+  _id: ID
+  createdAt: String
+  description: String
+  image: String
+  isActive: Boolean
+  isOutOfStock: Boolean
+  subCategory: String
+  title: String
+  variations: Variation
+}
+
+type PopularItemsPopularItems {
+  count: Int
+  id: ID
+}
+
+type RecentOrderRestaurantsRecentOrderRestaurants {
+  _id: ID
+  categories: Category
+  deliveryTime: String
+  image: String
+  name: String
+  reviewData: ReviewData
+  shopType: String
+  tax: Float
+}
+
+type Restaurant {
+  _id: ID
+  acceptVouchers: String
+  addons: Addon
+  address: String
+  bussinessDetails: BussinessDetails
+  categories: Category
+  commissionRate: Float
+  cuisines: [String]
+  currentWalletAmount: Float
+  deliveryBounds: Polygon
+  deliveryInfo: RestaurantDeliveryInfo
+  deliveryTime: String
+  distanceWithCurrentLocation: String
+  enableNotification: String
+  freeDelivery: String
+  hasBusinessDetails: Boolean
+  image: String
+  isActive: Boolean
+  isAvailable: Boolean
+  location: Location
+  logo: String
+  minimumOrder: Float
+  name: String
+  notificationToken: String
+  openingTimes: OpeningTimes
+  options: Option
+  orderId: String
+  orderPrefix: String
+  owner: Owner
+  phone: String
+  rating: Float
+  restaurantUrl: String
+  reviewCount: Int
+  reviewData: ReviewData
+  shopType: String
+  slug: String
+  stripeDetailsSubmitted: String
+  tax: Float
+  totalWalletAmount: Float
+  unique_restaurant_id: String
+  username: String
+  withdrawnWalletAmount: Float
+  zone: Zone
+}
+
+type RestaurantAddonsPaginatedData {
+  _id: ID
+  description: String
+  options: String
+  quantityMaximum: String
+  quantityMinimum: String
+  title: String
+}
+
+type RestaurantAddonsPaginatedRestaurantAddonsPaginated {
+  currentPage: String
+  data: RestaurantAddonsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type RestaurantByOwnerRestaurantByOwner {
+  _id: ID
+  email: String
+  restaurants: Restaurant
+  userType: String
+}
+
+type RestaurantCarouselPreview {
+  _id: ID
+  coordinates: String
+  cuisines: [String]
+  day: String
+  deliveryTime: String
+  endTime: String
+  image: String
+  isActive: Boolean
+  isAvailable: Boolean
+  location: RestaurantCarouselPreview
+  logo: String
+  minimumOrder: Float
+  name: String
+  openingTimes: RestaurantCarouselPreview
+  reviewAverage: String
+  reviewCount: Int
+  shopType: String
+  slug: String
+  startTime: String
+  tags: [String]
+  tax: Float
+  times: RestaurantCarouselPreview
+}
+
+type RestaurantCategoriesPaginatedData {
+  _id: ID
+  image: String
+  title: String
+}
+
+type RestaurantCategoriesPaginatedRestaurantCategoriesPaginated {
+  currentPage: String
+  data: RestaurantCategoriesPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type RestaurantCouponsPaginatedData {
+  _id: ID
+  discount: Float
+  enabled: Boolean
+  title: String
+}
+
+type RestaurantCouponsPaginatedRestaurantCouponsPaginated {
+  currentPage: String
+  data: RestaurantCouponsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type RestaurantCouponsRestaurantCoupons {
+  _id: ID
+  discount: Float
+  enabled: Boolean
+  title: String
+}
+
+type RestaurantDeliveryInfo {
+  deliveryDistance: String
+  deliveryFee: String
+  minDeliveryFee: String
+}
+
+type RestaurantLoginRestaurantLogin {
+  restaurantId: ID
+  token: String
+}
+
+type RestaurantOptionsPaginatedData {
+  _id: ID
+  description: String
+  price: Float
+  title: String
+}
+
+type RestaurantOptionsPaginatedRestaurantOptionsPaginated {
+  currentPage: String
+  data: RestaurantOptionsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type RestaurantOrdersRestaurantOrders {
+  _id: ID
+  acceptedAt: String
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  discountAmount: Float
+  eta: OrderEta
+  id: ID
+  instructions: String
+  isActive: Boolean
+  isPickedUp: Boolean
+  isRinged: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type RestaurantPreview {
+  _id: ID
+  acceptVouchers: String
+  coordinates: String
+  cuisines: [String]
+  day: String
+  deliveryTime: String
+  distanceWithCurrentLocation: String
+  endTime: String
+  freeDelivery: String
+  image: String
+  isActive: Boolean
+  isAvailable: Boolean
+  location: RestaurantPreview
+  logo: String
+  minimumOrder: Float
+  name: String
+  openingTimes: RestaurantPreview
+  reviewAverage: String
+  reviewCount: Int
+  shopType: String
+  slug: String
+  startTime: String
+  tags: [String]
+  tax: Float
+  times: RestaurantPreview
+}
+
+type RestaurantReviewsPaginatedData {
+  _id: ID
+  comments: String
+  createdAt: String
+  description: String
+  order: RestaurantReviewsPaginatedDataOrder
+  rating: Float
+  restaurant: Restaurant
+}
+
+type RestaurantReviewsPaginatedDataOrder {
+  _id: ID
+  items: OrderItem
+  orderId: String
+  user: User
+}
+
+type RestaurantReviewsPaginatedRestaurantReviewsPaginated {
+  currentPage: String
+  data: RestaurantReviewsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type RestaurantsPaginatedData {
+  _id: ID
+  address: String
+  commissionRate: Float
+  deliveryTime: String
+  image: String
+  isActive: Boolean
+  minimumOrder: Float
+  name: String
+  orderPrefix: String
+  owner: Owner
+  shopType: String
+  slug: String
+  tax: Float
+  unique_restaurant_id: String
+  username: String
+}
+
+type RestaurantsPaginatedRestaurantsPaginated {
+  currentPage: String
+  data: RestaurantsPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type Review {
+  _id: ID
+  comments: String
+  createdAt: String
+  description: String
+  isActive: Boolean
+  order: NearByRestaurantsRestaurantsReviewDataReviewsOrder
+  rating: Float
+  restaurant: Restaurant
+  updatedAt: String
+}
+
+type ReviewData {
+  ratings: Float
+  reviews: Review
+  total: String
+}
+
+type ReviewOrderReviewOrder {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  eta: OrderEta
+  expectedTime: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type ReviewsByRestaurantReviewsByRestaurant {
+  ratings: Float
+  reviews: Review
+  total: String
+}
+
+type SubCategoriesByParentIdSubCategoriesByParentId {
+  _id: ID
+  parentCategoryId: ID
+  title: String
+}
+
+type SubCategory {
+  _id: ID
+  parentCategoryId: ID
+  title: String
+}
+
+type Timings {
+  endTime: [String]
+  startTime: [String]
+}
+
+type ToggleStoreAvailabilityToggleStoreAvailability {
+  _id: ID
+  isAvailable: Boolean
+}
+
+type TopRatedVendorsTopRatedVendors {
+  _id: ID
+  categories: Category
+  deliveryTime: String
+  image: String
+  name: String
+  reviewData: ReviewData
+  shopType: String
+  tax: Float
+}
+
+type UpdateDeliveryBoundsAndLocationData {
+  _id: ID
+  deliveryBounds: Polygon
+  location: Location
+}
+
+type UpdateDeliveryBoundsAndLocationUpdateDeliveryBoundsAndLocation {
+  data: UpdateDeliveryBoundsAndLocationData
+  message: String
+  success: Boolean
+}
+
+type UpdateDeliveryOptionsDeliveryOptions {
+  delivery: String
+  pickup: String
+}
+
+type UpdateDeliveryOptionsUpdateDeliveryOptions {
+  deliveryOptions: UpdateDeliveryOptionsDeliveryOptions
+}
+
+type UpdateRestaurantBussinessDetailsData {
+  _id: ID
+}
+
+type UpdateRestaurantBussinessDetailsUpdateRestaurantBussinessDetails {
+  data: UpdateRestaurantBussinessDetailsData
+  message: String
+  success: Boolean
+}
+
+type UpdateRestaurantDeliveryData {
+  _id: ID
+}
+
+type UpdateRestaurantDeliveryUpdateRestaurantDelivery {
+  data: UpdateRestaurantDeliveryData
+  message: String
+  success: Boolean
+}
+
+type UpdateTimingsUpdateTimings {
+  _id: ID
+  openingTimes: OpeningTimes
+}
+
+type Variation {
+  _id: ID
+  addons: String
+  discounted: Float
+  id: ID
+  isOutOfStock: Boolean
+  price: Float
+  title: String
+}
+
+type Vendor {
+  _id: ID
+  email: String
+  image: String
+  isActive: Boolean
+  name: String
+  restaurants: Restaurant
+  unique_id: String
+  userType: String
+}
+
+extend type Query {
+  attachedCuisines: AttachedCuisinesAttachedCuisines
+  coupons: Coupon
+  couponsPaginated(
+    enabled: Boolean
+    endDate: String
+    limit: Int
+    page: Int
+    search: String
+    startDate: String
+  ): CouponsPaginatedCouponsPaginated
+  fetchCategoryDetailsByStoreId(
+    storeId: String
+  ): FetchCategoryDetailsByStoreIdFetchCategoryDetailsByStoreId
+  fetchCategoryDetailsByStoreIdForMobile(
+    storeId: String
+  ): FetchCategoryDetailsByStoreIdForMobileFetchCategoryDetailsByStoreIdForMobile
+  getClonedRestaurants: GetClonedRestaurantsGetClonedRestaurants
+  getClonedRestaurantsPaginated(
+    limit: Int
+    page: Int
+    search: String
+  ): GetClonedRestaurantsPaginatedGetClonedRestaurantsPaginated
+  getRestaurantDeliveryZoneInfo(
+    id: ID
+  ): GetRestaurantDeliveryZoneInfoGetRestaurantDeliveryZoneInfo
+  getStoreDetailsByVendorId(
+    dateKeyword: String
+    ending_date: String
+    id: String
+    starting_date: String
+  ): GetStoreDetailsByVendorIdGetStoreDetailsByVendorId
+  getStoreDetailsByVendorIdPaginated(
+    dateKeyword: String
+    ending_date: String
+    id: String
+    limit: Int
+    page: Int
+    search: String
+    starting_date: String
+  ): GetStoreDetailsByVendorIdPaginatedGetStoreDetailsByVendorIdPaginated
+  getVendor(id: String): GetVendorGetVendor
+  mostOrderedRestaurants(
+    latitude: Float
+    longitude: Float
+  ): MostOrderedRestaurantsMostOrderedRestaurants
+  mostOrderedRestaurantsPreview(
+    latitude: Float
+    limit: Int
+    longitude: Float
+    page: Int
+    shopType: String
+  ): RestaurantCarouselPreview
+  nearByRestaurants(
+    latitude: Float
+    longitude: Float
+    shopType: String
+  ): NearByRestaurantsNearByRestaurants
+  nearByRestaurantsCuisines(
+    latitude: Float
+    longitude: Float
+    shopType: String
+  ): NearByRestaurantsCuisinesNearByRestaurantsCuisines
+  nearByRestaurantsPreview(
+    latitude: Float
+    limit: Int
+    longitude: Float
+    page: Int
+    shopType: String
+  ): NearByRestaurantsPreviewNearByRestaurantsPreview
+  popularFoodItems(restaurantId: String): PopularFoodItemsPopularFoodItems
+  popularItems(restaurantId: String): PopularItemsPopularItems
+  recentOrderRestaurants(
+    latitude: Float
+    longitude: Float
+  ): RecentOrderRestaurantsRecentOrderRestaurants
+  recentOrderRestaurantsPreview(
+    latitude: Float
+    longitude: Float
+  ): RestaurantCarouselPreview
+  relatedItems(itemId: String, restaurantId: String): String
+  restaurant(id: String, slug: String): Restaurant
+  restaurantAddonsPaginated(
+    limit: Int
+    page: Int
+    restaurantId: String
+    search: String
+  ): RestaurantAddonsPaginatedRestaurantAddonsPaginated
+  restaurantByOwner(id: String): RestaurantByOwnerRestaurantByOwner
+  restaurantCategoriesPaginated(
+    limit: Int
+    page: Int
+    restaurantId: String
+    search: String
+  ): RestaurantCategoriesPaginatedRestaurantCategoriesPaginated
+  restaurantCoupons(restaurantId: String): RestaurantCouponsRestaurantCoupons
+  restaurantCouponsPaginated(
+    enabled: Boolean
+    limit: Int
+    page: Int
+    restaurantId: String
+    search: String
+  ): RestaurantCouponsPaginatedRestaurantCouponsPaginated
+  restaurantOptionsPaginated(
+    limit: Int
+    page: Int
+    restaurantId: String
+    search: String
+  ): RestaurantOptionsPaginatedRestaurantOptionsPaginated
+  restaurantReviewsPaginated(
+    limit: Int
+    maxRating: Float
+    minRating: Float
+    page: Int
+    restaurantId: String
+    search: String
+  ): RestaurantReviewsPaginatedRestaurantReviewsPaginated
+  restaurants: Restaurant
+  restaurantsPaginated(
+    limit: Int
+    page: Int
+    search: String
+  ): RestaurantsPaginatedRestaurantsPaginated
+  reviews(restaurant: String): Review
+  reviewsByRestaurant(
+    restaurant: String
+  ): ReviewsByRestaurantReviewsByRestaurant
+  subCategories: SubCategory
+  subCategoriesByParentId(
+    parentCategoryId: String
+  ): SubCategoriesByParentIdSubCategoriesByParentId
+  subCategory(_id: String): SubCategory
+  topRatedVendors(
+    latitude: Float
+    longitude: Float
+  ): TopRatedVendorsTopRatedVendors
+  topRatedVendorsPreview(
+    latitude: Float
+    longitude: Float
+  ): RestaurantCarouselPreview
+  vendorCount: Int
+  vendors: Vendor
+}
+
+extend type Mutation {
+  createAddons(addonInput: AddonInput): CreateAddonsCreateAddons
+  createCategory(category: CategoryInput): CreateCategoryCreateCategory
+  createCoupon(couponInput: CouponInput): CreateCouponCreateCoupon
+  createFood(foodInput: FoodInput): CreateFoodCreateFood
+  createOptions(optionInput: CreateOptionInput): CreateOptionsCreateOptions
+  createRestaurant(
+    owner: ID
+    restaurant: RestaurantInput
+  ): CreateRestaurantCreateRestaurant
+  createRestaurantCoupon(
+    couponInput: CouponInput
+    restaurantId: ID
+  ): CreateRestaurantCouponCreateRestaurantCoupon
+  createSubCategories(subCategories: [SubCategoryInput]): String
+  createVendor(vendorInput: VendorInput): CreateVendorCreateVendor
+  deleteAddon(id: String, restaurant: String): DeleteAddonDeleteAddon
+  deleteCategory(id: String, restaurant: String): DeleteCategoryDeleteCategory
+  deleteCoupon(id: String): String
+  deleteFood(
+    categoryId: String
+    id: String
+    restaurant: String
+  ): DeleteFoodDeleteFood
+  deleteOption(id: String, restaurant: String): DeleteOptionDeleteOption
+  deleteRestaurant(id: String): DeleteRestaurantDeleteRestaurant
+  deleteRestaurantCoupon(couponId: ID, restaurantId: ID): String
+  deleteSubCategory(_id: String): String
+  deleteVendor(id: String): String
+  duplicateRestaurant(
+    id: String
+    owner: String
+  ): DuplicateRestaurantDuplicateRestaurant
+  editAddon(addonInput: editAddonInput): EditAddonEditAddon
+  editCategory(category: CategoryInput): EditCategoryEditCategory
+  editCoupon(couponInput: CouponInput): EditCouponEditCoupon
+  editFood(foodInput: FoodInput): EditFoodEditFood
+  editOption(optionInput: editOptionInput): EditOptionEditOption
+  editRestaurant(
+    restaurant: RestaurantProfileInput
+  ): EditRestaurantEditRestaurant
+  editRestaurantCoupon(
+    couponInput: CouponInput
+    restaurantId: ID
+  ): EditRestaurantCouponEditRestaurantCoupon
+  editVendor(vendorInput: VendorInput): EditVendorEditVendor
+  hardDeleteRestaurant(id: String): String
+  toggleStoreAvailability(
+    restaurantId: String
+  ): ToggleStoreAvailabilityToggleStoreAvailability
+  updateDeliveryBoundsAndLocation(
+    address: String
+    bounds: [[[Float]]]
+    boundType: String
+    circleBounds: CircleBoundsInput
+    city: String
+    id: ID
+    location: CoordinatesInput
+    postCode: String
+  ): UpdateDeliveryBoundsAndLocationUpdateDeliveryBoundsAndLocation
+  updateDeliveryOptions(
+    delivery: Boolean
+    pickup: Boolean
+    restId: String
+  ): UpdateDeliveryOptionsUpdateDeliveryOptions
+  updateFoodOutOfStock(
+    categoryId: String
+    id: String
+    restaurant: String
+  ): String
+  updateRestaurantBussinessDetails(
+    bussinessDetails: BussinessDetailsInput
+    id: String
+  ): UpdateRestaurantBussinessDetailsUpdateRestaurantBussinessDetails
+  updateRestaurantDelivery(
+    deliveryDistance: Float
+    deliveryFee: Float
+    id: ID
+    minDeliveryFee: Float
+  ): UpdateRestaurantDeliveryUpdateRestaurantDelivery
+  updateTimings(
+    id: String
+    openingTimes: [TimingsInput]
+  ): UpdateTimingsUpdateTimings
+}

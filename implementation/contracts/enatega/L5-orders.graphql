@@ -1,0 +1,657 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type AbortOrderAbortOrder {
+  _id: ID
+  cancelledAt: String
+  eta: OrderEta
+  orderId: String
+  orderStatus: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  user: User
+}
+
+type AcceptOrderAcceptOrder {
+  _id: ID
+  eta: OrderEta
+  orderStatus: String
+  preparationTime: String
+}
+
+type AllOrdersAllOrders {
+  _id: ID
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  isActive: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type AllOrdersPaginatedAllOrdersPaginated {
+  currentPage: String
+  nextPage: String
+  orders: AllOrdersPaginatedOrders
+  prevPage: String
+  totalCount: Int
+  totalPages: Int
+}
+
+type AllOrdersPaginatedOrders {
+  _id: ID
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  isActive: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type AllOrdersWithoutPaginationAllOrdersWithoutPagination {
+  _id: ID
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  isActive: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type CancelOrderCancelOrder {
+  _id: ID
+  eta: OrderEta
+  orderStatus: String
+}
+
+type GetUsersActiveOrdersGetUsersActiveOrders {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  discountAmount: Float
+  eta: OrderEta
+  expectedTime: String
+  id: ID
+  instructions: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type GetUsersPastOrdersGetUsersPastOrders {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  discountAmount: Float
+  eta: OrderEta
+  expectedTime: String
+  id: ID
+  instructions: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type OrderDetailsEtaDestination {
+  latitude: Float
+  longitude: Float
+}
+
+type OrderDetailsEtaOrigin {
+  latitude: Float
+  longitude: Float
+}
+
+type OrderDetailsOrderDetails {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  discountAmount: Float
+  eta: OrderEta
+  expectedTime: String
+  instructions: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  selectedPrepTime: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type OrderEta {
+  baseArrivalAt: String
+  calculatedAt: String
+  destination: OrderDetailsEtaDestination
+  distanceMeters: Int
+  durationSeconds: Int
+  encodedPolyline: String
+  estimatedArrivalAt: String
+  lastLocationAt: String
+  origin: OrderDetailsEtaOrigin
+  phase: String
+  readyAt: String
+  source: String
+  version: Int
+  windowEndAt: String
+  windowStartAt: String
+}
+
+type OrderFilterOptionsOrderFilterOptions {
+  restaurants: Restaurant
+  riders: Rider
+}
+
+type OrderItem {
+  _id: ID
+  addons: OrderItemAddon
+  createdAt: String
+  description: String
+  food: String
+  id: ID
+  image: String
+  isActive: Boolean
+  label: String
+  quantity: Int
+  specialInstructions: String
+  title: String
+  updatedAt: String
+  url: String
+  variation: Variation
+}
+
+type OrderItemAddon {
+  _id: ID
+  description: String
+  id: ID
+  options: Option
+  quantityMaximum: String
+  quantityMinimum: String
+  title: String
+}
+
+type OrderOrder {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  expectedTime: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  paymentMethod: String
+  pickedAt: String
+  restaurant: Restaurant
+  user: User
+}
+
+type OrderPickedUpOrderPickedUp {
+  _id: ID
+  eta: OrderEta
+  orderStatus: String
+}
+
+type OrdersByRestIdOrders {
+  _id: ID
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  isActive: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type OrdersByRestIdOrdersByRestId {
+  currentPage: String
+  nextPage: String
+  orders: OrdersByRestIdOrders
+  prevPage: String
+  totalCount: Int
+  totalPages: Int
+}
+
+type OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination {
+  _id: ID
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  isActive: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  reason: String
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type OrdersByUserOrders {
+  _id: ID
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  restaurant: Restaurant
+  taxationAmount: Float
+  tipping: Float
+}
+
+type OrdersByUserOrdersByUser {
+  currentPage: String
+  nextPage: String
+  orders: OrdersByUserOrders
+  prevPage: String
+  totalCount: Int
+  totalPages: Int
+}
+
+type OrdersOrders {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  discountAmount: Float
+  eta: OrderEta
+  expectedTime: String
+  id: ID
+  instructions: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type OrderStatusChangedOrder {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  discountAmount: Float
+  eta: OrderEta
+  expectedTime: String
+  id: ID
+  instructions: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type OrderStatusChangedOrderStatusChanged {
+  order: OrderStatusChangedOrder
+  origin: String
+  rawOrder: OrderStatusChangedRawOrder
+  userId: ID
+}
+
+type OrderStatusChangedRawOrder {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  deliveryType: String
+  eta: OrderEta
+  expectedTime: String
+  instructions: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderState: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type OrderTrackingOrderTracking {
+  eta: OrderEta
+  orderId: String
+  riderLocation: OrderTrackingRiderLocation
+  status: String
+}
+
+type OrderTrackingRiderLocation {
+  accuracy: Float
+  heading: Float
+  latitude: Float
+  longitude: Float
+  recordedAt: String
+  speed: Float
+}
+
+type PlaceOrderPlaceOrder {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  discountAmount: Float
+  eta: OrderEta
+  expectedTime: String
+  instructions: String
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type SubscribePlaceOrderOrder {
+  _id: ID
+  acceptedAt: String
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  discountAmount: Float
+  eta: OrderEta
+  id: ID
+  instructions: String
+  isActive: Boolean
+  isPickedUp: Boolean
+  isRinged: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type SubscribePlaceOrderSubscribePlaceOrder {
+  order: SubscribePlaceOrderOrder
+  origin: String
+  userId: ID
+}
+
+type SubscriptionOrderSubscriptionOrder {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  deliveredAt: String
+  eta: OrderEta
+  isPickedUp: Boolean
+  orderStatus: String
+  pickedAt: String
+  preparationTime: String
+  rider: Rider
+}
+
+type UpdateStatusUpdateStatus {
+  _id: ID
+  orderStatus: String
+}
+
+extend type Query {
+  allOrders(page: Int): AllOrdersAllOrders
+  allOrdersPaginated(
+    dateKeyword: String
+    ending_date: String
+    orderStatus: [String]
+    page: Int
+    restaurantId: ID
+    riderId: ID
+    rows: Int
+    search: String
+    starting_date: String
+  ): AllOrdersPaginatedAllOrdersPaginated
+  allOrdersWithoutPagination(
+    dateKeyword: String
+    ending_date: String
+    starting_date: String
+  ): AllOrdersWithoutPaginationAllOrdersWithoutPagination
+  getUsersActiveOrders(
+    limit: Int
+    offset: Int
+    page: Int
+  ): GetUsersActiveOrdersGetUsersActiveOrders
+  getUsersPastOrders(
+    limit: Int
+    offset: Int
+    page: Int
+  ): GetUsersPastOrdersGetUsersPastOrders
+  order(id: String): OrderOrder
+  orderDetails(id: String): OrderDetailsOrderDetails
+  orderFilterOptions: OrderFilterOptionsOrderFilterOptions
+  orders(limit: Int, offset: Int, page: Int): OrdersOrders
+  ordersByRestId(
+    orderStatus: [String]
+    page: Int
+    restaurant: String
+    rows: Int
+    search: String
+  ): OrdersByRestIdOrdersByRestId
+  ordersByRestIdWithoutPagination(
+    restaurant: String
+    search: String
+  ): OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination
+  restaurantOrders(limit: Int, offset: Int): RestaurantOrdersRestaurantOrders
+}
+
+extend type Mutation {
+  abortOrder(id: String): AbortOrderAbortOrder
+  acceptOrder(_id: String, time: String): AcceptOrderAcceptOrder
+  cancelOrder(_id: String, reason: String): CancelOrderCancelOrder
+  coupon(coupon: String, restaurantId: ID): Coupon
+  muteRing(orderId: String): String
+  orderPickedUp(_id: String): OrderPickedUpOrderPickedUp
+  placeOrder(
+    address: AddressInput
+    couponCode: String
+    deliveryCharges: Float
+    instructions: String
+    isPickedUp: Boolean
+    orderDate: String
+    orderInput: [OrderInput]
+    paymentMethod: String
+    restaurant: String
+    taxationAmount: Float
+    tipping: Float
+  ): PlaceOrderPlaceOrder
+  reviewOrder(reviewInput: ReviewOrderReviewInputInput): ReviewOrderReviewOrder
+  updateStatus(id: String, orderStatus: String): UpdateStatusUpdateStatus
+}
+
+extend type Subscription {
+  orderStatusChanged(userId: String): OrderStatusChangedOrderStatusChanged
+  subscribePlaceOrder(
+    restaurant: String
+  ): SubscribePlaceOrderSubscribePlaceOrder
+  subscriptionOrder(id: String): SubscriptionOrderSubscriptionOrder
+}

@@ -1,0 +1,540 @@
+# Generated from pinned Enatega documents. Lane owners refine this schema.
+
+type AssignOrderAssignOrder {
+  _id: ID
+  orderStatus: String
+  rider: Rider
+}
+
+type AssignRiderAssignRider {
+  _id: ID
+  orderStatus: String
+  rider: Rider
+}
+
+type AvailableRidersAvailableRiders {
+  _id: ID
+  available: Boolean
+  name: String
+  phone: String
+  username: String
+  vehicleType: String
+  zone: Zone
+}
+
+type ChatChat {
+  createdAt: String
+  id: ID
+  image: String
+  message: String
+  user: User
+}
+
+type CreateRiderCreateRider {
+  _id: ID
+  available: Boolean
+  name: String
+  phone: String
+  username: String
+  vehicleType: String
+  zone: Zone
+}
+
+type DeleteRiderDeleteRider {
+  _id: ID
+}
+
+type EditRiderEditRider {
+  _id: ID
+  name: String
+  phone: String
+  username: String
+  vehicleType: String
+  zone: Zone
+}
+
+type GetActiveOrdersGetActiveOrders {
+  orders: GetActiveOrdersOrders
+  totalCount: Int
+}
+
+type GetActiveOrdersOrders {
+  _id: ID
+  completionTime: String
+  createdAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  eta: OrderEta
+  isActive: Boolean
+  isPickedUp: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  preparationTime: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  user: User
+  zone: Zone
+}
+
+type GetLiveMonitorDataGetLiveMonitorData {
+  cancelled_orders: String
+  delayed_orders: String
+  online_stores: String
+  ratings: Float
+}
+
+type RegisterLiveActivitySessionRegisterLiveActivitySession {
+  message: String
+  success: Boolean
+}
+
+type RemoveLiveActivitySessionRemoveLiveActivitySession {
+  message: String
+  success: Boolean
+}
+
+type Rider {
+  _id: ID
+  accountNumber: String
+  assigned: String
+  available: Boolean
+  bussinessDetails: BussinessDetails
+  createdAt: String
+  currentWalletAmount: Float
+  email: String
+  image: String
+  isActive: Boolean
+  licenseDetails: RiderLicenseDetails
+  location: Location
+  name: String
+  phone: String
+  timeZone: String
+  totalWalletAmount: Float
+  updatedAt: String
+  username: String
+  vehicleDetails: RiderVehicleDetails
+  vehicleType: String
+  withdrawnWalletAmount: Float
+  workSchedule: RiderWorkSchedule
+  zone: Zone
+}
+
+type RiderCurrentWithdrawRequestRiderCurrentWithdrawRequest {
+  _id: ID
+  createdAt: String
+  requestAmount: Float
+  status: String
+}
+
+type RiderEarningsGraphEarnings {
+  _id: ID
+  date: String
+  earningsArray: RiderEarningsGraphEarningsEarningsArray
+  totalDeliveries: String
+  totalEarningsSum: String
+  totalHours: String
+  totalTipsSum: String
+}
+
+type RiderEarningsGraphEarningsEarningsArray {
+  date: String
+  deliveryFee: String
+  orderDetails: RiderEarningsGraphEarningsEarningsArrayOrderDetails
+  tip: String
+  totalEarnings: String
+}
+
+type RiderEarningsGraphEarningsEarningsArrayOrderDetails {
+  orderId: String
+  orderType: String
+  paymentMethod: String
+}
+
+type RiderEarningsGraphRiderEarningsGraph {
+  earnings: RiderEarningsGraphEarnings
+  totalCount: Int
+}
+
+type RiderLicenseDetails {
+  expiryDate: String
+  image: String
+  number: String
+}
+
+type RiderLoginRiderLogin {
+  token: String
+  userId: ID
+}
+
+type RiderOrdersRiderOrders {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  eta: OrderEta
+  expectedTime: String
+  isPickedUp: Boolean
+  isRiderRinged: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderState: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type RidersByZoneRidersByZone {
+  _id: ID
+  available: Boolean
+  name: String
+  phone: String
+  username: String
+  vehicleType: String
+  zone: Zone
+}
+
+type RidersPaginatedData {
+  _id: ID
+  assigned: String
+  available: Boolean
+  name: String
+  phone: String
+  username: String
+  vehicleType: String
+  zone: Zone
+}
+
+type RidersPaginatedRidersPaginated {
+  currentPage: String
+  data: RidersPaginatedData
+  totalCount: Int
+  totalPages: Int
+}
+
+type RiderUpdatedRiderUpdated {
+  _id: ID
+}
+
+type RiderVehicleDetails {
+  image: String
+  number: String
+}
+
+type RiderWorkSchedule {
+  day: String
+  enabled: Boolean
+  slots: RiderWorkScheduleSlots
+}
+
+type RiderWorkScheduleSlots {
+  endTime: String
+  startTime: String
+}
+
+type SendChatMessageData {
+  createdAt: String
+  id: ID
+  image: String
+  message: String
+  user: User
+}
+
+type SendChatMessageSendChatMessage {
+  data: SendChatMessageData
+  message: String
+  success: Boolean
+}
+
+type SubscriptionAssignRiderOrder {
+  _id: ID
+  acceptedAt: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  expectedTime: String
+  isPickedUp: Boolean
+  isRiderRinged: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderState: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type SubscriptionAssignRiderSubscriptionAssignRider {
+  order: SubscriptionAssignRiderOrder
+  origin: String
+}
+
+type SubscriptionDispatcherSubscriptionDispatcher {
+  _id: ID
+  acceptedAt: String
+  completionTime: String
+  createdAt: String
+  deliveryAddress: Address
+  eta: OrderEta
+  expectedTime: String
+  isActive: Boolean
+  isPickedUp: Boolean
+  orderId: String
+  orderStatus: String
+  paymentMethod: String
+  preparationTime: String
+  restaurant: Restaurant
+  rider: Rider
+  selectedPrepTime: String
+  status: String
+  user: User
+  zone: Zone
+}
+
+type SubscriptionNewMessageSubscriptionNewMessage {
+  createdAt: String
+  id: ID
+  image: String
+  message: String
+  user: User
+}
+
+type SubscriptionOrderTrackingRiderLocation {
+  accuracy: Float
+  heading: Float
+  latitude: Float
+  longitude: Float
+  recordedAt: String
+  speed: Float
+}
+
+type SubscriptionOrderTrackingSubscriptionOrderTracking {
+  eta: OrderEta
+  orderId: String
+  riderLocation: SubscriptionOrderTrackingRiderLocation
+  status: String
+}
+
+type SubscriptionRiderLocationSubscriptionRiderLocation {
+  _id: ID
+  location: Location
+}
+
+type SubscriptionZoneOrdersOrder {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  expectedTime: String
+  isPickedUp: Boolean
+  isRiderRinged: Boolean
+  items: OrderItem
+  orderAmount: Float
+  orderId: String
+  orderState: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  reason: String
+  restaurant: Restaurant
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
+}
+
+type SubscriptionZoneOrdersSubscriptionZoneOrders {
+  order: SubscriptionZoneOrdersOrder
+  origin: String
+  zoneId: ID
+}
+
+type ToggleAvailablityToggleAvailablity {
+  _id: ID
+  available: Boolean
+  name: String
+  phone: String
+  username: String
+  vehicleType: String
+  zone: Zone
+}
+
+type UpdateOrderStatusRiderUpdateOrderStatusRider {
+  _id: ID
+  orderStatus: String
+}
+
+type UpdateRiderBussinessDetailsUpdateRiderBussinessDetails {
+  _id: ID
+}
+
+type UpdateRiderLicenseDetailsUpdateRiderLicenseDetails {
+  _id: ID
+}
+
+type UpdateRiderLocationUpdateRiderLocation {
+  _id: ID
+}
+
+type UpdateRiderVehicleDetailsUpdateRiderVehicleDetails {
+  _id: ID
+}
+
+type UpdateWorkScheduleUpdateWorkSchedule {
+  _id: ID
+  timeZone: String
+  workSchedule: UpdateWorkScheduleWorkSchedule
+}
+
+type UpdateWorkScheduleWorkSchedule {
+  day: String
+  enabled: Boolean
+  slots: UpdateWorkScheduleWorkScheduleSlots
+}
+
+type UpdateWorkScheduleWorkScheduleSlots {
+  endTime: String
+  startTime: String
+}
+
+extend type Query {
+  availableRiders: AvailableRidersAvailableRiders
+  chat(order: ID): ChatChat
+  getActiveOrders(
+    actions: [String]
+    page: Int
+    restaurantId: ID
+    rowsPerPage: Int
+    search: String
+  ): GetActiveOrdersGetActiveOrders
+  getLiveMonitorData(
+    dateKeyword: String
+    ending_date: String
+    id: String
+    starting_date: String
+  ): GetLiveMonitorDataGetLiveMonitorData
+  orderTracking(id: ID): OrderTrackingOrderTracking
+  rider(id: String): Rider
+  riderOrders(limit: Int, offset: Int): RiderOrdersRiderOrders
+  riders: Rider
+  ridersByZone(id: String): RidersByZoneRidersByZone
+  ridersPaginated(
+    available: Boolean
+    isActive: Boolean
+    limit: Int
+    page: Int
+    search: String
+    zone: String
+  ): RidersPaginatedRidersPaginated
+}
+
+extend type Mutation {
+  assignOrder(id: String): AssignOrderAssignOrder
+  assignRider(id: String, riderId: String): AssignRiderAssignRider
+  createRider(riderInput: RiderInput): CreateRiderCreateRider
+  deleteRider(id: String): DeleteRiderDeleteRider
+  editRider(riderInput: RiderInput): EditRiderEditRider
+  registerLiveActivitySession(
+    activityId: String
+    language: String
+    orderId: ID
+    platform: String
+    pushToken: String
+    schemaVersion: Int
+  ): RegisterLiveActivitySessionRegisterLiveActivitySession
+  removeLiveActivitySession(
+    activityId: String
+    orderId: ID
+  ): RemoveLiveActivitySessionRemoveLiveActivitySession
+  sendChatMessage(
+    message: ChatMessageInput
+    orderId: ID
+  ): SendChatMessageSendChatMessage
+  toggleAvailablity(id: String): ToggleAvailablityToggleAvailablity
+  updateOrderStatusRider(
+    id: String
+    status: String
+  ): UpdateOrderStatusRiderUpdateOrderStatusRider
+  updateRiderBussinessDetails(
+    bussinessDetails: BussinessDetailsInput
+    id: String
+  ): UpdateRiderBussinessDetailsUpdateRiderBussinessDetails
+  updateRiderLicenseDetails(
+    id: String
+    licenseDetails: LicenseDetailsInput
+  ): UpdateRiderLicenseDetailsUpdateRiderLicenseDetails
+  updateRiderLocation(
+    accuracy: Float
+    deviceTimestamp: String
+    heading: Float
+    latitude: String
+    longitude: String
+    speed: Float
+  ): UpdateRiderLocationUpdateRiderLocation
+  updateRiderVehicleDetails(
+    id: String
+    vehicleDetails: VehicleDetailsInput
+  ): UpdateRiderVehicleDetailsUpdateRiderVehicleDetails
+  updateWorkSchedule(
+    riderId: String
+    timeZone: String
+    workSchedule: [DayScheduleInput]
+  ): UpdateWorkScheduleUpdateWorkSchedule
+}
+
+extend type Subscription {
+  riderUpdated: RiderUpdatedRiderUpdated
+  subscriptionAssignRider(
+    riderId: String
+  ): SubscriptionAssignRiderSubscriptionAssignRider
+  subscriptionDispatcher: SubscriptionDispatcherSubscriptionDispatcher
+  subscriptionNewMessage(
+    order: ID
+  ): SubscriptionNewMessageSubscriptionNewMessage
+  subscriptionOrderTracking(
+    id: String
+  ): SubscriptionOrderTrackingSubscriptionOrderTracking
+  subscriptionRiderLocation(
+    riderId: String
+  ): SubscriptionRiderLocationSubscriptionRiderLocation
+  subscriptionZoneOrders(
+    zoneId: String
+  ): SubscriptionZoneOrdersSubscriptionZoneOrders
+}
