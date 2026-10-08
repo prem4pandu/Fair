@@ -11,7 +11,7 @@
     "Role and application binding across API, web and native consumers"
   ],
   "verification": {
-    "unit_http": "130 passed across 10 packages",
+    "unit_http": "134 passed across 10 packages",
     "api_integration": "17 passed against real PostgreSQL/PostGIS and Redis",
     "client_integration": "5 passed against real API, PostgreSQL/PostGIS and Redis",
     "browser_e2e": "22 passed across foundation, development identity and controlled localhost TLS production boundaries",
