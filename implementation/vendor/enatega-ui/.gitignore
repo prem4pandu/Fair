@@ -1,0 +1,5 @@
+# Upstream Firebase project bindings are intentionally not part of Fair.
+/enatega-multivendor-app/GoogleService-Info.plist
+/enatega-multivendor-app/google-services.json
+/enatega-multivendor-rider/google-services.json
+/enatega-multivendor-store/google-services.json

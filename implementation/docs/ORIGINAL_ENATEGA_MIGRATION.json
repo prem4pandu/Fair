@@ -1,13 +1,19 @@
 {
   "date": "2026-10-08",
   "rule": "Original complete pinned Enatega UI only; FairBite backend/integration only; no custom/source-derived replacement UI",
-  "candidate": ".toolchain/enatega-original-customer-web",
-  "source_files": 711,
-  "page_routes": 39,
+  "tracked_baseline": "vendor/enatega-ui",
+  "source_packages": 6,
+  "manifest_entries": 4137,
+  "customer_web_page_files": 40,
   "source_hash_mismatches": 0,
   "claimed_upstream_commit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
   "provenance_limit": "Hash comparison to local pinned source; independent upstream clone revision not verified",
-  "candidate_state": "Unchanged source copied; dependencies not installed; build/E2E NOT_RUN; not integrated into live apps",
+  "baseline_state": "Complete six-package UI source baseline tracked with licenses, provenance and SHA-256 manifest. Four upstream Firebase application-binding files excluded. Dependencies not installed; original applications not built, integrated or E2E verified.",
+  "baseline_evidence": [
+    "vendor/enatega-ui/SOURCE_PROVENANCE.json",
+    "vendor/enatega-ui/SOURCE_MANIFEST.json",
+    "vendor/enatega-ui/FAIR_INTEGRATION.md"
+  ],
   "required_integration": [
     "Validated server public configuration without provider secrets/fake activation",
     "Secure transport/session bridge replaces original localStorage token handling without redesigning UI",

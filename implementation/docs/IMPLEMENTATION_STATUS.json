@@ -1,7 +1,7 @@
 {
   "date": "2026-10-08",
   "overall": "IN_PROGRESS",
-  "frontend_baseline": "NONCOMPLIANT: running shells and rewritten source-derived screens are not the required original Enatega UI; full source migration pending",
+  "frontend_baseline": "Complete original six-package Enatega source is tracked under vendor/enatega-ui with licenses and verified manifest; current runnable shells remain NONCOMPLIANT and original source integration is pending",
   "FB00": "Static source/action baseline and selected identity audits recorded; full semantics/runtime parity/cloud catalog reconciliation pending",
   "FB01": "Bounded public API/worker/six-app connection foundation implemented, independently reviewed and checked; full foundation gates pending",
   "FB02": "Password identity/session slice implemented and verified across API and six apps; recovery, OTP/social, MFA/provisioning, native-device and release gates remain IN_PROGRESS",

@@ -1,0 +1,25 @@
+{
+  "sourceRepository": "https://github.com/Ninjas-Code-official/Enatega-Multivendor-Food-Delivery-Solution",
+  "ownerReference": "https://deepwiki.com/enatega/food-delivery-multivendor",
+  "claimedUpstreamCommit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
+  "commitIndependentlyVerified": false,
+  "copiedFrom": "repository-local upstream snapshot",
+  "copiedOn": "2026-10-08",
+  "packages": {
+    "enatega-multivendor-web": "customer web",
+    "enatega-multivendor-admin": "platform administration and merchant/vendor web routes",
+    "enatega-singlevendor-admin": "separate single-vendor administration product and integration candidate",
+    "enatega-multivendor-app": "customer mobile",
+    "enatega-multivendor-store": "merchant mobile",
+    "enatega-multivendor-rider": "rider mobile"
+  },
+  "exclusions": [
+    "Git metadata",
+    "dependency directories",
+    "generated build and test output",
+    "local environment files",
+    "operating-system metadata",
+    "upstream Firebase application-binding files"
+  ],
+  "verification": "SOURCE_MANIFEST.json contains the copied file paths, byte sizes and SHA-256 digests. The claimed commit cannot be independently established from the repository-local snapshot because it has no separate Git metadata."
+}
