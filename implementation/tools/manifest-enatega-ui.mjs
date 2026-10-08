@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
-import { dirname, relative, resolve } from "node:path";
+import { dirname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const implementation = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -23,7 +23,7 @@ function files(directory) {
       if (
         !entry.isFile() ||
         ignored.has(entry.name) ||
-        excludedPaths.has(relative(source, path))
+        excludedPaths.has(relative(source, path).split(sep).join("/"))
       )
         return [];
       return [path];
@@ -33,7 +33,7 @@ function files(directory) {
 const entries = files(source).map((path) => {
   const data = readFileSync(path);
   return {
-    path: relative(source, path),
+    path: relative(source, path).split(sep).join("/"),
     bytes: statSync(path).size,
     sha256: createHash("sha256").update(data).digest("hex"),
   };

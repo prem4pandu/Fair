@@ -8,6 +8,7 @@ export default tseslint.config(
       "**/.expo/**",
       "**/generated/**",
       "upstream/**",
+      "vendor/**",
       "**/.toolchain/**",
       "**/dist-verified/**",
       "**/dist-native/**",

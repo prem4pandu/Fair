@@ -12,12 +12,10 @@
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "test:integration": "pnpm --filter @fairbite/api test:integration",
-    "test:e2e": "playwright test",
     "codegen": "graphql-codegen --config codegen.ts && prettier --write packages/identity-contracts/src/generated.ts",
-    "test:clients": "vitest run --config vitest.clients.config.ts",
     "codegen:check": "node tools/check-codegen.mjs",
     "check:enatega-ui-source": "node tools/manifest-enatega-ui.mjs --check",
-    "check:enatega": "node tools/check-enatega-compatibility.mjs ../upstream contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check",
+    "check:enatega": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check",
     "test:enatega-contracts": "node --test tools/check-enatega-compatibility.test.mjs"
   },
   "devDependencies": {

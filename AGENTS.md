@@ -14,12 +14,14 @@ An unsupported backend capability is an integration blocker, never permission
 to substitute another UI, fabricate data or call the upstream production backend.
 Do not remove original screens or actions to hide missing backend implementation.
 
-Current lightweight shells and rewritten identity/catalog/address screens are
-NONCOMPLIANT product presentation. Their backend/test evidence remains useful,
-but they cannot satisfy Enatega UI parity or product completion. Migrate the
-original source in isolated candidates, preserve existing changes and integrate
-only after independent review plus actual build/E2E and visual parity checks.
-This rule must be included in every frontend/mobile implementation handoff.
+The product UI is the unchanged pinned Enatega multivendor source in
+`implementation/vendor/enatega-ui/` (admin, customer app, rider, store, customer web).
+The earlier replacement shells were removed on 2026-10-08. The backend must
+implement the GraphQL/REST/WebSocket API those apps call, with the same
+operation names, arguments and response shapes. Any edit inside
+`implementation/vendor/enatega-ui/` must be recorded in `SOURCE_PROVENANCE.json`
+under `allowedModifications`. This rule must be included in every
+frontend/mobile implementation handoff.
 
 # Fresh-build engineering boundaries
 

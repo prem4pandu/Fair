@@ -1,6 +1,81 @@
 {
   "repository": "https://github.com/enatega/food-delivery-multivendor",
   "commit": "d9eb29e8b32b6ec11ee038f94d43caa0eba54bab",
-  "directory": "upstream",
+  "upstreamTag": "enatega-upstream-d9eb29e",
+  "license": "MIT (implementation/vendor/enatega-ui/LICENSE)",
+  "directory": "implementation/vendor/enatega-ui",
+  "packageManifest": "implementation/vendor/enatega-ui/SOURCE_MANIFEST.json",
+  "imported": [
+    {
+      "directory": "enatega-multivendor-admin",
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-admin",
+      "upstreamGitTree": "5b0d5b49c17dfe3553a7b5f582c33164978b69a5",
+      "gitTree": "5b0d5b49c17dfe3553a7b5f582c33164978b69a5",
+      "files": 864
+    },
+    {
+      "directory": "enatega-multivendor-app",
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-app",
+      "upstreamGitTree": "df993417cbec43f38f81370b15f053c313266214",
+      "gitTree": "fdb714dd54db56563a87b26f1b4210db9a8f7eb9",
+      "files": 980
+    },
+    {
+      "directory": "enatega-multivendor-rider",
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-rider",
+      "upstreamGitTree": "b297bb399eddbfbc625e0461b8eb7fc41538ff8b",
+      "gitTree": "48e190c839f12804bd2eb73cc9f7964b2d65524f",
+      "files": 359
+    },
+    {
+      "directory": "enatega-multivendor-store",
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-store",
+      "upstreamGitTree": "afdd0698464d4e62892929e96eef0fa932ca1a2b",
+      "gitTree": "cddf43c985d91c4d2251ef8257d1f9b960eb0ae1",
+      "files": 294
+    },
+    {
+      "directory": "enatega-multivendor-web",
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-web",
+      "upstreamGitTree": "e0a88ec2beeeab5af277e1d18404d514268e296d",
+      "gitTree": "e0a88ec2beeeab5af277e1d18404d514268e296d",
+      "files": 711
+    },
+    {
+      "directory": "enatega-singlevendor-admin",
+      "path": "implementation/vendor/enatega-ui/enatega-singlevendor-admin",
+      "upstreamGitTree": "ba60af78264bd7db896ad36ead277d310159f42a",
+      "gitTree": "ba60af78264bd7db896ad36ead277d310159f42a",
+      "files": 919
+    }
+  ],
+  "excluded": [
+    "upstream Firebase application-binding files (see allowedModifications)",
+    "assets/ (README screenshots, not app source)",
+    ".codex/, .github/, lib/ and index.html at the upstream repository root"
+  ],
+  "verify": "For each entry, `git diff --name-status <commit>:<directory> HEAD:<path>` must list only the files under allowedModifications. Any other difference is an unrecorded modification.",
+  "allowedModifications": [
+    {
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-app/GoogleService-Info.plist",
+      "change": "removed",
+      "reason": "Upstream Firebase project binding; Fair generates its own per environment."
+    },
+    {
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-app/google-services.json",
+      "change": "removed",
+      "reason": "Upstream Firebase project binding; Fair generates its own per environment."
+    },
+    {
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-rider/google-services.json",
+      "change": "removed",
+      "reason": "Upstream Firebase project binding; Fair generates its own per environment."
+    },
+    {
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-store/google-services.json",
+      "change": "removed",
+      "reason": "Upstream Firebase project binding; Fair generates its own per environment."
+    }
+  ],
   "executed_upstream_code": false
 }

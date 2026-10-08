@@ -16,8 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RUN = ROOT / ".toolchain" / "local-run"
 PID_FILE = RUN / "pids.json"
 CONFIG_FILE = RUN / "runtime.json"
-NAMES = ["api", "worker", "customer-web", "merchant-web", "admin-web",
-         "customer-mobile", "merchant-mobile", "rider-mobile"]
+NAMES = ["api", "worker"]
 PORTS = dict(zip([n for n in NAMES if n != "worker"],
                  [4100, 3100, 3101, 3102, 8081, 8082, 8083]))
 

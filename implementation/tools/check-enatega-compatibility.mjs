@@ -9,7 +9,9 @@ import {
   print,
 } from "graphql";
 import { readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
-import { resolve, relative, extname } from "node:path";
+import { resolve, relative as nativeRelative, extname, sep } from "node:path";
+// Report paths are POSIX-style on every platform so reports stay byte-stable.
+const relative = (from, to) => nativeRelative(from, to).split(sep).join("/");
 import { fileURLToPath } from "node:url";
 import { runInNewContext } from "node:vm";
 import { createHash } from "node:crypto";

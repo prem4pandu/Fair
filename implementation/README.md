@@ -1,7 +1,7 @@
 # Fresh application workspace
 
 This is the fresh application workspace and independently implemented backend foundation.
-Enatega presentation adoption is planned after the source/action audit; the current apps are original public connection shells.
+The product UI is the unchanged Enatega multivendor source in `vendor/enatega-ui/`; each app keeps its own npm lockfile and is not part of the pnpm workspace.
 The prior FairBite application remains preserved in its original directory.
 The product display name is imported from `@fairbite/brand`.
 
@@ -14,7 +14,7 @@ Use Node.js 24 and Corepack. Run `./tools/pnpm.sh install --frozen-lockfile`, th
 Backend settings are explicit; there is no upstream production endpoint fallback.
 See `docs/EXECUTION_PLAN.json` for phase gates and external blockers.
 
-Verification: `./tools/pnpm.sh lint`, `typecheck`, `test`, `test:integration`, and `test:e2e`.
+Verification: `./tools/pnpm.sh lint`, `typecheck`, `test` and `test:integration`. Browser E2E against the Enatega apps returns with the backend contract work.
 Real-stack checks need Docker; on this host select the Colima socket through DOCKER_HOST.
 See `docs/FOUNDATION_EVIDENCE.json` for actual results and remaining gates.
 
