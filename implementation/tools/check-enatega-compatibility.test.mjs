@@ -15,6 +15,7 @@ function fixture(
   t,
   source,
   schema = "type Query { viewer: User } type User { id: ID!, child: User } type Mutation { save: User }",
+  options = {},
 ) {
   const root = mkdtempSync(join(tmpdir(), "fair-compatibility-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -29,11 +30,74 @@ function fixture(
       "utf8",
     ),
   );
-  const run = () =>
-    audit(join(root, "source"), join(root, "contracts"), ["app"]);
+  const run = (auditOptions = options.audit) =>
+    audit(join(root, "source"), join(root, "contracts"), ["app"], auditOptions);
   run.root = root;
   return run;
 }
+
+test("reads boundedOperation from services/api/src/kernel/limits.ts when present", (t) => {
+  const run = fixture(t, "const doc = gql`query { viewer { id } }`;");
+  const kernel = join(run.root, "services/api/src/kernel");
+  mkdirSync(kernel, { recursive: true });
+  writeFileSync(
+    join(kernel, "limits.ts"),
+    `import { GraphQLError, Kind } from "graphql";
+export const LIMITS = { fields: 1 } as const;
+export const boundedOperation = (context) => ({
+  Document(node) {
+    let fields = 0;
+    const visit = (value) => {
+      if (value?.kind === Kind.FIELD) fields++;
+      for (const child of value?.selectionSet?.selections ?? []) visit(child);
+    };
+    for (const definition of node.definitions) visit(definition);
+    if (fields > LIMITS.fields)
+      context.reportError(new GraphQLError("Operation exceeds allowed limits"));
+  },
+});`,
+  );
+  const report = run();
+  assert.equal(report.serverLimits.source, "services/api/src/kernel/limits.ts");
+  assert.deepEqual(report.apps[0].documents[0].backendOperationLimits, [
+    "Operation exceeds allowed limits",
+  ]);
+});
+
+test("multivendor scope ignores documents whose only missing roots are L12", (t) => {
+  const run = fixture(t, "const doc = gql`query { singleVendorDiscovery }`;");
+  const report = run({
+    scope: "multivendor",
+    lanes: { "query.singleVendorDiscovery": "L12" },
+  });
+  assert.equal(report.apps[0].documents[0].status, "OUT_OF_SCOPE");
+  assert.equal(report.staticCompatibility, "PASS");
+});
+
+test("reads the configured GraphQL body-limit default", (t) => {
+  const run = fixture(t, "const doc = gql`query { viewer { id } }`;");
+  writeFileSync(
+    join(run.root, "services/api/src/config.ts"),
+    'const schema = z.object({ GRAPHQL_BODY_LIMIT: z.string().default("2mb") });',
+  );
+  assert.equal(run().serverLimits.httpBodyBytes, 2 * 1024 * 1024);
+});
+
+test("multivendor scope still fails documents with any in-scope missing root", (t) => {
+  const run = fixture(
+    t,
+    "const doc = gql`query { singleVendorDiscovery multivendorDiscovery }`;",
+  );
+  const report = run({
+    scope: "multivendor",
+    lanes: {
+      "query.singleVendorDiscovery": "L12",
+      "query.multivendorDiscovery": "L3",
+    },
+  });
+  assert.equal(report.apps[0].documents[0].status, "INVALID");
+  assert.equal(report.staticCompatibility, "FAIL");
+});
 
 test("valid static fragments, aliases and multiline comments validate deterministically", (t) => {
   const run = fixture(

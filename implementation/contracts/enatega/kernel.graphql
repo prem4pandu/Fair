@@ -1,0 +1,27 @@
+# Public-access handshake used by every Enatega app before other operations.
+# Only `experience` (token) and `hehe` (ISO-8601 expiry) are read by clients;
+# the other fields are selected by every client and must exist.
+type MetricsGeneral {
+  excellence: String
+  topgun: String
+  experience: String!
+  skydiver: String
+  rider: String
+  haha: String
+  hehe: String!
+  huhu: String
+  yoyo: String
+  turu: String
+}
+
+type Mutation {
+  metricsGeneral: MetricsGeneral!
+}
+
+type Query {
+  _kernel: String
+}
+
+type Subscription {
+  _kernel: String
+}

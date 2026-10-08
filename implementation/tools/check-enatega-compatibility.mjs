@@ -48,59 +48,103 @@ function looksLikeGraphQL(text) {
     text,
   );
 }
-export function audit(source, contracts, appNames = apps) {
+function limitBytes(value) {
+  const match = /^(\d+)(kb|mb)$/.exec(value);
+  if (!match) return null;
+  return Number(match[1]) * (match[2] === "mb" ? 1024 * 1024 : 1024);
+}
+
+function laneMap(lanes) {
+  if (!lanes) return {};
+  if (!Array.isArray(lanes.operations)) return lanes;
+  return Object.fromEntries(
+    lanes.operations.map(({ type, name, lane }) => [`${type}.${name}`, lane]),
+  );
+}
+
+function readValidationRule(contracts) {
+  const candidates = [
+    resolve(contracts, "../services/api/src/kernel/limits.ts"),
+    resolve(contracts, "../services/api/src/app.ts"),
+  ];
+  const serverPath = candidates.find(existsSync);
+  if (!serverPath)
+    return {
+      boundRule: undefined,
+      serverLimits: { status: "NOT_INSPECTED", reason: "API source is absent" },
+    };
+
+  const server = readFileSync(serverPath, "utf8");
+  const serverAst = ts.createSourceFile(
+    serverPath,
+    server,
+    ts.ScriptTarget.Latest,
+    true,
+  );
+  let ruleExpression;
+  let limitsExpression;
+  const findDeclarations = (node) => {
+    if (ts.isVariableDeclaration(node)) {
+      const name = node.name.getText(serverAst);
+      if (name === "boundedOperation")
+        ruleExpression = node.initializer?.getText(serverAst);
+      if (name === "LIMITS")
+        limitsExpression = node.initializer?.getText(serverAst);
+    }
+    ts.forEachChild(node, findDeclarations);
+  };
+  findDeclarations(serverAst);
+  if (!ruleExpression)
+    throw new Error("Cannot locate actual backend boundedOperation rule");
+
+  const compiled = ts.transpileModule(
+    `${limitsExpression ? `const LIMITS = ${limitsExpression};` : ""}\nconst rule = ${ruleExpression}; rule;`,
+    { compilerOptions: { target: ts.ScriptTarget.ES2022 } },
+  ).outputText;
+  const boundRule = runInNewContext(
+    compiled,
+    { Kind, GraphQLError, print },
+    { timeout: 1000 },
+  );
+
+  const configPath = resolve(contracts, "../services/api/src/config.ts");
+  const config = existsSync(configPath) ? readFileSync(configPath, "utf8") : "";
+  const configured =
+    /GRAPHQL_BODY_LIMIT[\s\S]*?\.default\(["'](\d+(?:kb|mb))["']\)/.exec(
+      config,
+    )?.[1];
+  const httpBodyBytes = configured
+    ? limitBytes(configured)
+    : /json\(\{\s*limit:\s*["']16kb["']/.test(server) ||
+        (serverPath.endsWith("limits.ts") &&
+          existsSync(candidates[1]) &&
+          /json\(\{\s*limit:\s*["']16kb["']/.test(
+            readFileSync(candidates[1], "utf8"),
+          ))
+      ? 16384
+      : null;
+  const source = relative(resolve(contracts, ".."), serverPath);
+  return {
+    boundRule,
+    serverLimits: {
+      status: "ACTUAL_RULE_EXTRACTED",
+      source,
+      sourceSha256: hash(server),
+      httpBodyBytes,
+      caveat:
+        "Body check uses GraphQL print AST and query-only JSON; variables, operationName, extensions and transport encoding can increase actual bytes.",
+    },
+  };
+}
+
+export function audit(source, contracts, appNames = apps, options = {}) {
   const schemaFiles = files(contracts, [".graphql"]);
   if (!schemaFiles.length) throw new Error("No backend SDL files found");
   const schema = buildSchema(
     schemaFiles.map((path) => readFileSync(path, "utf8")).join("\n"),
   );
-  const serverPath = resolve(contracts, "../services/api/src/app.ts");
-  let boundRule;
-  let serverLimits = {
-    status: "NOT_INSPECTED",
-    reason: "API source is absent",
-  };
-  if (existsSync(serverPath)) {
-    const server = readFileSync(serverPath, "utf8");
-    const serverAst = ts.createSourceFile(
-      serverPath,
-      server,
-      ts.ScriptTarget.Latest,
-      true,
-    );
-    let expression;
-    const findRule = (node) => {
-      if (
-        ts.isVariableDeclaration(node) &&
-        node.name.getText(serverAst) === "boundedOperation"
-      )
-        expression = node.initializer?.getText(serverAst);
-      ts.forEachChild(node, findRule);
-    };
-    findRule(serverAst);
-    if (!expression)
-      throw new Error("Cannot locate actual backend boundedOperation rule");
-    // Execute only our local validation rule, never frontend/upstream source.
-    const compiled = ts.transpileModule(`const rule = ${expression}; rule;`, {
-      compilerOptions: { target: ts.ScriptTarget.ES2022 },
-    }).outputText;
-    boundRule = runInNewContext(
-      compiled,
-      { Kind, GraphQLError, print },
-      { timeout: 1000 },
-    );
-    const bodyLimit = /json\(\{\s*limit:\s*["']16kb["']/.test(server)
-      ? 16384
-      : null;
-    serverLimits = {
-      status: "ACTUAL_RULE_EXTRACTED",
-      source: "services/api/src/app.ts",
-      sourceSha256: hash(server),
-      httpBodyBytes: bodyLimit,
-      caveat:
-        "Body check uses GraphQL print AST and query-only JSON; variables, operationName, extensions and transport encoding can increase actual bytes.",
-    };
-  }
+  const { boundRule, serverLimits } = readValidationRule(contracts);
+  const lanes = laneMap(options.lanes);
   const reports = appNames.map((app) => {
     const documents = [];
     const sourceErrors = [];
@@ -185,6 +229,12 @@ export function audit(source, contracts, appNames = apps) {
             document.errors.length || document.missingRoots.length
               ? "INVALID"
               : "VALID_STATIC_DOCUMENT";
+          if (
+            options.scope === "multivendor" &&
+            document.missingRoots.length > 0 &&
+            document.missingRoots.every((root) => lanes[root] === "L12")
+          )
+            document.status = "OUT_OF_SCOPE";
           document.backendOperationLimits = boundRule
             ? validate(schema, ast, [boundRule]).map((error) => error.message)
             : null;
@@ -276,6 +326,8 @@ export function audit(source, contracts, appNames = apps) {
       ).length,
       unresolvedDocuments: documents.filter((d) => d.status === "UNRESOLVED")
         .length,
+      outOfScopeDocuments: documents.filter((d) => d.status === "OUT_OF_SCOPE")
+        .length,
       missingRoots,
       sourceErrors,
       documents,
@@ -289,7 +341,8 @@ export function audit(source, contracts, appNames = apps) {
       (report) =>
         report.totalDocuments > 0 &&
         report.sourceErrors.length === 0 &&
-        report.validDocuments === report.totalDocuments &&
+        report.validDocuments + report.outOfScopeDocuments ===
+          report.totalDocuments &&
         report.documents.every(
           (d) =>
             !d.backendOperationLimits?.length && !d.minimumHttpBodyExceedsLimit,
@@ -319,6 +372,10 @@ export function audit(source, contracts, appNames = apps) {
         (n, a) => n + a.unresolvedDocuments,
         0,
       ),
+      outOfScopeDocuments: reports.reduce(
+        (n, a) => n + a.outOfScopeDocuments,
+        0,
+      ),
       missingRoots: [...new Set(reports.flatMap((a) => a.missingRoots))].sort(),
     },
     apps: reports,
@@ -328,12 +385,27 @@ if (
   process.argv[1] &&
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
-  const [source, contracts, output, mode] = process.argv.slice(2);
-  if (!source || !contracts || !output || (mode && mode !== "--check"))
+  const [source, contracts, output, ...flags] = process.argv.slice(2);
+  const check = flags.includes("--check");
+  const scopeAt = flags.indexOf("--scope");
+  const scope = scopeAt >= 0 ? flags[scopeAt + 1] : undefined;
+  const known = new Set(["--check", "--scope", scope]);
+  if (
+    !source ||
+    !contracts ||
+    !output ||
+    flags.some((flag) => !known.has(flag)) ||
+    (scopeAt >= 0 && scope !== "multivendor")
+  )
     throw new Error(
-      "Usage: node tools/check-enatega-compatibility.mjs SOURCE CONTRACTS OUTPUT [--check]",
+      "Usage: node tools/check-enatega-compatibility.mjs SOURCE CONTRACTS OUTPUT [--check] [--scope multivendor]",
     );
-  const report = audit(resolve(source), resolve(contracts));
+  const lanesPath = resolve("docs/OPERATION_LANES.json");
+  const lanes = scope ? JSON.parse(readFileSync(lanesPath, "utf8")) : undefined;
+  const report = audit(resolve(source), resolve(contracts), apps, {
+    scope,
+    lanes,
+  });
   writeFileSync(
     output,
     await format(JSON.stringify(report), { parser: "json" }),
@@ -345,6 +417,5 @@ if (
       missingRoots: report.summary.missingRoots.length,
     }),
   );
-  if (mode === "--check" && report.staticCompatibility !== "PASS")
-    process.exitCode = 1;
+  if (check && report.staticCompatibility !== "PASS") process.exitCode = 1;
 }
