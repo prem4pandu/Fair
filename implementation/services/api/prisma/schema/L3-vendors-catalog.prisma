@@ -1,0 +1,48 @@
+model CatalogMerchant {
+  id        String          @id @default(uuid()) @db.Uuid
+  name      String          @db.VarChar(100)
+  published Boolean         @default(false)
+  outlets   CatalogOutlet[]
+}
+
+model CatalogOutlet {
+  id         String            @id @default(uuid()) @db.Uuid
+  merchantId String            @db.Uuid
+  name       String            @db.VarChar(100)
+  currency   String            @db.VarChar(3)
+  published  Boolean           @default(false)
+  merchant   CatalogMerchant   @relation(fields: [merchantId], references: [id], onDelete: Restrict)
+  categories CatalogCategory[]
+  items      CatalogItem[]
+
+  @@index([merchantId])
+  @@index([published, id])
+}
+
+model CatalogCategory {
+  id        String        @id @default(uuid()) @db.Uuid
+  outletId  String        @db.Uuid
+  name      String        @db.VarChar(100)
+  published Boolean       @default(false)
+  outlet    CatalogOutlet @relation(fields: [outletId], references: [id], onDelete: Restrict)
+  items     CatalogItem[]
+
+  @@unique([id, outletId])
+  @@index([outletId, published, id])
+}
+
+model CatalogItem {
+  id          String          @id @default(uuid()) @db.Uuid
+  outletId    String          @db.Uuid
+  categoryId  String          @db.Uuid
+  name        String          @db.VarChar(100)
+  description String          @default("") @db.VarChar(2000)
+  priceMinor  Int
+  available   Boolean         @default(true)
+  published   Boolean         @default(false)
+  outlet      CatalogOutlet   @relation(fields: [outletId], references: [id], onDelete: Restrict)
+  category    CatalogCategory @relation(fields: [categoryId, outletId], references: [id, outletId], onDelete: Restrict)
+
+  @@index([outletId, published, id])
+  @@index([categoryId, outletId])
+}

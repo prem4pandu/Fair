@@ -11,7 +11,9 @@ export function loadTypeDefs(): string[] {
   const directory = fileURLToPath(new URL("enatega/", contracts));
   const enategaFiles = existsSync(directory)
     ? readdirSync(directory)
-        .filter((file) => file.endsWith(".graphql"))
+        // Wave 1 generated lane contracts remain review artifacts until their
+        // shared-root conflicts are resolved and the compatibility gate passes.
+        .filter((file) => file === "kernel.graphql")
         .sort()
     : [];
   const legacyFiles = [

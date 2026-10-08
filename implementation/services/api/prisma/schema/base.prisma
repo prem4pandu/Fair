@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model FoundationMigration {
+  id        String   @id
+  appliedAt DateTime @default(now()) @db.Timestamptz(3)
+}
+
+model DomainEvent {
+  id             String    @id @db.Uuid
+  type           String    @db.VarChar(64)
+  payload        Json      @db.JsonB
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
+  availableAt    DateTime  @default(now()) @db.Timestamptz(3)
+  claimedBy      String?   @db.VarChar(100)
+  claimExpiresAt DateTime? @db.Timestamptz(3)
+  processedAt    DateTime? @db.Timestamptz(3)
+  attempts       Int       @default(0)
+  lastError      String?   @db.VarChar(500)
+  deadLetteredAt DateTime? @db.Timestamptz(3)
+
+  @@index([processedAt, availableAt, claimExpiresAt, createdAt])
+}
+
+model EventInbox {
+  consumer    String   @db.VarChar(100)
+  eventId     String   @db.Uuid
+  processedAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([consumer, eventId])
+  @@index([eventId])
+}
+
+model DevOutbox {
+  id        String   @id @db.Uuid
+  channel   String   @db.VarChar(16)
+  recipient String   @db.VarChar(254)
+  subject   String?  @db.VarChar(200)
+  body      String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([recipient, createdAt])
+}

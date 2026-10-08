@@ -1,0 +1,63 @@
+model IdentityUser {
+  id            String                     @id @default(uuid()) @db.Uuid
+  email         String                     @unique @db.VarChar(254)
+  displayName   String                     @db.VarChar(100)
+  status        String                     @default("ACTIVE")
+  emailVerified Boolean                    @default(false)
+  roles         String[]
+  createdAt     DateTime                   @default(now()) @db.Timestamptz(3)
+  credential    IdentityCredential?
+  grants        IdentityApplicationGrant[]
+  families      IdentitySessionFamily[]
+  addresses     CustomerAddress[]
+}
+
+model IdentityCredential {
+  userId       String       @id @db.Uuid
+  passwordHash String
+  user         IdentityUser @relation(fields: [userId], references: [id], onDelete: Restrict)
+}
+
+model IdentityApplicationGrant {
+  userId      String       @db.Uuid
+  application String
+  active      Boolean      @default(true)
+  user        IdentityUser @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@id([userId, application])
+}
+
+model IdentitySessionFamily {
+  id          String                   @id @default(uuid()) @db.Uuid
+  userId      String                   @db.Uuid
+  application String
+  createdAt   DateTime                 @default(now()) @db.Timestamptz(3)
+  expiresAt   DateTime                 @db.Timestamptz(3)
+  revokedAt   DateTime?                @db.Timestamptz(3)
+  user        IdentityUser             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  sessions    IdentityRefreshSession[]
+
+  @@unique([id, userId])
+  @@index([userId])
+}
+
+model IdentityRefreshSession {
+  id         String                @id @db.Uuid
+  familyId   String                @db.Uuid
+  userId     String                @db.Uuid
+  tokenHash  String                @unique @db.Char(64)
+  createdAt  DateTime              @default(now()) @db.Timestamptz(3)
+  consumedAt DateTime?             @db.Timestamptz(3)
+  family     IdentitySessionFamily @relation(fields: [familyId, userId], references: [id, userId], onDelete: Restrict)
+
+  @@index([familyId])
+}
+
+model IdentityAuditEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @db.Uuid
+  familyId   String?  @db.Uuid
+  action     String   @db.VarChar(40)
+  outcome    String   @db.VarChar(10)
+  occurredAt DateTime @default(now()) @db.Timestamptz(3)
+}

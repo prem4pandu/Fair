@@ -1,0 +1,13 @@
+model CustomerAddress {
+  id              String       @id @default(uuid()) @db.Uuid
+  userId          String       @db.Uuid
+  user            IdentityUser @relation(fields: [userId], references: [id], onDelete: Restrict)
+  label           String       @db.VarChar(100)
+  deliveryAddress String       @db.VarChar(500)
+  details         String       @db.VarChar(1000)
+  longitude       Float
+  latitude        Float
+  selected        Boolean      @default(false)
+
+  @@index([userId, id])
+}
