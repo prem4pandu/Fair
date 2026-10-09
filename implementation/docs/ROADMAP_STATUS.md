@@ -22,7 +22,7 @@ repository can prove.
 
 | Gate  | Last run   | Finished                 | Commit         | Approvals              |
 | ----- | ---------- | ------------------------ | -------------- | ---------------------- |
-| `GP0` | **FAILED** | 2026-10-09T15:33:11.166Z | `b4f7fd59146d` | **none** of 3 required |
+| `GP0` | **FAILED** | 2026-10-09T15:54:34.663Z | `08bcd146261f` | **none** of 3 required |
 | `G0`  | never run  | —                        | —              | **none** of 2 required |
 | `G1`  | never run  | —                        | —              | **none** of 2 required |
 | `G2`  | never run  | —                        | —              | **none** of 2 required |
@@ -40,7 +40,7 @@ refuses self-approval and refuses a failing or dirty-tree run.
 
 | ID     | Workstream                                                             | Lanes | State             | Measured                              | Dependencies                    |
 | ------ | ---------------------------------------------------------------------- | ----- | ----------------- | ------------------------------------- | ------------------------------- |
-| `W0`   | Baseline repair and gate instrumentation                               | —     | GATE_FAILED       | GP0 recorded 2026-10-09T15:33:11.166Z | —                               |
+| `W0`   | Baseline repair and gate instrumentation                               | —     | GATE_FAILED       | GP0 recorded 2026-10-09T15:54:34.663Z | —                               |
 | `W1`   | Kernel and transport completion                                        | L0    | RESOLVERS_ONLY    | 1/1 resolvers · 0/1 evidenced         | waiting on W0                   |
 | `W2`   | Contract and data-model freeze                                         | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W0                   |
 | `W3`   | Identity, roles, staff scopes, MFA, recovery, OTP/social               | L1    | IN_PROGRESS       | 8/30 resolvers · 0/30 evidenced       | waiting on W2                   |

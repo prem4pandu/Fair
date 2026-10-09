@@ -844,12 +844,156 @@
           "approvals": [],
           "reviewer": null,
           "approved": false
+        },
+        {
+          "gate": "GP0",
+          "commit": "08bcd146261f7eaec8807d28bd3b147fcfe21248",
+          "dirty": false,
+          "recordedBy": "prem4pandu@users.noreply.github.com",
+          "startedAt": "2026-10-09T15:53:42.921Z",
+          "finishedAt": "2026-10-09T15:54:34.663Z",
+          "passed": false,
+          "partial": false,
+          "commands": [
+            {
+              "command": "pnpm install --frozen-lockfile",
+              "executed": "./tools/pnpm.sh install --frozen-lockfile",
+              "exitCode": 0,
+              "durationMs": 395,
+              "startedAt": "2026-10-09T15:53:42.922Z",
+              "outputTail": "Scope: all 5 workspace projects\nLockfile is up to date, resolution step is skipped\nAlready up to date\n\n╭ Warning ─────────────────────────────────────────────────────────────────────╮\n│                                                                              │\n│   Ignored build scripts: @prisma/engines@7.10.0, prisma@7.10.0.              │\n│   Run \"pnpm approve-builds\" to pick which dependencies should be allowed     │\n│   to run scripts.                                                            │\n│                                                                              │\n╰──────────────────────────────────────────────────────────────────────────────╯\nDone in 306ms using pnpm v10.28.2\n"
+            },
+            {
+              "command": "pnpm lint",
+              "executed": "./tools/pnpm.sh lint",
+              "exitCode": 0,
+              "durationMs": 1881,
+              "startedAt": "2026-10-09T15:53:43.317Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ lint /Users/premkumarmamidi/Development/Fair/implementation\n> eslint .\n\n"
+            },
+            {
+              "command": "pnpm format:check",
+              "executed": "./tools/pnpm.sh format:check",
+              "exitCode": 1,
+              "durationMs": 4192,
+              "startedAt": "2026-10-09T15:53:45.198Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ format:check /Users/premkumarmamidi/Development/Fair/implementation\n> prettier --check .\n\nChecking formatting...\n ELIFECYCLE  Command failed with exit code 1.\n[warn] docs/TASK_BOARD.md\n[warn] Code style issues found in the above file. Run Prettier with --write to fix.\n"
+            },
+            {
+              "command": "pnpm typecheck",
+              "executed": "./tools/pnpm.sh typecheck",
+              "exitCode": 0,
+              "durationMs": 4281,
+              "startedAt": "2026-10-09T15:53:49.390Z",
+              "outputTail": "airbite/identity-contracts@0.0.0 typecheck /Users/premkumarmamidi/Development/Fair/implementation/packages/identity-contracts\n@fairbite/identity-contracts:build: cache hit, replaying logs 7611897172072f1e\n@fairbite/identity-contracts:typecheck: > tsc --noEmit\n@fairbite/identity-contracts:typecheck: \n@fairbite/brand:typecheck: \n@fairbite/brand:typecheck: > @fairbite/brand@0.0.0 typecheck /Users/premkumarmamidi/Development/Fair/implementation/packages/brand\n@fairbite/brand:typecheck: > tsc --noEmit\n@fairbite/brand:typecheck: \n@fairbite/brand:build: \n@fairbite/brand:build: > @fairbite/brand@0.0.0 build /Users/premkumarmamidi/Development/Fair/implementation/packages/brand\n@fairbite/brand:build: > tsc\n@fairbite/brand:build: \n@fairbite/identity-contracts:build: \n@fairbite/identity-contracts:build: > @fairbite/identity-contracts@0.0.0 build /Users/premkumarmamidi/Development/Fair/implementation/packages/identity-contracts\n@fairbite/identity-contracts:build: > tsc\n@fairbite/identity-contracts:build: \n@fairbite/worker:typecheck: cache miss, executing ff4a78ac16db68de\n@fairbite/api:typecheck: cache miss, executing c8617830524385f4\n@fairbite/worker:typecheck: \n@fairbite/worker:typecheck: > @fairbite/worker@0.0.0 typecheck /Users/premkumarmamidi/Development/Fair/implementation/services/worker\n@fairbite/worker:typecheck: > tsc --noEmit\n@fairbite/worker:typecheck: \n@fairbite/api:typecheck: \n@fairbite/api:typecheck: > @fairbite/api@0.0.0 typecheck /Users/premkumarmamidi/Development/Fair/implementation/services/api\n@fairbite/api:typecheck: > prisma generate && tsc --noEmit\n@fairbite/api:typecheck: \n@fairbite/api:typecheck: Loaded Prisma config from prisma.config.ts.\n@fairbite/api:typecheck: \n@fairbite/api:typecheck: Prisma schema loaded from prisma/schema.\n@fairbite/api:typecheck: \n@fairbite/api:typecheck: ✔ Generated Prisma Client (7.10.0) to ./src/generated/prisma in 68ms\n@fairbite/api:typecheck: \n\n Tasks:    6 successful, 6 total\nCached:    4 cached, 6 total\n  Time:    3.447s \n\n"
+            },
+            {
+              "command": "pnpm build",
+              "executed": "./tools/pnpm.sh build",
+              "exitCode": 0,
+              "durationMs": 1885,
+              "startedAt": "2026-10-09T15:53:53.671Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ build /Users/premkumarmamidi/Development/Fair/implementation\n> turbo run build\n\n\n   • turbo 2.11.7\n   • Packages in scope: @fairbite/api, @fairbite/brand, @fairbite/identity-contracts, @fairbite/worker\n   • Running build in 4 packages\n   • Remote caching disabled\n\n@fairbite/brand:build: cache hit, replaying logs 94c2668584d683f5\n@fairbite/identity-contracts:build: cache hit, replaying logs 7611897172072f1e\n@fairbite/brand:build: \n@fairbite/brand:build: > @fairbite/brand@0.0.0 build /Users/premkumarmamidi/Development/Fair/implementation/packages/brand\n@fairbite/brand:build: > tsc\n@fairbite/brand:build: \n@fairbite/identity-contracts:build: \n@fairbite/identity-contracts:build: > @fairbite/identity-contracts@0.0.0 build /Users/premkumarmamidi/Development/Fair/implementation/packages/identity-contracts\n@fairbite/identity-contracts:build: > tsc\n@fairbite/identity-contracts:build: \n@fairbite/worker:build: cache miss, executing 383921c3f1ac65c5\n@fairbite/api:build: cache miss, executing c46ab3a0683e9f1e\n@fairbite/api:build: \n@fairbite/api:build: > @fairbite/api@0.0.0 build /Users/premkumarmamidi/Development/Fair/implementation/services/api\n@fairbite/api:build: > prisma generate && tsc -p tsconfig.build.json\n@fairbite/api:build: \n@fairbite/worker:build: \n@fairbite/worker:build: > @fairbite/worker@0.0.0 build /Users/premkumarmamidi/Development/Fair/implementation/services/worker\n@fairbite/worker:build: > tsc -p tsconfig.build.json\n@fairbite/worker:build: \n@fairbite/api:build: Loaded Prisma config from prisma.config.ts.\n@fairbite/api:build: \n@fairbite/api:build: Prisma schema loaded from prisma/schema.\n@fairbite/api:build: \n@fairbite/api:build: ✔ Generated Prisma Client (7.10.0) to ./src/generated/prisma in 73ms\n@fairbite/api:build: \n\n Tasks:    4 successful, 4 total\nCached:    2 cached, 4 total\n  Time:    1.66s \n\n"
+            },
+            {
+              "command": "pnpm test",
+              "executed": "./tools/pnpm.sh test",
+              "exitCode": 0,
+              "durationMs": 6073,
+              "startedAt": "2026-10-09T15:53:55.556Z",
+              "outputTail": "ntifiers are redirected, not silently dropped (1.336209ms)\n✔ status reports only derived facts and never claims an unapproved gate (8.054792ms)\n✔ unscheduled gaps stay visible in both the plan and the status (0.668375ms)\n✔ the task board exists and carries the claim protocol (0.47625ms)\n✔ generates roots, fragment types and named inputs as valid SDL (15.486083ms)\n✔ applies exact root, object and leaf type overrides while recursing named types (1.56175ms)\n✔ reports collection-shaped selections without a cardinality override (0.306417ms)\n✔ reports a lane with no generated content as empty (0.590542ms)\n✔ does not report a lane that received generated content as empty (0.395833ms)\n✔ produces a file entry for every lane including the empty ones (0.639292ms)\n✔ applies exact argument and named input overrides (1.297083ms)\n✔ loads an exported gql document by name with its operation intact (5.505542ms)\n✔ inlines interpolated fragments from the same or imported files (345.758708ms)\n✔ refuses paths outside vendor/enatega-ui (0.347042ms)\n✔ extracts untagged rider literals that carry the #graphql pragma (142.548625ms)\n✔ the rider's pragma document count is stable against a vendor bump (18.122375ms)\n✔ an untagged literal without the pragma is not a document (397.139708ms)\n✔ the shared predicates agree on pragma and shape (0.094375ms)\n✔ approves only complete independent records for the exact run and commit (1.010291ms)\n✔ fails closed for forged summaries and incomplete records (0.553458ms)\n✔ rejects duplicate normalized reviewers, recorder self-approval and stale stamps (0.772375ms)\n✔ rejects missing, malformed and pre-run approval timestamps (0.11525ms)\n✔ rejects a legacy commit author self-approval (0.089375ms)\n✔ release presentation has truthful approved and unapproved HTML/status values (0.080041ms)\n✔ ignores dependency, build and env artefacts but keeps source (10.407625ms)\nℹ tests 96\nℹ suites 0\nℹ pass 96\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 3073.043708\n"
+            },
+            {
+              "command": "pnpm test:integration",
+              "executed": "./tools/pnpm.sh test:integration",
+              "exitCode": 1,
+              "durationMs": 21227,
+              "startedAt": "2026-10-09T15:54:01.629Z",
+              "outputTail": "d with exit code 1.\nNo test files found, exiting with code 1\n\ninclude: test/**/*.integration.spec.ts\nexclude:  **/node_modules/**, **/.git/**\n\n\n⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯\nError: Could not find a working container runtime strategy\n ❯ getContainerRuntimeClient ../../node_modules/.pnpm/testcontainers@11.7.0/node_modules/testcontainers/build/container-runtime/clients/client.js:67:11\n ❯ processTicksAndRejections node:internal/process/task_queues:104:5\n ❯ GenericContainer.start ../../node_modules/.pnpm/testcontainers@11.7.0/node_modules/testcontainers/build/generic-container/generic-container.js:59:24\n ❯ Object.setup test/support/stack-global.ts:19:25\n     17|\n     18|   try {\n     19|     [postgres, redis] = await Promise.all([\n       |                         ^\n     20|       new PostgreSqlContainer(\"postgis/postgis:17-3.5\")\n     21|         .withPlatform(\"linux/amd64\")\n ❯ TestProject._initializeGlobalSetup ../../node_modules/.pnpm/vitest@4.1.11_@types+node@26.6.4_@vitest+coverage-v8@4.1.11_vite@8.3.3_@types+node@26.6_4fdc364f088923ffb5aacb339545efd0/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:10813:21\n ❯ Vitest.initializeGlobalSetup ../../node_modules/.pnpm/vitest@4.1.11_@types+node@26.6.4_@vitest+coverage-v8@4.1.11_vite@8.3.3_@types+node@26.6_4fdc364f088923ffb5aacb339545efd0/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:13812:35\n ❯ ../../node_modules/.pnpm/vitest@4.1.11_@types+node@26.6.4_@vitest+coverage-v8@4.1.11_vite@8.3.3_@types+node@26.6_4fdc364f088923ffb5aacb339545efd0/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:13655:6\n ❯ ../../node_modules/.pnpm/vitest@4.1.11_@types+node@26.6.4_@vitest+coverage-v8@4.1.11_vite@8.3.3_@types+node@26.6_4fdc364f088923ffb5aacb339545efd0/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:13684:11\n ❯ ../../node_modules/.pnpm/vitest@4.1.11_@types+node@26.6.4_@vitest+coverage-v8@4.1.11_vite@8.3.3_@types+node@26.6_4fdc364f088923ffb5aacb339545efd0/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:13546:19\n\n\n\n\n"
+            },
+            {
+              "command": "pnpm coverage:report",
+              "executed": "./tools/pnpm.sh coverage:report",
+              "exitCode": 0,
+              "durationMs": 2682,
+              "startedAt": "2026-10-09T15:54:22.856Z",
+              "outputTail": "100 |     87.5 |     100 |     100 | 23                \n  outbox.ts        |   38.88 |    22.22 |      50 |   41.17 | 40-98             \n  pagination.ts    |   88.88 |    84.61 |   85.71 |   86.66 | 51-52             \n  ports.ts         |       0 |      100 |     100 |       0 | 5-214             \n  pubsub.ts        |   22.78 |     3.03 |   22.22 |   26.47 | 32-117,128        \n  schema.ts        |     100 |       75 |     100 |     100 | 28                \n  time.ts          |   88.88 |    83.33 |     100 |     100 | 8-12              \n  unit-of-work.ts  |       0 |      100 |       0 |       0 | 9-26              \n src/kernel/auth   |   88.23 |    80.35 |     100 |   88.88 |                   \n  guards.ts        |    92.3 |    78.94 |     100 |   95.23 | 77                \n  sessions.ts      |       0 |      100 |     100 |       0 | 5-19              \n  tokens.ts        |    91.3 |    83.33 |     100 |    90.9 | 67,89             \n .../public-access |   95.38 |     87.5 |     100 |   98.27 |                   \n  gate.ts          |   95.34 |     87.8 |     100 |     100 | 9-18,36-40,110    \n  resolver.ts      |     100 |      100 |     100 |     100 |                   \n  token.ts         |   94.73 |    85.71 |     100 |   94.44 | 51                \n src/kernel/ws     |   76.92 |    58.33 |      74 |   78.64 |                   \n  ...y-protocol.ts |   80.85 |    66.19 |   77.27 |   83.33 | ...19,271-279,357 \n  server.ts        |   68.65 |       36 |   71.42 |   68.33 | ...20,153-171,180 \n src/orders        |    63.9 |    53.89 |   56.52 |   65.35 |                   \n  checkout.ts      |   72.72 |     77.5 |     100 |   77.41 | ...67,74,84,88,91 \n  persistence.ts   |   25.53 |    13.43 |   27.27 |   26.66 | ...55,172,184-357 \n  pricing.ts       |   93.93 |    91.66 |     100 |   93.54 | 67,90             \n  state-machine.ts |      90 |    77.77 |      60 |      90 | 169-173           \n-------------------|---------|----------|---------|---------|-------------------\n"
+            },
+            {
+              "command": "pnpm check:enatega-ui-source",
+              "executed": "./tools/pnpm.sh check:enatega-ui-source",
+              "exitCode": 0,
+              "durationMs": 782,
+              "startedAt": "2026-10-09T15:54:25.538Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ check:enatega-ui-source /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/manifest-enatega-ui.mjs --check\n\n{\"status\":\"verified\",\"files\":4139,\"bytes\":118002099,\"entriesSha256\":\"5112f344bafb90bbd6adfbcbb161c0ab22dec5f9e9f6f81de7fb03e3adcf413c\"}\n"
+            },
+            {
+              "command": "pnpm test:enatega-contracts",
+              "executed": "./tools/pnpm.sh test:enatega-contracts",
+              "exitCode": 0,
+              "durationMs": 517,
+              "startedAt": "2026-10-09T15:54:26.320Z",
+              "outputTail": "ga-contracts /Users/premkumarmamidi/Development/Fair/implementation\n> node --test tools/check-enatega-compatibility.test.mjs\n\n✔ reads boundedOperation from services/api/src/kernel/limits.ts when present (23.687208ms)\n✔ multivendor scope ignores documents whose only missing roots are L12 (8.204625ms)\n✔ reads the configured GraphQL body-limit default (6.238583ms)\n✔ multivendor scope still fails documents with any in-scope missing root (5.352625ms)\n✔ valid static fragments, aliases and multiline comments validate deterministically (9.632875ms)\n✔ a standalone shared fragment export is a valid static document (4.062875ms)\n✔ a fragment-only document selecting an absent field still fails (4.597625ms)\n✔ a fragment-only document on an unknown type condition still fails (5.712791ms)\n✔ an unused fragment beside an operation is still rejected (4.408375ms)\n✔ field, argument and variable-type mismatches fail beyond root-name matching (4.743792ms)\n✔ absent Subscription type and fragment-wrapped missing roots cannot pass (4.092375ms)\n✔ interpolated documents and imported gql arguments remain unresolved (5.511042ms)\n✔ missing fragment imports and malformed documents fail without execution (4.129583ms)\n✔ actual backend rule rejects multiple mutation roots and excessive field count (5.511416ms)\n✔ actual backend rule checks depth and total definitions (5.638625ms)\n✔ configured query-only JSON limit is a minimum bound and oversized source fails (14.389333ms)\n✔ empty source and TypeScript parse errors fail closed (9.531709ms)\n✔ absent server source, unknown body limit and empty app sets cannot pass (6.327833ms)\n✔ a supplied resolution set is the whole audit unless reconciliation is requested (4.419084ms)\n✔ reconciliation still audits a static site the resolver did not cover (4.369625ms)\n✔ reconciliation reports a dynamic site the resolver did not cover instead of dropping it (3.943833ms)\nℹ tests 21\nℹ suites 0\nℹ pass 21\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 310.405375\n"
+            },
+            {
+              "command": "pnpm test:operation-evidence",
+              "executed": "./tools/pnpm.sh test:operation-evidence",
+              "exitCode": 0,
+              "durationMs": 924,
+              "startedAt": "2026-10-09T15:54:26.837Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ test:operation-evidence /Users/premkumarmamidi/Development/Fair/implementation\n> node --test tools/check-operation-evidence.test.mjs\n\n✔ inventory without evidence is explicitly uncovered (0.679833ms)\n✔ complete evidence covers exact operation and every applicable gate (0.243083ms)\n✔ missing integration, browser and device gates remain uncovered (0.106666ms)\n✔ duplicates and unexpected operations fail (0.126584ms)\n✔ inventory duplicates and inconsistent totals fail (0.076333ms)\n✔ test files and result artifacts must exist and contain data (0.17225ms)\n✔ a command alone or a failed result cannot pass (0.215625ms)\n✔ missing command and malformed evidence fail (0.077792ms)\n✔ web journey is accepted and mobile-only operations still require device evidence (0.097625ms)\n✔ CLI default inventory is honest, strict mode fails, reports do not overwrite (581.548125ms)\n✔ schema readiness accepts implemented roots and explicit NOT_IMPLEMENTED fallbacks (0.196667ms)\n✔ schema readiness fails for missing SDL or an unwired fallback (0.051292ms)\n✔ the repository check rejects roots excluded from the active runtime (15.157459ms)\n✔ zero inventories, unsupported types, and missing or unknown apps cannot pass (0.214375ms)\n✔ unrelated or prefix-only test and artifact claims cannot pass (0.185458ms)\nℹ tests 15\nℹ suites 0\nℹ pass 15\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 732.915791\n"
+            },
+            {
+              "command": "node --test tools/*.test.mjs",
+              "executed": "node --test tools/*.test.mjs",
+              "exitCode": 0,
+              "durationMs": 2118,
+              "startedAt": "2026-10-09T15:54:27.761Z",
+              "outputTail": "onditions per root (0.189625ms)\n✔ records inline literal argument kinds and input object keys (0.117208ms)\n✔ tracks named input types and list/nullability syntax (0.087375ms)\n✔ multivendor scope excludes single-vendor apps and L12-only documents (0.240125ms)\n✔ contract scope keeps the single-vendor admin but drops single-vendor mode and L12 (0.129708ms)\n✔ status report is current, self-contained, and accessible (130.124375ms)\n✔ machine-readable status is generated from operation state, not prose (1.971375ms)\n✔ generator judgment preserves the run recorder instead of substituting the commit author (0.309083ms)\n✔ reported resolver coverage matches an independent source scan (7.570375ms)\n✔ status exposes the full audit independently of the scoped result (1.336959ms)\n✔ roadmap status is current and internally consistent (100.453208ms)\n✔ the roadmap plan is machine-valid (0.611542ms)\n✔ every lane with operations is owned, and every capability is mapped (12.360875ms)\n✔ retired lane identifiers are redirected, not silently dropped (1.109917ms)\n✔ status reports only derived facts and never claims an unapproved gate (5.460541ms)\n✔ unscheduled gaps stay visible in both the plan and the status (0.571416ms)\n✔ the task board exists and carries the claim protocol (0.362833ms)\n✔ generates roots, fragment types and named inputs as valid SDL (9.624375ms)\n✔ applies exact root, object and leaf type overrides while recursing named types (1.057459ms)\n✔ reports collection-shaped selections without a cardinality override (0.208292ms)\n✔ reports a lane with no generated content as empty (0.332667ms)\n✔ does not report a lane that received generated content as empty (0.224417ms)\n✔ produces a file entry for every lane including the empty ones (0.449625ms)\n✔ applies exact argument and named input overrides (0.755584ms)\n✔ ignores dependency, build and env artefacts but keeps source (8.566708ms)\nℹ tests 83\nℹ suites 0\nℹ pass 83\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 2089.783958\n"
+            },
+            {
+              "command": "pnpm traceability:check",
+              "executed": "./tools/pnpm.sh traceability:check",
+              "exitCode": 0,
+              "durationMs": 292,
+              "startedAt": "2026-10-09T15:54:29.879Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ traceability:check /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/generate-operation-traceability.mjs --check\n\noperation traceability is current (334 operations, sha256 da04bade4b97ced7)\n"
+            },
+            {
+              "command": "pnpm roadmap:check",
+              "executed": "./tools/pnpm.sh roadmap:check",
+              "exitCode": 0,
+              "durationMs": 259,
+              "startedAt": "2026-10-09T15:54:30.171Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ roadmap:check /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/generate-roadmap-status.mjs --check\n\nRoadmap status is current and consistent with the lane data\n"
+            },
+            {
+              "command": "pnpm check:error-messages",
+              "executed": "./tools/pnpm.sh check:error-messages",
+              "exitCode": 0,
+              "durationMs": 214,
+              "startedAt": "2026-10-09T15:54:30.430Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ check:error-messages /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-error-messages.mjs\n\nerror-message contract OK: 85 appError call(s) checked against 5 reserved word(s); 11 non-literal message(s) not statically verifiable\n"
+            },
+            {
+              "command": "pnpm e2e:backend",
+              "executed": "./tools/pnpm.sh e2e:backend",
+              "exitCode": 0,
+              "durationMs": 4018,
+              "startedAt": "2026-10-09T15:54:30.644Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ e2e:backend /Users/premkumarmamidi/Development/Fair/implementation\n> pnpm --filter @fairbite/api build && playwright test --config playwright.backend.config.ts\n\n\n> @fairbite/api@0.0.0 build /Users/premkumarmamidi/Development/Fair/implementation/services/api\n> prisma generate && tsc -p tsconfig.build.json\n\n\n✔ Generated Prisma Client (7.10.0) to ./src/generated/prisma in 55ms\n\n\nRunning 5 tests using 1 worker\n\n  ✓  1 e2e/backend/boundaries.spec.ts:7:1 › browser can inspect API liveness while readiness fails on unavailable dependencies (220ms)\n  ✓  2 e2e/backend/boundaries.spec.ts:17:1 › GraphQL reports unavailable infrastructure without fabricated readiness (11ms)\n  ✓  3 e2e/backend/boundaries.spec.ts:27:1 › an undeclared root is rejected by schema validation without data (5ms)\n  ✓  4 e2e/backend/boundaries.spec.ts:42:1 › a declared but unbuilt operation fails explicitly instead of returning data (5ms)\n  ✓  5 e2e/backend/boundaries.spec.ts:58:1 › malformed requests and unauthorized origins remain bounded (3ms)\n\n  5 passed (1.5s)\nLoaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from prisma/schema.\n[WebServer] (node:54446) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)\n(node:54454) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+            }
+          ],
+          "missingCommands": [],
+          "approvals": [],
+          "reviewer": null,
+          "approved": false
         }
       ],
       "latest": {
-        "commit": "b4f7fd59146d2d3b9637e2fe9c0b307118ff4ad8",
+        "commit": "08bcd146261f7eaec8807d28bd3b147fcfe21248",
         "dirty": false,
-        "finishedAt": "2026-10-09T15:33:11.166Z",
+        "finishedAt": "2026-10-09T15:54:34.663Z",
         "passed": false,
         "approvals": [],
         "approved": false,
@@ -857,55 +1001,55 @@
           {
             "command": "pnpm install --frozen-lockfile",
             "exitCode": 0,
-            "durationMs": 333
+            "durationMs": 395
           },
-          { "command": "pnpm lint", "exitCode": 0, "durationMs": 1070 },
-          { "command": "pnpm format:check", "exitCode": 0, "durationMs": 3295 },
-          { "command": "pnpm typecheck", "exitCode": 2, "durationMs": 2236 },
-          { "command": "pnpm build", "exitCode": 0, "durationMs": 237 },
-          { "command": "pnpm test", "exitCode": 0, "durationMs": 3368 },
+          { "command": "pnpm lint", "exitCode": 0, "durationMs": 1881 },
+          { "command": "pnpm format:check", "exitCode": 1, "durationMs": 4192 },
+          { "command": "pnpm typecheck", "exitCode": 0, "durationMs": 4281 },
+          { "command": "pnpm build", "exitCode": 0, "durationMs": 1885 },
+          { "command": "pnpm test", "exitCode": 0, "durationMs": 6073 },
           {
             "command": "pnpm test:integration",
             "exitCode": 1,
-            "durationMs": 20572
+            "durationMs": 21227
           },
           {
             "command": "pnpm coverage:report",
             "exitCode": 0,
-            "durationMs": 1519
+            "durationMs": 2682
           },
           {
             "command": "pnpm check:enatega-ui-source",
             "exitCode": 0,
-            "durationMs": 340
+            "durationMs": 782
           },
           {
             "command": "pnpm test:enatega-contracts",
             "exitCode": 0,
-            "durationMs": 431
+            "durationMs": 517
           },
           {
             "command": "pnpm test:operation-evidence",
             "exitCode": 0,
-            "durationMs": 815
+            "durationMs": 924
           },
           {
             "command": "node --test tools/*.test.mjs",
             "exitCode": 0,
-            "durationMs": 1645
+            "durationMs": 2118
           },
           {
             "command": "pnpm traceability:check",
             "exitCode": 0,
-            "durationMs": 248
+            "durationMs": 292
           },
-          { "command": "pnpm roadmap:check", "exitCode": 0, "durationMs": 241 },
+          { "command": "pnpm roadmap:check", "exitCode": 0, "durationMs": 259 },
           {
             "command": "pnpm check:error-messages",
             "exitCode": 0,
-            "durationMs": 173
+            "durationMs": 214
           },
-          { "command": "pnpm e2e:backend", "exitCode": 0, "durationMs": 2520 }
+          { "command": "pnpm e2e:backend", "exitCode": 0, "durationMs": 4018 }
         ]
       }
     }
