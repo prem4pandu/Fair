@@ -12,14 +12,13 @@
   "limitations": [
     "Static validation cannot prove resolver behavior, runtime reachability, authorization, URLs, subscriptions transport or UI parity.",
     "Dynamic/interpolated gql calls are unresolved and fail the gate; arbitrary computed document factories may require manual audit.",
-    "Supported static literals, local references and relative imports are expanded without execution; unsupported alias imports require hash-pinned manual reconciliation.",
-    "Standalone cache fragment libraries skip only NoUnusedFragments; actual request documents retain that rule.",
+    "Imported fragments are not automatically assembled. Standalone fragments and absent imports may cause validation failures requiring explicit reconciliation.",
     "SDL compatibility is not proof that the running server loaded these contracts."
   ],
   "backendSchema": [
     {
       "file": "enatega/core.graphql",
-      "sha256": "24c877c575479d58a0fa5d4961d8f3c27209d3b58fb19daebcd2b27c921c5588"
+      "sha256": "7ee64a761649770ba0b8255660157050b429e9dc26135b8034d01fbbb503f053"
     },
     {
       "file": "enatega/L1-identity.graphql",
@@ -27,11 +26,11 @@
     },
     {
       "file": "enatega/L12-single-vendor.graphql",
-      "sha256": "6e6ce86e9ab643b89493a56b2ede405787e754d5623915691124607c779e6899"
+      "sha256": "e399a3d09ae7d6e7a21420b9c21c677c116dc8920f02cd28207d7e17ed65526b"
     },
     {
       "file": "enatega/L2-platform.graphql",
-      "sha256": "0e772338cb42ae36534c034687b2936c531bacf6f992ecb7616539eb7ef7065f"
+      "sha256": "f95a2e24dec527f0a9ea5740576783222b935406ba6ecc7878e5abfa679aa8d0"
     },
     {
       "file": "enatega/L3-vendors-catalog.graphql",
@@ -43,11 +42,11 @@
     },
     {
       "file": "enatega/L5-orders.graphql",
-      "sha256": "364dad4e02fce05a4ade7cb81500c55af05010e68e55e0520b6a232ca91b7b80"
+      "sha256": "e3017723dfe3747607a180ddd576c400751249ff35980d05e0e0acca013fd41c"
     },
     {
       "file": "enatega/L6-dispatch.graphql",
-      "sha256": "f5b946050bd1a02a32010a4aaa82f9cf760e3b5a690ec36872cca468b51130ea"
+      "sha256": "c97bdcd49ec2e0baa8bdd73f4a33d3c6a756604701e38c5d042d745e2c3e2a3b"
     },
     {
       "file": "enatega/L7-finance.graphql",
@@ -55,7 +54,7 @@
     },
     {
       "file": "enatega/L8-notifications.graphql",
-      "sha256": "9368ae1e6c73ba6630e99e95e85b5538300ac678dca52bdfb1e10c5a1e802035"
+      "sha256": "34d35c114be8b620fca39a15e666f9ba65d74f4a0d80adc061a1b558f418551b"
     },
     {
       "file": "enatega/L9-analytics.graphql",

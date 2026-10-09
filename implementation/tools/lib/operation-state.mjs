@@ -81,11 +81,14 @@ export function implementedRoots({
  * this records where a root is declared, not whether the multivendor runtime
  * serves it.
  */
-export function sdlHomes({ implementation = defaultImplementation } = {}) {
+export function sdlHomes({
+  implementation = defaultImplementation,
+  excludedFiles = new Set(),
+} = {}) {
   const contracts = resolve(implementation, "contracts/enatega");
   const homes = new Map();
   for (const file of readdirSync(contracts).sort()) {
-    if (!file.endsWith(".graphql")) continue;
+    if (!file.endsWith(".graphql") || excludedFiles.has(file)) continue;
     const text = readFileSync(resolve(contracts, file), "utf8");
     const block =
       /(?:^|\n)(?:extend\s+)?type\s+(Query|Mutation|Subscription)\s*\{([\s\S]*?)\n\}/g;

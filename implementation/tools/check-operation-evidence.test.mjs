@@ -5,7 +5,10 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { checkOperationEvidence } from "./check-operation-evidence.mjs";
+import {
+  checkOperationEvidence,
+  checkOperationSchema,
+} from "./check-operation-evidence.mjs";
 const inventory = {
   total: 1,
   operations: [{ type: "query", name: "orders", apps: ["web", "app"] }],
@@ -136,6 +139,7 @@ test("CLI default inventory is honest, strict mode fails, reports do not overwri
     assert.equal(normal.status, 0);
     assert.equal(JSON.parse(normal.stdout).complete, false);
     assert.equal(cli(["--require-complete"]).status, 1);
+    assert.equal(cli(["--require-schema"]).status, 1);
     assert.equal(cli(["--report", "report.json"]).status, 0);
     const before = fs.readFileSync(path.join(root, "report.json"), "utf8");
     assert.equal(cli(["--report", "report.json"]).status, 1);
@@ -146,6 +150,62 @@ test("CLI default inventory is honest, strict mode fails, reports do not overwri
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
+});
+
+test("schema readiness accepts implemented roots and explicit NOT_IMPLEMENTED fallbacks", () => {
+  const homes = new Map([["query.orders", "L5-orders.graphql"]]);
+  const implemented = new Set(["query.orders"]);
+  assert.equal(
+    checkOperationSchema(inventory, {
+      homes,
+      implemented,
+      fallbackEnabled: false,
+    }).ready,
+    true,
+  );
+  implemented.clear();
+  const fallback = checkOperationSchema(inventory, {
+    homes,
+    implemented,
+    fallbackEnabled: true,
+  });
+  assert.equal(fallback.ready, true);
+  assert.equal(fallback.explicitNotImplemented, 1);
+});
+
+test("schema readiness fails for missing SDL or an unwired fallback", () => {
+  const missing = checkOperationSchema(inventory, {
+    homes: new Map(),
+    implemented: new Set(),
+    fallbackEnabled: true,
+  });
+  assert.equal(missing.ready, false);
+  assert.equal(missing.missing[0].reason, "SDL_MISSING");
+  const unwired = checkOperationSchema(inventory, {
+    homes: new Map([["query.orders", "L5-orders.graphql"]]),
+    implemented: new Set(),
+    fallbackEnabled: false,
+  });
+  assert.equal(unwired.ready, false);
+  assert.equal(
+    unwired.missing[0].reason,
+    "NO_RESOLVER_OR_NOT_IMPLEMENTED_FALLBACK",
+  );
+});
+
+test("the repository check rejects roots excluded from the active runtime", () => {
+  const result = checkOperationSchema({
+    total: 1,
+    operations: [
+      {
+        type: "query",
+        name: "adminConfiguration",
+        apps: ["svadmin(sv)"],
+      },
+    ],
+  });
+  assert.equal(result.ready, false);
+  assert.equal(result.missing[0].reason, "SDL_MISSING");
 });
 
 test("zero inventories, unsupported types, and missing or unknown apps cannot pass", () => {

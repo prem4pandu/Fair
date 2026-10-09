@@ -1,11 +1,5 @@
 # Generated from pinned Enatega documents. Lane owners refine this schema.
 
-enum NotificationRecipientType {
-  CUSTOMER
-  STORE
-  RIDER
-}
-
 type MarkWebNotificationsAsReadMarkWebNotificationsAsRead {
   _id: ID
   body: String

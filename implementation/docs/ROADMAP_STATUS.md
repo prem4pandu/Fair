@@ -13,9 +13,9 @@ repository can prove.
 - **0/334** operations have recorded evidence in `OPERATION_TEST_EVIDENCE.json`.
 - **0** roots have no SDL declaration.
 - Scoped multivendor compatibility: **PASS**
-  (454/454 documents valid).
-- Full six-app compatibility: **FAIL**
-  (829/852 valid, 14 invalid, 9 unresolved).
+  (531/531 documents valid).
+- Full six-app compatibility: **PASS**
+  (845/845 valid, 0 invalid, 0 unresolved).
 - Gates with an independent approval recorded: **0/7**.
 
 ## Gates

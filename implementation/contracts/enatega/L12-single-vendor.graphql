@@ -177,18 +177,6 @@ input GeneralConfigurationInput {
 
 # Additive fields selected only by the pinned single-vendor clients. These
 # extend the shared multivendor response types without changing their shapes.
-extend type Banner {
-  buttonText: String
-}
-extend type CreateBannerCreateBanner {
-  buttonText: String
-}
-extend type EditBannerEditBanner {
-  buttonText: String
-}
-extend type SaveGoogleApiKeyConfigurationSaveGoogleApiKeyConfiguration {
-  googleApiKey: String
-}
 extend type CreateRestaurantCouponCreateRestaurantCoupon {
   startDate: String
   endDate: String
@@ -200,38 +188,6 @@ extend type EditRestaurantCouponEditRestaurantCoupon {
 extend type RestaurantCouponsRestaurantCoupons {
   startDate: String
   endDate: String
-}
-extend type NotificationsNotifications {
-  recipientType: NotificationRecipientType
-}
-extend type GetActiveOrdersOrders {
-  deliveryType: String
-}
-extend type OrdersByRestIdOrders {
-  completionTime: String
-  preparationTime: String
-  eta: OrderEta
-}
-extend type OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination {
-  completionTime: String
-  preparationTime: String
-  eta: OrderEta
-}
-extend type AllOrdersAllOrders {
-  completionTime: String
-  preparationTime: String
-  eta: OrderEta
-}
-extend type AllOrdersWithoutPaginationAllOrdersWithoutPagination {
-  completionTime: String
-  preparationTime: String
-  eta: OrderEta
-}
-extend type SubscribePlaceOrderOrder {
-  completionTime: String
-}
-extend type SubscriptionDispatcherSubscriptionDispatcher {
-  deliveryType: String
 }
 extend type PlaceOrderPlaceOrder {
   status: String

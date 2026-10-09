@@ -529,7 +529,7 @@
         "pnpm check:enatega:full",
         "pnpm codegen:check",
         "pnpm test:integration",
-        "pnpm check:operations"
+        "pnpm check:operations:schema"
       ],
       "approvals": ["lead", "reviewer-SEC"]
     },
@@ -569,7 +569,7 @@
         "pnpm coverage",
         "pnpm test:journeys",
         "pnpm e2e",
-        "pnpm check:operations --require-complete",
+        "pnpm check:operations:complete",
         "pnpm coverage:e2e"
       ],
       "approvals": ["reviewer-QA", "reviewer-SEC"]

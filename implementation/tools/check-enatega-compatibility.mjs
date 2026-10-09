@@ -311,18 +311,17 @@ export function audit(source, contracts, appNames = apps, options = {}) {
     const covered = new Set();
     if (suppliedDocuments) {
       for (const document of suppliedDocuments) {
-          // reconcile() compares against relative(source, path), which always
-          // carries the app prefix; document.file is app-relative.
-          covered.add(
-            `${app}/${document.file}`.split(sep).join("/") +
-              `:${document.line}`,
-          );
-          record(
-            resolve(source, app, document.file),
-            document.line,
-            document.text,
-            !document.resolved,
-          );
+        // reconcile() compares against relative(source, path), which always
+        // carries the app prefix; document.file is app-relative.
+        covered.add(
+          `${app}/${document.file}`.split(sep).join("/") + `:${document.line}`,
+        );
+        record(
+          resolve(source, app, document.file),
+          document.line,
+          document.text,
+          !document.resolved,
+        );
       }
     }
     // When the caller supplies a resolution set it is the whole audit, unless it

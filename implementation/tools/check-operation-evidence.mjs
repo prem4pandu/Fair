@@ -2,6 +2,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import ts from "typescript";
+import {
+  defaultImplementation,
+  implementedRoots,
+  sdlHomes,
+} from "./lib/operation-state.mjs";
 
 export const operationKey = ({ type, name }) => `${type}:${name}`;
 const mobileApps = new Set(["app", "app(sv)", "rider", "store"]);
@@ -10,6 +16,141 @@ const knownApps = new Set([...mobileApps, ...webApps]);
 const supportedTypes = new Set(["query", "mutation", "subscription"]);
 const declarationNotice =
   "Declaration completeness with operation-associated artifacts; not release proof.";
+
+export function checkOperationSchema(
+  inventory,
+  {
+    implementation = defaultImplementation,
+    implemented = implementedRoots({ implementation }),
+    homes = runtimeSdlHomes(implementation),
+    fallbackEnabled = defaultFallbackEnabled(implementation),
+  } = {},
+) {
+  const errors = [];
+  if (
+    !Array.isArray(inventory?.operations) ||
+    inventory.operations.length === 0
+  )
+    return {
+      ready: false,
+      total: 0,
+      implemented: 0,
+      explicitNotImplemented: 0,
+      missing: [],
+      errors: ["Inventory must contain at least one operation"],
+    };
+  const missing = [];
+  let implementedCount = 0;
+  let fallbackCount = 0;
+  for (const operation of inventory.operations) {
+    const key = `${String(operation?.type ?? "").toLowerCase()}.${operation?.name ?? ""}`;
+    if (!homes.has(key)) {
+      missing.push({
+        type: operation?.type,
+        name: operation?.name,
+        reason: "SDL_MISSING",
+      });
+      continue;
+    }
+    if (implemented.has(key)) implementedCount += 1;
+    else if (fallbackEnabled) fallbackCount += 1;
+    else
+      missing.push({
+        type: operation?.type,
+        name: operation?.name,
+        reason: "NO_RESOLVER_OR_NOT_IMPLEMENTED_FALLBACK",
+      });
+  }
+  if (inventory.total !== inventory.operations.length)
+    errors.push("Inventory total does not match operation count");
+  return {
+    ready: errors.length === 0 && missing.length === 0,
+    total: inventory.operations.length,
+    implemented: implementedCount,
+    explicitNotImplemented: fallbackCount,
+    missing,
+    errors,
+  };
+}
+
+function defaultFallbackEnabled(implementation) {
+  try {
+    const app = fs.readFileSync(
+      path.resolve(implementation, "services/api/src/app.ts"),
+      "utf8",
+    );
+    const fallback = fs.readFileSync(
+      path.resolve(
+        implementation,
+        "services/api/src/kernel/not-implemented.ts",
+      ),
+      "utf8",
+    );
+    const appAst = ts.createSourceFile(
+      "app.ts",
+      app,
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS,
+    );
+    let imported = false,
+      wired = false;
+    const visit = (node) => {
+      if (
+        ts.isImportDeclaration(node) &&
+        node.moduleSpecifier.text === "./kernel/not-implemented.js" &&
+        node.importClause?.namedBindings?.elements?.some(
+          (element) => element.name.text === "fillNotImplemented",
+        )
+      )
+        imported = true;
+      if (
+        ts.isPropertyAssignment(node) &&
+        node.name.getText(appAst) === "transformSchema" &&
+        node.initializer.getText(appAst) === "fillNotImplemented"
+      )
+        wired = true;
+      ts.forEachChild(node, visit);
+    };
+    visit(appAst);
+    const fallbackAst = ts.createSourceFile(
+      "not-implemented.ts",
+      fallback,
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS,
+    );
+    const text = fallbackAst.getText();
+    return (
+      imported &&
+      wired &&
+      text.includes("field.resolve =") &&
+      text.includes("field.subscribe =") &&
+      (text.match(/appError\(\s*"NOT_IMPLEMENTED"/g)?.length ?? 0) >= 2
+    );
+  } catch {
+    return false;
+  }
+}
+
+function runtimeSdlHomes(implementation) {
+  const schema = fs.readFileSync(
+    path.resolve(implementation, "services/api/src/kernel/schema.ts"),
+    "utf8",
+  );
+  const excludedBlock =
+    /EXCLUDED_ENATEGA_CONTRACTS\s*=\s*new Set\(\[([\s\S]*?)\]\)/.exec(
+      schema,
+    )?.[1];
+  if (!excludedBlock)
+    throw new Error("Cannot determine the runtime contract exclusion set");
+  const excluded = new Set(
+    [...excludedBlock.matchAll(/["']([^"']+\.graphql)["']/g)].map(
+      (match) => match[1],
+    ),
+  );
+  return sdlHomes({ implementation, excludedFiles: excluded });
+}
 
 /** Evidence is a declaration plus inspectable artifacts, never proof of production readiness.
  * Format: {records:[{type,name,tests:{unit:[check],integration:[check],
@@ -208,9 +349,11 @@ function defaultInspectFile(file) {
 }
 export function runCli(args = process.argv.slice(2)) {
   const options = { inventory: "docs/OPERATION_LANES.json" };
-  let requireComplete = false;
+  let requireComplete = false,
+    requireSchema = false;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--require-complete") requireComplete = true;
+    else if (args[i] === "--require-schema") requireSchema = true;
     else if (
       ["--inventory", "--evidence", "--report", "--root"].includes(args[i]) &&
       args[i + 1] &&
@@ -227,11 +370,19 @@ export function runCli(args = process.argv.slice(2)) {
     options.evidence ? read(options.evidence) : { records: [] },
     { root },
   );
+  if (requireSchema)
+    report.schemaReadiness = checkOperationSchema(read(options.inventory), {
+      implementation: root,
+    });
   const json = `${JSON.stringify(report, null, 2)}\n`;
   if (options.report)
     fs.writeFileSync(path.resolve(root, options.report), json, { flag: "wx" });
   process.stdout.write(json);
-  return report.errors.length || (requireComplete && !report.complete) ? 1 : 0;
+  return report.errors.length ||
+    (requireComplete && !report.complete) ||
+    (requireSchema && !report.schemaReadiness?.ready)
+    ? 1
+    : 0;
 }
 if (
   process.argv[1] &&
