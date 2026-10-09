@@ -32,7 +32,6 @@ map to.
 
 | Task  | Workstream | Subject                                                                           | Owner        | Started    | Acceptance                                                      | Reviewer |
 | ----- | ---------- | --------------------------------------------------------------------------------- | ------------ | ---------- | --------------------------------------------------------------- | -------- |
-| T-018 | W0         | Fix the foundation integration test to pass the worker's required PostgreSQL URL. | agent-W0     | 2026-10-09 | API typecheck; focused integration test when containers exist   | W23      |
 | T-003 | W7         | Complete `14-lane-L5-orders.PARTIAL.md` against `_lane-plan-brief.md`.            | agent-L5     | 2026-10-09 | lead review of the completed plan                               | lead     |
 | T-004 | W8         | Complete `15-lane-L6-dispatch.PARTIAL.md` against `_lane-plan-brief.md`.          | agent-L6     | 2026-10-09 | lead review of the completed plan                               | lead     |
 | T-005 | W9         | Complete `16-lane-L7-finance.PARTIAL.md` against `_lane-plan-brief.md`.           | agent-L7     | 2026-10-09 | lead review of the completed plan                               | lead     |
@@ -60,3 +59,4 @@ map to.
 | T-015 | W25        | Make gate approval recording and derived release status fail closed on incomplete, forged, stale, self-approved or inconsistent evidence.        | `f4723bc` | Clean-worktree acceptance: 94 tool tests, lint, format, roadmap check and approval listing pass  | W24 (`/root/roadmap_reconcile`)  |
 | T-009 | W25        | Replace retired lane ownership and reconcile L12/multivendor counts while retaining honest partial-plan status.                                  | `70ff025` | `pnpm roadmap:check`; active ownership uses W workstreams; counts are 71 L12 and 263 multivendor | lead (`/root/roadmap_reconcile`) |
 | T-001 | W0         | Re-run GP0 on a clean tree and record the truthful result; approvals apply only to a passing run.                                                | `0bb65a1` | 16/16 commands recorded cleanly: 14 passed, typecheck and no-container integration failed        | W23 (`/root/roadmap_reconcile`)  |
+| T-018 | W0         | Pass the real test Postgres URL to the foundation worker integration runtime.                                                                    | `2b9a339` | API typecheck and worker tests 14/14 pass; container integration remains externally blocked      | W23 (`/root/w2_gate_audit`)      |
