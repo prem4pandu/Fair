@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { resolve } from "node:path";
 import { loadOperationState } from "./lib/operation-state.mjs";
+import { approvalState, judgedRun } from "./lib/gate-approval.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const readJson = (name) =>
@@ -116,10 +117,14 @@ test("status reports only derived facts and never claims an unapproved gate", ()
   const registry = JSON.parse(
     readFileSync(resolve(root, "docs/GATES.json"), "utf8"),
   );
-  const approved = Object.values(registry.gates ?? {}).filter((entry) => {
-    const latest = entry.latest ?? entry.runs?.at(-1);
-    return latest?.passed && (latest.approvals ?? []).length > 0;
-  }).length;
+  const definitions = new Map(
+    readJson("ROADMAP.json").gates.map((gate) => [gate.id, gate]),
+  );
+  // Every required reviewer role, not merely one signature.
+  const approved = Object.values(registry.gates ?? {}).filter(
+    (entry) =>
+      approvalState(definitions.get(entry.gate), judgedRun(entry)).approved,
+  ).length;
   assert.match(
     text,
     new RegExp(`approval recorded: \\*\\*${approved}/`),

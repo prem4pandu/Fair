@@ -4,8 +4,11 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { resolve } from "node:path";
 import { implementedRoots } from "./lib/operation-state.mjs";
+import { approvalState } from "./lib/gate-approval.mjs";
 
 const root = resolve(import.meta.dirname, "..");
+const readDocJson = (name) =>
+  JSON.parse(readFileSync(resolve(root, "docs", name), "utf8"));
 
 test("status report is current, self-contained, and accessible", () => {
   execFileSync(
@@ -35,8 +38,20 @@ test("machine-readable status is generated from operation state, not prose", () 
   );
   assert.equal(status.operations.total, lanes.total);
   assert.ok(status.operations.withRealResolvers < status.operations.total);
-  assert.equal(status.release, "NOT_APPROVED");
-  assert.equal(status.approvedGates, 0);
+  // Both of these were once hard-coded constants, which meant a real approval
+  // could never be reported. They must be derived from the gate registry.
+  const registry = readDocJson("GATES.json");
+  const definitions = new Map(
+    readDocJson("ROADMAP.json").gates.map((gate) => [gate.id, gate]),
+  );
+  const closed = (id) =>
+    approvalState(definitions.get(id), registry.gates?.[id]?.latest).approved;
+  assert.equal(
+    status.approvedGates,
+    Object.keys(registry.gates ?? {}).filter(closed).length,
+    "approved gate count is derived from docs/GATES.json",
+  );
+  assert.equal(status.release, closed("G5") ? "APPROVED" : "NOT_APPROVED");
   assert.equal(
     Object.values(status.lanes).reduce((sum, lane) => sum + lane.roots, 0),
     lanes.total,

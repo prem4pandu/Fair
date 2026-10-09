@@ -39,6 +39,16 @@ function git(args) {
   }
 }
 
+// Who ran the gate. Stamped so tools/approve-gate.mjs can refuse a
+// self-approval instead of trusting the operator to refuse it themselves.
+function recordedBy() {
+  return (
+    process.env.FAIRBITE_RECORDED_BY?.trim() ||
+    git(["config", "user.email"]) ||
+    null
+  );
+}
+
 function loadGates() {
   const plan = JSON.parse(readFileSync(planFile, "utf8"));
   return new Map(plan.gates.map((gate) => [gate.id, gate]));
@@ -131,6 +141,7 @@ if (isMain) {
     gate: id,
     commit: git(["rev-parse", "HEAD"]),
     dirty: Boolean(git(["status", "--porcelain"])),
+    recordedBy: recordedBy(),
     startedAt: new Date().toISOString(),
     finishedAt: null,
     passed: false,
@@ -160,12 +171,16 @@ if (isMain) {
   registry.gates[id].runs.push(entry);
   // A filtered run is real evidence for the commands it ran, but it must never
   // become the gate's headline result: only a complete run updates `latest`.
+  // A complete run also resets the approvals: reviewers signed off a specific
+  // run, and this is a different one.
   if (!partial)
     registry.gates[id].latest = {
       commit: entry.commit,
       dirty: entry.dirty,
       finishedAt: entry.finishedAt,
       passed: entry.passed,
+      approvals: [],
+      approved: false,
       commands: entry.commands.map(({ command, exitCode, durationMs }) => ({
         command,
         exitCode,

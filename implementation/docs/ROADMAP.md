@@ -46,7 +46,7 @@ real artifacts only:
 | GraphQL/REST/WS backend                  | `implementation/services/api` (NestJS + Apollo + Prisma)                    | schema-complete-looking, a small fraction of operations implemented         |
 | Worker                                   | `implementation/services/worker` (BullMQ outbox)                            | transport-level only; no domain jobs                                        |
 | Contracts                                | `implementation/contracts/enatega/*.graphql`                                | scoped multivendor compatibility passes; full six-app mode does not         |
-| Tooling/gates                            | `implementation/tools/*`                                                    | gate runners and generators exist; approvals do not                         |
+| Tooling/gates                            | `implementation/tools/*`                                                    | gate runners, generators and the approval recorder exist; no gate is closed |
 
 ### 1.2 Scope, and where each number lives
 
@@ -451,6 +451,21 @@ Claiming is a committed edit to `docs/TASK_BOARD.md`; two agents cannot hold the
 conflicts. The board carries tasks; `docs/ROADMAP_STATUS.md` carries derived state. Never record a status in the
 board that a recorded command does not support.
 
+The two halves of a gate have two commands, and neither may be hand-edited into `docs/GATES.json`:
+
+```
+pnpm record-gate  --gate <id>                                            # run and record the commands
+pnpm approve-gate --gate <id> --role <role> --reviewer "<identity>"      # record one reviewer's sign-off
+pnpm approve-gate --list                                                 # who still needs to sign what
+```
+
+`record-gate` never writes an approval, and `approve-gate` refuses to record one when the reviewer is whoever
+recorded the run, when the identity already holds another role on that gate, when the run failed, when it was
+recorded over a dirty tree, or when it is not the tree at `HEAD` (`--allow-stale` makes approving an older tree a
+deliberate, recorded act). Recording a new complete run clears that gate's approvals, because reviewers signed off
+a specific run. A gate is closed only when **every** role in its `approvals` list is recorded — one signature of
+three closes nothing.
+
 ### 5.4 Handoff template (paste into every agent spawn)
 
 ```
@@ -614,7 +629,10 @@ as silence.
 | **G4** (W18–W20)  | G3 + provider sandbox evidence, native device runs, security review closed, no high/critical advisories, load/outage/restore results, observability and redaction verified                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **G5** (W21–W22)  | G1–G4 for L12 and the single-vendor admin; owner release decision recorded                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
-`docs/GATES.json` entry schema: `{ gate, command, commit, startedAt, finishedAt, exitCode, summary, artifactPaths, reviewer, approved }`.
+`docs/GATES.json` entry schema: `{ gate, commit, dirty, recordedBy, startedAt, finishedAt, passed, partial, commands[],
+approvals[], approvalRecords[], reviewer, approved }`, where each `approvalRecords` entry is
+`{ role, reviewer, at, runFinishedAt, commit, headAtApproval, approvedStaleTree, note }`. `approvals` holds the roles
+signed; `approved` is true only when they cover every role the gate requires in `ROADMAP.json`.
 
 ---
 

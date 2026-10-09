@@ -11,6 +11,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import prettier from "prettier";
 import { loadOperationState } from "./lib/operation-state.mjs";
+import { approvalState, judgedRun } from "./lib/gate-approval.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const target = resolve(root, "docs/ROADMAP_STATUS.md");
@@ -33,15 +34,13 @@ const registry = existsSync(gatesFile)
   : { gates: {} };
 
 /** Latest recorded run per gate id, or null when a gate has never run. */
-const gateRun = (id) => {
-  const entry = registry.gates?.[id];
-  const latest = entry?.latest ?? entry?.runs?.at(-1);
-  return latest?.finishedAt ? latest : null;
-};
-const gateApproved = (id) => {
-  const run = gateRun(id);
-  return Boolean(run?.passed && (run.approvals ?? []).length > 0);
-};
+const gateRun = (id) => judgedRun(registry.gates?.[id]);
+const gateById = new Map(roadmap.gates.map((gate) => [gate.id, gate]));
+// Approval is all-or-nothing against the roles the gate declares in
+// ROADMAP.json: one signature out of three required reviewers does not close a
+// gate, and must never read as if it did.
+const gateState = (id) => approvalState(gateById.get(id), gateRun(id));
+const gateApproved = (id) => gateState(id).approved;
 
 const laneByIdentifier = new Map(laneSummary.map((lane) => [lane.lane, lane]));
 
@@ -141,13 +140,15 @@ const table = (headers, body) =>
 
 const gateRows = roadmap.gates.map((gate) => {
   const run = gateRun(gate.id);
-  const approvals = run?.approvals ?? [];
+  const state = gateState(gate.id);
   return [
     `\`${gate.id}\``,
     run ? (run.passed ? "commands passed" : "**FAILED**") : "never run",
     run?.finishedAt ?? "—",
     run?.commit ? `\`${String(run.commit).slice(0, 12)}\`` : "—",
-    approvals.length ? approvals.join(", ") : "**none**",
+    state.recorded.length
+      ? `${state.recorded.join(", ")}${state.missing.length ? ` (missing **${state.missing.join(", ")}**)` : ""}`
+      : `**none** of ${state.required.length} required`,
   ];
 });
 
@@ -207,8 +208,11 @@ repository can prove.
 
 ${table(["Gate", "Last run", "Finished", "Commit", "Approvals"], gateRows)}
 
-A gate is closed only when its commands passed **and** an independent reviewer is
-recorded. "commands passed" with no approval does not close a batch.
+A gate is closed only when its commands passed **and** every reviewer role it
+declares in \`ROADMAP.json\` is recorded. "commands passed" with no approval does
+not close a batch, and a partial set of signatures does not either. Record one
+with \`pnpm approve-gate --gate <id> --role <role> --reviewer <identity>\`; it
+refuses self-approval and refuses a failing or dirty-tree run.
 
 ## Workstreams
 

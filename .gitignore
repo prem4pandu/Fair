@@ -19,3 +19,7 @@ upstream/
 .DS_Store
 **/.DS_Store
 .pnpm-store/
+
+# Scratch files left by local tooling. These must not keep the tree "dirty",
+# because every gate in docs/ROADMAP.md §7 requires a clean tree to be recorded.
+**/.tmp-*

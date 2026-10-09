@@ -3,6 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import prettier from "prettier";
 import { loadOperationState } from "./lib/operation-state.mjs";
+import { approvalState } from "./lib/gate-approval.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const target = resolve(root, "docs/IMPLEMENTATION_STATUS.html");
@@ -38,6 +39,16 @@ const gateRuns = Object.values(registry?.gates ?? {})
   .map((entry) => ({ id: entry.gate, ...(entry.latest ?? {}) }))
   .filter((entry) => entry.finishedAt);
 const passedGates = gateRuns.filter((entry) => entry.passed).length;
+// Approval counts are derived from the recorded reviewers against the roles
+// each gate demands, never asserted. This used to be hard-coded to 0, which
+// made a recorded approval unreportable even once one existed.
+const roadmapGates = new Map(
+  JSON.parse(
+    readFileSync(resolve(root, "docs/ROADMAP.json"), "utf8"),
+  ).gates.map((gate) => [gate.id, gate]),
+);
+const stateFor = (run) => approvalState(roadmapGates.get(run.id), run);
+const approvedGates = gateRuns.filter((run) => stateFor(run).approved).length;
 const latestRun = [...gateRuns].sort((a, b) =>
   String(b.finishedAt).localeCompare(String(a.finishedAt)),
 )[0];
@@ -46,7 +57,8 @@ const gateSummary = gateRuns.length
     `${latestRun.passed ? "PASSED" : "FAILED"} at ${escape(latestRun.finishedAt)} ` +
     `on commit <code>${escape(String(latestRun.commit ?? "unknown").slice(0, 12))}</code> ` +
     `(${latestRun.commands.filter((command) => command.exitCode === 0).length}/${latestRun.commands.length} commands exit 0). ` +
-    `Independent gate approvals remain pending. Full command output: <code>docs/GATES.json</code>.`
+    `${approvedGates}/${roadmapGates.size} gates are closed by every reviewer role they require. ` +
+    `Full command output: <code>docs/GATES.json</code>.`
   : "No gate run is recorded yet; run <code>node tools/record-gate.mjs --gate GP0</code> and commit <code>docs/GATES.json</code>.";
 const laneNames = {
   L0: "Transport foundation",
@@ -94,8 +106,11 @@ const status = {
   generatedBy: "tools/generate-implementation-status.mjs",
   authority: "docs/ROADMAP.md",
   overall: "IN_PROGRESS",
-  // Release approval is an owner decision and is never derived from code.
-  release: "NOT_APPROVED",
+  // Release approval is the owner's signature on G5, so it is read from that
+  // gate's recorded approvals rather than declared here.
+  release: gateRuns.some((run) => run.id === "G5" && stateFor(run).approved)
+    ? "APPROVED"
+    : "NOT_APPROVED",
   operations: {
     total: totals.operations,
     withRealResolvers: totals.implemented,
@@ -136,6 +151,8 @@ const status = {
       finishedAt: run.finishedAt ?? null,
       commit: run.commit ?? null,
       approvals: run.approvals ?? [],
+      requiredApprovals: stateFor(run).required,
+      approved: stateFor(run).approved,
       commands: (run.commands ?? []).map(({ command, exitCode }) => ({
         command,
         exitCode,
@@ -143,14 +160,16 @@ const status = {
     }))
     .sort((a, b) => a.id.localeCompare(b.id)),
   recordedGateRuns: gateRuns.length,
-  approvedGates: 0,
+  approvedGates,
   notes: [
     "A resolving schema is not implementation: NOT_IMPLEMENTED roots are counted as unimplemented.",
-    "No gate is approved until an independent reviewer is recorded in docs/GATES.json.",
+    "A gate is approved only when every reviewer role it requires is recorded in docs/GATES.json by tools/approve-gate.mjs.",
     "Static compatibility does not prove resolver behavior, authorization, runtime reachability or UI parity.",
   ],
 };
-const json = `${JSON.stringify(status, null, 2)}\n`;
+// Formatted by prettier rather than JSON.stringify's fixed indent, so the
+// generated file and `pnpm format:check` can never disagree about it.
+const json = await prettier.format(JSON.stringify(status), { parser: "json" });
 
 const staleness = [];
 if (readFileSync(target, "utf8") !== html) staleness.push("HTML");

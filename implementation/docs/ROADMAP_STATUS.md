@@ -20,18 +20,21 @@ repository can prove.
 
 ## Gates
 
-| Gate  | Last run        | Finished                 | Commit         | Approvals |
-| ----- | --------------- | ------------------------ | -------------- | --------- |
-| `GP0` | commands passed | 2026-10-08T15:14:41.660Z | `5a75b7ddab20` | **none**  |
-| `G0`  | never run       | —                        | —              | **none**  |
-| `G1`  | never run       | —                        | —              | **none**  |
-| `G2`  | never run       | —                        | —              | **none**  |
-| `G3`  | never run       | —                        | —              | **none**  |
-| `G4`  | never run       | —                        | —              | **none**  |
-| `G5`  | never run       | —                        | —              | **none**  |
+| Gate  | Last run        | Finished                 | Commit         | Approvals              |
+| ----- | --------------- | ------------------------ | -------------- | ---------------------- |
+| `GP0` | commands passed | 2026-10-08T15:14:41.660Z | `5a75b7ddab20` | **none** of 3 required |
+| `G0`  | never run       | —                        | —              | **none** of 2 required |
+| `G1`  | never run       | —                        | —              | **none** of 2 required |
+| `G2`  | never run       | —                        | —              | **none** of 2 required |
+| `G3`  | never run       | —                        | —              | **none** of 2 required |
+| `G4`  | never run       | —                        | —              | **none** of 3 required |
+| `G5`  | never run       | —                        | —              | **none** of 3 required |
 
-A gate is closed only when its commands passed **and** an independent reviewer is
-recorded. "commands passed" with no approval does not close a batch.
+A gate is closed only when its commands passed **and** every reviewer role it
+declares in `ROADMAP.json` is recorded. "commands passed" with no approval does
+not close a batch, and a partial set of signatures does not either. Record one
+with `pnpm approve-gate --gate <id> --role <role> --reviewer <identity>`; it
+refuses self-approval and refuses a failing or dirty-tree run.
 
 ## Workstreams
 

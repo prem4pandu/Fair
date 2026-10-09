@@ -29,6 +29,7 @@
     "roadmap:check": "node tools/generate-roadmap-status.mjs --check",
     "check:error-messages": "node tools/check-error-messages.mjs",
     "record-gate": "node tools/record-gate.mjs",
+    "approve-gate": "node tools/approve-gate.mjs",
     "e2e:smoke": "node tools/pending-gate.mjs e2e:smoke",
     "e2e": "node tools/pending-gate.mjs e2e",
     "test:journeys": "node tools/pending-gate.mjs test:journeys",
