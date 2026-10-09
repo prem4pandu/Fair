@@ -70,7 +70,7 @@ describe("real foundation stack", () => {
     await events.waitUntilReady();
     const job = await queue.add("probe", { probeId: randomUUID() });
     expect(await job.getState()).toBe("waiting");
-    const runtime = await startWorker(redisUrl);
+    const runtime = await startWorker(redisUrl, postgres.getConnectionUri());
     try {
       expect(await job.waitUntilFinished(events, 10000)).toMatchObject({
         status: "ok",
