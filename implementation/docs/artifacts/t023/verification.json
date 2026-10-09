@@ -1,0 +1,39 @@
+{
+  "task": "T-023",
+  "date": "2026-10-10",
+  "scope": "Test HTTP lifecycle stabilization and non-GraphQL response diagnostics only",
+  "file": "services/api/test/addresses.integration.spec.ts",
+  "rootCause": "Original intermittent failure not reproduced; production cause remains unproven. No production code or timeout changed.",
+  "checks": [
+    {
+      "command": "./tools/pnpm.sh --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/addresses.integration.spec.ts",
+      "result": "PASS",
+      "tests": 8,
+      "reportedBy": "/root/w1_gap_audit"
+    },
+    {
+      "command": "./tools/pnpm.sh test:integration",
+      "environment": {
+        "DOCKER_HOST": "unix:///Users/premkumarmamidi/.colima/default/docker.sock",
+        "TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE": "/var/run/docker.sock"
+      },
+      "exitCode": 0,
+      "files": 13,
+      "tests": 76,
+      "artifact": "docs/artifacts/t023/full-integration.log"
+    },
+    {
+      "command": "./tools/pnpm.sh lint",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh format:check",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh --filter @fairbite/api typecheck",
+      "exitCode": 0
+    }
+  ],
+  "gate": "GP0 complete rerun still required"
+}

@@ -1,0 +1,17 @@
+
+> fairbite-fresh-workspace@ test:integration /Users/premkumarmamidi/Development/Fair/implementation
+> pnpm --filter @fairbite/api test:integration
+
+
+> @fairbite/api@0.0.0 test:integration /Users/premkumarmamidi/Development/Fair/implementation/services/api
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v4.1.11 /Users/premkumarmamidi/Development/Fair/implementation/services/api
+
+
+ Test Files  13 passed (13)
+      Tests  76 passed (76)
+   Start at  01:16:00
+   Duration  167.45s (transform 233ms, setup 0ms, import 4.58s, tests 142.13s, environment 0ms)
+

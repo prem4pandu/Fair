@@ -47,7 +47,13 @@ async function gql(
 ) {
   const req = request(app.getHttpServer()).post("/graphql");
   if (access) req.set("Authorization", `Bearer ${access}`);
-  return (await req.send({ query, variables })).body;
+  const response = await req.send({ query, variables });
+  const body = response.body;
+  if (!body || (!Object.hasOwn(body, "data") && !Object.hasOwn(body, "errors")))
+    throw new Error(
+      `GraphQL response had no data or errors: status=${response.status} content-type=${response.headers["content-type"] ?? "missing"} body=${response.text}`,
+    );
+  return body;
 }
 async function customer() {
   const email = `addresses-${randomUUID()}@example.test`,
@@ -107,6 +113,7 @@ beforeAll(async () => {
       REFRESH_TOKEN_PEPPER: randomBytes(32).toString("base64url"),
     }),
   );
+  await app.listen(0, "127.0.0.1");
 });
 afterAll(async () => {
   await app?.close();
