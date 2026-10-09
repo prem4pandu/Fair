@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { resolve } from "node:path";
 import { implementedRoots } from "./lib/operation-state.mjs";
-import { approvalState } from "./lib/gate-approval.mjs";
+import { approvalState, judgedRun } from "./lib/gate-approval.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const readDocJson = (name) =>
@@ -45,7 +45,8 @@ test("machine-readable status is generated from operation state, not prose", () 
     readDocJson("ROADMAP.json").gates.map((gate) => [gate.id, gate]),
   );
   const closed = (id) =>
-    approvalState(definitions.get(id), registry.gates?.[id]?.latest).approved;
+    approvalState(definitions.get(id), judgedRun(registry.gates?.[id]))
+      .approved;
   assert.equal(
     status.approvedGates,
     Object.keys(registry.gates ?? {}).filter(closed).length,
@@ -61,6 +62,44 @@ test("machine-readable status is generated from operation state, not prose", () 
     assert.equal(typeof gate.passed, "boolean");
     assert.ok(Array.isArray(gate.commands));
   }
+});
+
+test("generator judgment preserves the run recorder instead of substituting the commit author", () => {
+  const finishedAt = "2026-10-09T10:00:00.000Z";
+  const record = (reviewer) => ({
+    role: "owner",
+    reviewer,
+    at: "2026-10-09T10:01:00.000Z",
+    runFinishedAt: finishedAt,
+    commit: "abc123",
+  });
+  const entry = {
+    latest: {
+      finishedAt,
+      commit: "abc123",
+      passed: true,
+      approvals: ["owner"],
+      approvalRecords: [record("recorder@example.com")],
+    },
+    runs: [
+      {
+        finishedAt,
+        commit: "abc123",
+        passed: true,
+        recordedBy: "recorder@example.com",
+        approvals: ["owner"],
+        approvalRecords: [record("recorder@example.com")],
+      },
+    ],
+  };
+  const judged = judgedRun(entry);
+  assert.equal(judged.recordedBy, "recorder@example.com");
+  assert.equal(
+    approvalState({ approvals: ["owner"] }, judged, {
+      commitAuthor: () => "different-author@example.com",
+    }).approved,
+    false,
+  );
 });
 
 test("reported resolver coverage matches an independent source scan", () => {

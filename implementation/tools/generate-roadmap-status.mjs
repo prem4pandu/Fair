@@ -7,6 +7,7 @@
 // Nothing here may be hand-maintained: a workstream is never "done" because a
 // document says so, only because a recorded command and an independent
 // approval say so.
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import prettier from "prettier";
@@ -39,7 +40,19 @@ const gateById = new Map(roadmap.gates.map((gate) => [gate.id, gate]));
 // Approval is all-or-nothing against the roles the gate declares in
 // ROADMAP.json: one signature out of three required reviewers does not close a
 // gate, and must never read as if it did.
-const gateState = (id) => approvalState(gateById.get(id), gateRun(id));
+const commitAuthor = (commit) => {
+  if (!commit) return "";
+  try {
+    return execFileSync("git", ["show", "-s", "--format=%ae", commit], {
+      cwd: root,
+      encoding: "utf8",
+    }).trim();
+  } catch {
+    return "";
+  }
+};
+const gateState = (id) =>
+  approvalState(gateById.get(id), gateRun(id), { commitAuthor });
 const gateApproved = (id) => gateState(id).approved;
 
 const laneByIdentifier = new Map(laneSummary.map((lane) => [lane.lane, lane]));

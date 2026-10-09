@@ -1,9 +1,14 @@
 #!/usr/bin/env node
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import prettier from "prettier";
 import { loadOperationState } from "./lib/operation-state.mjs";
-import { approvalState } from "./lib/gate-approval.mjs";
+import {
+  approvalState,
+  judgedRun,
+  releasePresentation,
+} from "./lib/gate-approval.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const target = resolve(root, "docs/IMPLEMENTATION_STATUS.html");
@@ -36,7 +41,7 @@ const registry = existsSync(gatesFile)
   ? JSON.parse(readFileSync(gatesFile, "utf8"))
   : null;
 const gateRuns = Object.values(registry?.gates ?? {})
-  .map((entry) => ({ id: entry.gate, ...(entry.latest ?? {}) }))
+  .map((entry) => ({ id: entry.gate, ...(judgedRun(entry) ?? {}) }))
   .filter((entry) => entry.finishedAt);
 const passedGates = gateRuns.filter((entry) => entry.passed).length;
 // Approval counts are derived from the recorded reviewers against the roles
@@ -47,7 +52,19 @@ const roadmapGates = new Map(
     readFileSync(resolve(root, "docs/ROADMAP.json"), "utf8"),
   ).gates.map((gate) => [gate.id, gate]),
 );
-const stateFor = (run) => approvalState(roadmapGates.get(run.id), run);
+const commitAuthor = (commit) => {
+  if (!commit) return "";
+  try {
+    return execFileSync("git", ["show", "-s", "--format=%ae", commit], {
+      cwd: root,
+      encoding: "utf8",
+    }).trim();
+  } catch {
+    return "";
+  }
+};
+const stateFor = (run) =>
+  approvalState(roadmapGates.get(run.id), run, { commitAuthor });
 const approvedGates = gateRuns.filter((run) => stateFor(run).approved).length;
 const latestRun = [...gateRuns].sort((a, b) =>
   String(b.finishedAt).localeCompare(String(a.finishedAt)),
@@ -86,9 +103,13 @@ const laneRows = laneSummary
   .join("");
 const phase = (wave, scope, state, gap) =>
   `<tr><th scope="row">${wave}</th><td>${scope}</td><td>${badge(state)}</td><td>${gap}</td></tr>`;
+const releaseApproved = gateRuns.some(
+  (run) => run.id === "G5" && stateFor(run).approved,
+);
+const releaseState = releasePresentation(releaseApproved);
 const raw = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FairBite implementation status</title><style>
 :root{color-scheme:dark;--bg:#09110f;--panel:#111d19;--line:#294038;--text:#edf7f2;--muted:#a8beb4;--green:#65d6a6;--amber:#ffc966;--red:#ff8a85;--blue:#79bfff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:32px 20px 80px}header,.card,details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}header{padding:28px;background:linear-gradient(135deg,#162b24,#0d1714)}h1{font-size:clamp(2rem,5vw,4.2rem);line-height:1}.eyebrow{color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.12em}.lead,.note,caption{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:22px 0}.value{font-size:1.8rem;font-weight:800}.badge{display:inline-block;border-radius:99px;padding:.18rem .62rem;font-size:.78rem;font-weight:800}.in-progress{color:var(--amber);background:#40351b}.blocked{color:var(--red);background:#472525}.complete{color:var(--green);background:#163c30}.table{overflow:auto;border:1px solid var(--line);border-radius:14px}table{width:100%;border-collapse:collapse;background:var(--panel)}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:12px}thead th,.eyebrow{color:var(--green)}caption{text-align:left;padding:8px}code,a{color:var(--blue)}.callout{border-left:4px solid var(--amber);padding:14px;background:#241f13}:focus-visible{outline:3px solid var(--blue)}@media(max-width:650px){main{padding:18px 12px}th,td{padding:9px;font-size:.9rem}}
-</style></head><body><main><header><div class="eyebrow">Evidence-based project report</div><h1>FairBite implementation status</h1><p class="lead">The original pinned Enatega presentation is the product UI. FairBite owns its backend and integration layer.</p><p>${badge("IN PROGRESS")} No release gate is recorded as passed.</p></header>
+</style></head><body><main><header><div class="eyebrow">Evidence-based project report</div><h1>FairBite implementation status</h1><p class="lead">The original pinned Enatega presentation is the product UI. FairBite owns its backend and integration layer.</p><p>${badge(releaseState.badge)} ${releaseState.text}</p></header>
 <section><h2>Current snapshot</h2><div class="grid"><article class="card"><div class="value">${compatibility.summary.validDocuments}/${compatibility.summary.documents}</div><div>scoped multivendor documents valid</div></article><article class="card"><div class="value">${lanes.total}</div><div>inventoried root operations</div></article><article class="card"><div class="value">${verified}/${lanes.total}</div><div>operations marked verified</div></article><article class="card"><div class="value">${passedGates}</div><div>complete gate command runs passed</div></article></div><p class="callout"><strong>Scoped multivendor compatibility ${compatibility.staticCompatibility}</strong> does not prove resolver behavior, authorization, runtime reachability, subscriptions, UI parity, or E2E journeys.</p><p class="callout"><strong>Full six-app compatibility ${fullCompatibility.staticCompatibility}</strong>: ${fullCompatibility.summary.validDocuments}/${fullCompatibility.summary.documents} documents valid, ${fullInvalidDocuments} invalid, ${fullCompatibility.summary.unresolvedDocuments} unresolved. The scoped PASS does not satisfy the W2 full-mode gate.</p><p class="note">${gateSummary} Test counts and per-command exits are recorded there rather than restated here.</p></section>
 <section><h2>Phase status</h2><div class="table"><table><caption>Status requires implementation, checks, and independent approval.</caption><thead><tr><th>Wave</th><th>Scope</th><th>Status</th><th>Evidence gap</th></tr></thead><tbody>${phase("0", "Foundation", "IN PROGRESS", "Aggregate G0 evidence and approval are open.")}${phase("1", "Contract and data model", "IN PROGRESS", "Forward migrations exist; formal G1 evidence and approval remain open.")}${phase("2", "L1–L9 domains", "IN PROGRESS", "Identity, configuration, catalog, addresses, and order-domain slices exist; most operation behavior and per-operation tests remain incomplete.")}${phase("3", "Journeys and application E2E", "BLOCKED", "Depends on completed domain operations.")}${phase("4", "Hardening and release", "BLOCKED", "Providers, devices, security, load, restore, and approvals remain.")}${phase("5", "Single-vendor L12", "BLOCKED", "Separate gated product mode.")}</tbody></table></div></section>
 <section><h2>Backend lane matrix</h2><div class="table"><table><caption>Counts from OPERATION_LANES.json.</caption><thead><tr><th>Lane</th><th>Module</th><th>Roots</th><th>Implemented</th><th>Status</th><th>Assessment</th></tr></thead><tbody>${laneRows}</tbody></table></div></section>
@@ -108,9 +129,7 @@ const status = {
   overall: "IN_PROGRESS",
   // Release approval is the owner's signature on G5, so it is read from that
   // gate's recorded approvals rather than declared here.
-  release: gateRuns.some((run) => run.id === "G5" && stateFor(run).approved)
-    ? "APPROVED"
-    : "NOT_APPROVED",
+  release: releaseState.release,
   operations: {
     total: totals.operations,
     withRealResolvers: totals.implemented,
