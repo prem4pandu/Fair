@@ -2,6 +2,18 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Every implementation handoff MUST include the "Frontend boundary" section below verbatim.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this file
+> for scope, scheduling, workstream ownership, write scopes and gates. This file remains authoritative for
+> architecture, conventions and per-lane task detail. Two corrections apply everywhere below:
+>
+> 1. **Identifiers.** `L10`, `L11` and `L13` are retired. They were never lanes in `OPERATION_LANES.json`. Read
+>    `L10` as **W15** (journeys) or **W16** (Playwright); vendor-package edits belong to the matching frontend
+>    workstream **W12/W13/W14a/W14b**, not to a single E2E lane. Read `L11` as **W23** (QA) and `L13` as **W24**
+>    (security). See `ROADMAP.md` §4.0.
+> 2. **Counts.** Lane L12 holds **71** operations and multivendor scope is **263**, per `OPERATION_LANES.json`
+>    after the W0-7 generator fix. Every "70"/"264" below is stale; the JSON wins and `pnpm roadmap:check`
+>    enforces it.
+
 **Goal:** Build the backend that the six unchanged Enatega apps in `implementation/vendor/enatega-ui/` call — every GraphQL operation, REST route and WebSocket subscription, with the same names, arguments and response shapes — and prove it with unit, database-integration, contract, journey and Playwright tests, with coverage measured from the first commit.
 
 **Architecture:** One NestJS + Apollo API (schema-first) in `implementation/services/api`, one BullMQ worker in `implementation/services/worker`, PostgreSQL 17 + PostGIS and Redis. The schema lives in `implementation/contracts/enatega/*.graphql`. Each domain lane owns a module directory, an SDL file and a Prisma schema file. Cross-lane calls go through TypeScript ports defined once in Wave 1. Shared files and migrations are integrated serially by the lead; lane implementation runs in batches of at most three workers so the lead remains available within the four-agent concurrency limit.
@@ -20,13 +32,13 @@
 | `10-lane-L1-identity.md` … `18-lane-L9-analytics.md` | per-lane domain implementation, task by task, with tests                                        | lane workers in batches of at most three in Wave 2 |
 | `20-wave3-journeys-and-e2e.md`                       | cross-lane journeys, Playwright suites, mobile document replays, native device gate             | E2E lane + QA                                      |
 | `21-wave4-hardening-and-release.md`                  | providers, security review, performance, observability, release gates                           | lead + security + QA                               |
-| `22-wave5-single-vendor.PARTIAL.md`                  | the 70 single-vendor operations (gated on owner decision D1)                                    | 2 agents                                           |
+| `22-wave5-single-vendor.PARTIAL.md`                  | the 71 single-vendor operations (gated on owner decision D1)                                    | 2 agents                                           |
 | `reference/01..04-*.md`                              | exact client behaviour, documents, selection sets and rules, with file:line citations           | read-only input for everyone                       |
 
 Machine-readable inputs (generated, committed):
 
 - `implementation/docs/ENATEGA_OPERATION_INVENTORY.json` — 334 statically resolved root operations and the apps that call them (`node tools/inventory-operations.mjs …`). This is not a complete runtime inventory until the 132 unresolved imported or interpolated document sites in `ENATEGA_COMPATIBILITY_REPORT.json` are manually resolved and added.
-- `implementation/docs/OPERATION_LANES.json` — each operation's lane and wave (`node tools/operation-lanes.mjs …`). **This file is the authority for "who implements what".** 264 operations are multivendor scope; 70 are single-vendor (lane L12).
+- `implementation/docs/OPERATION_LANES.json` — each operation's lane and wave (`node tools/operation-lanes.mjs …`). **This file is the authority for "who implements what".** 263 operations are multivendor scope; 71 are single-vendor (lane L12).
 - `implementation/docs/ENATEGA_COMPATIBILITY_REPORT.json` — static validation of every app document against our SDL (`pnpm check:enatega`).
 
 ### 0.1 Verified baseline on 2026-10-08
@@ -64,7 +76,7 @@ Decisions marked **OWNER** need the owner's confirmation. Work proceeds on the s
 | D13 | Email, SMS, push           | `EmailSender`, `SmsSender`, `PushSender` ports. Production adapters are SendGrid/SMTP, Twilio and FCM/Expo, blocked on credentials. In `APP_ENV` `development` and `test` only, an `OutboxSender` writes messages to the `DevOutbox` table so tests and local runs can read OTPs; `readConfig` refuses `OutboxSender` in production.                                                                                                                                                                                                                                                                                      | Real delivery needs provider inputs; tests must not fake success.                                                                                                                                                            | **OWNER** (provider accounts) |
 | D14 | Recorded frontend edits    | Exactly the edits in `01-wave0-foundation.md` Task C7, each recorded in `SOURCE_PROVENANCE.json`. They must configuration-gate all known telemetry, Firebase, EmailJS, Maps and upstream URL connections before any first launch; disabled services must not load their scripts or send requests.                                                                                                                                                                                                                                                                                                                         | Hard-coded upstream URLs and telemetry (reference/01 §6).                                                                                                                                                                    | no                            |
 | D15 | Legacy FairBite operations | `serviceInfo`, `registerCustomer`, `loginPassword`, `refreshSession`, `logoutSession`, `logoutAllSessions`, `me`, `catalog*`, `customerAddresses`, `*CustomerAddress` are removed from the served schema at the end of Wave 1. Their services and tests are reused by L1/L3/L4.                                                                                                                                                                                                                                                                                                                                           | No app calls them.                                                                                                                                                                                                           | no                            |
-| D16 | Old phase plan             | `docs/EXECUTION_PLAN.json` FB05–FB20 and the status JSONs are superseded by this plan. Wave 4 Task R9 rewrites `IMPLEMENTATION_STATUS.json` from the gates in §8.                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Avoid two sources of truth.                                                                                                                                                                                                  | no                            |
+| D16 | Old phase plan             | The FB00–FB20 phase plan is superseded: its scheduling is gone and its capability names live in `docs/ROADMAP.json` `capabilityMap`. The file itself is archived at `docs/history/2026-10-08-EXECUTION_PLAN.json`. Status JSONs are generated (`pnpm roadmap`, `tools/generate-implementation-status.mjs`) and never hand-written.                                                                                                                                                                                                                                                                                        | Avoid two sources of truth.                                                                                                                                                                                                  | no                            |
 
 ## 3. Architecture
 
@@ -202,7 +214,7 @@ Business messages must never contain the words `unauthorized`, `unauthenticated`
 | Lane | Name                                       | Modules                                                                                                                                                     | Ops                              | Plan                                  |
 | ---- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------- |
 | L0   | Platform kernel                            | `kernel/**`, `rest/health`                                                                                                                                  | 1 (`metricsGeneral`) + transport | `01-wave0-foundation.md`              |
-| L1   | Identity & sessions                        | `identity`, `staff`                                                                                                                                         | 31                               | `10-lane-L1-identity.md`              |
+| L1   | Identity & sessions                        | `identity`, `staff`                                                                                                                                         | 30                               | `10-lane-L1-identity.md`              |
 | L2   | Platform configuration & reference data    | `platform` (configuration, versions, geo reference, cuisines, shop types, banners, tips, taxes, zones, audit, uploads, activity), `rest/maps`, `rest/media` | 54                               | `11-lane-L2-configuration.md`         |
 | L3   | Vendors, restaurants, catalog & discovery  | `vendors`, `catalog`, `discovery`, `reviews`, `coupons`                                                                                                     | 75                               | `12-lane-L3-catalog.md`               |
 | L4   | Customers, addresses, favourites & support | `customers`, `support`                                                                                                                                      | 22                               | `13-lane-L4-discovery.md`             |
@@ -211,34 +223,45 @@ Business messages must never contain the words `unauthorized`, `unauthenticated`
 | L7   | Payments, ledger & finance                 | `finance`, `payments`, `rest/stripe`                                                                                                                        | 11 + REST                        | `16-lane-L7-finance.PARTIAL.md`       |
 | L8   | Notifications & messaging providers        | `notifications`, worker `jobs/notifications`                                                                                                                | 5 + ports                        | `17-lane-L8-notifications.PARTIAL.md` |
 | L9   | Dashboards & analytics                     | `analytics`                                                                                                                                                 | 9                                | `18-lane-L9-analytics.md`             |
-| L10  | E2E & app integration                      | `e2e/**`, `test/journeys/**`, recorded frontend edits                                                                                                       | —                                | `01` (C-tasks), `20`                  |
-| L11  | QA (independent)                           | review only                                                                                                                                                 | —                                | `20`, `21`                            |
-| L12  | Single-vendor (gated)                      | `singlevendor`                                                                                                                                              | 70                               | `22-wave5-single-vendor.PARTIAL.md`   |
-| L13  | Security (independent)                     | review only                                                                                                                                                 | —                                | `21`                                  |
+| L12  | Single-vendor (gated)                      | `singlevendor`                                                                                                                                              | 71                               | `22-wave5-single-vendor.PARTIAL.md`   |
 
 The full operation list per lane is `OPERATION_LANES.json`; each lane plan also lists its operations in a table.
 
+**Retired rows.** `L10` (E2E & app integration), `L11` (QA) and `L13` (security) used to appear here as lanes.
+They hold no operations and are not lanes; they are workstreams in `ROADMAP.md`:
+
+| Was | Work                                               | Now                                      | Plan                                                     |
+| --- | -------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------- |
+| L10 | `test/journeys/**`                                 | **W15**                                  | `20-wave3-journeys-and-e2e.md`                           |
+| L10 | `e2e/**`, `playwright*.config.ts`                  | **W16**                                  | `20-wave3-journeys-and-e2e.md`, `32-coverage-closure.md` |
+| L10 | recorded edits inside `vendor/enatega-ui/<pkg>/**` | **W12 / W13 / W14a / W14b**, per package | `30-frontend-integration.md`                             |
+| L11 | independent QA review                              | **W23**                                  | `20-wave3-journeys-and-e2e.md`                           |
+| L13 | independent security review                        | **W24**                                  | `21-wave4-hardening-and-release.md`                      |
+| —   | signed native device runs                          | **W19**                                  | `31-native-device-e2e.md`                                |
+
 ## 6. File ownership
 
-| Path                                                                          | Owner                                                                                                                   |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `contracts/enatega/core.graphql`, `scalars.graphql`, `kernel.graphql`         | lead (written in W0-A / W1-0)                                                                                           |
-| `contracts/enatega/<lane>.graphql`                                            | that lane                                                                                                               |
-| `services/api/prisma/schema/base.prisma`                                      | lead                                                                                                                    |
-| `services/api/prisma/schema/<lane>.prisma`                                    | that lane                                                                                                               |
-| `services/api/prisma/migrations/**`                                           | lead; lanes submit reviewed SQL/schema requirements and the lead serialises migration creation and upgrade verification |
-| `services/api/src/kernel/**`                                                  | L0 (lead after Wave 0)                                                                                                  |
-| `services/api/src/kernel/ports.ts`                                            | lead (W1-0); lanes request changes                                                                                      |
-| `services/api/src/modules/<module>/**`                                        | lane in §5                                                                                                              |
-| `services/api/src/rest/maps.*`, `rest/media.*`                                | L2                                                                                                                      |
-| `services/api/src/rest/stripe.*`                                              | L7                                                                                                                      |
-| `services/api/test/support/**`                                                | W0-C (lead after Wave 0); lane-specific builders live with lane tests unless promoted by the lead                       |
-| `services/api/test/unit/<module>/**`, `test/integration/<module>/**`          | lane                                                                                                                    |
-| `services/api/test/journeys/**`, `e2e/**`                                     | L10                                                                                                                     |
-| `services/worker/src/jobs/<lane>/**`                                          | lane                                                                                                                    |
-| `tools/**`, root configs, `package.json`, `turbo.json`, `pnpm-workspace.yaml` | lead                                                                                                                    |
-| `vendor/enatega-ui/**`                                                        | L10 only, only the edits in D14, recorded                                                                               |
-| `docs/**` status files                                                        | lead                                                                                                                    |
+| Path                                                                          | Owner                                                                                                                                   |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `contracts/enatega/core.graphql`, `scalars.graphql`, `kernel.graphql`         | lead (written in W0-A / W1-0)                                                                                                           |
+| `contracts/enatega/<lane>.graphql`                                            | that lane                                                                                                                               |
+| `services/api/prisma/schema/base.prisma`                                      | lead                                                                                                                                    |
+| `services/api/prisma/schema/<lane>.prisma`                                    | that lane                                                                                                                               |
+| `services/api/prisma/migrations/**`                                           | lead; lanes submit reviewed SQL/schema requirements and the lead serialises migration creation and upgrade verification                 |
+| `services/api/src/kernel/**`                                                  | L0 (lead after Wave 0)                                                                                                                  |
+| `services/api/src/kernel/ports.ts`                                            | lead (W1-0); lanes request changes                                                                                                      |
+| `services/api/src/modules/<module>/**`                                        | lane in §5                                                                                                                              |
+| `services/api/src/rest/maps.*`, `rest/media.*`                                | L2                                                                                                                                      |
+| `services/api/src/rest/stripe.*`                                              | L7                                                                                                                                      |
+| `services/api/test/support/**`                                                | W0-C (lead after Wave 0); lane-specific builders live with lane tests unless promoted by the lead                                       |
+| `services/api/test/unit/<module>/**`, `test/integration/<module>/**`          | lane                                                                                                                                    |
+| `services/api/test/journeys/**`                                               | W15                                                                                                                                     |
+| `e2e/**`, `playwright*.config.ts`                                             | W16                                                                                                                                     |
+| `services/worker/src/jobs/<lane>/**`                                          | lane                                                                                                                                    |
+| `tools/**`, root configs, `package.json`, `turbo.json`, `pnpm-workspace.yaml` | lead                                                                                                                                    |
+| `vendor/enatega-ui/<pkg>/**`                                                  | the frontend workstream owning that package (W12 web, W13 admins, W14a customer app, W14b store+rider); only the edits in D14, recorded |
+| `SOURCE_PROVENANCE.json`, `vendor/enatega-ui/SOURCE_MANIFEST.json`            | lead only — the serialisation point after every frontend batch                                                                          |
+| `docs/**` status files                                                        | lead                                                                                                                                    |
 
 ## 7. Waves and parallelism
 
@@ -249,9 +272,9 @@ Wave 0  Foundation ──────────── W0-A kernel+transport �
 Wave 1  Contract & data model ─ W1-0 core SDL+ports+base schema (1 agent)
                                └► W1-L1..L9 in batches of at most 3 lane agents; lead serialises shared files and migrations ─► gate G1
 Wave 2  Domain build ────────── L1..L9 in batches of at most 3 implementation agents
-                                lead integrates shared changes; L10/L11 run in later review batches ─► gate G2 (per lane)
-Wave 3  Journeys & E2E ──────── L10 full journeys (admin, web, mobile document replays) + fixes by owning lanes ─► gate G3
-Wave 4  Hardening & release ─── providers (blocked on inputs) · L13 security · perf · native device gate ─► gate G4
+                                lead integrates shared changes; W23/W24 review in later batches ─► gate G2 (per lane)
+Wave 3  Journeys & E2E ──────── W15 journeys + W16 Playwright (admin, web, mobile replays) + fixes by owning lanes ─► gate G3
+Wave 4  Hardening & release ─── providers (blocked on inputs) · W24 security · perf · native device gate ─► gate G4
 Wave 5  Single-vendor (gated) ─ L12 ─► gate G5
 ```
 
@@ -261,7 +284,7 @@ Wave 2 is blocked until the missing L1-L4 and Wave 3 plans are written and the L
 
 ## 8. Gates
 
-A gate passes only when every applicable command listed exits 0 on a clean checkout, the evidence is recorded in `docs/GATES.json` (command, commit, timestamp, summary), and an independent reviewer (L11/L13) has approved. No agent approves its own work. A check may be marked `N/A` only with the exact gate item, reason, scope, reviewer and replacement evidence recorded; omission, unavailable infrastructure and an unimplemented harness are failures, not `N/A`.
+A gate passes only when every applicable command listed exits 0 on a clean checkout, the evidence is recorded in `docs/GATES.json` (command, commit, timestamp, summary), and an independent reviewer (W23 QA / W24 security) has approved. No agent approves its own work. A check may be marked `N/A` only with the exact gate item, reason, scope, reviewer and replacement evidence recorded; omission, unavailable infrastructure and an unimplemented harness are failures, not `N/A`.
 
 | Gate          | Commands and conditions                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -2,6 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4, §6 first. Gate G1 must have passed.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Implement the 32 L6 root operations (rider administration and self-service, zone-broadcast dispatch with atomic self-assignment, admin dispatch, live tracking with ETA and encoded polylines, rider–customer chat, live-activity sessions) exactly as the unchanged Enatega admin, rider, customer app and customer web documents call them, plus the two L6 worker jobs (rider-claim timeout flagging, stale-location cleanup).
 
 **Architecture:** Three Nest modules — `tracking` (locations, ETA engine, polyline, tracking subscriptions, live-activity sessions), `dispatch` (riders, delivery routing, offers, assignments, the announcer that turns order transitions into rider/zone/dispatcher events) and `chat` — share one L6 database pool and talk to other lanes only through `kernel/ports.ts`. Every order status change goes through `OrdersPort.transition`; L6 keeps its own dispatch state (offers, assignments, ETA rows, announcements) and publishes thin `{ orderId, origin }` events on Redis pub/sub that each subscription resolves per subscriber after an authorisation check.
@@ -875,3 +883,27 @@ Exact strings in quotes are returned verbatim; codes are master §4.3 codes. Rid
 - R36. Subscriptions accept anonymous sockets (D9) but every L6 subscription calls `ctx.auth()` at subscribe time and throws before returning its stream; anonymous → `UNAUTHENTICATED`.
 - R37. Pushes for zone offers, admin assignment and chat go through `NOTIFY_PORT.push`; a missing provider never fails the business action (R31).
 - R38. UNVERIFIED defaults chosen: customer phone remains visible to zone riders before acceptance (L5 owns `Order.user`; see Open questions Q4); no read-only chat for admins.
+
+---
+
+## Remaining sections to author (this plan is PARTIAL)
+
+**Status:** PARTIAL. `W8` may not begin implementation on this plan. Completing it is the first task of
+`W8` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+
+**What exists:** §1 boundary, §2 all 32 operations, §3 contract notes and complete SDL, §4 data model and migration, §5 business rules R1–R38.
+
+**What is missing**, measured against `_lane-plan-brief.md`:
+
+1. **The entire Tasks section (§7).** This plan stops at business rules: it contains no task, no test and no implementation code. All 32 operations need TDD tasks with complete failing tests and complete implementations.
+2. **Atomic self-assignment** (`assignOrder`): the compare-and-set `UPDATE … WHERE` that makes two riders racing for one order resolve to exactly one winner, with a concurrency test that actually races.
+3. **Background location** (`updateRiderLocation`): the rider posts it from a native background task with hand-rolled headers, so the task must prove that exact request shape works, not only the Apollo path.
+4. **The seven subscriptions**, each with subscribe-time authorisation, per-event re-read and a legacy-protocol client test: zone orders, assigned rider, dispatcher, order tracking, rider location, rider updated, new chat message.
+5. **§8 Worker jobs** — the rider-claim timeout flag and the stale-location cleanup, both named in the goal and neither planned.
+6. **§9 Playwright and journey handover** to W16/W15, including the admin dispatch screens.
+7. **§10 Coverage and gate checklist.**
+8. **§11 Open questions** — Q4 (whether a customer's phone number is visible to zone riders before acceptance) is relied on by R38 but never stated.
+
+The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
+no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
+present in both the operations table and in at least one task's tests.

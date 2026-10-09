@@ -2,6 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4, §6 first. Gate G1 must have passed.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Implement the 11 L7 GraphQL operations (earnings, transaction history, withdrawals, earnings graphs, commission) and the Stripe REST surface (`/stripe/*`) on top of an immutable, balanced, double-entry ledger, so the unchanged Enatega admin, store and rider apps show wallet and earnings figures derived only from journal lines, and card payments work end to end once Stripe sandbox keys exist (and fail with `PROVIDER_UNAVAILABLE`-style responses until then).
 
 **Architecture:** `modules/finance` owns the chart of accounts, pure posting builders, a transactional journal writer (`postEntry`, idempotency key per source event, DB-enforced balance and immutability), SQL-derived balances (`LedgerPort`), read models (earnings rows, day-bucketed graphs, withdraw requests) and the withdrawal lifecycle. `modules/payments` owns the `PaymentProvider`/`ConnectProvider` ports, a dependency-free Stripe adapter (HMAC webhook verification with `node:crypto`, form-encoded HTTPS calls with idempotency keys), checkout sessions, webhooks, Stripe Connect onboarding and refunds; `rest/stripe.controller.ts` exposes them. The worker's `jobs/L7` consumes `order.transitioned` from the outbox and posts settlements idempotently.
@@ -3975,3 +3983,26 @@ Expected: PASS (4 files).
 git add services/api/src/modules/finance/{args,scope,mappers,withdraw-transitions}.ts services/api/test/unit/finance
 git commit -m "feat(L7): add finance argument parsing, subject scope, mappers and withdraw transitions"
 ```
+
+---
+
+## Remaining sections to author (this plan is PARTIAL)
+
+**Status:** PARTIAL. `W9` may not begin implementation on this plan. Completing it is the first task of
+`W9` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+
+**What exists:** §1 boundary, §2 all 11 operations and the Stripe REST surface, §3 contract notes and SDL, §4 data model, constraints and factories, §5 business rules and chart of accounts, and Tasks 1–5 (ledger constraints, posting builders, journal writer, outbox consumer, argument/scope/mapper parsing).
+
+**What is missing**, measured against `_lane-plan-brief.md`:
+
+1. **Tasks 6+ — the GraphQL layer.** The ledger core is planned; the 11 operations the apps call are not. Each needs a resolver, service, repository and a tagged integration test with the exact vendored document, including the field-level restrictions in §3 (`platformEarnings` null unless ADMIN/STAFF(Admin), `storeEarnings` null for a rider viewer, masked `toBank.accountNumber`).
+2. **The Stripe controller tasks** — all six REST routes in §2.1, proven against a local fake Stripe: checkout-session creation and its 303, HMAC-SHA256 webhook verification over the raw body, Connect onboarding, the 503 paths when unconfigured, and the deliberate non-serving of `/graphqlpaypal`.
+3. **The withdrawal lifecycle tasks** — `createWithdrawRequest` and `updateWithdrawReqStatus` end to end, including who may call them and the exact copied message strings in §3.
+4. **§8 Worker jobs** beyond Task 4: payout webhooks and settlement reconciliation.
+5. **§9 Playwright and journey handover** to W16/W15 for the admin earnings, transaction-history and withdraw-request screens and the store/rider wallet screens.
+6. **§10 Coverage and gate checklist.**
+7. **§11 Open questions and blockers** — in particular that every card path stays `PROVIDER_UNAVAILABLE` until sandbox keys exist (D12), and that the admin `POST /stripe/account` answers 401 until the recorded session edit lands (edit E8, now owned by **W13**, not the retired L10).
+
+The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
+no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
+present in both the operations table and in at least one task's tests.

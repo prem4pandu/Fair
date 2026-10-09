@@ -25,6 +25,8 @@
     "test:operation-evidence": "node --test tools/check-operation-evidence.test.mjs",
     "traceability": "node tools/generate-operation-traceability.mjs",
     "traceability:check": "node tools/generate-operation-traceability.mjs --check",
+    "roadmap": "node tools/generate-roadmap-status.mjs",
+    "roadmap:check": "node tools/generate-roadmap-status.mjs --check",
     "check:error-messages": "node tools/check-error-messages.mjs",
     "record-gate": "node tools/record-gate.mjs",
     "e2e:smoke": "node tools/pending-gate.mjs e2e:smoke",

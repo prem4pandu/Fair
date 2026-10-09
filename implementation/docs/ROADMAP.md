@@ -1,121 +1,75 @@
-# FairBite / Enatega end-to-end implementation plan
+# FairBite / Enatega roadmap
 
-**Status:** planning artifact, owner-reviewable. It supersedes the scheduling portions of
-`docs/EXECUTION_PLAN.json` and the narrative status files; it does **not** supersede the
-per-lane runbooks in `docs/superpowers/plans/2026-10-08-enatega-backend/`, which remain the
-task-level detail.
+**This is the single roadmap.** It replaces `docs/MASTER_END_TO_END_PLAN.md` (renamed to this file),
+`docs/MASTER_PLAN.json` and the scheduling content of `docs/EXECUTION_PLAN.json`. Its machine-readable twin is
+`docs/ROADMAP.json`; the live position is the generated `docs/ROADMAP_STATUS.md`. It does **not** supersede the
+per-lane runbooks in `docs/superpowers/plans/2026-10-08-enatega-backend/`, which remain the task-level detail.
 
-**Date:** 2026-10-08 · **Baseline commit:** `c814670` (+ uncommitted in-flight work listed in §1.3)
+**Never hand-write current state into this file.** Scope, sequence, ownership and rules belong here; counts,
+statuses and gate results belong in the generated artifacts.
 
 **Authority and precedence when documents disagree**
 
 1. `AGENTS.md` (root and `implementation/`) — owner directives, frontend boundary, engineering invariants.
-2. This plan — scope, workstreams, roster, waves, gates, evidence rules.
-3. `docs/superpowers/plans/2026-10-08-enatega-backend/*` — per-lane task detail and reference behaviour.
-4. `docs/OPERATION_LANES.json` — which lane owns which operation.
-5. `docs/OPERATION_TRACEABILITY.md` (generated) — the per-operation state of record.
-6. `docs/ENATEGA_COMPATIBILITY_REPORT.json`, `docs/ENATEGA_URL_CONTRACT.json`,
+2. This roadmap — scope, workstreams, roster, waves, gates, evidence rules.
+3. `docs/ROADMAP.json` — the machine-readable twin of §4–§11 (workstreams, batches, gates, dependencies).
+4. `docs/superpowers/plans/2026-10-08-enatega-backend/*` — per-lane task detail and reference behaviour.
+5. `docs/OPERATION_LANES.json` — which lane owns which operation.
+6. `docs/ROADMAP_STATUS.md`, `docs/OPERATION_TRACEABILITY.md`, `docs/IMPLEMENTATION_STATUS.{json,html}` (all
+   generated) — the state of record. These are regenerated from real command output and **are** quotable as current;
+   if one looks wrong, fix its generator or its input, never the output.
+7. `docs/ENATEGA_COMPATIBILITY_REPORT.json`, `docs/ENATEGA_URL_CONTRACT.json`,
    `docs/END_TO_END_ACCEPTANCE.json`, `docs/BACKEND_MODULE_PLAN.json` — machine-readable requirements.
-7. Everything else under `docs/` — historical evidence. **`docs/IMPLEMENTATION_STATUS.json`,
-   `docs/FULL_IMPLEMENTATION_REPORT.json` and `docs/IMPLEMENTATION_STATUS.html` are stale and must not be
-   quoted as current** until regenerated in W0.
+8. Everything else under `docs/` — historical evidence, valid only for the date it carries.
 
 ---
 
-## 1. Verified current state (day 0)
+## 1. Current state
+
+**Do not read a snapshot out of this file.** Run `pnpm roadmap` and read `docs/ROADMAP_STATUS.md`. It derives, from
+real artifacts only:
+
+| Question                                     | Answer comes from                                                  |
+| -------------------------------------------- | ------------------------------------------------------------------ |
+| Which workstream is open, next or blocked?   | `docs/ROADMAP.json` dependencies + `docs/GATES.json` recorded runs |
+| How many operations actually have resolvers? | source scan via `tools/lib/operation-state.mjs`                    |
+| How many operations have evidence?           | `docs/OPERATION_TEST_EVIDENCE.json`                                |
+| Did a gate pass, and did a reviewer approve? | `docs/GATES.json` (`passed`, `approvals`)                          |
+| Per-operation state                          | `docs/OPERATION_TRACEABILITY.md`                                   |
+| Contract compatibility, scoped and full      | `docs/ENATEGA_COMPATIBILITY_REPORT{,.full}.json`                   |
 
 ### 1.1 What the repository is
 
-| Layer                                    | Location                                                                                          | State                                                                       |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Product UI (pinned upstream, unmodified) | `implementation/vendor/enatega-ui/` — 6 packages, 4137 files, 118.7 MB, SHA-256 manifest verified | source complete; **not installed, not built, not integrated, not runnable** |
-| GraphQL/REST/WS backend                  | `implementation/services/api` (NestJS + Apollo + Prisma)                                          | schema-complete-looking, ~6 % of operations implemented                     |
-| Worker                                   | `implementation/services/worker` (BullMQ outbox)                                                  | 6 unit tests green; no domain jobs                                          |
-| Contracts                                | `implementation/contracts/enatega/*.graphql` (4327 lines, 448 types, 280 root fields)             | static compatibility PASS                                                   |
-| Tooling/gates                            | `implementation/tools/*` (21 scripts)                                                             | strong; 6 gates currently red, 3 blocked                                    |
+| Layer                                    | Location                                                                    | State                                                                       |
+| ---------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Product UI (pinned upstream, unmodified) | `implementation/vendor/enatega-ui/` — 6 packages, SHA-256 manifest verified | source complete; **not installed, not built, not integrated, not runnable** |
+| GraphQL/REST/WS backend                  | `implementation/services/api` (NestJS + Apollo + Prisma)                    | schema-complete-looking, a small fraction of operations implemented         |
+| Worker                                   | `implementation/services/worker` (BullMQ outbox)                            | transport-level only; no domain jobs                                        |
+| Contracts                                | `implementation/contracts/enatega/*.graphql`                                | scoped multivendor compatibility passes; full six-app mode does not         |
+| Tooling/gates                            | `implementation/tools/*`                                                    | gate runners and generators exist; approvals do not                         |
 
-### 1.2 Gate scoreboard, re-run 2026-10-08 21:38–21:48
+### 1.2 Scope, and where each number lives
 
-| Gate                                  | Command                                       | Result                                                          |
-| ------------------------------------- | --------------------------------------------- | --------------------------------------------------------------- |
-| API unit/HTTP                         | `./tools/pnpm.sh --filter @fairbite/api test` | ✅ 160 tests / 23 files                                         |
-| Worker unit                           | `./tools/pnpm.sh test` (worker leg)           | ✅ 6 tests                                                      |
-| Build                                 | `./tools/pnpm.sh build`                       | ✅ 4 tasks                                                      |
-| Typecheck                             | `./tools/pnpm.sh typecheck`                   | ✅ 6 tasks                                                      |
-| Codegen vs frozen SDL                 | `./tools/pnpm.sh codegen:check`               | ✅                                                              |
-| Static Enatega compatibility          | `./tools/pnpm.sh check:enatega`               | ✅ 5 apps, 439/439 documents valid, 0 missing roots             |
-| Vendor source integrity               | `./tools/pnpm.sh check:enatega-ui-source`     | ✅ 4137 files, manifest hash verified                           |
-| Contract/gate tool tests              | `./tools/pnpm.sh test:enatega-contracts`      | ✅ 14 tests                                                     |
-| Evidence-format tool tests            | `./tools/pnpm.sh test:operation-evidence`     | ✅ 12 tests                                                     |
-| Workspace test                        | `./tools/pnpm.sh test`                        | ❌ `packages/identity-contracts/src/operations.test.ts`         |
-| Lint                                  | `./tools/pnpm.sh lint`                        | ❌ 1 error, `services/api/src/dispatch/routing.ts:17`           |
-| Tool tests                            | `node --test tools/*.test.mjs`                | ❌ 36/37 — `docs/IMPLEMENTATION_STATUS.html` stale              |
-| Backend browser smoke                 | `./tools/pnpm.sh e2e:backend`                 | ❌ 3/4                                                          |
-| Coverage (unit+integration, per-file) | `./tools/pnpm.sh coverage`                    | ❌ 87.68 % lines / 88.01 % funcs / 79.82 % branches vs 90/90/85 |
-| Operation evidence gate               | `./tools/pnpm.sh check:operations`            | ❌ 0/334 operations evidenced                                   |
-| Integration (PostGIS/Redis)           | `./tools/pnpm.sh test:integration`            | ⛔ blocked — Colima daemon stopped                              |
-| Native device E2E                     | —                                             | ⛔ blocked — no devices; CommandLineTools only                  |
-| Provider sandbox                      | —                                             | ⛔ blocked — no credentials                                     |
+| Measure                                          | Source of truth (never restated here)        |
+| ------------------------------------------------ | -------------------------------------------- |
+| Root operations, by kind and lane                | `docs/OPERATION_LANES.json`                  |
+| Operations with a real resolver / with evidence  | `docs/ROADMAP_STATUS.md`                     |
+| Roots with no SDL declaration                    | `docs/OPERATION_TRACEABILITY.md`             |
+| GraphQL document sites validated (scoped / full) | `docs/ENATEGA_COMPATIBILITY_REPORT*.json`    |
+| Handler candidates (upper bound on user actions) | `docs/ACTION_CANDIDATES.json`                |
+| Acceptance workflows                             | `docs/END_TO_END_ACCEPTANCE.json`            |
+| Customer web routes, REST and WS requirements    | `docs/ENATEGA_URL_CONTRACT.json`             |
+| Frontend integration blockers, per package       | `docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md` |
 
-### 1.3 In-flight uncommitted work (do not discard)
+The two facts that do not move: the backend must satisfy **two** WebSocket frame sets on one path
+(`graphql-ws` legacy + `graphql-transport-ws`), and a non-GraphQL REST surface (`/maps/*`, `/stripe/*`, `/paypal`,
+signed `/media/*`) that a GraphQL-only plan would miss.
 
-| Area                       | Files                                                                                                                                                  | Assessment                                                                                                                                                               |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| L5 order domain            | `services/api/src/orders/{pricing,state-machine,checkout,persistence}.ts`, `prisma/schema/L5-orders.prisma`, `prisma/migrations/202610090150_L5_init/` | sound domain logic (integer minor units, 0 % core commission, actor-authorised transitions, balanced CHECK constraints); **no resolver/module yet**; 19 unit tests green |
-| L6 dispatch domain         | `services/api/src/dispatch/{types,routing,assignment,location,events}.ts`                                                                              | domain-only; provider path fails honestly; 13 unit tests green; `routing.ts` has the lint error                                                                          |
-| Address contract alignment | `contracts/enatega/{core,L4-customers-support}.graphql`, `tools/{generate-sdl.mjs,type-map.json}`, `services/api/test/addresses.integration.spec.ts`   | exact `AddressInput!`/`[ID!]!` shapes for the five Enatega address mutations + real-Postgres test that cannot run until Docker is up                                     |
+### 1.3 History
 
-### 1.4 Root causes of the red gates (all small, all fixable in W0)
-
-1. `pnpm test` broke at `0d51466` (19:30) when `contracts/foundation.graphql` changed `type Query` → `extend type Query`
-   to avoid duplicate roots in the in-process schema. The codegen-facing `contracts/*.graphql` set now has no base
-   `Query`/`Mutation`, so `operations.test.ts` cannot build a schema. This is a **contract packaging defect**, not a
-   product defect.
-2. `pnpm lint` fails on an unused parameter in a brand-new untracked file.
-3. `e2e:backend` broke at `463f2d5` (19:52) when `placeOrder` legitimately entered the SDL; the boundary spec still
-   asserts "unknown document". The API's actual behaviour (`data.placeOrder = null` + `NOT_IMPLEMENTED`) is correct.
-4. `docs/IMPLEMENTATION_STATUS.html` and the two JSON status files describe a 16:18 checkpoint (190 tests, 36 browser
-   tests, "noncompliant shells") that no longer exists.
-5. Coverage misses are concentrated in files with **zero** tests: `kernel/auth/sessions.ts`, `main.ts`,
-   `kernel/public-access/resolver.ts`, `kernel/ws/server.ts`, plus partial coverage in `legacy-protocol.ts`,
-   `pubsub.ts`, `pagination.ts`, `public-access/gate.ts`.
-6. `check:operations` is red by design: the evidence file is a template with 334 unverified records.
-
-### 1.5 Real scope, quantified
-
-| Measure                                           | Count                                                                                                                                                                            | Source                                   |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| Pinned UI packages / tracked files                | 6 / 4137 (118.7 MB)                                                                                                                                                              | `vendor/enatega-ui/SOURCE_MANIFEST.json` |
-| Statically extracted root operations              | **334** (159 query, 164 mutation, 11 subscription)                                                                                                                               | `docs/ENATEGA_OPERATION_INVENTORY.json`  |
-| Multivendor operations (runtime scope through G4) | 263                                                                                                                                                                              | `docs/OPERATION_LANES.json`              |
-| Single-vendor operations (gated)                  | 71                                                                                                                                                                               | same                                     |
-| GraphQL document sites validated                  | 439/439 valid, 0 unresolved                                                                                                                                                      | `docs/ENATEGA_COMPATIBILITY_REPORT.json` |
-| Operations with a real resolver                   | **18** (L0 1, L1 8, L2 2, L3 2, L4 5)                                                                                                                                            | `docs/OPERATION_TRACEABILITY.md`         |
-| Runtime root fields / bound resolvers             | 280 / 33                                                                                                                                                                         | generated from SDL + source scan         |
-| Roots with no SDL declaration                     | 71 (all L12)                                                                                                                                                                     | traceability matrix                      |
-| Handler candidates (upper bound on user actions)  | 3405 across 1095 files                                                                                                                                                           | `docs/ACTION_CANDIDATES.json`            |
-| Acceptance workflows                              | 18                                                                                                                                                                               | `docs/END_TO_END_ACCEPTANCE.json`        |
-| Phase gates FB00–FB20                             | 21 (FB00–FB04 partial)                                                                                                                                                           | `docs/EXECUTION_PLAN.json`               |
-| Customer web routes audited                       | 40                                                                                                                                                                               | `docs/ENATEGA_URL_CONTRACT.json`         |
-| Non-GraphQL REST requirements                     | 6 (`/maps/autocomplete`, `/maps/place-details`, `/maps/reverse-geocode`, `/stripe/create-checkout-session`, `/stripe/create-web-checkout-session`, `/stripe/account`, `/paypal`) | same                                     |
-| WebSocket protocols required                      | 2 on one path (`graphql-ws` legacy + `graphql-transport-ws`)                                                                                                                     | same                                     |
-| Per-operation evidence recorded                   | **0/334**                                                                                                                                                                        | `docs/OPERATION_TEST_EVIDENCE.json`      |
-
----
-
-### 1.6 Continuation checkpoint — 2026-10-09
-
-The day-0 tables above are historical. Current generated status reports 18/334 real resolver operations and 0/334 recorded operation evidence. The scoped multivendor audit passes 439/439 documents; the full six-app audit fails with 800/852 valid, 43 invalid and 9 unresolved. Status and traceability now display both scopes explicitly.
-
-The next eligible W2 packet adds the populated migration-005 fixture, exhaustive baseline inventory and preservation/fresh-deployment checks in `docs/WAVE1_MIGRATION_INVENTORY.md` and `services/api/test/integration/schema/`. Real execution exposed and corrected the L2 bootstrap aggregate guard (`WHERE` → `HAVING`); existing snapshot data and the selected SGD currency remain unchanged. Already-applied migration checksum/drift reconciliation remains a separate deployment prerequisite, documented in the inventory.
-
-W1 follow-up closes modern WebSocket exception masking and GraphQL error serialization, and routes legacy queries/mutations through execution rather than subscription setup. The real transport harness now uses the same GraphQL module instance as Nest, cancellable controlled sources, scoped resolver overrides and a separate irreversibly revoked session. Independent agent review covers these bounded changes; it does not approve G0/G1 or release.
-
-Coverage closure task **W17-WS-TRANSPORT** tracks `src/kernel/ws/server.ts` and `src/kernel/ws/legacy-protocol.ts`; final unit-only lines coverage is 68.33% and 83.33% respectively. The report does not satisfy full integration coverage or the 90/90/85 per-file gate.
-
-Final validation: 181 API unit/HTTP tests, 76 real PostgreSQL/Redis integration tests across 13 files, 52 tooling tests and 5 backend browser boundary checks pass. Lint, typecheck, build, formatting, codegen, source integrity and traceability pass. `docs/GATES.json` records the whole integration command as partial GP0 evidence with no approval; `docs/artifacts/w1-w2-2026-10-09/packet.json` records the bounded packet and prior failures. This is not original UI/native journey acceptance.
-
-Next work remains W2 full-document reconciliation, contract/data-model and ports review, schema replay, migration drift and authenticated historical-session/address continuity. Original UI smoke, per-operation evidence, strict coverage, native/provider and phase approvals remain open. No frontend files were edited in this packet.
+Dated checkpoints — the day-0 gate scoreboard, the in-flight-work table, the W0 red-gate root causes and the
+2026-10-09 continuation note — are in `docs/history/2026-10-08-day0-baseline.md`. They are evidence of what was true
+on their date and must not be quoted as current.
 
 ---
 
@@ -136,7 +90,7 @@ Next work remains W2 full-document reconciliation, contract/data-model and ports
 
 1. All six pinned apps build and run against our stack with **no active upstream Enatega/Google/Firebase/EmailJS/
    Clarity endpoint**, no provider secret in a client, and no fabricated data anywhere.
-2. Every one of the 334 operations is either: implemented with the exact upstream name/arguments/selection shape, or
+2. Every extracted root operation in `docs/OPERATION_LANES.json` is either: implemented with the exact upstream name/arguments/selection shape, or
    returns an explicit `NOT_IMPLEMENTED`/`PROVIDER_UNAVAILABLE` for a documented, owner-visible blocker.
 3. All 18 acceptance workflows in `docs/END_TO_END_ACCEPTANCE.json` pass with the positive **and** negative cases listed there.
 4. Web workflows are proven by Playwright against the real stack; native workflows by signed device runs. Expo exports
@@ -260,6 +214,65 @@ The findings that change this plan:
 `Ops` = statically extracted operations owned. `Scope` = files the owner may write; outside it, request the change
 from the owner named in §5.4.
 
+### 4.0 One identifier system, and how the old ones map onto it
+
+**`W` identifiers are the only way to assign work.** Four schemes existed and nothing mapped between them, so
+"which phase are we in" had no answer. They now mean exactly this:
+
+- **`W…`** — a workstream. The unit of assignment, ownership and scope. Defined here and in `docs/ROADMAP.json`.
+- **`L…`** — an operation lane, i.e. a slice of `docs/OPERATION_LANES.json`. A **label on operations**, not an
+  assignable unit. `L0–L9` and `L12` are the only lanes; they match the lane field in that file.
+- **`G…`** — a gate: the evidence a workstream must produce. Defined in §7, recorded in `docs/GATES.json`.
+- **`FB00–FB20`** — business capability names from the original phase plan. Retained so capability language survives,
+  but **they no longer schedule anything**. Use the mapping below.
+
+**Retired identifiers.** `L10` (E2E), `L11` (QA) and `L13` (security) appear in
+`docs/superpowers/plans/2026-10-08-enatega-backend/*` as if they were lanes. They are not lanes — they hold no
+operations in `OPERATION_LANES.json` and they collide with this roadmap's ownership table. Read them as:
+
+| Retired | Means                       | Now owned by                                  |
+| ------- | --------------------------- | --------------------------------------------- |
+| `L10`   | journeys, Playwright, E2E   | **W15** and **W16**                           |
+| `L10`   | recorded vendor UI edits    | **W12/W13/W14a/W14b** (per package, per §5.2) |
+| `L11`   | independent QA review       | **W23**                                       |
+| `L13`   | independent security review | **W24**                                       |
+
+Where a lane plan says "handed to L10", hand it to W15 (journeys) or W16 (Playwright). Where it claims `L10` owns
+`vendor/enatega-ui/**`, §5.2 wins: the matching frontend workstream owns its own package.
+
+**Capability → workstream map.** Every FB phase is delivered by the workstreams below; no capability is dropped.
+
+| FB   | Capability                                                 | Delivered by                           | Lane(s)    |
+| ---- | ---------------------------------------------------------- | -------------------------------------- | ---------- |
+| FB00 | Source/action/mode inventory and licensing                 | W0, W2                                 | —          |
+| FB01 | API/worker, persistence, six-app foundations, harness      | W0, W1                                 | L0         |
+| FB02 | Identity, roles, staff scopes, secure sessions             | W3                                     | L1         |
+| FB03 | Merchant/outlet/catalog/media/hours                        | W5a, W4 (media)                        | L3, L2     |
+| FB04 | Discovery, search, addresses, favourites                   | W5b, W6                                | L3, L4     |
+| FB05 | Integer pricing, quotes, cart, immutable orders            | W7                                     | L5         |
+| FB06 | Payments, ledger, refunds, signed webhooks                 | W9, W18                                | L7         |
+| FB07 | Merchant acceptance/preparation/readiness                  | W7 (transitions), W5a                  | L5, L3     |
+| FB08 | Provider-neutral dispatch and reconciliation               | W8                                     | L6         |
+| FB09 | Own-fleet rider workflow and native tracking               | W8, W14b, W19                          | L6         |
+| FB10 | External courier (Lalamove-style) adapter                  | W18                                    | L6         |
+| FB11 | Subscriptions, notifications, chat, media                  | W10, W8 (chat), W4                     | L8, L6, L2 |
+| FB12 | History, tracking, reorder, cancellation, ratings          | W7, W5b (reviews)                      | L5, L3     |
+| FB13 | Earnings, payables, withdrawals, reconciliation            | W9                                     | L7         |
+| FB14 | Support, disputes, risk, privacy lifecycle                 | W6                                     | L4         |
+| FB15 | Membership, credits, referrals, deals                      | **W21 only** — see decision D-S1 (§11) | L12        |
+| FB16 | Full administrative operations and reporting               | W11, W13                               | L9         |
+| FB17 | Public/provider configuration, localization, observability | W4, **W26**, W20                       | L2         |
+| FB18 | Full UI/action parity and regression                       | W12–W14b, W15, W16                     | all        |
+| FB19 | Load, resilience, retention, restore, security             | W20                                    | —          |
+| FB20 | Signed devices, provider readiness, owner release decision | W18, W19, W22                          | —          |
+
+Two consequences the owner should see rather than discover later:
+
+1. **FB15 ships only if W21 (single-vendor) is approved.** Every credits, referral, deal and subscription operation
+   sits in lane L12. Decision **D-S1** in §11 records this.
+2. **FB17 localization had no owner at all** — there is no localization operation among the extracted roots. It is
+   now **W26** (§4.6a).
+
 ### 4.1 Wave 0 — make the baseline green and instrumented
 
 | ID     | Workstream                             | Owner role | Scope                                                                                                                                                        | Depends |
@@ -357,6 +370,25 @@ installation decision, not a licence to edit pinned manifests.
 | **W21** | Single-vendor mode (L12, 71 ops) including its SDL, resolvers, admin app                                                                              | agent-L12       | W2, W16, owner decision D1 | owner approval                 |
 | **W22** | Release package: regenerated status docs, gate registry, owner acceptance run                                                                         | lead            | all                        | owner approval                 |
 
+### 4.6a Localization (W26) — previously unowned
+
+FB17 names localization, no extracted root operation provides it, and no workstream owned it. The six pinned apps
+localize their own strings; what the backend must not do is force English through server-owned content.
+
+| ID      | Workstream                                                                                                                                                                                               | Owner role | Scope                                                                                                                          | Depends |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------- |
+| **W26** | Server-side localization: locale negotiation on HTTP/WS, locale-tagged configuration and catalog content, localized notification/email/SMS templates, locale-aware money/date formatting at the boundary | agent-L2   | `src/platform/i18n/**`, `src/notifications/templates/**` (by request to W10), `contracts/enatega/L2-*.graphql`, matching tests | W4, W10 |
+
+W26 deliverables: a resolved request locale (client header → user preference → outlet default → platform default,
+with the chosen source recorded); no hard-coded human-readable string in a response that the pinned UI does not
+itself translate; one template per channel per supported locale with a tested fallback chain; and an explicit
+supported-locale list in configuration that an unsupported request degrades to rather than failing. W26 adds **no**
+new UI string and no new screen — if a pinned app has no slot for a translated value, that is an integration
+blocker, not a reason to render one.
+
+**Open input (owner):** the supported-locale list. Until it is given, W26 implements the mechanism with a single
+configured locale and the fallback chain proven by test; it does not invent a market's language set.
+
 ### 4.7 Continuous lanes
 
 | ID      | Workstream                               | Owner role   | Rule                                                                            |
@@ -407,10 +439,17 @@ approves, so overlapping review with the next batch's build is expected and requ
 
 ### 5.3 Task board protocol
 
-Every unit of work is a shared task created **before** its owner starts, containing: subject, deliverable list,
-write scope, dependencies, exact acceptance commands, and the evidence artifact path. Workflow: `list → get → claim
-(revision) → implement → run acceptance → hand evidence to reviewer → complete`. A task whose acceptance command did
-not actually run is never completed.
+The board is **`docs/TASK_BOARD.md`**, in the repository, edited by the claiming agent. It previously existed only as
+this paragraph, so `claim` and `complete` had nowhere to happen.
+
+Every unit of work is a board row created **before** its owner starts, containing: id, workstream, subject, write
+scope, dependencies, exact acceptance commands, evidence artifact path, owner and reviewer. Workflow:
+`list → claim → implement → run acceptance → hand evidence to reviewer → complete`. A task whose acceptance command
+did not actually run is never completed, and a task is never completed by the agent that implemented it.
+
+Claiming is a committed edit to `docs/TASK_BOARD.md`; two agents cannot hold the same row because the second claim
+conflicts. The board carries tasks; `docs/ROADMAP_STATUS.md` carries derived state. Never record a status in the
+board that a recorded command does not support.
 
 ### 5.4 Handoff template (paste into every agent spawn)
 
@@ -419,15 +458,18 @@ You are <ID> (<name>) of the FairBite/Enatega end-to-end build.
 
 Read, in order:
 1. AGENTS.md (root) and implementation/AGENTS.md.
-2. implementation/docs/MASTER_END_TO_END_PLAN.md — §2 definition of done, §4 your workstream,
-   §5.2 your write scope, §7 test rules, §8 your gate.
-3. implementation/docs/superpowers/plans/2026-10-08-enatega-backend/00-master-plan.md §1–§4 and §6.
+2. implementation/docs/ROADMAP.md — §2 definition of done, §4.0 identifiers, §4 your workstream,
+   §5.2 your write scope, §5.3 the task board, §7 your gate.
+3. implementation/docs/superpowers/plans/2026-10-08-enatega-backend/00-master-plan.md §1–§4 and §6,
+   reading L10/L11/L13 through the retirement table in ROADMAP.md §4.0.
 4. Your lane plan: <plan file>.
-5. implementation/docs/OPERATION_TRACEABILITY.md — the operations you own and their current state.
+5. implementation/docs/ROADMAP_STATUS.md and docs/OPERATION_TRACEABILITY.md — the operations you own
+   and their current state. Never quote a count from a prose document.
 
 <frontend boundary §2.1 verbatim>
 
 Rules:
+- Claim your row in docs/TASK_BOARD.md before you start; do not start work that has no row.
 - Write only inside your declared scope. Ask the lead for anything else; never overwrite another lane's files.
 - TDD: failing test → run it → implement → run it → commit.
 - Use the exact upstream documents from services/api/test/support/documents.ts. Never hand-write a document an app already sends.
@@ -535,11 +577,12 @@ Expo exports remain non-evidence.
 | Tools (`tools/**`)                         | 1 test per generator/checker              | `node --test tools/*.test.mjs`                            |
 | Generated Prisma client                    | excluded                                  | config                                                    |
 
-### 6.7 Day-0 coverage debt (measured 2026-10-08, `pnpm coverage`)
+### 6.7 Coverage debt — who owns which files
 
-Global: 88.88 % lines, 87.51 % statements, 91.66 % functions, 80.89 % branches —
-**27 files fail the per-file thresholds (44 failed checks)**. GP0 records this report;
-closure is required by G3.
+**Dated measurement (2026-10-08).** The percentages below are a snapshot kept only to assign ownership; re-run
+`pnpm coverage` for current numbers and record them in `docs/GATES.json`. Global at the time: 88.88 % lines,
+87.51 % statements, 91.66 % functions, 80.89 % branches — **27 files failing the per-file thresholds (44 failed
+checks)**. Closure is required by G3 and planned in `32-coverage-closure.md`.
 
 | Owner       | Files (worst first)                                                                                                                                                                                                                                                                                                                                             |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -584,37 +627,47 @@ as silence.
 | 3     | W3, W4, W5a, W6    | first four lane G2s                                       |
 | 4     | W5b, W7, W12, W13  | L3/L5 G2 + customer and admin web load against real stack |
 | 5     | W8, W9, W14a, W14b | L6/L7 G2 + three mobile apps build and run locally        |
-| 6     | W10, W11, W15      | L8/L9 G2 + journeys green                                 |
+| 6     | W10, W11, W15, W26 | L8/L9 G2 + journeys green + locale negotiation tested     |
 | 7     | W16, W17           | G3                                                        |
 | 8     | W18, W19, W20      | G4                                                        |
 | 9     | W21, W22           | G5 + owner acceptance                                     |
 
 **Order-of-magnitude effort** (agent-days, inherently an estimate): W0 ≈ 2; W1+W2 ≈ 12; W3–W11 ≈ 4–8 per lane
 (L2/L3/L6/L7 at the top of the range) ≈ 50; W12–W14 ≈ 6–10 per app ≈ 45; W15–W17 ≈ 20; W18–W20 ≈ 25; W21 ≈ 15;
-review overhead ≈ 25 % of build. Total ≈ **210–260 agent-days**; with lead + 4 writers and real review overhead,
-roughly **14–20 working sessions/weeks**, dominated by provider, device and review gates that are not parallelisable away.
+W26 ≈ 5; review overhead ≈ 25 % of build. Total ≈ **215–265 agent-days**; with lead + 4 writers and real review
+overhead, roughly **14–20 working sessions/weeks**, dominated by provider, device and review gates that are not
+parallelisable away. This excludes the unscheduled work in §13, which has no estimate because it has no owner.
+
+A batch closes only when its reviewer approves in `docs/GATES.json`. `docs/ROADMAP_STATUS.md` prints any workstream
+that started before its dependency's gate was approved, so proceeding at risk is visible rather than silent.
 
 ---
 
 ## 9. Risk register
 
-| #   | Risk                                                                                                        | Impact                 | Mitigation                                                                                                                                                    |
-| --- | ----------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R1  | 334 operations vs 18 implemented; scope is 10× the current code                                             | schedule               | lane batches with per-operation evidence; traceability matrix shows truth continuously                                                                        |
-| R2  | Frontend install/build may not work under pnpm/Node 24 (npm lockfiles, Expo/Metro, duplicate package names) | blocks all UI gates    | D-F1 per-app npm in place; verify in W12 first; fallback documented                                                                                           |
-| R3  | Vendor edits + manifest regeneration collide across frontend agents                                         | broken provenance gate | single serialisation point owned by the lead; batches of ≤ 2 frontend writers                                                                                 |
-| R4  | Real payment/provider/device inputs absent                                                                  | G4 unreachable         | honest `PROVIDER_UNAVAILABLE`/blocked status; build everything up to the boundary                                                                             |
-| R5  | Schema-complete but behaviour-thin code could be mistaken for progress                                      | false status           | `NOT_IMPLEMENTED` everywhere by default; status docs generated from gates, never narrative                                                                    |
-| R6  | Silent clamping/interpretation in domain code (e.g. discount clamped to items total in `pricing.ts`)        | policy drift           | lane review must confirm each rule against upstream documents; reject vs clamp is an explicit decision                                                        |
-| R7  | Playwright suite against mutable upstream DOM                                                               | flakes                 | page objects sourced from pinned markup; `retries: 0`; quarantine is a blocker                                                                                |
-| R8  | Migration drift across parallel lanes                                                                       | data loss              | migrations authored only by the lead; lanes submit reviewed SQL; upgrade test from populated baseline is a gate                                               |
-| R9  | Dependency advisories (4 high, 4 moderate per audit)                                                        | release blocker        | bump/quarantine in W20; re-audit at G4                                                                                                                        |
-| R10 | Docs drift (already happened once)                                                                          | wrong decisions        | every status doc generated from gate output; stale-file tests (`tools/*.test.mjs`) enforce                                                                    |
-| R11 | The vendor tree drifts from the pinned snapshot once frontend lanes start editing                           | boundary breach        | baseline verified byte-identical (0 diffs) and recorded in SOURCE_PROVENANCE.json; every future edit must be listed in allowedModifications and re-manifested |
-| R12 | Vendor web installs fail under Node 24 (`engine-strict=true`)                                               | frontend lanes stall   | D-F4 recipe verified in W12 before the other frontend lanes start                                                                                             |
-| R13 | Upstream credentials/hosts remain live in the tree (Firebase web keys, Sentry DSN, EAS profiles)            | security, owner breach | gated and removed by the owning frontend lane; the Playwright network guard fails any upstream-host request                                                   |
-| R14 | `metricsGeneral`/legacy-WS incompatibility blocks every app, including login                                | total UI blockage      | W1 owns it as the first transport gate; `e2e:smoke` proves both operation types and both WS frame sets                                                        |
-| R15 | Signed media URLs, Live Activity and background-location contracts are easy to miss in a GraphQL-only plan  | silent mobile breakage | capability checklist in `docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md` §5 drives W4/W8/W10                                                                      |
+| #   | Risk                                                                                                                                       | Impact                             | Mitigation                                                                                                                                                                            |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1  | Implemented operations are a small fraction of the extracted roots (see `docs/ROADMAP_STATUS.md`)                                          | schedule                           | lane batches with per-operation evidence; traceability matrix shows truth continuously                                                                                                |
+| R2  | Frontend install/build may not work under pnpm/Node 24 (npm lockfiles, Expo/Metro, duplicate package names)                                | blocks all UI gates                | D-F1 per-app npm in place; verify in W12 first; fallback documented                                                                                                                   |
+| R3  | Vendor edits + manifest regeneration collide across frontend agents                                                                        | broken provenance gate             | single serialisation point owned by the lead; batches of ≤ 2 frontend writers                                                                                                         |
+| R4  | Real payment/provider/device inputs absent                                                                                                 | G4 unreachable                     | honest `PROVIDER_UNAVAILABLE`/blocked status; build everything up to the boundary                                                                                                     |
+| R5  | Schema-complete but behaviour-thin code could be mistaken for progress                                                                     | false status                       | `NOT_IMPLEMENTED` everywhere by default; status docs generated from gates, never narrative                                                                                            |
+| R6  | Silent clamping/interpretation in domain code (e.g. discount clamped to items total in `pricing.ts`)                                       | policy drift                       | lane review must confirm each rule against upstream documents; reject vs clamp is an explicit decision                                                                                |
+| R7  | Playwright suite against mutable upstream DOM                                                                                              | flakes                             | page objects sourced from pinned markup; `retries: 0`; quarantine is a blocker                                                                                                        |
+| R8  | Migration drift across parallel lanes                                                                                                      | data loss                          | migrations authored only by the lead; lanes submit reviewed SQL; upgrade test from populated baseline is a gate                                                                       |
+| R9  | Dependency advisories (4 high, 4 moderate per audit)                                                                                       | release blocker                    | bump/quarantine in W20; re-audit at G4                                                                                                                                                |
+| R10 | Docs drift (already happened once)                                                                                                         | wrong decisions                    | every status doc generated from gate output; stale-file tests (`tools/*.test.mjs`) enforce                                                                                            |
+| R11 | The vendor tree drifts from the pinned snapshot once frontend lanes start editing                                                          | boundary breach                    | baseline verified byte-identical (0 diffs) and recorded in SOURCE_PROVENANCE.json; every future edit must be listed in allowedModifications and re-manifested                         |
+| R12 | Vendor web installs fail under Node 24 (`engine-strict=true`)                                                                              | frontend lanes stall               | D-F4 recipe verified in W12 before the other frontend lanes start                                                                                                                     |
+| R13 | Upstream credentials/hosts remain live in the tree (Firebase web keys, Sentry DSN, EAS profiles)                                           | security, owner breach             | gated and removed by the owning frontend lane; the Playwright network guard fails any upstream-host request                                                                           |
+| R14 | `metricsGeneral`/legacy-WS incompatibility blocks every app, including login                                                               | total UI blockage                  | W1 owns it as the first transport gate; `e2e:smoke` proves both operation types and both WS frame sets                                                                                |
+| R15 | Signed media URLs, Live Activity and background-location contracts are easy to miss in a GraphQL-only plan                                 | silent mobile breakage             | capability checklist in `docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md` §5 drives W4/W8/W10                                                                                              |
+| R16 | Files failing the per-file coverage thresholds (measured at day 0: 27 files, 44 failed checks)                                             | G3 unreachable                     | GP0 records the report only; W1 and W7 close their own files at G2 and W17 closes the rest by G3 (`32-coverage-closure.md`)                                                           |
+| R17 | Observed integration flake: `test/catalog.integration.spec.ts` failed once in three full runs while passing in isolation                   | false red/green                    | the assertion now prints limit, query and response body so the next occurrence is diagnosable; W20 owns flake elimination before G4, and a quarantine is a blocker, not a pass        |
+| R18 | Scoped (`--scope multivendor`) audits cover only the supplied resolution set, so lexically present sites stay invisible to the scoped gate | false compatibility PASS           | full mode (`pnpm check:enatega:full`) reconciles every lexical site and is a G1 criterion; remaining dynamic sites are classified in `docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json` |
+| R19 | Every gate runs only on a developer machine; there is no CI, container image or pipeline in the repository                                 | unreproducible gates, "works here" | recorded in §13 (U1) as an accepted, unscheduled gap; `docs/GATES.json` records commit + dirty flag so a local run is at least attributable                                           |
+| R20 | G3/G4 demand accessibility and load evidence that no installed tool can produce                                                            | gate cannot be closed as written   | recorded in §13 (U4, U5); either tooling is scheduled or the gate wording is changed by owner decision — it must not be waived silently                                               |
+| R21 | Lane plans still carry retired `L10`/`L11`/`L13` ids and a stale L12 count                                                                 | mis-assignment                     | §4.0 retirement table is authoritative; `pnpm roadmap:check` fails if a lane count disagrees with `OPERATION_LANES.json`; board task T-009 propagates it                              |
 
 ---
 
@@ -634,21 +687,23 @@ roughly **14–20 working sessions/weeks**, dominated by provider, device and re
 
 ---
 
-## 11. Owner decision register (delta over existing plan §2)
+## 11. Owner decision register
 
-| #                        | Decision                                                                                                                          | Default now                                                                                                                                                                                                                                                           | Reversible cost                          |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| D-F1                     | Frontend install/run strategy: per-app `npm ci` in place vs workspace membership vs `.toolchain` copies                           | per-app npm in place                                                                                                                                                                                                                                                  | one workstream re-run                    |
-| D-F2                     | Web session bridge: same-origin HttpOnly BFF cookies for all three web apps (already proven for addresses) vs bearer in memory    | BFF cookies for web, secure storage for native                                                                                                                                                                                                                        | one adapter layer                        |
-| D-F3                     | Playwright browser scope: chromium required, firefox/webkit best-effort                                                           | chromium                                                                                                                                                                                                                                                              | extra CI time                            |
-| D-F4                     | Web-package install under Node 24: per-package `.npmrc` relaxing `engine-strict` vs a Node 20 toolchain for vendor builds         | per-package `.npmrc`, pinned manifests untouched                                                                                                                                                                                                                      | one install recipe                       |
-| D-F5                     | Web push: extend the customer-web config query with `vapidKey` (recorded vendor edit) vs a backend field the client already reads | extend the query, recorded in provenance                                                                                                                                                                                                                              | one query + one edit                     |
-| D-F6                     | Admin client-side AES-GCM config decryption with a public `NEXT_PUBLIC_*` key: keep vs move server-side                           | keep, and stop treating it as secrecy                                                                                                                                                                                                                                 | one adapter layer                        |
-| D-F7                     | Client-owned web tokens (`localStorage`) vs the BFF cookie bridge (D-F2) for the two admin apps                                   | BFF cookies for all three web apps                                                                                                                                                                                                                                    | one adapter layer                        |
-| D-G1                     | Public-access gate scope: HTTP-only (recorded) or enforced on the WebSocket handshake too                                         | **HTTP-only.** web/admin/app/single-admin send only `authorization` in connectionParams, so handshake enforcement would break 4 of the 6 pinned clients. bop-auth is verified on WS when a client supplies it, and per-subscription authorisation remains the control | revisit if a client needs WS enforcement |
-| D-G2                     | `x-skip-public-auth`: honoured by the server or not                                                                               | **Not honoured.** Enforcement is controlled only by `PUBLIC_ACCESS_ENFORCED`; the header is removed from the gate and the CORS allow-list                                                                                                                             | small, one header                        |
-| D-N1                     | Native harness: Maestro (simpler, Expo-friendly) vs Detox                                                                         | Maestro                                                                                                                                                                                                                                                               | one test-suite rewrite                   |
-| D1, D4, D5, D6, D12, D13 | as recorded in the existing master plan §2                                                                                        | unchanged                                                                                                                                                                                                                                                             | per-lane                                 |
+| #                        | Decision                                                                                                                                                                                                                                                                                                           | Default now                                                                                                                                                                                                                                                           | Reversible cost                                                           |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| D-F1                     | Frontend install/run strategy: per-app `npm ci` in place vs workspace membership vs `.toolchain` copies                                                                                                                                                                                                            | per-app npm in place                                                                                                                                                                                                                                                  | one workstream re-run                                                     |
+| D-F2                     | Web session bridge: same-origin HttpOnly BFF cookies for all three web apps (already proven for addresses) vs bearer in memory                                                                                                                                                                                     | BFF cookies for web, secure storage for native                                                                                                                                                                                                                        | one adapter layer                                                         |
+| D-F3                     | Playwright browser scope: chromium required, firefox/webkit best-effort                                                                                                                                                                                                                                            | chromium                                                                                                                                                                                                                                                              | extra CI time                                                             |
+| D-F4                     | Web-package install under Node 24: per-package `.npmrc` relaxing `engine-strict` vs a Node 20 toolchain for vendor builds                                                                                                                                                                                          | per-package `.npmrc`, pinned manifests untouched                                                                                                                                                                                                                      | one install recipe                                                        |
+| D-F5                     | Web push: extend the customer-web config query with `vapidKey` (recorded vendor edit) vs a backend field the client already reads                                                                                                                                                                                  | extend the query, recorded in provenance                                                                                                                                                                                                                              | one query + one edit                                                      |
+| D-F6                     | Admin client-side AES-GCM config decryption with a public `NEXT_PUBLIC_*` key: keep vs move server-side                                                                                                                                                                                                            | keep, and stop treating it as secrecy                                                                                                                                                                                                                                 | one adapter layer                                                         |
+| D-F7                     | Client-owned web tokens (`localStorage`) vs the BFF cookie bridge (D-F2) for the two admin apps                                                                                                                                                                                                                    | BFF cookies for all three web apps                                                                                                                                                                                                                                    | one adapter layer                                                         |
+| D-G1                     | Public-access gate scope: HTTP-only (recorded) or enforced on the WebSocket handshake too                                                                                                                                                                                                                          | **HTTP-only.** web/admin/app/single-admin send only `authorization` in connectionParams, so handshake enforcement would break 4 of the 6 pinned clients. bop-auth is verified on WS when a client supplies it, and per-subscription authorisation remains the control | revisit if a client needs WS enforcement                                  |
+| D-G2                     | `x-skip-public-auth`: honoured by the server or not                                                                                                                                                                                                                                                                | **Not honoured.** Enforcement is controlled only by `PUBLIC_ACCESS_ENFORCED`; the header is removed from the gate and the CORS allow-list                                                                                                                             | small, one header                                                         |
+| D-N1                     | Native harness: Maestro (simpler, Expo-friendly) vs Detox                                                                                                                                                                                                                                                          | Maestro                                                                                                                                                                                                                                                               | one test-suite rewrite                                                    |
+| **D-S1**                 | **FB15 — membership, credits, referrals and deals.** Every such operation (`giveUserCredits`, `getMyReferralCode`, `checkReferralCodeExists`, `getAllSubscriptionPlans`, `createSubscription`, `cancelSubscription`, the food-deal roots, single-vendor banners) is in lane **L12**. **OPEN — owner must decide.** | **Not in the release unless W21 is approved.** Approving D1/W21 brings FB15 in; declining means the product ships with coupons (L3) and tips/banners (L2) only, and FB15 is not delivered. No multivendor equivalent is planned.                                      | re-planning a new lane if the owner wants FB15 without single-vendor mode |
+| **D-S2**                 | **Supported locales for W26.** No locale set has ever been given.                                                                                                                                                                                                                                                  | One configured locale plus a tested fallback chain; the mechanism is built, the language list is not invented                                                                                                                                                         | configuration only, once the list exists                                  |
+| D1, D4, D5, D6, D12, D13 | as recorded in `docs/superpowers/plans/2026-10-08-enatega-backend/00-master-plan.md` §2                                                                                                                                                                                                                            | unchanged                                                                                                                                                                                                                                                             | per-lane                                                                  |
 
 ---
 
@@ -672,14 +727,19 @@ DOCKER_HOST=unix://$HOME/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKE
 node --test tools/*.test.mjs tools/lib/*.test.mjs
 node tools/generate-operation-traceability.mjs [--check]
 node tools/manifest-enatega-ui.mjs [--check]
+./tools/pnpm.sh roadmap           # regenerate docs/ROADMAP_STATUS.md — run this before asking "where are we"
+./tools/pnpm.sh roadmap:check     # fail if the status file is stale or the plan contradicts the lane data
 ```
 
 ### 12.2 Artifact index
 
 | Artifact                                                                       | Role                                                                                            |
 | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| `docs/MASTER_END_TO_END_PLAN.md`                                               | this plan                                                                                       |
-| `docs/MASTER_PLAN.json`                                                        | machine-readable workstreams, batches, gates, scopes                                            |
+| `docs/ROADMAP.md`                                                              | this roadmap — the only plan                                                                    |
+| `docs/ROADMAP.json`                                                            | machine-readable workstreams, batches, gates, scopes, FB map                                    |
+| `docs/ROADMAP_STATUS.md` + `tools/generate-roadmap-status.mjs`                 | generated "you are here": per-workstream state, next claimable, blocked, at-risk                |
+| `docs/TASK_BOARD.md`                                                           | claimable task rows (§5.3)                                                                      |
+| `docs/history/**`                                                              | frozen dated snapshots; never current                                                           |
 | `docs/OPERATION_TRACEABILITY.md` + `tools/generate-operation-traceability.mjs` | per-operation state of record                                                                   |
 | `docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md`                                   | full per-package frontend integration surface, 24 blockers, backend capability table            |
 | `docs/OPERATION_LANES.json` / `docs/ENATEGA_OPERATION_INVENTORY.json`          | lane ownership and inventory                                                                    |
@@ -693,24 +753,47 @@ node tools/manifest-enatega-ui.mjs [--check]
 
 ### 12.3 Per-lane plan readiness
 
-| Lane             | Plan file                             | State                                                                   |
-| ---------------- | ------------------------------------- | ----------------------------------------------------------------------- |
-| L0 kernel        | `01-wave0-foundation.md`              | complete (3856 lines)                                                   |
-| L1               | `10-lane-L1-identity.md`              | complete                                                                |
-| L2               | `11-lane-L2-configuration.md`         | complete                                                                |
-| L3               | `12-lane-L3-catalog.md`               | complete                                                                |
-| L4               | `13-lane-L4-discovery.md`             | complete                                                                |
-| L5               | `14-lane-L5-orders.PARTIAL.md`        | **PARTIAL — complete before W7 starts**                                 |
-| L6               | `15-lane-L6-dispatch.PARTIAL.md`      | **PARTIAL — complete before W8 starts**                                 |
-| L7               | `16-lane-L7-finance.PARTIAL.md`       | **PARTIAL — complete before W9 starts**                                 |
-| L8               | `17-lane-L8-notifications.PARTIAL.md` | **PARTIAL — complete before W10 starts**                                |
-| L9               | `18-lane-L9-analytics.md`             | complete-draft                                                          |
-| journeys/E2E     | `20-wave3-journeys-and-e2e.md`        | complete                                                                |
-| hardening        | `21-wave4-hardening-and-release.md`   | complete                                                                |
-| L12              | `22-wave5-single-vendor.PARTIAL.md`   | **PARTIAL — complete before W21 starts**                                |
-| frontend         | _(none)_                              | **missing — W12/W13/W14 must write `30-frontend-integration.md` first** |
-| native E2E       | _(none)_                              | **missing — W19 must write `31-native-device-e2e.md` first**            |
-| coverage closure | _(none)_                              | **missing — W17 must write `32-coverage-closure.md` first**             |
+| Lane             | Plan file                             | State                                                  |
+| ---------------- | ------------------------------------- | ------------------------------------------------------ |
+| L0 kernel        | `01-wave0-foundation.md`              | complete (3856 lines)                                  |
+| L1               | `10-lane-L1-identity.md`              | complete                                               |
+| L2               | `11-lane-L2-configuration.md`         | complete                                               |
+| L3               | `12-lane-L3-catalog.md`               | complete                                               |
+| L4               | `13-lane-L4-discovery.md`             | complete                                               |
+| L5               | `14-lane-L5-orders.PARTIAL.md`        | **PARTIAL — complete before W7 starts**                |
+| L6               | `15-lane-L6-dispatch.PARTIAL.md`      | **PARTIAL — complete before W8 starts**                |
+| L7               | `16-lane-L7-finance.PARTIAL.md`       | **PARTIAL — complete before W9 starts**                |
+| L8               | `17-lane-L8-notifications.PARTIAL.md` | **PARTIAL — complete before W10 starts**               |
+| L9               | `18-lane-L9-analytics.md`             | complete-draft                                         |
+| journeys/E2E     | `20-wave3-journeys-and-e2e.md`        | complete                                               |
+| hardening        | `21-wave4-hardening-and-release.md`   | complete                                               |
+| L12              | `22-wave5-single-vendor.PARTIAL.md`   | **PARTIAL — complete before W21 starts**               |
+| frontend         | `30-frontend-integration.md`          | written; per-package audits are each lane's first task |
+| native E2E       | `31-native-device-e2e.md`             | written; blocked on devices and signing accounts       |
+| coverage closure | `32-coverage-closure.md`              | written                                                |
 
-A lane may not start on a PARTIAL or missing plan: writing that plan is the lane's first task and is reviewed by the
-lead before implementation begins.
+A lane may not start on a PARTIAL plan: completing it is that lane's first task and is reviewed by the lead before
+implementation begins. Each PARTIAL file carries a "Remaining sections to author" block naming exactly what is
+missing against `_lane-plan-brief.md`, so completing it is itself a scoped task rather than a judgement call.
+
+---
+
+## 13. Known gaps with no owner
+
+These were identified in the 2026-10-09 roadmap audit and the owner **chose not to schedule them**. They are
+recorded here because an unscheduled gap must stay visible: none of them is "done", and several are required by
+gates this roadmap already demands. Each needs either a workstream or an owner decision to change the gate.
+
+| #   | Gap                                                                                                                                                                                                   | Which gate it undermines                              | What happens meanwhile                                                                                   |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| U1  | **No CI.** There is no pipeline, workflow file, container image or compose file anywhere in the repository. Every gate is a manual local run against a developer's Colima.                            | §7's "all green on a clean tree" for every gate       | `docs/GATES.json` records commit and a `dirty` flag, so a local run is attributable but not reproducible |
+| U2  | **No deployment or environment workstream.** W22 produces documents and an owner acceptance run, not a deployment. Nothing owns build artifacts, environments, config/secret management or runbooks.  | G4/G5 release meaning                                 | hosting stays a blocker in §10 rather than work; the product cannot be released from this plan alone     |
+| U3  | **Migration drift and rollback are unowned.** Checksum/drift reconciliation for already-applied migrations is called a deployment prerequisite; no workstream owns it and there is no downgrade path. | G1's "migrations clean on empty and upgrade"          | W2 proves forward migration only; drift remains a deployment-time surprise                               |
+| U4  | **No accessibility tooling.** No axe/a11y dependency or command exists, yet §2 and `END_TO_END_ACCEPTANCE.json` require keyboard/responsive/accessibility evidence.                                   | G3 (W16), and the acceptance workflows' evidence list | a11y evidence can only be produced by manual inspection, which does not scale to 18 workflows            |
+| U5  | **No load/performance tooling or targets.** W20 names load, concurrency and outage work; no harness is installed and no SLO numbers exist.                                                            | G4 (W20)                                              | load results cannot be produced; SLO inputs are not even listed as a requested owner decision            |
+| U6  | **No licence/attribution gate.** `manifest-enatega-ui.mjs` verifies bytes, not that upstream licence notices survive, and no third-party attribution artifact is produced for release.                | FB00's licensing scope, G5                            | the boundary rule "preserve upstream licence notices" is enforced by review only                         |
+| U7  | **Existing FairBite has no migration or decommissioning plan.** The root README says it "remains preserved"; nothing says what happens to it or its data at release.                                  | G5 owner acceptance                                   | undefined end state for the system this one replaces                                                     |
+
+Rule for all seven: do **not** mark a dependent gate `N/A` because of them. §5.5 already forbids it — missing
+infrastructure is a failure or a blocker, never `N/A`. Closing one of these requires either a new `W` workstream
+here or a recorded owner decision in §11 that changes what the gate asks for.

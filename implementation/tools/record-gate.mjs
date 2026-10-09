@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Records gate runs with real command output, so docs/GATES.json is evidence
-// rather than narrative. Reads the gate definitions from docs/MASTER_PLAN.json.
+// rather than narrative. Reads the gate definitions from docs/ROADMAP.json.
 //
 //   node tools/record-gate.mjs --list
 //   node tools/record-gate.mjs --gate GP0
@@ -19,7 +19,7 @@ const implementation = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
 );
-const planFile = path.join(implementation, "docs/MASTER_PLAN.json");
+const planFile = path.join(implementation, "docs/ROADMAP.json");
 const outputFile = path.join(implementation, "docs/GATES.json");
 
 export function translate(command) {
@@ -181,15 +181,19 @@ if (isMain) {
   // Recording a run rewrites GATES.json, which is an input to the generated
   // status artifacts. Regenerate them here so the tree is never left with a
   // status document that contradicts the evidence it points at.
-  const status = spawnSync(
-    process.execPath,
-    ["tools/generate-implementation-status.mjs"],
-    { cwd: implementation, encoding: "utf8" },
-  );
-  if (status.status !== 0)
-    process.stdout.write(
-      `  warning: failed to regenerate the status artifacts: ${(status.stderr ?? "").trim()}\n`,
-    );
+  for (const generator of [
+    "tools/generate-implementation-status.mjs",
+    "tools/generate-roadmap-status.mjs",
+  ]) {
+    const status = spawnSync(process.execPath, [generator], {
+      cwd: implementation,
+      encoding: "utf8",
+    });
+    if (status.status !== 0)
+      process.stdout.write(
+        `  warning: ${generator} failed to regenerate: ${(status.stderr ?? "").trim()}\n`,
+      );
+  }
   process.stdout.write(
     `gate ${id} ${entry.passed ? "PASSED" : "FAILED"}${partial ? " (partial run; latest unchanged)" : ""}; recorded in docs/GATES.json\n`,
   );

@@ -1,31 +1,34 @@
 # Fresh application workspace
 
-Current local AI handoff and end-to-end diagrams: [LOCAL_AI_HANDOFF.md](docs/LOCAL_AI_HANDOFF.md).
-Actual verification and open gates: [LOCAL_AI_HANDOFF_EVIDENCE.json](docs/LOCAL_AI_HANDOFF_EVIDENCE.json).
-The product remains in progress; backend Playwright smoke does not establish full original UI acceptance.
+**Start here**
+
+| Question                        | File                                                                          |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| What is the plan?               | [`docs/ROADMAP.md`](docs/ROADMAP.md) — the only plan                          |
+| Where is the build right now?   | [`docs/ROADMAP_STATUS.md`](docs/ROADMAP_STATUS.md) — run `pnpm roadmap` first |
+| What can I pick up?             | [`docs/TASK_BOARD.md`](docs/TASK_BOARD.md)                                    |
+| What did a gate actually prove? | [`docs/GATES.json`](docs/GATES.json)                                          |
+| State of one operation?         | [`docs/OPERATION_TRACEABILITY.md`](docs/OPERATION_TRACEABILITY.md)            |
+
+Dated snapshots live in [`docs/history/`](docs/history/README.md) and are never current.
 
 This is the fresh application workspace and independently implemented backend foundation.
 The product UI is the unchanged Enatega multivendor source in `vendor/enatega-ui/`; each app keeps its own npm lockfile and is not part of the pnpm workspace.
-The prior FairBite application remains preserved in its original directory.
+The prior FairBite application remains preserved in its original directory; it has no migration or decommissioning plan yet (`docs/ROADMAP.md` §13 U7).
 The product display name is imported from `@fairbite/brand`.
 
-Current checkpoint: public API/worker and six-app connection foundations, password
-identity/session slice, public catalog reads, and customer identity/catalog/address
-presentation integration. Full identity,
-source UI parity, commerce, delivery, payments and release gates remain open.
+The product remains in progress and no release gate is approved. Backend Playwright smoke does not establish full
+original UI acceptance. Do not infer progress from this README: every count lives in the generated status files.
 
 Use Node.js 24 and Corepack. Run `./tools/pnpm.sh install --frozen-lockfile`, then `./tools/pnpm.sh build`. The helper creates workspace-local package-manager shims so Turborepo can find pnpm.
 Backend settings are explicit; there is no upstream production endpoint fallback.
-See `docs/EXECUTION_PLAN.json` for phase gates and external blockers.
 
 Verification: `./tools/pnpm.sh lint`, `typecheck`, `test` and `test:integration`. Browser E2E against the Enatega apps returns with the backend contract work.
 Real-stack checks need Docker; on this host select the Colima socket through DOCKER_HOST.
-See `docs/FOUNDATION_EVIDENCE.json` for actual results and remaining gates.
+There is no CI: every gate is a local run recorded by `node tools/record-gate.mjs` (`docs/ROADMAP.md` §13 U1).
 
-Latest full-scope report: `docs/FULL_IMPLEMENTATION_REPORT.json`. It records
-implemented slices, actual checks and remaining unimplemented modules. The full
-module backlog is `docs/BACKEND_MODULE_PLAN.json`; static upstream operations and
-runtime acceptance are tracked separately in `docs/ENATEGA_OPERATION_COVERAGE.json`
+The module backlog is `docs/BACKEND_MODULE_PLAN.json`; static upstream operations and
+runtime acceptance are tracked in `docs/ENATEGA_OPERATION_COVERAGE.json`
 and `docs/END_TO_END_ACCEPTANCE.json`.
 
 Run the local stack with `python3 tools/local-stack.py start`; verify it with

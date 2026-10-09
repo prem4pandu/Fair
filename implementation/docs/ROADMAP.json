@@ -1,0 +1,646 @@
+{
+  "schemaVersion": 2,
+  "authority": "docs/ROADMAP.md is authoritative for intent and rules; this file is its machine-readable twin for workstreams, dependencies, batches and gates. docs/ROADMAP_STATUS.md (generated) is authoritative for current state. docs/OPERATION_TRACEABILITY.md is authoritative for per-operation state.",
+  "replaces": [
+    "docs/MASTER_PLAN.json",
+    "docs/EXECUTION_PLAN.json (scheduling portions)"
+  ],
+  "objective": "Build the complete backend and integration layer for the six pinned Enatega apps, prove it with unit, real-stack integration, journey, Playwright and native device evidence, and keep per-operation coverage enforced from the first change.",
+  "stateRule": "No status field exists in this file by design. Status is derived in tools/generate-roadmap-status.mjs from docs/OPERATION_LANES.json, a resolver source scan, docs/OPERATION_TEST_EVIDENCE.json and docs/GATES.json. A workstream is never complete on assertion.",
+  "identifiers": {
+    "W": "workstream — the only assignable unit",
+    "L": "operation lane — a label on operations in docs/OPERATION_LANES.json, not an assignable unit",
+    "G": "gate — the evidence a workstream must produce",
+    "FB": "business capability name retained from the original phase plan; schedules nothing",
+    "retired": {
+      "L10": ["W15", "W16", "W12", "W13", "W14a", "W14b"],
+      "L11": ["W23"],
+      "L13": ["W24"]
+    }
+  },
+  "capabilityMap": {
+    "FB00": {
+      "scope": "Source/action/mode inventory and licensing",
+      "workstreams": ["W0", "W2"],
+      "lanes": []
+    },
+    "FB01": {
+      "scope": "API/worker, persistence, six-app foundations and real-stack harness",
+      "workstreams": ["W0", "W1"],
+      "lanes": ["L0"]
+    },
+    "FB02": {
+      "scope": "Identity, roles, staff scopes and secure sessions",
+      "workstreams": ["W3"],
+      "lanes": ["L1"]
+    },
+    "FB03": {
+      "scope": "Merchant/outlet/catalog/media/hours",
+      "workstreams": ["W5a", "W4"],
+      "lanes": ["L3", "L2"]
+    },
+    "FB04": {
+      "scope": "Discovery, search, addresses and favorites",
+      "workstreams": ["W5b", "W6"],
+      "lanes": ["L3", "L4"]
+    },
+    "FB05": {
+      "scope": "Integer pricing, quotes, cart and immutable orders",
+      "workstreams": ["W7"],
+      "lanes": ["L5"]
+    },
+    "FB06": {
+      "scope": "Payments, ledger, refunds and signed webhooks",
+      "workstreams": ["W9", "W18"],
+      "lanes": ["L7"]
+    },
+    "FB07": {
+      "scope": "Merchant acceptance/preparation/readiness",
+      "workstreams": ["W7", "W5a"],
+      "lanes": ["L5", "L3"]
+    },
+    "FB08": {
+      "scope": "Provider-neutral dispatch/reconciliation",
+      "workstreams": ["W8"],
+      "lanes": ["L6"]
+    },
+    "FB09": {
+      "scope": "Own-fleet rider workflow and native tracking",
+      "workstreams": ["W8", "W14b", "W19"],
+      "lanes": ["L6"]
+    },
+    "FB10": {
+      "scope": "External courier (Lalamove-style) adapter",
+      "workstreams": ["W18"],
+      "lanes": ["L6"]
+    },
+    "FB11": {
+      "scope": "Subscriptions, notifications, chat and media",
+      "workstreams": ["W10", "W8", "W4"],
+      "lanes": ["L8", "L6", "L2"]
+    },
+    "FB12": {
+      "scope": "History/tracking/reorder/cancellation/ratings",
+      "workstreams": ["W7", "W5b"],
+      "lanes": ["L5", "L3"]
+    },
+    "FB13": {
+      "scope": "Earnings, payables, withdrawals and reconciliation",
+      "workstreams": ["W9"],
+      "lanes": ["L7"]
+    },
+    "FB14": {
+      "scope": "Support/disputes/risk/privacy lifecycle",
+      "workstreams": ["W6"],
+      "lanes": ["L4"]
+    },
+    "FB15": {
+      "scope": "Membership/credits/referrals/deals",
+      "workstreams": ["W21"],
+      "lanes": ["L12"],
+      "ownerDecision": "D-S1",
+      "note": "Delivered only if the owner approves single-vendor mode. No multivendor equivalent is planned."
+    },
+    "FB16": {
+      "scope": "Full administrative operations and reporting",
+      "workstreams": ["W11", "W13"],
+      "lanes": ["L9"]
+    },
+    "FB17": {
+      "scope": "Public/provider configuration, localization and observability",
+      "workstreams": ["W4", "W26", "W20"],
+      "lanes": ["L2"]
+    },
+    "FB18": {
+      "scope": "Full UI/action parity and regression",
+      "workstreams": ["W12", "W13", "W14a", "W14b", "W15", "W16"],
+      "lanes": []
+    },
+    "FB19": {
+      "scope": "Load, resilience, retention, restore and security",
+      "workstreams": ["W20"],
+      "lanes": []
+    },
+    "FB20": {
+      "scope": "Signed devices, provider readiness and owner release decision",
+      "workstreams": ["W18", "W19", "W22"],
+      "lanes": []
+    }
+  },
+  "workstreams": [
+    {
+      "id": "W0",
+      "name": "Baseline repair and gate instrumentation",
+      "ownerRole": "lead",
+      "wave": 0,
+      "batch": 1,
+      "lanes": [],
+      "depends": [],
+      "gate": "GP0",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/01-wave0-foundation.md"
+    },
+    {
+      "id": "W1",
+      "name": "Kernel and transport completion",
+      "ownerRole": "backend-kernel",
+      "wave": 1,
+      "batch": 2,
+      "lanes": ["L0"],
+      "depends": ["W0"],
+      "gate": "G0",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/01-wave0-foundation.md"
+    },
+    {
+      "id": "W2",
+      "name": "Contract and data-model freeze",
+      "ownerRole": "backend-contract",
+      "wave": 1,
+      "batch": 2,
+      "lanes": [],
+      "depends": ["W0"],
+      "gate": "G1",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/02-wave1-contract-and-data-model.md"
+    },
+    {
+      "id": "W3",
+      "name": "Identity, roles, staff scopes, MFA, recovery, OTP/social",
+      "ownerRole": "agent-L1",
+      "wave": 2,
+      "batch": 3,
+      "lanes": ["L1"],
+      "depends": ["W2"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/10-lane-L1-identity.md"
+    },
+    {
+      "id": "W4",
+      "name": "Platform configuration, maps and media REST",
+      "ownerRole": "agent-L2",
+      "wave": 2,
+      "batch": 3,
+      "lanes": ["L2"],
+      "depends": ["W2"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/11-lane-L2-configuration.md"
+    },
+    {
+      "id": "W5a",
+      "name": "Vendors, outlets, onboarding, publication, hours, media",
+      "ownerRole": "agent-L3a",
+      "wave": 2,
+      "batch": 3,
+      "lanes": ["L3"],
+      "depends": ["W2"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/12-lane-L3-catalog.md"
+    },
+    {
+      "id": "W6",
+      "name": "Customers, addresses, favourites, support, privacy",
+      "ownerRole": "agent-L4",
+      "wave": 2,
+      "batch": 3,
+      "lanes": ["L4"],
+      "depends": ["W2", "W3"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/13-lane-L4-discovery.md"
+    },
+    {
+      "id": "W5b",
+      "name": "Catalog items, variations, addons, discovery, search, reviews, coupons",
+      "ownerRole": "agent-L3b",
+      "wave": 2,
+      "batch": 4,
+      "lanes": ["L3"],
+      "depends": ["W2", "W3"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/12-lane-L3-catalog.md"
+    },
+    {
+      "id": "W7",
+      "name": "Cart, quotes, pricing policy versions, immutable orders, lifecycle",
+      "ownerRole": "agent-L5",
+      "wave": 2,
+      "batch": 4,
+      "lanes": ["L5"],
+      "depends": ["W6"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/14-lane-L5-orders.PARTIAL.md",
+      "planState": "PARTIAL"
+    },
+    {
+      "id": "W12",
+      "name": "Customer web integration",
+      "ownerRole": "agent-FE-web",
+      "wave": 2,
+      "batch": 4,
+      "lanes": [],
+      "depends": ["W2", "W3", "W4", "W6"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/30-frontend-integration.md"
+    },
+    {
+      "id": "W13",
+      "name": "Admin web and single-vendor admin integration",
+      "ownerRole": "agent-FE-admin",
+      "wave": 2,
+      "batch": 4,
+      "lanes": [],
+      "depends": ["W2", "W3", "W4", "W5a"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/30-frontend-integration.md"
+    },
+    {
+      "id": "W8",
+      "name": "Dispatch, own fleet, rider state, tracking, chat, realtime",
+      "ownerRole": "agent-L6",
+      "wave": 2,
+      "batch": 5,
+      "lanes": ["L6"],
+      "depends": ["W7"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/15-lane-L6-dispatch.PARTIAL.md",
+      "planState": "PARTIAL"
+    },
+    {
+      "id": "W9",
+      "name": "Payments, Stripe REST, ledger, refunds, payables, settlements",
+      "ownerRole": "agent-L7",
+      "wave": 2,
+      "batch": 5,
+      "lanes": ["L7"],
+      "depends": ["W7"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/16-lane-L7-finance.PARTIAL.md",
+      "planState": "PARTIAL"
+    },
+    {
+      "id": "W14a",
+      "name": "Customer mobile integration (Expo)",
+      "ownerRole": "agent-FE-app",
+      "wave": 2,
+      "batch": 5,
+      "lanes": [],
+      "depends": ["W2", "W3", "W6"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/30-frontend-integration.md"
+    },
+    {
+      "id": "W14b",
+      "name": "Store mobile and rider mobile integration",
+      "ownerRole": "agent-FE-mobile2",
+      "wave": 2,
+      "batch": 5,
+      "lanes": [],
+      "depends": ["W2", "W3", "W5a", "W8"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/30-frontend-integration.md"
+    },
+    {
+      "id": "W10",
+      "name": "Notifications, push/email/SMS ports, worker jobs, chat media",
+      "ownerRole": "agent-L8",
+      "wave": 2,
+      "batch": 6,
+      "lanes": ["L8"],
+      "depends": ["W8"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/17-lane-L8-notifications.PARTIAL.md",
+      "planState": "PARTIAL"
+    },
+    {
+      "id": "W11",
+      "name": "Dashboards, reports, analytics",
+      "ownerRole": "agent-L9",
+      "wave": 2,
+      "batch": 6,
+      "lanes": ["L9"],
+      "depends": ["W9", "W7"],
+      "gate": "G2",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/18-lane-L9-analytics.md"
+    },
+    {
+      "id": "W15",
+      "name": "Cross-lane journey suites replaying exact app documents",
+      "ownerRole": "agent-E2E",
+      "wave": 3,
+      "batch": 6,
+      "lanes": [],
+      "depends": ["W7", "W8", "W9", "W10", "W11"],
+      "gate": "G3",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/20-wave3-journeys-and-e2e.md"
+    },
+    {
+      "id": "W26",
+      "name": "Server-side localization",
+      "ownerRole": "agent-L2",
+      "wave": 3,
+      "batch": 6,
+      "lanes": [],
+      "depends": ["W4", "W10"],
+      "gate": "G3",
+      "planFile": "docs/ROADMAP.md#46a-localization-w26--previously-unowned",
+      "ownerDecision": "D-S2",
+      "note": "Owns no extracted root operation: localization is a cross-cutting capability over L2 configuration and L8 templates, which is why it had no lane and no owner until now."
+    },
+    {
+      "id": "W16",
+      "name": "Playwright web E2E against the real stack",
+      "ownerRole": "agent-E2E",
+      "wave": 3,
+      "batch": 7,
+      "lanes": [],
+      "depends": ["W12", "W13", "W15"],
+      "gate": "G3",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/20-wave3-journeys-and-e2e.md"
+    },
+    {
+      "id": "W17",
+      "name": "Coverage closure",
+      "ownerRole": "agent-CQ",
+      "wave": 3,
+      "batch": 7,
+      "lanes": [],
+      "depends": ["W15", "W16"],
+      "gate": "G3",
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/32-coverage-closure.md"
+    },
+    {
+      "id": "W18",
+      "name": "Provider adapters and sandbox evidence",
+      "ownerRole": "agent-providers",
+      "wave": 4,
+      "batch": 8,
+      "lanes": [],
+      "depends": ["W9", "W10"],
+      "gate": "G4",
+      "blockedBy": ["provider-credentials"],
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/21-wave4-hardening-and-release.md"
+    },
+    {
+      "id": "W19",
+      "name": "Native device E2E for the three mobile apps",
+      "ownerRole": "agent-native",
+      "wave": 4,
+      "batch": 8,
+      "lanes": [],
+      "depends": ["W14a", "W14b"],
+      "gate": "G4",
+      "blockedBy": ["devices", "signing-accounts"],
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/31-native-device-e2e.md"
+    },
+    {
+      "id": "W20",
+      "name": "Hardening: security, advisories, load, restore, observability",
+      "ownerRole": "agent-hardening",
+      "wave": 4,
+      "batch": 8,
+      "lanes": [],
+      "depends": ["W17"],
+      "gate": "G4",
+      "blockedBy": ["slo-hosting-inputs"],
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/21-wave4-hardening-and-release.md"
+    },
+    {
+      "id": "W21",
+      "name": "Single-vendor mode including its SDL, resolvers and admin app",
+      "ownerRole": "agent-L12",
+      "wave": 5,
+      "batch": 9,
+      "lanes": ["L12"],
+      "depends": ["W2", "W16"],
+      "gate": "G5",
+      "blockedBy": ["owner-decision-D1"],
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/22-wave5-single-vendor.PARTIAL.md",
+      "planState": "PARTIAL"
+    },
+    {
+      "id": "W22",
+      "name": "Release package and owner acceptance run",
+      "ownerRole": "lead",
+      "wave": 5,
+      "batch": 9,
+      "lanes": [],
+      "depends": ["W18", "W19", "W20", "W21"],
+      "gate": "G5",
+      "blockedBy": ["owner-approval"],
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/21-wave4-hardening-and-release.md"
+    },
+    {
+      "id": "W23",
+      "name": "Independent QA review",
+      "ownerRole": "reviewer-QA",
+      "wave": null,
+      "batch": null,
+      "lanes": [],
+      "depends": [],
+      "gate": null,
+      "continuous": true,
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/20-wave3-journeys-and-e2e.md"
+    },
+    {
+      "id": "W24",
+      "name": "Independent security and architecture review",
+      "ownerRole": "reviewer-SEC",
+      "wave": null,
+      "batch": null,
+      "lanes": [],
+      "depends": [],
+      "gate": null,
+      "continuous": true,
+      "planFile": "docs/superpowers/plans/2026-10-08-enatega-backend/21-wave4-hardening-and-release.md"
+    },
+    {
+      "id": "W25",
+      "name": "Documentation and traceability upkeep",
+      "ownerRole": "lead",
+      "wave": null,
+      "batch": null,
+      "lanes": [],
+      "depends": [],
+      "gate": null,
+      "continuous": true,
+      "planFile": "docs/ROADMAP.md"
+    }
+  ],
+  "batches": [
+    { "id": 1, "writers": ["W0"], "gate": "GP0" },
+    { "id": 2, "writers": ["W1", "W2"], "gate": "G1" },
+    { "id": 3, "writers": ["W3", "W4", "W5a", "W6"], "gate": "G2 per lane" },
+    {
+      "id": 4,
+      "writers": ["W5b", "W7", "W12", "W13"],
+      "gate": "G2 + frontend smoke"
+    },
+    {
+      "id": 5,
+      "writers": ["W8", "W9", "W14a", "W14b"],
+      "gate": "G2 + native build"
+    },
+    {
+      "id": 6,
+      "writers": ["W10", "W11", "W15", "W26"],
+      "gate": "G2 + journeys"
+    },
+    { "id": 7, "writers": ["W16", "W17"], "gate": "G3" },
+    { "id": 8, "writers": ["W18", "W19", "W20"], "gate": "G4" },
+    { "id": 9, "writers": ["W21", "W22"], "gate": "G5 + owner acceptance" }
+  ],
+  "gateCommandRule": "tools/record-gate.mjs executes these verbatim and records exit codes in docs/GATES.json. A gate is closed only when every command exits 0 AND every named approval is recorded; tools/generate-roadmap-status.mjs treats an unapproved pass as unclosed.",
+  "gates": [
+    {
+      "id": "GP0",
+      "workstreams": ["W0"],
+      "requires": [],
+      "commands": [
+        "pnpm install --frozen-lockfile",
+        "pnpm lint",
+        "pnpm format:check",
+        "pnpm typecheck",
+        "pnpm build",
+        "pnpm test",
+        "pnpm test:integration",
+        "pnpm coverage:report",
+        "pnpm check:enatega-ui-source",
+        "pnpm test:enatega-contracts",
+        "pnpm test:operation-evidence",
+        "node --test tools/*.test.mjs",
+        "pnpm traceability:check",
+        "pnpm roadmap:check",
+        "pnpm check:error-messages",
+        "pnpm e2e:backend"
+      ],
+      "approvals": ["lead", "reviewer-QA", "reviewer-SEC"],
+      "coverageScope": "GP0 requires the coverage report to be produced and recorded. The strict per-file thresholds (90/90/85) are enforced per lane at G2 and closed by W17 at G3, because the kernel is still being completed in W1 and day-0 thresholds would measure unfinished code."
+    },
+    {
+      "id": "G0",
+      "workstreams": ["W1"],
+      "requires": ["GP0"],
+      "commands": ["pnpm e2e:smoke"],
+      "approvals": ["lead", "reviewer-QA"]
+    },
+    {
+      "id": "G1",
+      "workstreams": ["W2"],
+      "requires": ["G0"],
+      "commands": [
+        "pnpm check:enatega",
+        "pnpm check:enatega:full",
+        "pnpm codegen:check",
+        "pnpm test:integration",
+        "pnpm check:operations"
+      ],
+      "approvals": ["lead", "reviewer-SEC"]
+    },
+    {
+      "id": "G2",
+      "workstreams": [
+        "W3",
+        "W4",
+        "W5a",
+        "W5b",
+        "W6",
+        "W7",
+        "W8",
+        "W9",
+        "W10",
+        "W11",
+        "W12",
+        "W13",
+        "W14a",
+        "W14b"
+      ],
+      "requires": ["G1"],
+      "perLane": true,
+      "commands": [
+        "pnpm test",
+        "pnpm test:integration",
+        "pnpm coverage",
+        "pnpm e2e (lane specs)"
+      ],
+      "approvals": ["reviewer-QA", "reviewer-SEC"]
+    },
+    {
+      "id": "G3",
+      "workstreams": ["W15", "W16", "W17", "W26"],
+      "requires": ["G2"],
+      "commands": [
+        "pnpm coverage",
+        "pnpm test:journeys",
+        "pnpm e2e",
+        "pnpm check:operations --require-complete",
+        "pnpm coverage:e2e"
+      ],
+      "approvals": ["reviewer-QA", "reviewer-SEC"]
+    },
+    {
+      "id": "G4",
+      "workstreams": ["W18", "W19", "W20"],
+      "requires": ["G3"],
+      "commands": [
+        "provider sandbox suites",
+        "native device runs",
+        "pnpm audit",
+        "load suite",
+        "backup restore proof"
+      ],
+      "approvals": ["reviewer-QA", "reviewer-SEC", "owner"],
+      "toolingGap": "No load harness and no accessibility tooling exist in the repository (see unscheduledGaps U4, U5). Those commands cannot run today and must not be marked N/A."
+    },
+    {
+      "id": "G5",
+      "workstreams": ["W21", "W22"],
+      "requires": ["G4"],
+      "commands": [
+        "pnpm check:enatega --scope singlevendor",
+        "pnpm e2e (single-vendor project)"
+      ],
+      "approvals": ["reviewer-QA", "reviewer-SEC", "owner"]
+    }
+  ],
+  "unscheduledGaps": [
+    {
+      "id": "U1",
+      "gap": "No CI pipeline, container image or compose file exists; every gate is a manual local run",
+      "undermines": "every gate's clean-tree requirement",
+      "ownerDecision": "not scheduled 2026-10-09"
+    },
+    {
+      "id": "U2",
+      "gap": "No deployment, environment, secret-management or runbook workstream",
+      "undermines": "G4, G5",
+      "ownerDecision": "not scheduled 2026-10-09"
+    },
+    {
+      "id": "U3",
+      "gap": "Migration checksum/drift reconciliation and rollback are unowned",
+      "undermines": "G1",
+      "ownerDecision": "not scheduled 2026-10-09"
+    },
+    {
+      "id": "U4",
+      "gap": "No accessibility tooling, though the gates demand accessibility evidence",
+      "undermines": "G3",
+      "ownerDecision": "not scheduled 2026-10-09"
+    },
+    {
+      "id": "U5",
+      "gap": "No load/performance harness and no SLO targets",
+      "undermines": "G4",
+      "ownerDecision": "not scheduled 2026-10-09"
+    },
+    {
+      "id": "U6",
+      "gap": "No licence-notice or third-party attribution gate",
+      "undermines": "FB00, G5",
+      "ownerDecision": "not scheduled 2026-10-09"
+    },
+    {
+      "id": "U7",
+      "gap": "Existing FairBite has no migration or decommissioning plan",
+      "undermines": "G5",
+      "ownerDecision": "not scheduled 2026-10-09"
+    }
+  ]
+}

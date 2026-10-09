@@ -331,7 +331,7 @@ export function audit(source, contracts, appNames = apps, options = {}) {
     // explicitly asks for reconciliation. The CLI enables reconciliation in full
     // mode only, so a lexical site whose resolution is missing is reported as
     // UNRESOLVED instead of disappearing from the six-app audit. The scoped
-    // extractor gap is tracked separately (docs/MASTER_PLAN.json R18).
+    // extractor gap is tracked separately (docs/ROADMAP.md §9 R18).
     const reconcileSites = Boolean(options.reconcileUncoveredSites);
     const recordUncovered = (path, line, text, dynamic) => {
       // Without a supplied resolution set the lexical scan IS the audit.

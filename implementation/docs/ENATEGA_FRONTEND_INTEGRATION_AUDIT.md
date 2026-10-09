@@ -6,7 +6,7 @@
 `implementation/`.
 
 This document is the durable record of the frontend integration surface. It is the input to workstreams W12–W14
-(see `MASTER_END_TO_END_PLAN.md` §4.4) and must be updated whenever an integration edit is made.
+(see `ROADMAP.md` §4.4) and must be updated whenever an integration edit is made.
 
 ---
 

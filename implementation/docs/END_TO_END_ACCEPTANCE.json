@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-08",
   "authority": "Derived acceptance candidate; does not advance implementation or release status.",
-  "sourcePlan": "docs/EXECUTION_PLAN.json",
+  "sourcePlan": "docs/ROADMAP.md (capability map in docs/ROADMAP.json; the original phase plan is archived at docs/history/2026-10-08-EXECUTION_PLAN.json)",
   "sourceOperations": "docs/ENATEGA_OPERATION_COVERAGE.json",
   "phaseGraph": [
     {
@@ -677,7 +677,7 @@
           "DBoutage/recovery"
         ],
         "actualCommand": "./tools/pnpm.sh test:e2e",
-        "resultArtifact": "docs/FULL_IMPLEMENTATION_REPORT.json;docs/artifacts/enatega-catalog",
+        "resultArtifact": "docs/history/2026-10-08-FULL_IMPLEMENTATION_REPORT.json;docs/artifacts/enatega-catalog",
         "independentReviewer": "coverage_plan and integration_security",
         "scope": "Partial canonical adapter; geospatial/search/commerce absent"
       },
@@ -696,7 +696,7 @@
           "APIoutage"
         ],
         "actualCommand": "./tools/pnpm.sh test:e2e",
-        "resultArtifact": "docs/FULL_IMPLEMENTATION_REPORT.json;docs/artifacts/enatega-addresses",
+        "resultArtifact": "docs/history/2026-10-08-FULL_IMPLEMENTATION_REPORT.json;docs/artifacts/enatega-addresses",
         "independentReviewer": "coverage_plan and integration_security",
         "scope": "Manual/unverified coordinates; no geocoding or serviceability claim"
       }

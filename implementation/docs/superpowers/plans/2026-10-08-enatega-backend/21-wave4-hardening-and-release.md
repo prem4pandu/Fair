@@ -2,6 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` first. Gate G3 must have passed.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Take the G3-verified system to a releasable state: real providers in sandbox, independent security review closed, dependency advisories resolved, performance and resilience targets met, observability in place, recorded frontend configuration edits for native builds done, native device runs recorded, and status documents rewritten from evidence.
 
 **Architecture:** No new product behaviour. Provider adapters already exist behind ports (L2, L7, L8); this wave configures them, proves them against sandboxes, and hardens operations. Work runs in four parallel tracks: **R-sec** (L13), **R-perf** (lead + one agent), **R-prov** (L7/L8/L2 owners), **R-native** (L10).
@@ -141,7 +149,7 @@ For each provider with credentials supplied, run the lane's sandbox suite (each 
 
 ### Task R10: Rewrite status documents from evidence
 
-- [ ] Replace `docs/IMPLEMENTATION_STATUS.json`, `docs/EXECUTION_PLAN.json` (mark FB phases superseded with a pointer to this plan), `docs/FULL_IMPLEMENTATION_REPORT.json` and `README.md` status lines with values generated from `docs/GATES.json`, `docs/OPERATION_COVERAGE.json`, `docs/PERFORMANCE.md`, `docs/PROVIDERS.md` and `docs/security/REVIEW_2026-W4.md` by `tools/status-report.mjs` (write it with a test asserting that every number in the output comes from those inputs).
+- [ ] Confirm `docs/IMPLEMENTATION_STATUS.json`, `docs/ROADMAP_STATUS.md` and the `README.md` status lines carry only generated values (the former `EXECUTION_PLAN.json` and `FULL_IMPLEMENTATION_REPORT.json` are archived under `docs/history/`), extending them where needed with values generated from `docs/GATES.json`, `docs/OPERATION_COVERAGE.json`, `docs/PERFORMANCE.md`, `docs/PROVIDERS.md` and `docs/security/REVIEW_2026-W4.md` by `tools/status-report.mjs` (write it with a test asserting that every number in the output comes from those inputs).
 - [ ] Remove stale claims (six-app shells, 190/30/5/36 test counts, Colima instructions).
 
 ### Task R11: Gate G4

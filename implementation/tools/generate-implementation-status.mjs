@@ -92,7 +92,7 @@ const html = await prettier.format(raw, { parser: "html" });
 const status = {
   schemaVersion: 1,
   generatedBy: "tools/generate-implementation-status.mjs",
-  authority: "docs/MASTER_END_TO_END_PLAN.md",
+  authority: "docs/ROADMAP.md",
   overall: "IN_PROGRESS",
   // Release approval is an owner decision and is never derived from code.
   release: "NOT_APPROVED",

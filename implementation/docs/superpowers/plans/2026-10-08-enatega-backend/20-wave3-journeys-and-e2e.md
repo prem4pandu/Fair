@@ -1,5 +1,13 @@
 # Wave 3 — Cross-lane journeys, Playwright and coverage
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Prove the original pinned apps operate against the real Fair API through complete user journeys, including failures and isolation. This plan defines required work, not completed tests. All per-lane G2 gates precede G3; providers, security and native-device release gates remain Wave 4 requirements.
 
 ## Frontend boundary

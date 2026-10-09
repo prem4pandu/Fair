@@ -116,7 +116,7 @@ database integration tests, and work in the real Enatega app.
    Enatega admin has commission settings (`updateCommission`). Should the
    backend store and apply commission rates as Enatega does, or accept the
    setting but enforce zero for core-plan orders?
-2. The phase plan in `docs/EXECUTION_PLAN.json` (FB05–FB20) was written for a
+2. The phase plan (FB05–FB20, archived at `docs/history/2026-10-08-EXECUTION_PLAN.json`) was written for a
    FairBite-shaped API. This spec replaces its API shape and order. Should
    those JSON status files be rewritten to match, or retired?
 3. Provider accounts (Stripe, PayPal, Twilio, SendGrid, Firebase, Google Maps,

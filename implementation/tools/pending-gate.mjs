@@ -57,7 +57,7 @@ if (isMain) {
     `${name} is NOT implemented yet (${gate.workstream}): ${gate.requirement}.\n` +
       `Blocked by: ${gate.blockedBy}.\n` +
       `This gate fails by design until its harness exists; no substitute smoke test satisfies it.\n` +
-      `See docs/MASTER_END_TO_END_PLAN.md §7.\n`,
+      `See docs/ROADMAP.md §7.\n`,
   );
   process.exit(1);
 }

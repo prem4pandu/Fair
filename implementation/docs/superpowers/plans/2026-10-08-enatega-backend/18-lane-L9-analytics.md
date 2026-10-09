@@ -2,6 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4, §6 first. Gate G1 must have passed.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Serve the nine dashboard queries that the unchanged Enatega multivendor admin calls on the super-admin `/home`, vendor `/admin/vendor/dashboard` and store `/admin/store/dashboard` screens, with the exact argument names and response shapes the admin reads, real numbers aggregated from delivered orders and live population counts, strict role scoping, localized `dateKeyword` handling, platform-timezone bucketing, indexed bounded SQL and a short-TTL Redis cache.
 
 **Architecture:** `src/modules/analytics` is a read-only module. It reads five SQL views created by its own migration (`AnalyticsUserView`, `AnalyticsVendorView`, `AnalyticsRestaurantView`, `AnalyticsRiderView`, `AnalyticsOrderView` over L5's `OrderSummaryView`) through its own read-only `pg` pool, and never writes to PostgreSQL. A thin resolver parses arguments with zod, a scope guard authorizes the caller against the requested vendor/store, a pure date-range module turns the (possibly translated) `dateKeyword` into a half-open UTC interval in the platform timezone, and results are cached in Redis for 30 seconds under a key that contains the authorized scope.

@@ -2,6 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4, §6 first. Wave 0 (gate G0) must be merged.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** By the end of Wave 1, every one of the 334 root operations exists in the served schema with the argument and response shapes the apps use; every multivendor and single-vendor app document validates (`pnpm check:enatega` PASS); every root without a resolver returns `NOT_IMPLEMENTED`; the full database schema, the cross-lane ports, the at-least-once domain-event outbox and the test factories exist. L12 is present for schema compatibility but remains runtime `NOT_IMPLEMENTED` until Wave 5. This is what makes Wave 2 lane work possible.
 
 **Architecture:** One agent (W1-0) derives type requirements from every app document, generates a first SDL, splits it into per-lane files and gets the contract gate to PASS. Lane agents W1-L1 … W1-L9 refine only their own SDL, Prisma schema, mapper and lane factory files with no more than four total agents active. The lead alone integrates shared configuration, composes the schema and applies lane migrations sequentially in dependency order. Cross-lane database references are plain id columns; their foreign keys are added by one lead migration at the end.

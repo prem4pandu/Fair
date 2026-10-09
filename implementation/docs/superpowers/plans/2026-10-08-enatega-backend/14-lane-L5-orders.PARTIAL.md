@@ -2,6 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4, §6 first. Gate G1 must have passed.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Implement every L5 operation (24 roots: placement, pricing, customer/store/admin order reads, the order state machine and its three subscriptions) so the unchanged Enatega customer app, customer web, store app, rider app and admin place, price, track, accept, decline, hand over, cancel, review and administer orders against our backend with server-owned money, one central transition function and exactly-once accept timeouts.
 
 **Architecture:** Two modules. `modules/pricing` is a pure, exhaustively unit-tested engine (integer minor units) plus a thin service that gathers its inputs through `RestaurantsPort`, `CouponsPort` and `ConfigPort`. `modules/orders` owns the `Order` aggregate, its snapshots and history; every status change in the system goes through the PostgreSQL function `l5_transition_order(...)` (allowed-transition table, actor classes, optimistic version, idempotency, timestamps, history row and `order.transitioned` outbox row in one statement), called by `TransitionService` (API, also behind `OrdersPort.transition`) and by the worker accept-timeout sweep; subscription messages are published to Redis after commit and each subscription authorises itself at subscribe time and re-reads the order per event.
@@ -2614,3 +2622,26 @@ git commit -m "feat(L5): map translated admin date keywords and order filters"
 ```
 
 ---
+
+---
+
+## Remaining sections to author (this plan is PARTIAL)
+
+**Status:** PARTIAL. `W7` may not begin implementation on this plan. Completing it is the first task of
+`W7` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+
+**What exists:** §1 boundary, §2 all 24 operations, §3 contract notes and SDL, §4 data model and factories, §5 requests to the lead, §6 business rules, and Tasks 1–5 (the pure engines: pricing, menu validation, transition rules, ETA, admin filters).
+
+**What is missing**, measured against `_lane-plan-brief.md`:
+
+1. **Tasks 6+ — the GraphQL layer.** Every one of the 24 operations needs its own resolver method, service and repository code, and its own integration test using the exact vendored document through `doc(...)`, tagged `describe(op("type.name"))`. The pure engines are planned; nothing the apps actually call is. Cover per operation: happy path, auth failure, ownership failure, validation failure, and each business rule in §6.
+2. **The `l5_transition_order` PL/pgSQL function task.** §6 makes it the single point every status change passes through, but no task creates it, nor tests its allowed-transition table, optimistic version check, idempotency key, or its history row and `order.transitioned` outbox write in one statement.
+3. **The three subscriptions** (`subscribePlaceOrder`, `subscriptionOrder`, `orderStatusChanged`): subscribe-time authorisation, per-event re-read, and a legacy-protocol client test for each audience.
+4. **§8 Worker jobs** — the accept-timeout sweep (D6: `PENDING` auto-cancels after `ORDER_ACCEPT_TIMEOUT_SECONDS`; unclaimed `ACCEPTED` is flagged and never auto-cancelled), with exactly-once evidence.
+5. **§9 Playwright and journey handover** — specs for W16 (customer web and admin order flows, selectors cited file:line from the pinned source, `@op:` tags) and mobile document replays for W15.
+6. **§10 Coverage and gate checklist** — the G2 command set and the exact list of operations that must show implemented and integration-tested.
+7. **§11 Open questions and blockers.**
+
+The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
+no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
+present in both the operations table and in at least one task's tests.

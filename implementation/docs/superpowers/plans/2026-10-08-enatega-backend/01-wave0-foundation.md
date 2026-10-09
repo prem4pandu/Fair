@@ -2,6 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4 and §6 first.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Give every later lane a working transport (HTTP + both WebSocket protocols), the public-access handshake, user-token verification, the error contract, codecs, the `NOT_IMPLEMENTED` fallback, contract/coverage gates, the database test harness and a Playwright harness that runs the real Enatega admin and customer web apps against our API. Preserve and verify the existing `configuration` and `publicConfiguration` roots while the remaining Enatega roots are added.
 
 **Architecture:** New code lives in `services/api/src/kernel/`, `services/api/test/support/`, `tools/` and `e2e/`. `app.ts` is reduced to wiring. With four total agent slots, three bounded workers may run concurrently: **W0-A** (kernel and transport), **W0-B** (contract tooling and gates), and **W0-C** (test, coverage and E2E harness), while the lead coordinates integration. Workers do not edit root `package.json`, `pnpm-lock.yaml`, `turbo.json`, `codegen.ts`, or any other shared workspace file directly. They instead report an exact dependency/script/config delta; the lead applies those queued changes serially after the owning worker packet is reviewed. Any task below that lists a lead-owned file means “request this queued lead edit.” The lead merges A, then B, then C and resolves only mechanical integration conflicts.

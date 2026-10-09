@@ -2,6 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4, §6 first. Gate G1 must have passed.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Implement the five L8 operations the Enatega admin calls (`notifications`, `notificationsPaginated`, `sendNotificationUser`, `webNotifications`, `markWebNotificationsAsRead`), implement `NotifyPort` (push, email, SMS) for every other lane, and turn the domain events `user.otp`, `order.placed`, `order.transitioned`, `order.paid`, `withdraw.updated` and `ticket.message` into templated, preference-aware, idempotent deliveries with retries, rate limits and provider adapters (Expo push, FCM HTTP v1, Twilio Messages, SendGrid v3, and the development/test-only DevOutbox).
 
 **Architecture:** The `notifications` module never calls a provider inside a request: every send becomes a `NotificationDelivery` row written in the caller's transaction (idempotent on `(sourceId, channel, address)`), and the worker drains that table with `FOR UPDATE SKIP LOCKED`, exponential backoff, per-provider rate limits and invalid-token cleanup. Admin broadcasts are stored as `Notification` rows and fanned out page by page by the worker; admin app-bar notifications are `WebNotification` rows with a per-user read watermark. Provider adapters sit behind `PushSender`/`EmailSender`/`SmsSender` (D13) and are proven against local HTTP contract fakes in `test/support/providers/`.
@@ -3387,3 +3395,27 @@ Expected: PASS (4 + 4 tests).
 git add services/api/src/modules/notifications/providers/twilio.ts services/api/src/modules/notifications/providers/sendgrid.ts services/api/test/support/providers/twilio.ts services/api/test/support/providers/sendgrid.ts services/api/test/integration/notifications/providers/twilio.integration.spec.ts services/api/test/integration/notifications/providers/sendgrid.integration.spec.ts
 git commit -m "feat(L8): add Twilio SMS and SendGrid email adapters proven against contract fakes"
 ```
+
+---
+
+## Remaining sections to author (this plan is PARTIAL)
+
+**Status:** PARTIAL. `W10` may not begin implementation on this plan. Completing it is the first task of
+`W10` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+
+**What exists:** §1 boundary, §2 all 5 operations plus the port and event surface, §3 contract notes and SDL, §4 data model, §5 business rules, Task 0 (requests to the lead) and Tasks 1–6 (lane schema, configuration, templates and rate limiting, Expo push, FCM, Twilio and SendGrid adapters).
+
+**What is missing**, measured against `_lane-plan-brief.md`:
+
+1. **Tasks 7+ — the GraphQL layer.** The five admin operations (`notifications`, `notificationsPaginated`, `webNotifications`, `markWebNotificationsAsRead`, `sendNotificationUser`) have no resolver, service or tagged integration test. Include the per-role row filtering for `webNotifications` and the single-vendor `recipientType` argument.
+2. **The delivery drain job** — the `FOR UPDATE SKIP LOCKED` worker loop with exponential backoff, per-provider rate limits and invalid-token cleanup is in the architecture but has no task.
+3. **The broadcast fan-out job** — admin broadcasts stored as `Notification` rows and fanned out page by page, including the `NOTIFY_BROADCAST_INTERVAL_SECONDS` behaviour the E2E recipe depends on.
+4. **The six domain-event handlers** (`user.otp`, `order.placed`, `order.transitioned`, `order.paid`, `withdraw.updated`, `ticket.message`), each idempotent by event id.
+5. **`NotifyPort` conformance tests** for the consuming lanes (L1, L4, L5, L6, L7), proving a missing provider never fails the business action.
+6. **§9 Playwright and journey handover** to W16 for the admin notification screens and app-bar behaviour.
+7. **§10 Coverage and gate checklist.**
+8. **§11 Open questions and blockers** — provider credentials, and the D13 rule that the DevOutbox is refused in production.
+
+The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
+no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
+present in both the operations table and in at least one task's tests.

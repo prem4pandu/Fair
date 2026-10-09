@@ -2,7 +2,15 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Read `00-master-plan.md` §1, §2, §4, §6 first. Gate G1 must have passed.
 
-**Goal:** Serve the 70 single-vendor root operations (lane `L12` in `docs/OPERATION_LANES.json`) that the unchanged single-vendor admin and the single-vendor code paths of the multivendor customer app, customer web, store and rider apps call, with the same names, arguments and response shapes, backed by server-owned prices, balanced journals for credits and honest `NOT_IMPLEMENTED` / `PROVIDER_UNAVAILABLE` answers where an input is missing. Wave 5 does not start until the owner approves D1. Until then every L12 root returns `NOT_IMPLEMENTED`.
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
+**Goal:** Serve the 71 single-vendor root operations (lane `L12` in `docs/OPERATION_LANES.json`) that the unchanged single-vendor admin and the single-vendor code paths of the multivendor customer app, customer web, store and rider apps call, with the same names, arguments and response shapes, backed by server-owned prices, balanced journals for credits and honest `NOT_IMPLEMENTED` / `PROVIDER_UNAVAILABLE` answers where an input is missing. Wave 5 does not start until the owner approves D1. Until then every L12 root returns `NOT_IMPLEMENTED`.
 
 **Architecture:** Single-vendor is served by the **same** NestJS API instance and the **same** PostgreSQL database as multivendor. A platform-level `vendorMode` flag plus one designated restaurant (`SvSettings.storeRestaurantId`) define "the store". L12 adds one module (`src/modules/singlevendor`) that owns only single-vendor state: the server cart, checkout quotes, deals, store banners, scheduled-order slots, favourite foods, credits, referral codes, membership plans, feedback and a snapshot of every single-vendor order. Everything else (catalog, coupons, orders, riders, users, addresses, configuration, notifications, ledger, payments) is reused from the multivendor lanes through `kernel/ports.ts`. Orders placed in single-vendor mode are created by L5 (`OrdersPort.createPriced`) so that the store app, rider app, dispatch, ledger and notifications behave exactly as in multivendor.
 
@@ -72,7 +80,7 @@ API side: `SINGLE_VENDOR_ENABLED=true`, `CORS_ORIGINS` must include the single-v
 
 ## Operations
 
-`OPERATION_LANES.json` lists **70** operations with `lane: "L12"` (44 queries, 25 mutations, 1 subscription). All 70 are below; count checked with `node -e 'console.log(require("./docs/OPERATION_LANES.json").operations.filter(o=>o.lane==="L12").length)'` → `70`.
+`OPERATION_LANES.json` lists **71** operations with `lane: "L12"` after the W0-7 generator fix (the earlier **70** was the pre-fix count). Verify with `node -e 'console.log(require("./docs/OPERATION_LANES.json").operations.filter(o=>o.lane==="L12").length)'` → `71`, and reconcile the table below against that list before implementation: **the operation missing from the table must be identified and added as part of completing this plan** (board task T-007).
 
 Abbreviations: `SV` = `enatega-singlevendor-admin`, `APP` = `enatega-multivendor-app`, `WEB` = `enatega-multivendor-web`. Document files: `SVQ` = `SV:lib/api/graphql/queries/…`, `SVM` = `SV:lib/api/graphql/mutations/…`, `AQ` = `APP:src/singlevendor/apollo/queries.js`, `AM` = `APP:src/singlevendor/apollo/mutations.js`, `AS` = `APP:src/singlevendor/apollo/subscriptions.js`, `W` = `WEB:lib/api/graphql/single-vendor/index.ts`. Every export name below was verified by parsing the files (they are all `export const`). Callers: **pub** = anonymous allowed (personalised when a customer token is present); **C** = CUSTOMER (own data only); **A** = ADMIN; **S(x)** = STAFF with permission `x`; **V/R(own)** = VENDOR/RESTAURANT owning the restaurant (reference/04 §B).
 
@@ -1548,4 +1556,24 @@ Credits, membership, referrals, feedback, notifications, dashboard, payments
 - **R46** The L12 worker updates `SvOrder.lastStatus` on every `order.transitioned` event and sets `cancelledAt` on `CANCELLED` (frees scheduled-slot capacity).
 - **R47** Configuration: `saveVendorTypeToggle(false)` needs exactly one active restaurant "Single-vendor mode needs exactly one active store" and designates it; `true` keeps the designation. Both config mutations write an audit entry (`AUDIT_PORT.record`) and return the admin `Configuration` view.
 
-<!-- CONTINUE -->
+---
+
+## Remaining sections to author (this plan is PARTIAL)
+
+**Status:** PARTIAL. `W21` may not begin implementation on this plan. Completing it is the first task of
+`W21` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+
+**What exists:** §1 boundary, the single-vendor design decisions, an operations table, contract notes, data model and business rules R1–R47.
+
+**What is missing**, measured against `_lane-plan-brief.md`:
+
+1. **The operation-count reconciliation.** The table lists 70 rows; `OPERATION_LANES.json` holds **71** after the W0-7 generator fix. Identify the missing operation, add it, and state the verified count.
+2. **The entire Tasks section (§7).** No task, test or implementation code exists in this plan.
+3. **§8 Worker jobs** — the `order.transitioned` handler maintaining `SvOrder.lastStatus` and `cancelledAt` (R46), and the `order.paid` handler publishing `subscriptionPaymentSuccess` (R44).
+4. **§9 Playwright and journey handover** to W16 for the single-vendor admin, and to W15 for the single-vendor code paths of the shared customer apps.
+5. **§10 Coverage and gate checklist** for G5.
+6. **§11 Open questions** — above all that **FB15 (membership, credits, referrals, deals) lives entirely in this lane**, so declining owner decision D1/D-S1 means the product ships without those capabilities. See `ROADMAP.md` §11, decision D-S1.
+
+The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
+no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
+present in both the operations table and in at least one task's tests.

@@ -2,6 +2,12 @@
 
 You are writing ONE implementation plan file for one lane of the Enatega-compatible backend. You write a plan; you do not implement it. Edit nothing except your output file.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap. Work is assigned by
+> **`W` workstream**, never by `L10`/`L11`/`L13` — those are retired identifiers (journeys → **W15**, Playwright →
+> **W16**, vendor-package edits → **W12/W13/W14a/W14b**, QA → **W23**, security → **W24**). A plan you write must
+> hand work to the correct `W`, must take every count from `docs/OPERATION_LANES.json` rather than from another
+> plan's prose, and must open with the precedence banner used by the existing plans in this directory.
+
 ## Read first
 
 1. `implementation/AGENTS.md` and the root `AGENTS.md`.
@@ -40,7 +46,7 @@ You are writing ONE implementation plan file for one lane of the Enatega-compati
    - Step 5: commit with message `<type>(<lane>): …`.
      Where many operations share a pattern (CRUD lists, paginated lists, config saves), you may implement them in one task with a shared helper, but every operation still gets its own test case and its own resolver method, and the code must be complete — no "repeat for the others", no "similar to Task N", no TBD/TODO.
 8. **Worker jobs and event handlers** the lane owns (outbox consumers, timeouts), with tests.
-9. **Playwright and journey specs to hand to L10** — for each user-visible flow your operations power in the admin or customer web apps: spec file path under `implementation/e2e/specs/<admin|web>/`, the route, the user actions (use the real Enatega UI — selectors by role/label/text found in the vendored source, with file:line), the assertions, and the `@op:` tags. For mobile-only flows: the journey test under `services/api/test/journeys/` replaying the mobile app's documents in order.
+9. **Playwright and journey specs to hand over** — Playwright specs go to **W16**, journey replays to **W15**. For each user-visible flow your operations power in the admin or customer web apps: spec file path under `implementation/e2e/specs/<admin|web>/`, the route, the user actions (use the real Enatega UI — selectors by role/label/text found in the vendored source, with file:line), the assertions, and the `@op:` tags. For mobile-only flows: the journey test under `services/api/test/journeys/` replaying the mobile app's documents in order.
 10. **Coverage and gate checklist** — commands for G2 for this lane (from master §8), and the exact list of operations that must show `implemented: true` and `integrationTested: true` in `docs/OPERATION_COVERAGE.json`.
 11. **Open questions / blockers** — anything needing the owner or a provider account.
 

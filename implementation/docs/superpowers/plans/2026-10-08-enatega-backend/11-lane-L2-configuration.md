@@ -2,6 +2,14 @@
 
 > **For agentic workers:** Use this operation-complete execution runbook alongside `00-master-plan.md` §1, §2, §4, §6 and `02-wave1-contract-and-data-model.md`. Gate G1 must pass before domain completion can be claimed.
 
+> **Precedence notice (2026-10-09).** `implementation/docs/ROADMAP.md` is the single roadmap and outranks this
+> file for scope, scheduling, ownership and gates; this file remains authoritative for its own task detail.
+> `L10`, `L11` and `L13` are **retired identifiers** — they were never lanes in `OPERATION_LANES.json`. Read
+> `L10` as **W15** for journey suites (`test/journeys/**`), **W16** for Playwright (`e2e/**`), and the matching
+> frontend workstream **W12/W13/W14a/W14b** for edits inside a `vendor/enatega-ui/` package; `L11` as **W23**
+> (independent QA) and `L13` as **W24** (independent security). Operation counts come from
+> `docs/OPERATION_LANES.json`, not from prose. See `ROADMAP.md` §4.0.
+
 **Goal:** Implement and verify all 54 inventory-assigned operations using the original app documents.
 **Architecture:** Thin schema-compatible resolvers invoke transactional services and repositories in platform, rest/maps, rest/media. Reuse existing `configuration/service.ts, configuration/regions.ts` after checking actual signatures; migrate incrementally without breaking the existing populated baseline.
 **Tech stack:** Installed NestJS/Apollo, TypeScript, PostgreSQL/PostGIS, Prisma, Redis, Vitest/Testcontainers and Playwright.
