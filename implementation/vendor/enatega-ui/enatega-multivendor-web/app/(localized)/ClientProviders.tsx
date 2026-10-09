@@ -18,18 +18,18 @@ import FirebaseForegroundHandler from "@/lib/config/FirebaseForegroundHandler";
 import { AppModeProvider, useAppMode } from "@/lib/mode";
 import ModeRouteGuard from "@/lib/mode/ModeRouteGuard";
 
-function ModeProviders({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function ModeProviders({ children }: { children: React.ReactNode }) {
   const { mode } = useAppMode();
   const client = useSetupApollo();
   const hasRegistered = useRef(false);
   const primeReactConfig = useMemo(() => ({ ripple: true }), []);
 
   useEffect(() => {
-    if (!("serviceWorker" in navigator)) return;
+    if (
+      !("serviceWorker" in navigator) ||
+      process.env.NEXT_PUBLIC_WEB_PUSH_ENABLED !== "true"
+    )
+      return;
 
     const registerServiceWorker = () => {
       if (hasRegistered.current) return;
@@ -80,12 +80,21 @@ function ModeProviders({
 function ReadyModeProviders({ children }: { children: React.ReactNode }) {
   const { mode, isModeReady } = useAppMode();
   if (!isModeReady) {
-    return <div className="min-h-screen bg-white dark:bg-gray-900" aria-busy="true" />;
+    return (
+      <div
+        className="min-h-screen bg-white dark:bg-gray-900"
+        aria-busy="true"
+      />
+    );
   }
   return <ModeProviders key={mode}>{children}</ModeProviders>;
 }
 
-export default function ClientProviders({ children }: { children: React.ReactNode }) {
+export default function ClientProviders({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <AppModeProvider>
       <ReadyModeProviders>{children}</ReadyModeProviders>

@@ -1,0 +1,62 @@
+{
+  "workstream": "W12",
+  "package": "vendor/enatega-ui/enatega-multivendor-web",
+  "allowedModifications": [
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/lib/api/graphql/queries/config.ts",
+      "layer": "L-D",
+      "reason": "Select the backend-owned public vapidKey already consumed by the unchanged notification configuration context."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/lib/hooks/useSetApollo.tsx",
+      "layer": "L-B",
+      "reason": "Remove the unused duplicate HTTP endpoint binding so package lint validates the existing per-operation configured transport."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/app/NotificationInitialzer.tsx",
+      "layer": "L-E",
+      "reason": "Initialize web push only when explicitly enabled and complete public Firebase/VAPID configuration exists."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/lib/config/FirebaseForegroundHandler.tsx",
+      "layer": "L-E",
+      "reason": "Disable Firebase foreground messaging when web push is unconfigured and normalize provider redirects to same-origin HTTP(S) paths before navigation or persistence."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/lib/config/notification-redirect.ts",
+      "layer": "L-E",
+      "reason": "Reject external, protocol-relative, non-HTTP(S) and malformed notification redirects at the provider boundary."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/lib/config/notification-redirect.test.ts",
+      "layer": "L-E",
+      "reason": "Verify notification redirects fail closed and preserve only valid same-origin application paths."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/app/(localized)/ClientProviders.tsx",
+      "layer": "L-E",
+      "reason": "Register the push worker only when web push is explicitly enabled."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/app/layout.tsx",
+      "layer": "L-E",
+      "reason": "Gate EmailJS and Clarity scripts through explicit public configuration and remove the hard-coded tracker id."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/public/serviceWorker.js",
+      "layer": "L-E",
+      "reason": "Remove embedded upstream Firebase credentials and reject cross-origin notification redirects."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/public/sw.js",
+      "layer": "L-E",
+      "reason": "Replace the checked-in credential-bearing compiled worker with a credential-free fail-closed worker."
+    },
+    {
+      "file": "vendor/enatega-ui/enatega-multivendor-web/scripts/check-single-vendor-schema.js",
+      "layer": "L-A",
+      "reason": "Require an explicit schema URL instead of falling back to the upstream Railway production API."
+    }
+  ],
+  "leadCommand": "cd implementation && node tools/manifest-enatega-ui.mjs"
+}

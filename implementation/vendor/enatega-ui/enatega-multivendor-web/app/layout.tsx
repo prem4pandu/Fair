@@ -36,6 +36,12 @@ export default async function RootLayout({
   //side is the easiest way to get started
 
   const messages = await getMessages({ locale });
+  const emailJsEnabled = process.env.NEXT_PUBLIC_EMAILJS_ENABLED === "true";
+  const configuredClarityId =
+    process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID?.trim() ?? "";
+  const clarityId = /^[A-Za-z0-9_-]+$/.test(configuredClarityId)
+    ? configuredClarityId
+    : "";
 
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
@@ -56,21 +62,25 @@ export default async function RootLayout({
             `,
           }}
         />
-        <Script
-          src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
-          strategy="beforeInteractive"
-        />
+        {emailJsEnabled ? (
+          <Script
+            src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+            strategy="beforeInteractive"
+          />
+        ) : null}
 
         {/* Microsoft Clarity */}
-        <Script id="microsoft-clarity" strategy="afterInteractive">
-          {`
+        {clarityId ? (
+          <Script id="microsoft-clarity" strategy="afterInteractive">
+            {`
             (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "tjqw9wn955");
+    })(window, document, "clarity", "script", ${JSON.stringify(clarityId)});
           `}
-        </Script>
+          </Script>
+        ) : null}
 
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#75D04B" />

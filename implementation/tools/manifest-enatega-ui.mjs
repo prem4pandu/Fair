@@ -25,6 +25,8 @@ export function listFiles(root) {
   ]);
   const skipFile = (name) =>
     name === ".DS_Store" ||
+    name === "next-env.d.ts" ||
+    name === "tsconfig.tsbuildinfo" ||
     name === ".env" ||
     (/^\.env\..+/.test(name) && name !== ".env.example");
   const walk = (directory) =>
@@ -76,6 +78,8 @@ if (isMain) {
       "dist",
       ".turbo",
       ".DS_Store",
+      "next-env.d.ts",
+      "tsconfig.tsbuildinfo",
       ".env",
       ".env.*",
       "upstream Firebase application-binding files",

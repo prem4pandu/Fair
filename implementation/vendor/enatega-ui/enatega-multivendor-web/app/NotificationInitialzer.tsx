@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect } from "react";
@@ -27,9 +26,9 @@ export default function NotificationInitializer() {
     FIREBASE_STORAGE_BUCKET,
     FIREBASE_VAPID_KEY,
   } = useConfig();
+  const webPushEnabled = process.env.NEXT_PUBLIC_WEB_PUSH_ENABLED === "true";
 
-  useEffect( () => {
-   
+  useEffect(() => {
     const firebaseConfig = {
       apiKey: FIREBASE_KEY,
       authDomain: FIREBASE_AUTH_DOMAIN,
@@ -40,16 +39,25 @@ export default function NotificationInitializer() {
     };
 
     const initNotifications = async () => {
+      const firebaseReady = Boolean(
+        webPushEnabled &&
+        FIREBASE_KEY &&
+        FIREBASE_AUTH_DOMAIN &&
+        FIREBASE_PROJECT_ID &&
+        FIREBASE_STORAGE_BUCKET &&
+        FIREBASE_MSG_SENDER_ID &&
+        FIREBASE_APP_ID &&
+        FIREBASE_VAPID_KEY &&
+        "Notification" in window &&
+        "serviceWorker" in navigator,
+      );
+      if (!firebaseReady) return;
+
       const localToken = getAccessToken(mode);
       const userId = modeStorage.get("userId", mode);
-    
-      if (
-        Notification.permission === "default" &&
-        localToken &&
-        userId
-      ) {
-        const permission = await Notification.requestPermission();
 
+      if (Notification.permission === "default" && localToken && userId) {
+        const permission = await Notification.requestPermission();
 
         if (permission == "granted") {
           await mutatePrefs({
@@ -66,7 +74,7 @@ export default function NotificationInitializer() {
             vapidKey: FIREBASE_VAPID_KEY,
             serviceWorkerRegistration: registration,
           });
-          
+
           if (fcmToken) {
             modeStorage.set("messaging-token", fcmToken);
             await saveNotify({ variables: { token: fcmToken } });
@@ -88,6 +96,7 @@ export default function NotificationInitializer() {
     FIREBASE_APP_ID,
     FIREBASE_STORAGE_BUCKET,
     FIREBASE_VAPID_KEY,
+    webPushEnabled,
     mutatePrefs,
     saveNotify,
     mode,

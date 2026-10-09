@@ -27,6 +27,8 @@ test("ignores dependency, build and env artefacts but keeps source", () => {
   writeFileSync(join(root, "app/.env.production"), "SECRET=1");
   writeFileSync(join(root, "app/.env"), "SECRET=1");
   writeFileSync(join(root, "app/.DS_Store"), "");
+  writeFileSync(join(root, "app/next-env.d.ts"), "generated");
+  writeFileSync(join(root, "app/tsconfig.tsbuildinfo"), "generated");
   writeFileSync(join(root, "app/src/page.tsx"), "export {}");
   writeFileSync(join(root, "app/.env.example"), "KEY=");
 

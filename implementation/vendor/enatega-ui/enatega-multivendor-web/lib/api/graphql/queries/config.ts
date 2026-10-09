@@ -24,6 +24,7 @@ export const GET_CONFIG = gql`
       storageBucket
       msgSenderId
       appId
+      vapidKey
     }
   }
 `;

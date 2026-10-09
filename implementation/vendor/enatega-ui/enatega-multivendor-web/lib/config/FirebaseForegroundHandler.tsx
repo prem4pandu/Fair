@@ -1,10 +1,10 @@
-
 "use client";
 
 import { useEffect } from "react";
 import { useConfig } from "@/lib/context/configuration/configuration.context";
 import { setupFirebase, onMessage } from "./firebase";
 import { isAppMode, modeStorage, useAppMode } from "@/lib/mode";
+import { normalizeNotificationRedirect } from "./notification-redirect";
 
 export default function FirebaseForegroundHandler() {
   const { mode, switchMode } = useAppMode();
@@ -16,10 +16,12 @@ export default function FirebaseForegroundHandler() {
     FIREBASE_MSG_SENDER_ID,
     FIREBASE_APP_ID,
   } = useConfig();
+  const webPushEnabled = process.env.NEXT_PUBLIC_WEB_PUSH_ENABLED === "true";
 
   useEffect(() => {
     // Ensure all required keys are present
     const isReady =
+      webPushEnabled &&
       FIREBASE_KEY &&
       FIREBASE_AUTH_DOMAIN &&
       FIREBASE_PROJECT_ID &&
@@ -57,11 +59,22 @@ export default function FirebaseForegroundHandler() {
 
         notification.onclick = async () => {
           const targetMode = isAppMode(vendorMode) ? vendorMode : mode;
-          const target = redirectUrl || (orderId ? `/order/${orderId}/tracking` : "/profile/order-history");
+          const providerTarget = normalizeNotificationRedirect(
+            redirectUrl,
+            window.location.origin,
+          );
+          const target =
+            providerTarget ||
+            (orderId ? `/order/${orderId}/tracking` : "/profile/order-history");
           if (targetMode !== mode) {
-            if (!window.confirm("This order belongs to your other delivery service. Switch and open it?")) return;
+            if (
+              !window.confirm(
+                "This order belongs to your other delivery service. Switch and open it?",
+              )
+            )
+              return;
             modeStorage.set("pendingOrderNavigation", target);
-            if (!await switchMode(targetMode)) return;
+            if (!(await switchMode(targetMode))) return;
           }
           window.location.assign(target);
         };
@@ -81,6 +94,7 @@ export default function FirebaseForegroundHandler() {
     FIREBASE_STORAGE_BUCKET,
     FIREBASE_MSG_SENDER_ID,
     FIREBASE_APP_ID,
+    webPushEnabled,
     mode,
     switchMode,
   ]);
