@@ -100,6 +100,8 @@ type CreateRestaurantCouponCreateRestaurantCoupon {
   _id: ID
   discount: Float
   enabled: Boolean
+  endDate: String
+  startDate: String
   title: String
 }
 
@@ -214,6 +216,8 @@ type EditRestaurantCouponEditRestaurantCoupon {
   _id: ID
   discount: Float
   enabled: Boolean
+  endDate: String
+  startDate: String
   title: String
 }
 
@@ -594,6 +598,8 @@ type RestaurantCouponsRestaurantCoupons {
   _id: ID
   discount: Float
   enabled: Boolean
+  endDate: String
+  startDate: String
   title: String
 }
 

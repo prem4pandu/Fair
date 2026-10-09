@@ -12,6 +12,7 @@ type NotificationsNotifications {
   _id: ID
   body: String
   createdAt: String
+  recipientType: String
   title: String
 }
 
@@ -52,5 +53,6 @@ extend type Mutation {
   sendNotificationUser(
     notificationBody: String
     notificationTitle: String
+    recipientType: NotificationRecipientType
   ): String
 }

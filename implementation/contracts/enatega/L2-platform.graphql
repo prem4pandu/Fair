@@ -22,6 +22,7 @@ type AuditLogsAuditLogsAdmin {
 type Banner {
   _id: ID
   action: String
+  buttonText: String
   description: String
   file: String
   parameters: String
@@ -89,6 +90,7 @@ type ConfigurationConfiguration {
 type CreateBannerCreateBanner {
   _id: ID
   action: String
+  buttonText: String
   description: String
   file: String
   parameters: String
@@ -172,6 +174,7 @@ type DeleteZoneDeleteZone {
 type EditBannerEditBanner {
   _id: ID
   action: String
+  buttonText: String
   description: String
   file: String
   parameters: String
@@ -368,6 +371,7 @@ type SaveFormEmailConfigurationSaveFormEmailConfiguration {
 
 type SaveGoogleApiKeyConfigurationSaveGoogleApiKeyConfiguration {
   _id: ID
+  googleApiKey: String
   googleMapsApiKey: String
 }
 
@@ -594,6 +598,9 @@ extend type Mutation {
     riderAppVersion: AppTypeInput
   ): String
   updateShopType(dto: UpdateShopTypeInput): UpdateShopTypeUpdateShopType
-  uploadImageToS3(image: String): UploadImageToS3UploadImageToS3
+  uploadImageToS3(
+    image: String
+    publicMedia: Boolean
+  ): UploadImageToS3UploadImageToS3
   uploadToken(id: String, pushToken: String): UploadTokenUploadToken
 }

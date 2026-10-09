@@ -37,6 +37,8 @@ scalar DeleteTypeEnum
 
 scalar FetchShopTypeFilter
 
+scalar NotificationRecipientType
+
 scalar OrderTypeEnum
 
 scalar PaymentMethodEnum

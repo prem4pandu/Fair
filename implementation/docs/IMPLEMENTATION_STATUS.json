@@ -26,8 +26,8 @@
     "status": "FAIL",
     "apps": 6,
     "documents": 856,
-    "validDocuments": 810,
-    "invalidDocuments": 37,
+    "validDocuments": 829,
+    "invalidDocuments": 18,
     "unresolvedDocuments": 9,
     "missingRoots": 0
   },

@@ -18,7 +18,7 @@
   "backendSchema": [
     {
       "file": "enatega/core.graphql",
-      "sha256": "24c877c575479d58a0fa5d4961d8f3c27209d3b58fb19daebcd2b27c921c5588"
+      "sha256": "7ee64a761649770ba0b8255660157050b429e9dc26135b8034d01fbbb503f053"
     },
     {
       "file": "enatega/L1-identity.graphql",
@@ -30,11 +30,11 @@
     },
     {
       "file": "enatega/L2-platform.graphql",
-      "sha256": "000765b34b35bb127718bec8848db074f21cca033f97bc0d8ecb21325f05b6e8"
+      "sha256": "f95a2e24dec527f0a9ea5740576783222b935406ba6ecc7878e5abfa679aa8d0"
     },
     {
       "file": "enatega/L3-vendors-catalog.graphql",
-      "sha256": "d3dc8970fa310347b4e43e2d0b01be00a85ded75169f28d0b0202364615917ed"
+      "sha256": "f770855f426193d46e1675931ec6735a1978a154fc6da868706a8b1c9eb8c75f"
     },
     {
       "file": "enatega/L4-customers-support.graphql",
@@ -42,11 +42,11 @@
     },
     {
       "file": "enatega/L5-orders.graphql",
-      "sha256": "d244408daf06a53175d81d0b77f2b2ab3fc32f831e480bc8ba6f28991fedd7b9"
+      "sha256": "fc8eaae57b16139e1466600914819b9812fe68fa199180cdb807a62eed0d1021"
     },
     {
       "file": "enatega/L6-dispatch.graphql",
-      "sha256": "f5b946050bd1a02a32010a4aaa82f9cf760e3b5a690ec36872cca468b51130ea"
+      "sha256": "c97bdcd49ec2e0baa8bdd73f4a33d3c6a756604701e38c5d042d745e2c3e2a3b"
     },
     {
       "file": "enatega/L7-finance.graphql",
@@ -54,7 +54,7 @@
     },
     {
       "file": "enatega/L8-notifications.graphql",
-      "sha256": "9144c8ef1ade03828beb548396f6f65229c903d75bd254b4dcd0586f5bc40f97"
+      "sha256": "34d35c114be8b620fca39a15e666f9ba65d74f4a0d80adc061a1b558f418551b"
     },
     {
       "file": "enatega/L9-analytics.graphql",
@@ -64,7 +64,7 @@
   "summary": {
     "apps": 6,
     "documents": 856,
-    "validDocuments": 810,
+    "validDocuments": 829,
     "unresolvedDocuments": 9,
     "outOfScopeDocuments": 0,
     "missingRoots": []
@@ -74,7 +74,7 @@
       "app": "enatega-multivendor-web",
       "filesScanned": 566,
       "totalDocuments": 111,
-      "validDocuments": 107,
+      "validDocuments": 108,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -1242,7 +1242,7 @@
           "file": "enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts",
           "line": 236,
           "sha256": "9e5ab36c0df005af0ce45ab3fb9a16f3479e6fcb4a419632541a363b0c63ee59",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "query",
@@ -1251,12 +1251,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"buttonText\" on type \"Banner\".",
-              "locations": [{ "line": 11, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 187,
           "minimumHttpBodyExceedsLimit": false
@@ -5322,7 +5317,7 @@
       "app": "enatega-singlevendor-admin",
       "filesScanned": 809,
       "totalDocuments": 197,
-      "validDocuments": 180,
+      "validDocuments": 197,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -5508,7 +5503,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/mutations/banners/index.ts",
           "line": 3,
           "sha256": "e454c740d20b9f1267efce9a4030b23b72e4caa1b6063c8c903697aedbe83a84",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "mutation",
@@ -5517,12 +5512,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"buttonText\" on type \"CreateBannerCreateBanner\".",
-              "locations": [{ "line": 11, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 219,
           "minimumHttpBodyExceedsLimit": false
@@ -5531,7 +5521,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/mutations/banners/index.ts",
           "line": 18,
           "sha256": "60091550fac64606a0248d1cd1225ee33b7d613af28e0a1df3c4cef116743af1",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "mutation",
@@ -5540,12 +5530,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"buttonText\" on type \"EditBannerEditBanner\".",
-              "locations": [{ "line": 11, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 215,
           "minimumHttpBodyExceedsLimit": false
@@ -5734,7 +5719,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/mutations/configuration/index.ts",
           "line": 74,
           "sha256": "d6a42e0719d2150efa195fe1a4ce8fab8eed20e8d8ee524f7f52e0847c6f56df",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "mutation",
@@ -5743,12 +5728,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"googleApiKey\" on type \"SaveGoogleApiKeyConfigurationSaveGoogleApiKeyConfiguration\". Did you mean \"googleMapsApiKey\"?",
-              "locations": [{ "line": 7, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 221,
           "minimumHttpBodyExceedsLimit": false
@@ -6045,7 +6025,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/mutations/coupons-restaurant/index.tsx",
           "line": 3,
           "sha256": "8fa2a351929fcba388c5277dc2cc3cc0d772b15adbaff5d1e819b1229ed0f468",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "mutation",
@@ -6054,16 +6034,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"startDate\" on type \"CreateRestaurantCouponCreateRestaurantCoupon\".",
-              "locations": [{ "line": 14, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"endDate\" on type \"CreateRestaurantCouponCreateRestaurantCoupon\".",
-              "locations": [{ "line": 15, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 260,
           "minimumHttpBodyExceedsLimit": false
@@ -6072,7 +6043,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/mutations/coupons-restaurant/index.tsx",
           "line": 22,
           "sha256": "2f46e3647279d6a4624666d5a4568e6bcbd0a1450170e94d700214bae4ca3a03",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "mutation",
@@ -6081,16 +6052,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"startDate\" on type \"EditRestaurantCouponEditRestaurantCoupon\".",
-              "locations": [{ "line": 14, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"endDate\" on type \"EditRestaurantCouponEditRestaurantCoupon\".",
-              "locations": [{ "line": 15, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 256,
           "minimumHttpBodyExceedsLimit": false
@@ -6383,7 +6345,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/mutations/notifications/index.ts",
           "line": 3,
           "sha256": "118b5b76f0d4f0d9af55ec6390137196b4ca1612b30d4eabe2096c426ab1be61",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "mutation",
@@ -6392,16 +6354,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Unknown type \"NotificationRecipientType\". Did you mean \"NotificationFeed\" or \"NotificationsNotifications\"?",
-              "locations": [{ "line": 5, "column": 21 }]
-            },
-            {
-              "message": "Unknown argument \"recipientType\" on field \"Mutation.sendNotificationUser\".",
-              "locations": [{ "line": 10, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 294,
           "minimumHttpBodyExceedsLimit": false
@@ -7014,7 +6967,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/mutations/upload/index.ts",
           "line": 3,
           "sha256": "6b4eec75e16d307f1276d1a4fcf86aa2b879e8b1f1a654eebe1941791a576aad",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "mutation",
@@ -7023,12 +6976,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Unknown argument \"publicMedia\" on field \"Mutation.uploadImageToS3\".",
-              "locations": [{ "line": 3, "column": 36 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 163,
           "minimumHttpBodyExceedsLimit": false
@@ -7399,17 +7347,12 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/queries/banners/index.tsx",
           "line": 3,
           "sha256": "ac16ff735a0da64ed709978527c791199a112d03020b9b69089b177e33b28188",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             { "kind": "query", "name": "Banners", "roots": ["banners"] }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"buttonText\" on type \"Banner\".",
-              "locations": [{ "line": 11, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 151,
           "minimumHttpBodyExceedsLimit": false
@@ -7482,7 +7425,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/queries/coupons-restaurant/index.tsx",
           "line": 3,
           "sha256": "bfdc77951f20083f887379db5dbdacf21a8db8f5bc4279b63ba6059c913766aa",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "query",
@@ -7491,16 +7434,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"startDate\" on type \"RestaurantCouponsRestaurantCoupons\".",
-              "locations": [{ "line": 8, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"endDate\" on type \"RestaurantCouponsRestaurantCoupons\".",
-              "locations": [{ "line": 9, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 199,
           "minimumHttpBodyExceedsLimit": false
@@ -7831,7 +7765,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/queries/notifications/index.ts",
           "line": 3,
           "sha256": "9359a3a9c0be44f57a409f20c7acc150f368884481e9efd54b927760c24b4979",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "query",
@@ -7840,12 +7774,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"recipientType\" on type \"NotificationsNotifications\".",
-              "locations": [{ "line": 8, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 127,
           "minimumHttpBodyExceedsLimit": false
@@ -7904,7 +7833,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/queries/orders/index.ts",
           "line": 3,
           "sha256": "ea5a4110a74bd24ffd648ba25f3c2ea3de2a97e3eaa0341d18316233a4105037",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "query",
@@ -7913,12 +7842,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"deliveryType\" on type \"GetActiveOrdersOrders\".",
-              "locations": [{ "line": 44, "column": 9 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1134,
           "minimumHttpBodyExceedsLimit": false
@@ -7927,7 +7851,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/queries/orders/index.ts",
           "line": 74,
           "sha256": "9003d32df3b067cd77f2b7b60b7fc30ce42bb1f4ca7896644f43901f633e3be2",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "query",
@@ -7936,20 +7860,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"completionTime\" on type \"OrdersByRestIdOrders\".",
-              "locations": [{ "line": 87, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"preparationTime\" on type \"OrdersByRestIdOrders\".",
-              "locations": [{ "line": 88, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"eta\" on type \"OrdersByRestIdOrders\".",
-              "locations": [{ "line": 89, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1819,
           "minimumHttpBodyExceedsLimit": false
@@ -7958,7 +7869,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/queries/orders/index.ts",
           "line": 176,
           "sha256": "4bd6ec61847a6a5567705bca23fedec0c146246b985a3fec921ba5be860961ae",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "query",
@@ -7967,20 +7878,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"completionTime\" on type \"OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination\".",
-              "locations": [{ "line": 62, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"preparationTime\" on type \"OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination\".",
-              "locations": [{ "line": 63, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"eta\" on type \"OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination\".",
-              "locations": [{ "line": 64, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1286,
           "minimumHttpBodyExceedsLimit": false
@@ -7989,25 +7887,12 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/queries/orders/index.ts",
           "line": 246,
           "sha256": "bc3680999445b4e4f5eb6f89759f3d3a11f22552ede118f78d9bc825d2b32b92",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             { "kind": "query", "name": "Orders", "roots": ["allOrders"] }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"completionTime\" on type \"AllOrdersAllOrders\".",
-              "locations": [{ "line": 71, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"preparationTime\" on type \"AllOrdersAllOrders\".",
-              "locations": [{ "line": 72, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"eta\" on type \"AllOrdersAllOrders\".",
-              "locations": [{ "line": 73, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1383,
           "minimumHttpBodyExceedsLimit": false
@@ -8016,7 +7901,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/queries/orders/index.ts",
           "line": 331,
           "sha256": "1293a53e19c537a83e29dca76e34956a7a207ea0952bb0e5bd34ae47ae20d80b",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "query",
@@ -8025,20 +7910,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"completionTime\" on type \"AllOrdersWithoutPaginationAllOrdersWithoutPagination\".",
-              "locations": [{ "line": 74, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"preparationTime\" on type \"AllOrdersWithoutPaginationAllOrdersWithoutPagination\".",
-              "locations": [{ "line": 75, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"eta\" on type \"AllOrdersWithoutPaginationAllOrdersWithoutPagination\".",
-              "locations": [{ "line": 76, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1495,
           "minimumHttpBodyExceedsLimit": false
@@ -8713,7 +8585,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/subscription/order-subscription/index.ts",
           "line": 3,
           "sha256": "e88d3bc8ddaeb3cdfb46f446d5520c9e0b4500071792bade4358e9af89898973",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "subscription",
@@ -8722,12 +8594,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"completionTime\" on type \"SubscribePlaceOrderOrder\". Did you mean \"preparationTime\"?",
-              "locations": [{ "line": 72, "column": 9 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1612,
           "minimumHttpBodyExceedsLimit": false
@@ -8736,7 +8603,7 @@
           "file": "enatega-singlevendor-admin/lib/api/graphql/subscription/order-subscription/index.ts",
           "line": 90,
           "sha256": "689b6fccd842a14f74dd3690e895a235a831f48d1acb68819d5188f87a096ba7",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
               "kind": "subscription",
@@ -8745,12 +8612,7 @@
             }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"deliveryType\" on type \"SubscriptionDispatcherSubscriptionDispatcher\".",
-              "locations": [{ "line": 30, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 858,
           "minimumHttpBodyExceedsLimit": false
@@ -8869,7 +8731,7 @@
       "app": "enatega-multivendor-app",
       "filesScanned": 790,
       "totalDocuments": 271,
-      "validDocuments": 251,
+      "validDocuments": 252,
       "unresolvedDocuments": 9,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -11622,17 +11484,12 @@
           "file": "enatega-multivendor-app/src/singlevendor/apollo/queries.js",
           "line": 1157,
           "sha256": "ac16ff735a0da64ed709978527c791199a112d03020b9b69089b177e33b28188",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             { "kind": "query", "name": "Banners", "roots": ["banners"] }
           ],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"buttonText\" on type \"Banner\".",
-              "locations": [{ "line": 11, "column": 7 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 151,
           "minimumHttpBodyExceedsLimit": false

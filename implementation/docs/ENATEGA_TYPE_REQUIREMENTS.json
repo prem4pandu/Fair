@@ -15,6 +15,11 @@
         "typeConditions": [],
         "fields": {
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
+          "completionTime": {
+            "leaf": true,
+            "typeConditions": [],
+            "fields": {}
+          },
           "createdAt": { "leaf": true, "typeConditions": [], "fields": {} },
           "deliveryAddress": {
             "leaf": false,
@@ -44,6 +49,40 @@
             "leaf": true,
             "typeConditions": [],
             "fields": {}
+          },
+          "eta": {
+            "leaf": false,
+            "typeConditions": [],
+            "fields": {
+              "calculatedAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "estimatedArrivalAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "lastLocationAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "phase": { "leaf": true, "typeConditions": [], "fields": {} },
+              "readyAt": { "leaf": true, "typeConditions": [], "fields": {} },
+              "source": { "leaf": true, "typeConditions": [], "fields": {} },
+              "windowEndAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "windowStartAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              }
+            }
           },
           "isActive": { "leaf": true, "typeConditions": [], "fields": {} },
           "items": {
@@ -138,6 +177,11 @@
           "paidAmount": { "leaf": true, "typeConditions": [], "fields": {} },
           "paymentMethod": { "leaf": true, "typeConditions": [], "fields": {} },
           "paymentStatus": { "leaf": true, "typeConditions": [], "fields": {} },
+          "preparationTime": {
+            "leaf": true,
+            "typeConditions": [],
+            "fields": {}
+          },
           "reason": { "leaf": true, "typeConditions": [], "fields": {} },
           "restaurant": {
             "leaf": false,
@@ -189,7 +233,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "allOrdersPaginated": {
       "arguments": {
@@ -566,6 +610,11 @@
         "typeConditions": [],
         "fields": {
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
+          "completionTime": {
+            "leaf": true,
+            "typeConditions": [],
+            "fields": {}
+          },
           "createdAt": { "leaf": true, "typeConditions": [], "fields": {} },
           "deliveryAddress": {
             "leaf": false,
@@ -595,6 +644,40 @@
             "leaf": true,
             "typeConditions": [],
             "fields": {}
+          },
+          "eta": {
+            "leaf": false,
+            "typeConditions": [],
+            "fields": {
+              "calculatedAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "estimatedArrivalAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "lastLocationAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "phase": { "leaf": true, "typeConditions": [], "fields": {} },
+              "readyAt": { "leaf": true, "typeConditions": [], "fields": {} },
+              "source": { "leaf": true, "typeConditions": [], "fields": {} },
+              "windowEndAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "windowStartAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              }
+            }
           },
           "isActive": { "leaf": true, "typeConditions": [], "fields": {} },
           "items": {
@@ -689,6 +772,11 @@
           "paidAmount": { "leaf": true, "typeConditions": [], "fields": {} },
           "paymentMethod": { "leaf": true, "typeConditions": [], "fields": {} },
           "paymentStatus": { "leaf": true, "typeConditions": [], "fields": {} },
+          "preparationTime": {
+            "leaf": true,
+            "typeConditions": [],
+            "fields": {}
+          },
           "reason": { "leaf": true, "typeConditions": [], "fields": {} },
           "restaurant": {
             "leaf": false,
@@ -740,7 +828,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "appleAuthNonce": {
       "arguments": {},
@@ -812,7 +900,7 @@
           "totalPages": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "availableRiders": {
       "arguments": {},
@@ -835,7 +923,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "banners": {
       "arguments": {},
@@ -845,6 +933,7 @@
         "fields": {
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
           "action": { "leaf": true, "typeConditions": [], "fields": {} },
+          "buttonText": { "leaf": true, "typeConditions": [], "fields": {} },
           "description": { "leaf": true, "typeConditions": [], "fields": {} },
           "file": { "leaf": true, "typeConditions": [], "fields": {} },
           "parameters": { "leaf": true, "typeConditions": [], "fields": {} },
@@ -857,7 +946,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "chat": {
@@ -1148,7 +1238,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "couponsPaginated": {
       "arguments": {
@@ -1236,7 +1326,11 @@
           "shopType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-app"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-app",
+        "enatega-singlevendor-admin"
+      ]
     },
     "cuisinesPaginated": {
       "arguments": {
@@ -1534,7 +1628,11 @@
           "success": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-store"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-store",
+        "enatega-singlevendor-admin"
+      ]
     },
     "fetchAllShopTypes": {
       "arguments": {},
@@ -1628,7 +1726,7 @@
           "name": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "fetchShopTypes": {
       "arguments": {
@@ -1669,7 +1767,7 @@
           "totalPages": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getActiveOrders": {
       "arguments": {
@@ -1753,6 +1851,11 @@
                 }
               },
               "deliveryCharges": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "deliveryType": {
                 "leaf": true,
                 "typeConditions": [],
                 "fields": {}
@@ -2031,7 +2134,7 @@
           "totalCount": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getCitiesByCountry": {
       "arguments": {
@@ -2102,7 +2205,7 @@
           "username": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getClonedRestaurantsPaginated": {
       "arguments": {
@@ -2190,7 +2293,7 @@
           "totalPages": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getCountries": {
       "arguments": {},
@@ -2243,7 +2346,7 @@
           "value": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getDashboardSalesByType": {
       "arguments": {},
@@ -2255,7 +2358,7 @@
           "value": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getDashboardUsers": {
       "arguments": {},
@@ -2273,7 +2376,7 @@
           "vendorsCount": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getDashboardUsersByYear": {
       "arguments": {
@@ -2325,7 +2428,7 @@
           "vendorsCount": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getLiveMonitorData": {
       "arguments": {
@@ -2376,7 +2479,7 @@
           "ratings": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getRestaurantDashboardOrderSalesDetailsByPaymentMethod": {
       "arguments": {
@@ -2615,7 +2718,7 @@
           "totalSales": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getRestaurantDashboardSalesOrderCountDetailsByYear": {
       "arguments": {
@@ -2642,7 +2745,7 @@
           "salesAmount": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getRestaurantDeliveryZoneInfo": {
       "arguments": {
@@ -2693,7 +2796,7 @@
           "postCode": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getSingleSupportTicket": {
       "arguments": {
@@ -2733,7 +2836,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "getSingleUserSupportTickets": {
@@ -2790,7 +2894,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "getStoreDetailsByVendorId": {
@@ -2840,7 +2945,7 @@
           "totalSales": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getStoreDetailsByVendorIdPaginated": {
       "arguments": {
@@ -2988,7 +3093,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "getTicketUsers": {
@@ -3022,7 +3128,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getTicketUsersWithLatest": {
       "arguments": {
@@ -3098,7 +3204,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getUsersActiveOrders": {
       "arguments": {
@@ -3733,7 +3839,7 @@
           "userType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getVendorDashboardGrowthDetailsByYear": {
       "arguments": {
@@ -3765,7 +3871,7 @@
           "totalSales": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getVendorDashboardStatsCardDetails": {
       "arguments": {
@@ -3816,7 +3922,7 @@
           "totalSales": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "getVersions": {
       "arguments": {},
@@ -3850,7 +3956,11 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-app"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-app",
+        "enatega-singlevendor-admin"
+      ]
     },
     "hasOwnerPermission": {
       "arguments": {
@@ -3863,7 +3973,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "mostOrderedRestaurants": {
       "arguments": {
@@ -4649,10 +4759,11 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
           "body": { "leaf": true, "typeConditions": [], "fields": {} },
           "createdAt": { "leaf": true, "typeConditions": [], "fields": {} },
+          "recipientType": { "leaf": true, "typeConditions": [], "fields": {} },
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "notificationsPaginated": {
       "arguments": {
@@ -5511,6 +5622,11 @@
             "typeConditions": [],
             "fields": {
               "_id": { "leaf": true, "typeConditions": [], "fields": {} },
+              "completionTime": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
               "createdAt": { "leaf": true, "typeConditions": [], "fields": {} },
               "deliveryAddress": {
                 "leaf": false,
@@ -5544,6 +5660,48 @@
                 "leaf": true,
                 "typeConditions": [],
                 "fields": {}
+              },
+              "eta": {
+                "leaf": false,
+                "typeConditions": [],
+                "fields": {
+                  "calculatedAt": {
+                    "leaf": true,
+                    "typeConditions": [],
+                    "fields": {}
+                  },
+                  "estimatedArrivalAt": {
+                    "leaf": true,
+                    "typeConditions": [],
+                    "fields": {}
+                  },
+                  "lastLocationAt": {
+                    "leaf": true,
+                    "typeConditions": [],
+                    "fields": {}
+                  },
+                  "phase": { "leaf": true, "typeConditions": [], "fields": {} },
+                  "readyAt": {
+                    "leaf": true,
+                    "typeConditions": [],
+                    "fields": {}
+                  },
+                  "source": {
+                    "leaf": true,
+                    "typeConditions": [],
+                    "fields": {}
+                  },
+                  "windowEndAt": {
+                    "leaf": true,
+                    "typeConditions": [],
+                    "fields": {}
+                  },
+                  "windowStartAt": {
+                    "leaf": true,
+                    "typeConditions": [],
+                    "fields": {}
+                  }
+                }
               },
               "isActive": { "leaf": true, "typeConditions": [], "fields": {} },
               "items": {
@@ -5694,6 +5852,11 @@
                 "typeConditions": [],
                 "fields": {}
               },
+              "preparationTime": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
               "reason": { "leaf": true, "typeConditions": [], "fields": {} },
               "restaurant": {
                 "leaf": false,
@@ -5762,7 +5925,7 @@
           "totalPages": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "ordersByRestIdWithoutPagination": {
       "arguments": {
@@ -5786,6 +5949,11 @@
         "typeConditions": [],
         "fields": {
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
+          "completionTime": {
+            "leaf": true,
+            "typeConditions": [],
+            "fields": {}
+          },
           "createdAt": { "leaf": true, "typeConditions": [], "fields": {} },
           "deliveryAddress": {
             "leaf": false,
@@ -5815,6 +5983,40 @@
             "leaf": true,
             "typeConditions": [],
             "fields": {}
+          },
+          "eta": {
+            "leaf": false,
+            "typeConditions": [],
+            "fields": {
+              "calculatedAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "estimatedArrivalAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "lastLocationAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "phase": { "leaf": true, "typeConditions": [], "fields": {} },
+              "readyAt": { "leaf": true, "typeConditions": [], "fields": {} },
+              "source": { "leaf": true, "typeConditions": [], "fields": {} },
+              "windowEndAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "windowStartAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              }
+            }
           },
           "isActive": { "leaf": true, "typeConditions": [], "fields": {} },
           "items": {
@@ -5909,6 +6111,11 @@
           "paidAmount": { "leaf": true, "typeConditions": [], "fields": {} },
           "paymentMethod": { "leaf": true, "typeConditions": [], "fields": {} },
           "paymentStatus": { "leaf": true, "typeConditions": [], "fields": {} },
+          "preparationTime": {
+            "leaf": true,
+            "typeConditions": [],
+            "fields": {}
+          },
           "reason": { "leaf": true, "typeConditions": [], "fields": {} },
           "status": { "leaf": true, "typeConditions": [], "fields": {} },
           "taxationAmount": {
@@ -5929,7 +6136,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "ordersByUser": {
       "arguments": {
@@ -6124,7 +6331,7 @@
           "totalPages": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "orderTracking": {
       "arguments": {
@@ -6250,7 +6457,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "ownerSession": {
@@ -6289,7 +6497,7 @@
           "userTypeId": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "popularFoodItems": {
       "arguments": {
@@ -7072,7 +7280,8 @@
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
         "enatega-multivendor-store",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "restaurantAddonsPaginated": {
@@ -7250,7 +7459,7 @@
           "userType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "restaurantCategoriesPaginated": {
       "arguments": {
@@ -7320,10 +7529,12 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
           "discount": { "leaf": true, "typeConditions": [], "fields": {} },
           "enabled": { "leaf": true, "typeConditions": [], "fields": {} },
+          "endDate": { "leaf": true, "typeConditions": [], "fields": {} },
+          "startDate": { "leaf": true, "typeConditions": [], "fields": {} },
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "restaurantCouponsPaginated": {
       "arguments": {
@@ -7850,6 +8061,26 @@
         "fields": {
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
           "address": { "leaf": true, "typeConditions": [], "fields": {} },
+          "categories": {
+            "leaf": false,
+            "typeConditions": [],
+            "fields": {
+              "_id": { "leaf": true, "typeConditions": [], "fields": {} },
+              "createdAt": { "leaf": true, "typeConditions": [], "fields": {} },
+              "foods": {
+                "leaf": false,
+                "typeConditions": [],
+                "fields": {
+                  "_id": { "leaf": true, "typeConditions": [], "fields": {} },
+                  "createdAt": {
+                    "leaf": true,
+                    "typeConditions": [],
+                    "fields": {}
+                  }
+                }
+              }
+            }
+          },
           "commissionRate": {
             "leaf": true,
             "typeConditions": [],
@@ -7881,7 +8112,7 @@
           "username": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "restaurantsPaginated": {
       "arguments": {
@@ -7969,7 +8200,7 @@
           "totalPages": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "reviews": {
       "arguments": {
@@ -8025,7 +8256,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "reviewsByRestaurant": {
       "arguments": {
@@ -8246,7 +8477,8 @@
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
         "enatega-multivendor-rider",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "riderCurrentWithdrawRequest": {
@@ -8655,7 +8887,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "ridersByZone": {
       "arguments": {
@@ -8687,7 +8919,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "ridersPaginated": {
       "arguments": {
@@ -8784,7 +9016,7 @@
           "phone": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "staffsPaginated": {
       "arguments": {
@@ -8981,7 +9213,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "subCategoriesByParentId": {
@@ -9007,7 +9240,11 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-app"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-app",
+        "enatega-singlevendor-admin"
+      ]
     },
     "subCategory": {
       "arguments": {
@@ -9032,7 +9269,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "taxes": {
       "arguments": {},
@@ -9065,7 +9302,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "topRatedVendors": {
@@ -9477,7 +9715,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-rider",
-        "enatega-multivendor-store"
+        "enatega-multivendor-store",
+        "enatega-singlevendor-admin"
       ]
     },
     "user": {
@@ -9559,7 +9798,7 @@
           "userType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "userFavourite": {
       "arguments": {
@@ -9824,7 +10063,7 @@
           "userType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "usersPaginated": {
       "arguments": {
@@ -9915,7 +10154,7 @@
     "vendorCount": {
       "arguments": {},
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "vendors": {
       "arguments": {},
@@ -9939,7 +10178,7 @@
           "userType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "webNotifications": {
       "arguments": {},
@@ -9954,7 +10193,7 @@
           "read": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "withdrawRequests": {
       "arguments": {
@@ -10194,7 +10433,7 @@
           "success": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "zones": {
       "arguments": {},
@@ -10222,7 +10461,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "zonesPaginated": {
@@ -10569,7 +10809,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "cancelOrder": {
       "arguments": {
@@ -10771,7 +11011,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createAddress": {
       "arguments": {
@@ -10834,6 +11074,7 @@
         "fields": {
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
           "action": { "leaf": true, "typeConditions": [], "fields": {} },
+          "buttonText": { "leaf": true, "typeConditions": [], "fields": {} },
           "description": { "leaf": true, "typeConditions": [], "fields": {} },
           "file": { "leaf": true, "typeConditions": [], "fields": {} },
           "parameters": { "leaf": true, "typeConditions": [], "fields": {} },
@@ -10841,7 +11082,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createCategory": {
       "arguments": {
@@ -10930,7 +11171,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createCoupon": {
       "arguments": {
@@ -10959,7 +11200,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createCuisine": {
       "arguments": {
@@ -10982,7 +11223,7 @@
           "shopType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createFood": {
       "arguments": {
@@ -11071,7 +11312,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createMessage": {
       "arguments": {
@@ -11099,7 +11340,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "createOptions": {
@@ -11133,12 +11375,12 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createRestaurant": {
       "arguments": {
         "owner": {
-          "variableTypes": ["ID!"],
+          "variableTypes": ["ID", "ID!"],
           "literalKinds": [],
           "objectKeys": [],
           "objectFieldTypes": {},
@@ -11199,7 +11441,7 @@
           "username": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createRestaurantCoupon": {
       "arguments": {
@@ -11225,10 +11467,12 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
           "discount": { "leaf": true, "typeConditions": [], "fields": {} },
           "enabled": { "leaf": true, "typeConditions": [], "fields": {} },
+          "endDate": { "leaf": true, "typeConditions": [], "fields": {} },
+          "startDate": { "leaf": true, "typeConditions": [], "fields": {} },
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createRider": {
       "arguments": {
@@ -11259,7 +11503,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createShopType": {
       "arguments": {
@@ -11281,7 +11525,7 @@
           "name": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createStaff": {
       "arguments": {
@@ -11306,7 +11550,7 @@
           "userType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createSubCategories": {
       "arguments": {
@@ -11319,7 +11563,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createSupportTicket": {
       "arguments": {
@@ -11358,7 +11602,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "createTaxation": {
@@ -11405,7 +11650,7 @@
           "tipVariations": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createUser": {
       "arguments": {
@@ -11489,7 +11734,7 @@
           "phoneNumber": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "createWithdrawRequest": {
       "arguments": {
@@ -11523,7 +11768,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-rider",
-        "enatega-multivendor-store"
+        "enatega-multivendor-store",
+        "enatega-singlevendor-admin"
       ]
     },
     "createZone": {
@@ -11557,7 +11803,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "Deactivate": {
       "arguments": {
@@ -11636,7 +11882,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteAddress": {
       "arguments": {
@@ -11693,7 +11939,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteBulkAddresses": {
       "arguments": {
@@ -11833,7 +12079,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteCoupon": {
       "arguments": {
@@ -11846,7 +12092,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteCuisine": {
       "arguments": {
@@ -11859,7 +12105,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteFood": {
       "arguments": {
@@ -11892,7 +12138,7 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteOption": {
       "arguments": {
@@ -11932,7 +12178,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteRestaurant": {
       "arguments": {
@@ -11952,7 +12198,7 @@
           "isActive": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteRestaurantCoupon": {
       "arguments": {
@@ -11972,7 +12218,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteRider": {
       "arguments": {
@@ -11991,7 +12237,7 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteShopType": {
       "arguments": {
@@ -12020,7 +12266,7 @@
           "name": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteStaff": {
       "arguments": {
@@ -12039,7 +12285,7 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteSubCategory": {
       "arguments": {
@@ -12052,7 +12298,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteUser": {
       "arguments": {
@@ -12071,7 +12317,7 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteVendor": {
       "arguments": {
@@ -12084,7 +12330,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "deleteZone": {
       "arguments": {
@@ -12117,7 +12363,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "duplicateRestaurant": {
       "arguments": {
@@ -12182,7 +12428,7 @@
           "username": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editAddon": {
       "arguments": {
@@ -12225,7 +12471,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editAddress": {
       "arguments": {
@@ -12288,6 +12534,7 @@
         "fields": {
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
           "action": { "leaf": true, "typeConditions": [], "fields": {} },
+          "buttonText": { "leaf": true, "typeConditions": [], "fields": {} },
           "description": { "leaf": true, "typeConditions": [], "fields": {} },
           "file": { "leaf": true, "typeConditions": [], "fields": {} },
           "parameters": { "leaf": true, "typeConditions": [], "fields": {} },
@@ -12295,7 +12542,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editCategory": {
       "arguments": {
@@ -12384,7 +12631,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editCoupon": {
       "arguments": {
@@ -12413,7 +12660,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editCuisine": {
       "arguments": {
@@ -12436,7 +12683,7 @@
           "shopType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editFood": {
       "arguments": {
@@ -12525,7 +12772,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editOption": {
       "arguments": {
@@ -12558,7 +12805,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editRestaurant": {
       "arguments": {
@@ -12624,7 +12871,7 @@
           "username": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editRestaurantCoupon": {
       "arguments": {
@@ -12650,10 +12897,12 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
           "discount": { "leaf": true, "typeConditions": [], "fields": {} },
           "enabled": { "leaf": true, "typeConditions": [], "fields": {} },
+          "endDate": { "leaf": true, "typeConditions": [], "fields": {} },
+          "startDate": { "leaf": true, "typeConditions": [], "fields": {} },
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editRider": {
       "arguments": {
@@ -12683,7 +12932,11 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-rider"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-rider",
+        "enatega-singlevendor-admin"
+      ]
     },
     "editStaff": {
       "arguments": {
@@ -12708,7 +12961,7 @@
           "userType": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editTaxation": {
       "arguments": {
@@ -12754,7 +13007,7 @@
           "tipVariations": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editVendor": {
       "arguments": {
@@ -12779,7 +13032,7 @@
           "phoneNumber": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "editZone": {
       "arguments": {
@@ -12812,7 +13065,7 @@
           "title": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "emailExist": {
       "arguments": {
@@ -12857,7 +13110,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "login": {
       "arguments": {
@@ -12992,7 +13245,7 @@
           "read": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "metricsGeneral": {
       "arguments": {},
@@ -13017,7 +13270,8 @@
         "enatega-multivendor-app",
         "enatega-multivendor-rider",
         "enatega-multivendor-store",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "muteRing": {
@@ -13140,7 +13394,7 @@
           "userTypeId": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "phoneExist": {
       "arguments": {
@@ -13548,7 +13802,7 @@
           "userId": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "registerLiveActivitySession": {
       "arguments": {
@@ -13689,7 +13943,7 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "restaurantLogin": {
       "arguments": {
@@ -14064,7 +14318,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveAppConfigurations": {
       "arguments": {
@@ -14100,7 +14354,7 @@
           "testOtp": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveCloudinaryConfiguration": {
       "arguments": {
@@ -14129,7 +14383,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveCurrencyConfiguration": {
       "arguments": {
@@ -14150,7 +14404,7 @@
           "currencySymbol": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveDeliveryRateConfiguration": {
       "arguments": {
@@ -14171,7 +14425,7 @@
           "deliveryRate": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveEmailConfiguration": {
       "arguments": {
@@ -14193,7 +14447,7 @@
           "enableEmail": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveFirebaseConfiguration": {
       "arguments": {
@@ -14220,7 +14474,7 @@
           "vapidKey": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveFormEmailConfiguration": {
       "arguments": {
@@ -14240,7 +14494,7 @@
           "formEmail": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveGoogleApiKeyConfiguration": {
       "arguments": {
@@ -14257,6 +14511,7 @@
         "typeConditions": [],
         "fields": {
           "_id": { "leaf": true, "typeConditions": [], "fields": {} },
+          "googleApiKey": { "leaf": true, "typeConditions": [], "fields": {} },
           "googleMapsApiKey": {
             "leaf": true,
             "typeConditions": [],
@@ -14264,7 +14519,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveGoogleClientIDConfiguration": {
       "arguments": {
@@ -14291,7 +14546,7 @@
           "webClientID": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveNotificationTokenWeb": {
       "arguments": {
@@ -14332,7 +14587,7 @@
           "sandbox": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveRestaurantToken": {
       "arguments": {
@@ -14398,7 +14653,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveSentryConfiguration": {
       "arguments": {
@@ -14439,7 +14694,7 @@
           "webSentryUrl": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveStripeConfiguration": {
       "arguments": {
@@ -14459,7 +14714,7 @@
           "publishableKey": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveTwilioConfiguration": {
       "arguments": {
@@ -14494,7 +14749,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveVerificationsToggle": {
       "arguments": {
@@ -14527,7 +14782,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "saveWebConfiguration": {
       "arguments": {
@@ -14552,7 +14807,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "selectAddress": {
       "arguments": {
@@ -14663,10 +14918,17 @@
           "objectKeys": [],
           "objectFieldTypes": {},
           "enumValues": []
+        },
+        "recipientType": {
+          "variableTypes": ["NotificationRecipientType"],
+          "literalKinds": [],
+          "objectKeys": [],
+          "objectFieldTypes": {},
+          "enumValues": []
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "sendOtpToEmail": {
       "arguments": {
@@ -14731,7 +14993,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "toggleAvailablity": {
       "arguments": {
@@ -14762,7 +15024,11 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-rider"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-rider",
+        "enatega-singlevendor-admin"
+      ]
     },
     "toggleStoreAvailability": {
       "arguments": {
@@ -14809,7 +15075,7 @@
           "commissionRate": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateDeliveryBoundsAndLocation": {
       "arguments": {
@@ -14907,7 +15173,7 @@
           "success": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateDeliveryOptions": {
       "arguments": {
@@ -14947,7 +15213,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateFoodOutOfStock": {
       "arguments": {
@@ -14974,7 +15240,7 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateNotificationStatus": {
       "arguments": {
@@ -15078,7 +15344,11 @@
           "success": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-store"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-store",
+        "enatega-singlevendor-admin"
+      ]
     },
     "updateRestaurantDelivery": {
       "arguments": {
@@ -15126,7 +15396,7 @@
           "success": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateRiderBussinessDetails": {
       "arguments": {
@@ -15280,7 +15550,7 @@
           "name": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateStatus": {
       "arguments": {
@@ -15307,7 +15577,7 @@
           "orderStatus": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateSupportTicketStatus": {
       "arguments": {
@@ -15328,7 +15598,11 @@
           "updatedAt": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
+      ]
     },
     "updateTimings": {
       "arguments": {
@@ -15377,7 +15651,11 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-store"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-store",
+        "enatega-singlevendor-admin"
+      ]
     },
     "updateUser": {
       "arguments": {
@@ -15440,7 +15718,7 @@
           "notes": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateUserStatus": {
       "arguments": {
@@ -15474,7 +15752,7 @@
           "status": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateWithdrawReqStatus": {
       "arguments": {
@@ -15693,7 +15971,7 @@
           "success": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "updateWorkSchedule": {
       "arguments": {
@@ -15761,6 +16039,13 @@
           "objectKeys": [],
           "objectFieldTypes": {},
           "enumValues": []
+        },
+        "publicMedia": {
+          "variableTypes": ["Boolean"],
+          "literalKinds": [],
+          "objectKeys": [],
+          "objectFieldTypes": {},
+          "enumValues": []
         }
       },
       "selection": {
@@ -15773,7 +16058,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-rider"
+        "enatega-multivendor-rider",
+        "enatega-singlevendor-admin"
       ]
     },
     "uploadToken": {
@@ -15801,7 +16087,7 @@
           "pushToken": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "verifyOtp": {
       "arguments": {
@@ -16613,7 +16899,7 @@
           "_id": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "subscribePlaceOrder": {
       "arguments": {
@@ -16635,6 +16921,11 @@
             "fields": {
               "_id": { "leaf": true, "typeConditions": [], "fields": {} },
               "acceptedAt": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "completionTime": {
                 "leaf": true,
                 "typeConditions": [],
                 "fields": {}
@@ -16971,7 +17262,11 @@
           "userId": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-admin", "enatega-multivendor-store"]
+      "apps": [
+        "enatega-multivendor-admin",
+        "enatega-multivendor-store",
+        "enatega-singlevendor-admin"
+      ]
     },
     "subscriptionAssignRider": {
       "arguments": {
@@ -17287,6 +17582,7 @@
               }
             }
           },
+          "deliveryType": { "leaf": true, "typeConditions": [], "fields": {} },
           "eta": {
             "leaf": false,
             "typeConditions": [],
@@ -17386,7 +17682,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-admin"]
+      "apps": ["enatega-multivendor-admin", "enatega-singlevendor-admin"]
     },
     "subscriptionNewMessage": {
       "arguments": {
@@ -17555,7 +17851,8 @@
         "enatega-multivendor-app",
         "enatega-multivendor-rider",
         "enatega-multivendor-store",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "subscriptionOrderTracking": {
@@ -17682,7 +17979,8 @@
       "apps": [
         "enatega-multivendor-admin",
         "enatega-multivendor-app",
-        "enatega-multivendor-web"
+        "enatega-multivendor-web",
+        "enatega-singlevendor-admin"
       ]
     },
     "subscriptionRiderLocation": {

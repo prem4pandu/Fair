@@ -232,14 +232,41 @@ function operationRoots(text) {
   return sorted(roots);
 }
 
+const singleVendorModeFile = (file) =>
+  /(^|\/)(?:singlevendor|single-vendor)(\/|$)/i.test(file ?? "");
+
 export function multivendorDocuments(documents, lanes) {
   const laneByRoot = new Map(
     lanes.operations.map(({ type, name, lane }) => [`${type}.${name}`, lane]),
   );
   return documents.filter((document) => {
     if (document.app === "enatega-singlevendor-admin") return false;
-    if (/(^|\/)(?:singlevendor|single-vendor)(\/|$)/i.test(document.file ?? ""))
-      return false;
+    if (singleVendorModeFile(document.file)) return false;
+    const roots = operationRoots(document.text);
+    return !(
+      roots.length > 0 && roots.every((root) => laneByRoot.get(root) === "L12")
+    );
+  });
+}
+
+// Which documents inform the generated SDL. This is deliberately wider than the
+// multivendor gate: the single-vendor admin's selections are additive (extra
+// fields and arguments break no document that does not select them), so the
+// contract should serve that app even though it sits outside the gate.
+//
+// Still excluded, for reasons that are not about scope at all:
+//   - single-vendor MODE files, because they contradict the three shipping
+//     multivendor apps on emailExist/phoneExist (object vs Boolean). Honouring
+//     them would break the live login flow in web, app and rider, so they stay
+//     out until the single-vendor lane is actually built (owner decision D1/W21).
+//   - L12-only documents, so generate-sdl keeps treating L12 as an empty lane
+//     and never overwrites the hand-curated L12-single-vendor.graphql.
+export function contractDocuments(documents, lanes) {
+  const laneByRoot = new Map(
+    lanes.operations.map(({ type, name, lane }) => [`${type}.${name}`, lane]),
+  );
+  return documents.filter((document) => {
+    if (singleVendorModeFile(document.file)) return false;
     const roots = operationRoots(document.text);
     return !(
       roots.length > 0 && roots.every((root) => laneByRoot.get(root) === "L12")
@@ -312,19 +339,19 @@ export function resolvedDocuments(options = {}) {
       resolved: true,
     });
   }
-  if (options.scope === "multivendor") {
+  if (options.scope === "multivendor" || options.scope === "contract") {
     const lanes =
       options.lanes ??
       JSON.parse(readFileSync(resolve(root, "docs/OPERATION_LANES.json")));
-    return multivendorDocuments(documents, lanes);
+    return options.scope === "contract"
+      ? contractDocuments(documents, lanes)
+      : multivendorDocuments(documents, lanes);
   }
   return documents;
 }
 
 export async function run() {
-  const result = deriveFromDocuments(
-    resolvedDocuments({ scope: "multivendor" }),
-  );
+  const result = deriveFromDocuments(resolvedDocuments({ scope: "contract" }));
   writeFileSync(
     resolve(root, "docs/ENATEGA_TYPE_REQUIREMENTS.json"),
     await format(JSON.stringify(result), { parser: "json" }),

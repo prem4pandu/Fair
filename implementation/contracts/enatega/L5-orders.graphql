@@ -21,9 +21,11 @@ type AcceptOrderAcceptOrder {
 
 type AllOrdersAllOrders {
   _id: ID
+  completionTime: String
   createdAt: String
   deliveryAddress: Address
   deliveryCharges: Float
+  eta: OrderEta
   isActive: Boolean
   items: OrderItem
   orderAmount: Float
@@ -32,6 +34,7 @@ type AllOrdersAllOrders {
   paidAmount: Float
   paymentMethod: String
   paymentStatus: String
+  preparationTime: String
   reason: String
   restaurant: Restaurant
   rider: Rider
@@ -74,9 +77,11 @@ type AllOrdersPaginatedOrders {
 
 type AllOrdersWithoutPaginationAllOrdersWithoutPagination {
   _id: ID
+  completionTime: String
   createdAt: String
   deliveryAddress: Address
   deliveryCharges: Float
+  eta: OrderEta
   isActive: Boolean
   items: OrderItem
   orderAmount: Float
@@ -85,6 +90,7 @@ type AllOrdersWithoutPaginationAllOrdersWithoutPagination {
   paidAmount: Float
   paymentMethod: String
   paymentStatus: String
+  preparationTime: String
   reason: String
   restaurant: Restaurant
   rider: Rider
@@ -290,9 +296,11 @@ type OrderPickedUpOrderPickedUp {
 
 type OrdersByRestIdOrders {
   _id: ID
+  completionTime: String
   createdAt: String
   deliveryAddress: Address
   deliveryCharges: Float
+  eta: OrderEta
   isActive: Boolean
   items: OrderItem
   orderAmount: Float
@@ -301,6 +309,7 @@ type OrdersByRestIdOrders {
   paidAmount: Float
   paymentMethod: String
   paymentStatus: String
+  preparationTime: String
   reason: String
   restaurant: Restaurant
   rider: Rider
@@ -321,9 +330,11 @@ type OrdersByRestIdOrdersByRestId {
 
 type OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination {
   _id: ID
+  completionTime: String
   createdAt: String
   deliveryAddress: Address
   deliveryCharges: Float
+  eta: OrderEta
   isActive: Boolean
   items: OrderItem
   orderAmount: Float
@@ -332,6 +343,7 @@ type OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination {
   paidAmount: Float
   paymentMethod: String
   paymentStatus: String
+  preparationTime: String
   reason: String
   status: String
   taxationAmount: Float
@@ -523,6 +535,7 @@ type PlaceOrderPlaceOrder {
 type SubscribePlaceOrderOrder {
   _id: ID
   acceptedAt: String
+  completionTime: String
   createdAt: String
   deliveryAddress: Address
   deliveryCharges: Float
