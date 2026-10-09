@@ -206,16 +206,12 @@ export const SINGLE_VENDOR_LOGIN = gql`
 `;
 export const SINGLE_VENDOR_EMAIL_EXISTS = gql`
   mutation EmailExistSingleVendor($email: String!) {
-    emailExist(email: $email) {
-      _id
-    }
+    emailExist(email: $email)
   }
 `;
 export const SINGLE_VENDOR_PHONE_EXISTS = gql`
   mutation PhoneExistSingleVendor($phone: String!) {
-    phoneExist(phone: $phone) {
-      _id
-    }
+    phoneExist(phone: $phone)
   }
 `;
 

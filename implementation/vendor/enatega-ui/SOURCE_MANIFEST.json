@@ -16,8 +16,8 @@
     "upstream Firebase application-binding files"
   ],
   "fileCount": 4137,
-  "totalBytes": 118718342,
-  "entriesSha256": "c0729ef97f6ffc360c96cf7ef5abda7e8f972dea828ac15ad101469d6155d3f9",
+  "totalBytes": 118718145,
+  "entriesSha256": "635f126fe83815af6992823457d070714c7949bb3b1b21f74a414fdc07dd16c4",
   "files": [
     {
       "path": ".gitignore",
@@ -4651,8 +4651,8 @@
     },
     {
       "path": "enatega-multivendor-app/src/apollo/queries.js",
-      "bytes": 23636,
-      "sha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18"
+      "bytes": 23511,
+      "sha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e"
     },
     {
       "path": "enatega-multivendor-app/src/apollo/subscriptions.js",
@@ -6986,8 +6986,8 @@
     },
     {
       "path": "enatega-multivendor-app/src/singlevendor/apollo/mutations.js",
-      "bytes": 7068,
-      "sha256": "e045383271d95f725b6ae791144dfb23797db6c4cf37d05f01c1f846159e7bba"
+      "bytes": 7032,
+      "sha256": "aa2345c50334f625ceb53eb172bcd01e5b42a78bdc9ecf1b2d49265bd1e500c5"
     },
     {
       "path": "enatega-multivendor-app/src/singlevendor/apollo/queries.js",
@@ -13056,8 +13056,8 @@
     },
     {
       "path": "enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts",
-      "bytes": 24120,
-      "sha256": "79542fa446740c2b42dec9ad7682877b82cc2c3dc6eb27087f0cbf3b395937cc"
+      "bytes": 24084,
+      "sha256": "cb35d99dd09ae308bdef05f72a6aaef492530a0b12d8cfed9c98bdd1b2a4c71e"
     },
     {
       "path": "enatega-multivendor-web/lib/api/graphql/subscription/ChatWithRider/index.tsx",

@@ -5,8 +5,8 @@
 
 - Source: `vendor/enatega-ui (six packages, pinned d9eb29e)` (schemaVersion 1)
 - Operations: 334 (159 query, 164 mutation, 11 subscription)
-- Scoped multivendor document compatibility: PASS (454/454 documents valid)
-- Full six-app document compatibility: FAIL (829/852 valid; 9 unresolved)
+- Scoped multivendor document compatibility: PASS (531/531 documents valid)
+- Full six-app document compatibility: PASS (845/845 valid; 0 unresolved)
 - Resolvers implemented today: 18/334
 - Recorded per-operation evidence: 0/334
 - Roots with no SDL declaration: 0

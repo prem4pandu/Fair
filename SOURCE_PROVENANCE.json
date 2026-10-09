@@ -17,7 +17,7 @@
       "directory": "enatega-multivendor-app",
       "path": "implementation/vendor/enatega-ui/enatega-multivendor-app",
       "upstreamGitTree": "df993417cbec43f38f81370b15f053c313266214",
-      "gitTree": "fdb714dd54db56563a87b26f1b4210db9a8f7eb9",
+      "gitTree": "90e0c8a3310485d8a92b14cca714d53912fe1c61",
       "files": 980
     },
     {
@@ -38,7 +38,7 @@
       "directory": "enatega-multivendor-web",
       "path": "implementation/vendor/enatega-ui/enatega-multivendor-web",
       "upstreamGitTree": "e0a88ec2beeeab5af277e1d18404d514268e296d",
-      "gitTree": "e0a88ec2beeeab5af277e1d18404d514268e296d",
+      "gitTree": "03d0791107ef0cdc6095ec7972cec5ceb4b04764",
       "files": 711
     },
     {
@@ -75,6 +75,21 @@
       "path": "implementation/vendor/enatega-ui/enatega-multivendor-store/google-services.json",
       "change": "removed",
       "reason": "Upstream Firebase project binding; Fair generates its own per environment."
+    },
+    {
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-app/src/apollo/queries.js",
+      "change": "integration adapter",
+      "reason": "Removed an unreachable legacy scalar getVersions document that conflicted with the live object-shaped ForceUpdate and admin contract; presentation and active flows are unchanged."
+    },
+    {
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-app/src/singlevendor/apollo/mutations.js",
+      "change": "integration adapter",
+      "reason": "Aligned single-vendor account-existence transport documents with the shared Boolean backend contract consumed as Boolean by the unchanged login and registration flows."
+    },
+    {
+      "path": "implementation/vendor/enatega-ui/enatega-multivendor-web/lib/api/graphql/single-vendor/index.ts",
+      "change": "integration adapter",
+      "reason": "Aligned single-vendor account-existence transport documents with the existing Boolean TypeScript data mapping and shared Boolean backend contract; presentation is unchanged."
     }
   ],
   "executed_upstream_code": false,
@@ -84,8 +99,8 @@
     "comparedAgainst": "upstream/ (repository-local pinned snapshot)",
     "command": "for p in enatega-multivendor-web enatega-multivendor-admin enatega-singlevendor-admin enatega-multivendor-app enatega-multivendor-store enatega-multivendor-rider; do diff -rq upstream/$p implementation/vendor/enatega-ui/$p; done",
     "result": "0 differences in all six packages",
-    "conclusion": "The tracked product UI is byte-identical to the repository-local pinned snapshot. The env/mode endpoint resolvers, the Next.js maps reverse-geocode proxy, the client public-access (nonce/bop-auth) token services and the rider background-location transport are part of that pinned snapshot, not unrecorded Fair edits.",
-    "limit": "The upstream GitHub commit is still not independently cloned, so commitIndependentlyVerified stays false; this verifies equality to the local snapshot only.",
+    "conclusion": "At the recorded baseline the product UI was byte-identical to the repository-local pinned snapshot. Current differences are limited to allowedModifications: removal of upstream Firebase bindings and presentation-preserving integration adapter corrections. The env/mode endpoint resolvers, the Next.js maps reverse-geocode proxy, the client public-access (nonce/bop-auth) token services and the rider background-location transport are part of that pinned snapshot.",
+    "limit": "The upstream GitHub commit is still not independently cloned, so commitIndependentlyVerified stays false; verification is against the local snapshot plus the explicit allowedModifications list.",
     "invariant": "Any future edit inside implementation/vendor/enatega-ui must be added to allowedModifications above, and node tools/manifest-enatega-ui.mjs re-run so SOURCE_MANIFEST.json matches."
   }
 }

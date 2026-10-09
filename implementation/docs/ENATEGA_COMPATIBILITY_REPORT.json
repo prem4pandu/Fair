@@ -12,25 +12,26 @@
   "limitations": [
     "Static validation cannot prove resolver behavior, runtime reachability, authorization, URLs, subscriptions transport or UI parity.",
     "Dynamic/interpolated gql calls are unresolved and fail the gate; arbitrary computed document factories may require manual audit.",
-    "Imported fragments are not automatically assembled. Standalone fragments and absent imports may cause validation failures requiring explicit reconciliation.",
+    "Supported static literals, local references and relative imports are expanded without execution; unsupported alias imports require hash-pinned manual reconciliation.",
+    "Standalone cache fragment libraries skip only NoUnusedFragments; actual request documents retain that rule.",
     "SDL compatibility is not proof that the running server loaded these contracts."
   ],
   "backendSchema": [
     {
       "file": "enatega/core.graphql",
-      "sha256": "7ee64a761649770ba0b8255660157050b429e9dc26135b8034d01fbbb503f053"
+      "sha256": "24c877c575479d58a0fa5d4961d8f3c27209d3b58fb19daebcd2b27c921c5588"
     },
     {
       "file": "enatega/L1-identity.graphql",
-      "sha256": "9de728081921233b6e5c685e8ff5f2d3ad01d685fd7b678d1a4f1dfd3f043721"
+      "sha256": "0c91459d6c82f4395e48c4a925bb898c6f7a2a459ee7917cf38d556d8897d662"
     },
     {
       "file": "enatega/L2-platform.graphql",
-      "sha256": "f95a2e24dec527f0a9ea5740576783222b935406ba6ecc7878e5abfa679aa8d0"
+      "sha256": "0e772338cb42ae36534c034687b2936c531bacf6f992ecb7616539eb7ef7065f"
     },
     {
       "file": "enatega/L3-vendors-catalog.graphql",
-      "sha256": "1b01d9b30503fb89699b3f956101660fbaaaacf1c622b7050d9c7eab71f743f1"
+      "sha256": "3b7b7aee763a05fed3eee6f01ce6fb0d38ab627d321e7dc80e98d26b387229e6"
     },
     {
       "file": "enatega/L4-customers-support.graphql",
@@ -38,11 +39,11 @@
     },
     {
       "file": "enatega/L5-orders.graphql",
-      "sha256": "fc8eaae57b16139e1466600914819b9812fe68fa199180cdb807a62eed0d1021"
+      "sha256": "364dad4e02fce05a4ade7cb81500c55af05010e68e55e0520b6a232ca91b7b80"
     },
     {
       "file": "enatega/L6-dispatch.graphql",
-      "sha256": "c97bdcd49ec2e0baa8bdd73f4a33d3c6a756604701e38c5d042d745e2c3e2a3b"
+      "sha256": "f5b946050bd1a02a32010a4aaa82f9cf760e3b5a690ec36872cca468b51130ea"
     },
     {
       "file": "enatega/L7-finance.graphql",
@@ -50,7 +51,7 @@
     },
     {
       "file": "enatega/L8-notifications.graphql",
-      "sha256": "34d35c114be8b620fca39a15e666f9ba65d74f4a0d80adc061a1b558f418551b"
+      "sha256": "9368ae1e6c73ba6630e99e95e85b5538300ac678dca52bdfb1e10c5a1e802035"
     },
     {
       "file": "enatega/L9-analytics.graphql",
@@ -59,8 +60,8 @@
   ],
   "summary": {
     "apps": 5,
-    "documents": 454,
-    "validDocuments": 454,
+    "documents": 531,
+    "validDocuments": 531,
     "unresolvedDocuments": 0,
     "outOfScopeDocuments": 0,
     "missingRoots": []
@@ -69,8 +70,8 @@
     {
       "app": "enatega-multivendor-web",
       "filesScanned": 566,
-      "totalDocuments": 68,
-      "validDocuments": 68,
+      "totalDocuments": 72,
+      "validDocuments": 72,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -90,6 +91,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 245,
           "minimumHttpBodyExceedsLimit": false
@@ -108,6 +110,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 281,
           "minimumHttpBodyExceedsLimit": false
@@ -126,6 +129,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 277,
           "minimumHttpBodyExceedsLimit": false
@@ -144,6 +148,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 225,
           "minimumHttpBodyExceedsLimit": false
@@ -158,6 +163,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 666,
           "minimumHttpBodyExceedsLimit": false
@@ -176,6 +182,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 82,
           "minimumHttpBodyExceedsLimit": false
@@ -194,6 +201,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 82,
           "minimumHttpBodyExceedsLimit": false
@@ -212,6 +220,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 109,
           "minimumHttpBodyExceedsLimit": false
@@ -230,6 +239,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 121,
           "minimumHttpBodyExceedsLimit": false
@@ -248,6 +258,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 109,
           "minimumHttpBodyExceedsLimit": false
@@ -266,6 +277,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 148,
           "minimumHttpBodyExceedsLimit": false
@@ -284,6 +296,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 180,
           "minimumHttpBodyExceedsLimit": false
@@ -302,6 +315,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 615,
           "minimumHttpBodyExceedsLimit": false
@@ -320,6 +334,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 342,
           "minimumHttpBodyExceedsLimit": false
@@ -338,6 +353,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 179,
           "minimumHttpBodyExceedsLimit": false
@@ -352,6 +368,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 155,
           "minimumHttpBodyExceedsLimit": false
@@ -370,6 +387,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 295,
           "minimumHttpBodyExceedsLimit": false
@@ -384,6 +402,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 235,
           "minimumHttpBodyExceedsLimit": false
@@ -402,6 +421,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 184,
           "minimumHttpBodyExceedsLimit": false
@@ -420,6 +440,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 143,
           "minimumHttpBodyExceedsLimit": false
@@ -438,6 +459,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 258,
           "minimumHttpBodyExceedsLimit": false
@@ -456,6 +478,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1951,
           "minimumHttpBodyExceedsLimit": false
@@ -474,6 +497,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1645,
           "minimumHttpBodyExceedsLimit": false
@@ -492,6 +516,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 553,
           "minimumHttpBodyExceedsLimit": false
@@ -510,6 +535,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 243,
           "minimumHttpBodyExceedsLimit": false
@@ -528,6 +554,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 316,
           "minimumHttpBodyExceedsLimit": false
@@ -546,6 +573,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 214,
           "minimumHttpBodyExceedsLimit": false
@@ -564,6 +592,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 173,
           "minimumHttpBodyExceedsLimit": false
@@ -578,6 +607,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 159,
           "minimumHttpBodyExceedsLimit": false
@@ -592,6 +622,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 147,
           "minimumHttpBodyExceedsLimit": false
@@ -610,6 +641,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 438,
           "minimumHttpBodyExceedsLimit": false
@@ -628,6 +660,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 87,
           "minimumHttpBodyExceedsLimit": false
@@ -646,6 +679,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 182,
           "minimumHttpBodyExceedsLimit": false
@@ -664,6 +698,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 119,
           "minimumHttpBodyExceedsLimit": false
@@ -682,6 +717,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 277,
           "minimumHttpBodyExceedsLimit": false
@@ -700,6 +736,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1878,
           "minimumHttpBodyExceedsLimit": false
@@ -718,6 +755,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 628,
           "minimumHttpBodyExceedsLimit": false
@@ -732,6 +770,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1635,
           "minimumHttpBodyExceedsLimit": false
@@ -750,6 +789,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1693,
           "minimumHttpBodyExceedsLimit": false
@@ -768,6 +808,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1697,
           "minimumHttpBodyExceedsLimit": false
@@ -782,6 +823,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 355,
           "minimumHttpBodyExceedsLimit": false
@@ -800,6 +842,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1246,
           "minimumHttpBodyExceedsLimit": false
@@ -818,8 +861,48 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 139,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts",
+          "line": 9,
+          "sha256": "67396c99a11bed7d394180efad2f1ec9171a073d57d7e0b8f36b487edfe78c9b",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 193,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts",
+          "line": 27,
+          "sha256": "3c6b49beda3e601936bd86489260182c862762fd246460d7df93773c29229d1b",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 330,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts",
+          "line": 58,
+          "sha256": "49e23cfa60aed6d07a2676795ff2400bdbe1e97fba2b88cb90cffefff9e142e1",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 346,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -836,6 +919,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 549,
           "minimumHttpBodyExceedsLimit": false
@@ -854,6 +938,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 668,
           "minimumHttpBodyExceedsLimit": false
@@ -872,6 +957,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 651,
           "minimumHttpBodyExceedsLimit": false
@@ -890,6 +976,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1367,
           "minimumHttpBodyExceedsLimit": false
@@ -908,6 +995,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 446,
           "minimumHttpBodyExceedsLimit": false
@@ -926,6 +1014,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 212,
           "minimumHttpBodyExceedsLimit": false
@@ -944,6 +1033,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 130,
           "minimumHttpBodyExceedsLimit": false
@@ -962,6 +1052,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 102,
           "minimumHttpBodyExceedsLimit": false
@@ -976,6 +1067,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 118,
           "minimumHttpBodyExceedsLimit": false
@@ -994,6 +1086,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 135,
           "minimumHttpBodyExceedsLimit": false
@@ -1012,6 +1105,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 420,
           "minimumHttpBodyExceedsLimit": false
@@ -1030,6 +1124,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 307,
           "minimumHttpBodyExceedsLimit": false
@@ -1048,6 +1143,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 378,
           "minimumHttpBodyExceedsLimit": false
@@ -1062,6 +1158,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 61,
           "minimumHttpBodyExceedsLimit": false
@@ -1080,6 +1177,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 532,
           "minimumHttpBodyExceedsLimit": false
@@ -1094,6 +1192,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 137,
           "minimumHttpBodyExceedsLimit": false
@@ -1112,8 +1211,28 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 190,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-web/lib/api/graphql/subscription/orders/index.ts",
+          "line": 3,
+          "sha256": "05bfeeca93748b5cb9446d882408e16f05eef5e574ad6052f69731fc29e20ff1",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "subscription",
+              "name": "OrderStatusChanged",
+              "roots": ["orderStatusChanged"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1729,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -1130,6 +1249,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 693,
           "minimumHttpBodyExceedsLimit": false
@@ -1148,6 +1268,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 663,
           "minimumHttpBodyExceedsLimit": false
@@ -1166,6 +1287,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 180,
           "minimumHttpBodyExceedsLimit": false
@@ -1184,6 +1306,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1729,
           "minimumHttpBodyExceedsLimit": false
@@ -1202,6 +1325,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 143,
           "minimumHttpBodyExceedsLimit": false
@@ -1220,6 +1344,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 182,
           "minimumHttpBodyExceedsLimit": false
@@ -1238,6 +1363,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 87,
           "minimumHttpBodyExceedsLimit": false
@@ -1256,6 +1382,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1729,
           "minimumHttpBodyExceedsLimit": false
@@ -1286,6 +1413,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 245,
           "minimumHttpBodyExceedsLimit": false
@@ -1300,6 +1428,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 243,
           "minimumHttpBodyExceedsLimit": false
@@ -1318,6 +1447,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 263,
           "minimumHttpBodyExceedsLimit": false
@@ -1336,6 +1466,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 295,
           "minimumHttpBodyExceedsLimit": false
@@ -1354,6 +1485,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 391,
           "minimumHttpBodyExceedsLimit": false
@@ -1372,6 +1504,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 245,
           "minimumHttpBodyExceedsLimit": false
@@ -1390,6 +1523,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 203,
           "minimumHttpBodyExceedsLimit": false
@@ -1408,6 +1542,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 199,
           "minimumHttpBodyExceedsLimit": false
@@ -1426,6 +1561,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 77,
           "minimumHttpBodyExceedsLimit": false
@@ -1444,6 +1580,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 471,
           "minimumHttpBodyExceedsLimit": false
@@ -1462,6 +1599,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 467,
           "minimumHttpBodyExceedsLimit": false
@@ -1480,6 +1618,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 493,
           "minimumHttpBodyExceedsLimit": false
@@ -1498,6 +1637,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 179,
           "minimumHttpBodyExceedsLimit": false
@@ -1516,6 +1656,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 223,
           "minimumHttpBodyExceedsLimit": false
@@ -1534,6 +1675,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 208,
           "minimumHttpBodyExceedsLimit": false
@@ -1552,6 +1694,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 246,
           "minimumHttpBodyExceedsLimit": false
@@ -1570,6 +1713,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 317,
           "minimumHttpBodyExceedsLimit": false
@@ -1588,6 +1732,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 320,
           "minimumHttpBodyExceedsLimit": false
@@ -1606,6 +1751,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 239,
           "minimumHttpBodyExceedsLimit": false
@@ -1624,6 +1770,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 242,
           "minimumHttpBodyExceedsLimit": false
@@ -1642,6 +1789,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 260,
           "minimumHttpBodyExceedsLimit": false
@@ -1660,6 +1808,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 282,
           "minimumHttpBodyExceedsLimit": false
@@ -1678,6 +1827,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 215,
           "minimumHttpBodyExceedsLimit": false
@@ -1696,6 +1846,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 284,
           "minimumHttpBodyExceedsLimit": false
@@ -1714,6 +1865,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 234,
           "minimumHttpBodyExceedsLimit": false
@@ -1732,6 +1884,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 210,
           "minimumHttpBodyExceedsLimit": false
@@ -1750,6 +1903,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 203,
           "minimumHttpBodyExceedsLimit": false
@@ -1768,6 +1922,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 273,
           "minimumHttpBodyExceedsLimit": false
@@ -1786,6 +1941,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 256,
           "minimumHttpBodyExceedsLimit": false
@@ -1804,6 +1960,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 223,
           "minimumHttpBodyExceedsLimit": false
@@ -1822,6 +1979,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 211,
           "minimumHttpBodyExceedsLimit": false
@@ -1840,6 +1998,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 207,
           "minimumHttpBodyExceedsLimit": false
@@ -1858,6 +2017,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 77,
           "minimumHttpBodyExceedsLimit": false
@@ -1876,6 +2036,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 232,
           "minimumHttpBodyExceedsLimit": false
@@ -1894,6 +2055,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 228,
           "minimumHttpBodyExceedsLimit": false
@@ -1912,6 +2074,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 160,
           "minimumHttpBodyExceedsLimit": false
@@ -1930,6 +2093,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 183,
           "minimumHttpBodyExceedsLimit": false
@@ -1948,6 +2112,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 179,
           "minimumHttpBodyExceedsLimit": false
@@ -1966,6 +2131,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 79,
           "minimumHttpBodyExceedsLimit": false
@@ -1984,6 +2150,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 252,
           "minimumHttpBodyExceedsLimit": false
@@ -2002,6 +2169,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 160,
           "minimumHttpBodyExceedsLimit": false
@@ -2020,6 +2188,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 189,
           "minimumHttpBodyExceedsLimit": false
@@ -2038,6 +2207,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 469,
           "minimumHttpBodyExceedsLimit": false
@@ -2052,6 +2222,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 465,
           "minimumHttpBodyExceedsLimit": false
@@ -2070,6 +2241,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 183,
           "minimumHttpBodyExceedsLimit": false
@@ -2088,6 +2260,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 184,
           "minimumHttpBodyExceedsLimit": false
@@ -2106,6 +2279,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 216,
           "minimumHttpBodyExceedsLimit": false
@@ -2124,6 +2298,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 149,
           "minimumHttpBodyExceedsLimit": false
@@ -2142,6 +2317,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 210,
           "minimumHttpBodyExceedsLimit": false
@@ -2160,6 +2336,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 218,
           "minimumHttpBodyExceedsLimit": false
@@ -2178,6 +2355,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 202,
           "minimumHttpBodyExceedsLimit": false
@@ -2196,6 +2374,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 480,
           "minimumHttpBodyExceedsLimit": false
@@ -2214,6 +2393,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 115,
           "minimumHttpBodyExceedsLimit": false
@@ -2232,6 +2412,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 93,
           "minimumHttpBodyExceedsLimit": false
@@ -2250,6 +2431,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 625,
           "minimumHttpBodyExceedsLimit": false
@@ -2268,6 +2450,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 454,
           "minimumHttpBodyExceedsLimit": false
@@ -2286,6 +2469,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 446,
           "minimumHttpBodyExceedsLimit": false
@@ -2304,6 +2488,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 187,
           "minimumHttpBodyExceedsLimit": false
@@ -2322,6 +2507,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 350,
           "minimumHttpBodyExceedsLimit": false
@@ -2340,6 +2526,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 259,
           "minimumHttpBodyExceedsLimit": false
@@ -2358,6 +2545,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 216,
           "minimumHttpBodyExceedsLimit": false
@@ -2372,6 +2560,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 197,
           "minimumHttpBodyExceedsLimit": false
@@ -2390,6 +2579,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 91,
           "minimumHttpBodyExceedsLimit": false
@@ -2408,6 +2598,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 196,
           "minimumHttpBodyExceedsLimit": false
@@ -2426,6 +2617,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 147,
           "minimumHttpBodyExceedsLimit": false
@@ -2444,6 +2636,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 147,
           "minimumHttpBodyExceedsLimit": false
@@ -2462,6 +2655,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 168,
           "minimumHttpBodyExceedsLimit": false
@@ -2480,6 +2674,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 196,
           "minimumHttpBodyExceedsLimit": false
@@ -2494,6 +2689,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 192,
           "minimumHttpBodyExceedsLimit": false
@@ -2512,6 +2708,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 91,
           "minimumHttpBodyExceedsLimit": false
@@ -2530,6 +2727,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 137,
           "minimumHttpBodyExceedsLimit": false
@@ -2548,6 +2746,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 119,
           "minimumHttpBodyExceedsLimit": false
@@ -2566,6 +2765,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 316,
           "minimumHttpBodyExceedsLimit": false
@@ -2584,6 +2784,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 214,
           "minimumHttpBodyExceedsLimit": false
@@ -2602,8 +2803,47 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 173,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-admin/lib/api/graphql/mutations/taxations/index.ts",
+          "line": 1,
+          "sha256": "039f7175847ecfe1f4e6d0ec6a16b091d1508c194100fe5ccf73213906c5ff9f",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "CreateTaxation",
+              "roots": ["createTaxation"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 171,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-admin/lib/api/graphql/mutations/taxations/index.ts",
+          "line": 8,
+          "sha256": "24c869cb5800f4d2159e173f4f17cb2cd126385251801f95d193b63b778eac3c",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "editTaxation",
+              "roots": ["editTaxation"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 167,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -2620,6 +2860,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 253,
           "minimumHttpBodyExceedsLimit": false
@@ -2638,6 +2879,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 163,
           "minimumHttpBodyExceedsLimit": false
@@ -2656,6 +2898,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 159,
           "minimumHttpBodyExceedsLimit": false
@@ -2674,6 +2917,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 113,
           "minimumHttpBodyExceedsLimit": false
@@ -2692,6 +2936,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 178,
           "minimumHttpBodyExceedsLimit": false
@@ -2710,6 +2955,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 138,
           "minimumHttpBodyExceedsLimit": false
@@ -2728,6 +2974,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 85,
           "minimumHttpBodyExceedsLimit": false
@@ -2746,6 +2993,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 109,
           "minimumHttpBodyExceedsLimit": false
@@ -2764,6 +3012,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 202,
           "minimumHttpBodyExceedsLimit": false
@@ -2782,6 +3031,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 198,
           "minimumHttpBodyExceedsLimit": false
@@ -2800,6 +3050,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 77,
           "minimumHttpBodyExceedsLimit": false
@@ -2818,6 +3069,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1162,
           "minimumHttpBodyExceedsLimit": false
@@ -2836,6 +3088,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 221,
           "minimumHttpBodyExceedsLimit": false
@@ -2854,6 +3107,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 182,
           "minimumHttpBodyExceedsLimit": false
@@ -2868,6 +3122,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 178,
           "minimumHttpBodyExceedsLimit": false
@@ -2886,6 +3141,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 173,
           "minimumHttpBodyExceedsLimit": false
@@ -2900,6 +3156,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 210,
           "minimumHttpBodyExceedsLimit": false
@@ -2918,6 +3175,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 418,
           "minimumHttpBodyExceedsLimit": false
@@ -2932,6 +3190,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 232,
           "minimumHttpBodyExceedsLimit": false
@@ -2946,6 +3205,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 321,
           "minimumHttpBodyExceedsLimit": false
@@ -2964,6 +3224,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 290,
           "minimumHttpBodyExceedsLimit": false
@@ -2982,6 +3243,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 110,
           "minimumHttpBodyExceedsLimit": false
@@ -2996,6 +3258,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 135,
           "minimumHttpBodyExceedsLimit": false
@@ -3010,6 +3273,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 147,
           "minimumHttpBodyExceedsLimit": false
@@ -3028,6 +3292,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 359,
           "minimumHttpBodyExceedsLimit": false
@@ -3046,6 +3311,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 121,
           "minimumHttpBodyExceedsLimit": false
@@ -3064,6 +3330,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1073,
           "minimumHttpBodyExceedsLimit": false
@@ -3078,6 +3345,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 143,
           "minimumHttpBodyExceedsLimit": false
@@ -3096,6 +3364,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 478,
           "minimumHttpBodyExceedsLimit": false
@@ -3114,6 +3383,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 171,
           "minimumHttpBodyExceedsLimit": false
@@ -3132,6 +3402,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 413,
           "minimumHttpBodyExceedsLimit": false
@@ -3146,6 +3417,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 111,
           "minimumHttpBodyExceedsLimit": false
@@ -3164,6 +3436,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 356,
           "minimumHttpBodyExceedsLimit": false
@@ -3182,6 +3455,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 141,
           "minimumHttpBodyExceedsLimit": false
@@ -3200,6 +3474,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 299,
           "minimumHttpBodyExceedsLimit": false
@@ -3218,6 +3493,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 104,
           "minimumHttpBodyExceedsLimit": false
@@ -3236,6 +3512,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 102,
           "minimumHttpBodyExceedsLimit": false
@@ -3254,6 +3531,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 408,
           "minimumHttpBodyExceedsLimit": false
@@ -3272,6 +3550,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 255,
           "minimumHttpBodyExceedsLimit": false
@@ -3292,6 +3571,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1125,
           "minimumHttpBodyExceedsLimit": false
@@ -3310,6 +3590,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 380,
           "minimumHttpBodyExceedsLimit": false
@@ -3328,6 +3609,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 577,
           "minimumHttpBodyExceedsLimit": false
@@ -3346,6 +3628,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 396,
           "minimumHttpBodyExceedsLimit": false
@@ -3364,6 +3647,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 348,
           "minimumHttpBodyExceedsLimit": false
@@ -3382,6 +3666,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 230,
           "minimumHttpBodyExceedsLimit": false
@@ -3396,6 +3681,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1364,
           "minimumHttpBodyExceedsLimit": false
@@ -3410,6 +3696,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1176,
           "minimumHttpBodyExceedsLimit": false
@@ -3424,6 +3711,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 450,
           "minimumHttpBodyExceedsLimit": false
@@ -3442,6 +3730,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 108,
           "minimumHttpBodyExceedsLimit": false
@@ -3460,6 +3749,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 286,
           "minimumHttpBodyExceedsLimit": false
@@ -3478,6 +3768,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 129,
           "minimumHttpBodyExceedsLimit": false
@@ -3492,6 +3783,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 163,
           "minimumHttpBodyExceedsLimit": false
@@ -3510,6 +3802,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 372,
           "minimumHttpBodyExceedsLimit": false
@@ -3528,6 +3821,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 987,
           "minimumHttpBodyExceedsLimit": false
@@ -3546,6 +3840,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1852,
           "minimumHttpBodyExceedsLimit": false
@@ -3564,6 +3859,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1614,
           "minimumHttpBodyExceedsLimit": false
@@ -3582,6 +3878,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1077,
           "minimumHttpBodyExceedsLimit": false
@@ -3596,6 +3893,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1174,
           "minimumHttpBodyExceedsLimit": false
@@ -3614,6 +3912,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1881,
           "minimumHttpBodyExceedsLimit": false
@@ -3632,6 +3931,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 192,
           "minimumHttpBodyExceedsLimit": false
@@ -3650,6 +3950,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1354,
           "minimumHttpBodyExceedsLimit": false
@@ -3664,6 +3965,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 373,
           "minimumHttpBodyExceedsLimit": false
@@ -3682,6 +3984,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 730,
           "minimumHttpBodyExceedsLimit": false
@@ -3696,6 +3999,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 65,
           "minimumHttpBodyExceedsLimit": false
@@ -3710,6 +4014,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 75,
           "minimumHttpBodyExceedsLimit": false
@@ -3728,6 +4033,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 495,
           "minimumHttpBodyExceedsLimit": false
@@ -3742,6 +4048,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 319,
           "minimumHttpBodyExceedsLimit": false
@@ -3760,6 +4067,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 530,
           "minimumHttpBodyExceedsLimit": false
@@ -3778,6 +4086,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 351,
           "minimumHttpBodyExceedsLimit": false
@@ -3796,6 +4105,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 625,
           "minimumHttpBodyExceedsLimit": false
@@ -3814,6 +4124,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 291,
           "minimumHttpBodyExceedsLimit": false
@@ -3828,6 +4139,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 874,
           "minimumHttpBodyExceedsLimit": false
@@ -3846,6 +4158,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 564,
           "minimumHttpBodyExceedsLimit": false
@@ -3860,6 +4173,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 179,
           "minimumHttpBodyExceedsLimit": false
@@ -3878,6 +4192,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 517,
           "minimumHttpBodyExceedsLimit": false
@@ -3892,6 +4207,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 476,
           "minimumHttpBodyExceedsLimit": false
@@ -3906,6 +4222,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 148,
           "minimumHttpBodyExceedsLimit": false
@@ -3924,6 +4241,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 200,
           "minimumHttpBodyExceedsLimit": false
@@ -3942,6 +4260,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 320,
           "minimumHttpBodyExceedsLimit": false
@@ -3960,6 +4279,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 161,
           "minimumHttpBodyExceedsLimit": false
@@ -3974,6 +4294,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 118,
           "minimumHttpBodyExceedsLimit": false
@@ -3992,6 +4313,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 366,
           "minimumHttpBodyExceedsLimit": false
@@ -4010,6 +4332,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 102,
           "minimumHttpBodyExceedsLimit": false
@@ -4024,6 +4347,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 121,
           "minimumHttpBodyExceedsLimit": false
@@ -4042,6 +4366,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 190,
           "minimumHttpBodyExceedsLimit": false
@@ -4060,6 +4385,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 459,
           "minimumHttpBodyExceedsLimit": false
@@ -4078,6 +4404,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 248,
           "minimumHttpBodyExceedsLimit": false
@@ -4096,6 +4423,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 420,
           "minimumHttpBodyExceedsLimit": false
@@ -4114,6 +4442,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 307,
           "minimumHttpBodyExceedsLimit": false
@@ -4132,6 +4461,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 378,
           "minimumHttpBodyExceedsLimit": false
@@ -4146,6 +4476,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 83,
           "minimumHttpBodyExceedsLimit": false
@@ -4164,6 +4495,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 150,
           "minimumHttpBodyExceedsLimit": false
@@ -4182,6 +4514,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1281,
           "minimumHttpBodyExceedsLimit": false
@@ -4196,6 +4529,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 247,
           "minimumHttpBodyExceedsLimit": false
@@ -4214,6 +4548,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 580,
           "minimumHttpBodyExceedsLimit": false
@@ -4228,6 +4563,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 53,
           "minimumHttpBodyExceedsLimit": false
@@ -4242,6 +4578,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 489,
           "minimumHttpBodyExceedsLimit": false
@@ -4260,6 +4597,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 192,
           "minimumHttpBodyExceedsLimit": false
@@ -4274,6 +4612,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 57,
           "minimumHttpBodyExceedsLimit": false
@@ -4288,6 +4627,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 176,
           "minimumHttpBodyExceedsLimit": false
@@ -4302,6 +4642,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 317,
           "minimumHttpBodyExceedsLimit": false
@@ -4320,6 +4661,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1351,
           "minimumHttpBodyExceedsLimit": false
@@ -4334,6 +4676,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 137,
           "minimumHttpBodyExceedsLimit": false
@@ -4352,6 +4695,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 365,
           "minimumHttpBodyExceedsLimit": false
@@ -4370,6 +4714,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1379,
           "minimumHttpBodyExceedsLimit": false
@@ -4388,6 +4733,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 840,
           "minimumHttpBodyExceedsLimit": false
@@ -4406,6 +4752,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 364,
           "minimumHttpBodyExceedsLimit": false
@@ -4424,6 +4771,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 395,
           "minimumHttpBodyExceedsLimit": false
@@ -4442,6 +4790,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 430,
           "minimumHttpBodyExceedsLimit": false
@@ -4460,44 +4809,9 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 74,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-admin/lib/api/graphql/mutations/taxations/index.ts",
-          "line": 1,
-          "sha256": "039f7175847ecfe1f4e6d0ec6a16b091d1508c194100fe5ccf73213906c5ff9f",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "CreateTaxation",
-              "roots": ["createTaxation"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 171,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-admin/lib/api/graphql/mutations/taxations/index.ts",
-          "line": 1,
-          "sha256": "24c869cb5800f4d2159e173f4f17cb2cd126385251801f95d193b63b778eac3c",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "editTaxation",
-              "roots": ["editTaxation"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 167,
           "minimumHttpBodyExceedsLimit": false
         }
       ]
@@ -4505,13 +4819,491 @@
     {
       "app": "enatega-multivendor-app",
       "filesScanned": 790,
-      "totalDocuments": 122,
-      "validDocuments": 122,
+      "totalDocuments": 183,
+      "validDocuments": 183,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
       "sourceErrors": [],
       "documents": [
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 3,
+          "sha256": "8830b37ec803372c9f94d3482b613c617ada6852be0dae035f931370f4ec8a9b",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "UploadImageToS3",
+              "roots": ["uploadImageToS3"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 113,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 9,
+          "sha256": "624340dfb9aeb05e13c2974721a93ae3c3a7872f17d176525f265b7fbf403945",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "SendChatMessage",
+              "roots": ["sendChatMessage"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 308,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 27,
+          "sha256": "b173a899c18ff4b580182329ce0bf8ce6569ddd55b6dfbeb35c9e66daf59d896",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "PlaceOrder",
+              "roots": ["placeOrder"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1808,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 106,
+          "sha256": "95134942d40c610d0548c7ab80ed738c6dba94861e90a93bd0cd00f76b8251f9",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "mutation", "name": "PushToken", "roots": ["pushToken"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 118,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 113,
+          "sha256": "a2e2c6b6af5923fbbcedde8ad485a5c04e11d158b9952180e9dcefdd127f6b00",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "ForgotPassword",
+              "roots": ["forgotPassword"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 109,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 119,
+          "sha256": "3d426ed297d65f96768ccd2a97c3d1143fe533b37f8e2e075d58dcd5778d1ee9",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "ResetPassword",
+              "roots": ["resetPassword"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 174,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 125,
+          "sha256": "d2ea3f62cebf5a07b1516bf2f56c815d29d3035f02648f6f0025ac44898a47c4",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "mutation", "name": "Coupon", "roots": ["coupon"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 235,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 138,
+          "sha256": "d2ab42035d4bd2d51be9f5fffcfd7ca635434061bd2250364decf25401684e78",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "DeleteAddress",
+              "roots": ["deleteAddress"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 225,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 151,
+          "sha256": "caf935860296e9798c60b4512929dc5c8b5e2b819ac3de29da7c4021b612a4dd",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "DeleteBulkAddresses",
+              "roots": ["deleteBulkAddresses"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 243,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 164,
+          "sha256": "44dcf803097c6d586505d8b2482f79953ee60765e25533096cffcc47f00e6c2f",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "CreateAddress",
+              "roots": ["createAddress"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 281,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 178,
+          "sha256": "5a1be6904bf59c1c2189cfff3b2d99a2698804623aaa023b8b5ec31f1c8ebc92",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "EditAddress",
+              "roots": ["editAddress"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 277,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 192,
+          "sha256": "1c06079cbb739bd131364ed71cb50de829e5b9ef6c46eca3f2cb3adb45f20fab",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "ChangePassword",
+              "roots": ["changePassword"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 158,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 196,
+          "sha256": "3eaa77f80a10428402ebf149dc9c444b83ac6aab61462662422c3be6d254ab70",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "SelectAddress",
+              "roots": ["selectAddress"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 245,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 210,
+          "sha256": "e3620a70eaf737365ec4f747a7dd1a546a05513436e15314807cd1df8ccd2aab",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "ReviewOrder",
+              "roots": ["reviewOrder"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1313,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 294,
+          "sha256": "ada2837fbb8b459e370020a0b8503c8891693351fb38acb4dee23223271b8331",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "AddFavourite",
+              "roots": ["addFavourite"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 243,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 308,
+          "sha256": "e2f310303f49814af0743f473b39e12fe09da6ae00537adfe7a67d9882698bf8",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "EmailExist",
+              "roots": ["emailExist"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 82,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 313,
+          "sha256": "61218ab9b488e978cb55874f0d6e01524ec2c037092e15f4a3b0e9e8daff4e52",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "PhoneExist",
+              "roots": ["phoneExist"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 82,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 318,
+          "sha256": "850626b510862df49495ecb91912e51ed5d112f7c7f5ba8c254297e589bce07c",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "SendOtpToEmail",
+              "roots": ["sendOtpToEmail"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 109,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 325,
+          "sha256": "6c3f2d9e46a29f9ae5284f5e576b0b86d248b08acf0c3ef4d7974eccc44c6381",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "SendOtpToPhoneNumber",
+              "roots": ["sendOtpToPhoneNumber"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 121,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 332,
+          "sha256": "7e1f9b32c98c46289cd08b2dfbb4700f05ac7553d48d5cf812c77c27a5a4c326",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "deactivated",
+              "roots": ["Deactivate"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 146,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 339,
+          "sha256": "d6f5a18cb6d552c07eb5fe557b9aeaf207f89dae3c2324c661569489edcc836e",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "mutation", "name": "Login", "roots": ["login"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 505,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 353,
+          "sha256": "e2632068054a97dd3689a65d3333d6a524deed90618949e636953f537eebc155",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "CreateUser",
+              "roots": ["createUser"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 508,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 374,
+          "sha256": "dfd05cce2ae903a9f692a0b89b7060584024e0eb2fa34b88d7c235f7762edfac",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "UpdateUser",
+              "roots": ["updateUser"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 342,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 385,
+          "sha256": "9a666c815de4c9a990e7accab35bb9b6a07ad459cd4b4658b04493d63799b96b",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "UpdateNotificationStatus",
+              "roots": ["updateNotificationStatus"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 319,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 395,
+          "sha256": "198e31125cd0910d7023cfe89656b1544cb65e30f06ac59b93db62816e5348ff",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "mutation", "name": null, "roots": ["abortOrder"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 116,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/mutations.js",
+          "line": 403,
+          "sha256": "007cfdaccd28f523ce88314475880e3b734c41d3cc8a29f61a55205ceeef7499",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "createActivity",
+              "roots": ["createActivity"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 271,
+          "minimumHttpBodyExceedsLimit": false
+        },
         {
           "file": "enatega-multivendor-app/src/apollo/mutations.js",
           "line": 421,
@@ -4526,6 +5318,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 316,
           "minimumHttpBodyExceedsLimit": false
@@ -4544,6 +5337,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 214,
           "minimumHttpBodyExceedsLimit": false
@@ -4558,6 +5352,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 155,
           "minimumHttpBodyExceedsLimit": false
@@ -4576,8 +5371,24 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 184,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 3,
+          "sha256": "bc70b7cc56b477abaf4fca14bed6f5bff4330eb715521d92fa7e1667f2ae2ab1",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Users", "roots": ["users"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 64,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -4594,6 +5405,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 430,
           "minimumHttpBodyExceedsLimit": false
@@ -4612,6 +5424,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 420,
           "minimumHttpBodyExceedsLimit": false
@@ -4630,6 +5443,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 307,
           "minimumHttpBodyExceedsLimit": false
@@ -4648,8 +5462,213 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 378,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 114,
+          "sha256": "4be86c7276e87ab8c92d6d548ccee95e4f4136dd36dea0a184f1739fe71b0c14",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 4042,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 361,
+          "sha256": "759fe8f15c0e966fd1fcf3a265aeb0895302eeaae709b4f61349b713d5babefe",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 344,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 388,
+          "sha256": "364308284cf27c1301ea71af578c9c1e25885ed2bc8d84bcfb81b8b9b53cb0c9",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": null, "roots": ["profile"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 369,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 413,
+          "sha256": "e5197dd211dc76e96c633ee50dfa02d8248d5bdb8c6369464f112061792b7aa1",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "GetCountryByIso",
+              "roots": ["getCountryByIso"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 166,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 424,
+          "sha256": "89b8c17d94d7775f693bd6915a18426c8ac2373c65974cf29984c41aba676048",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Order", "roots": ["order"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 891,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 490,
+          "sha256": "77f816625588af8f4e06685441ca2c9ce6c89eba7b762d106905517f408544a0",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "OrderTracking",
+              "roots": ["orderTracking"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 499,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 501,
+          "sha256": "96b1ae09e4c61684f13ec29aa7967420b554d3740cf2e44ca526fc75891b3f21",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Orders", "roots": ["orders"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1605,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 679,
+          "sha256": "6d9059a11e162485c81d0c298a8b7b57a36fdf701b9f2445fcdf6a351877d644",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "GetUsersActiveOrders",
+              "roots": ["getUsersActiveOrders"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1689,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 684,
+          "sha256": "d195d18ae8d70c78bb8fa05beb9efa4bf85dbe01ffca0ab230a116ab05668755",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "GetUsersPastOrders",
+              "roots": ["getUsersPastOrders"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1685,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 689,
+          "sha256": "b72ec0f7c7688bc6c5960dd5a92233022f3f2785021119cfb1f847a62d960566",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "Configuration",
+              "roots": ["configuration"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 374,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 709,
+          "sha256": "c71be95f861ee94c346d009db4b625a1b37c55e3edd6bd22dabaf1328ae121ea",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "Restaurants",
+              "roots": ["nearByRestaurants"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1671,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 800,
+          "sha256": "8502efd3fa26a75556c26f9e31fb30c673c6c9a692068557e5e923fce749b0d7",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "Restaurants",
+              "roots": ["nearByRestaurantsPreview"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 881,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -4666,8 +5685,188 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 530,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 850,
+          "sha256": "988e38dbf01be55ee48c19e7d9ea8971b2793602b06b615f22e98ffd75855728",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "TopRatedVendors",
+              "roots": ["topRatedVendors"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 375,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 873,
+          "sha256": "9eb4977d6dd7de2e35a383cd61568449d9ab6a265be219894677edb35f73c377",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Restaurant", "roots": ["restaurant"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1088,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 948,
+          "sha256": "2a34081c08a4166dfb19057c3e496353ea3786bdb020e958f478b8064301d1d3",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Cuisines", "roots": ["cuisines"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 111,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 958,
+          "sha256": "9f9066c08d96ea9b1f5a13955818a4a5f824fa4409ae56ab533d700b43781106",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Rider", "roots": ["rider"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 117,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 965,
+          "sha256": "3cd72aae91ecde11c033f5e4cec2423168c80215f0bdd0e5c0c9136f4709edfb",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Taxes", "roots": ["taxes"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 87,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 973,
+          "sha256": "6d769909a75901d472f4bc5127edf00424417ed67c4298bcf8dcd62c088026a3",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Tips", "roots": ["tips"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 83,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 981,
+          "sha256": "b167511ac52df59178eac4a185928510e40625f76483f4c844ba7988fd268e96",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "UserFavourite",
+              "roots": ["userFavourite"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 975,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1041,
+          "sha256": "99f6128c44623d45a9c1c13a22ce92ac1d5f1bf9bea4e56a9b1631496821947d",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1240,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1116,
+          "sha256": "1eebcf1fcb7dca1bf075dbdaa259a8edfbc4a77274b37cfb0ed6d27a2e6dd003",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "fetchCategoryDetailsByStoreIdForMobile",
+              "roots": ["fetchCategoryDetailsByStoreIdForMobile"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 197,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1125,
+          "sha256": "93c91fa470434f99b3fa09409fed4ea1b09f25cf0d914fe38dfbe82c1c7cd956",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "popularFoodItems",
+              "roots": ["popularFoodItems"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 345,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1146,
+          "sha256": "b1a9dcb54729a2d7436d90a8bcc281cf77ab05738b71c768f0b753449867b3c5",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Chat", "roots": ["chat"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 158,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -4684,6 +5883,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 547,
           "minimumHttpBodyExceedsLimit": false
@@ -4702,6 +5902,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 392,
           "minimumHttpBodyExceedsLimit": false
@@ -4720,6 +5921,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 666,
           "minimumHttpBodyExceedsLimit": false
@@ -4738,13 +5940,110 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 392,
           "minimumHttpBodyExceedsLimit": false
         },
         {
           "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1298,
+          "line": 1227,
+          "sha256": "259fb9f346c83c160bc23f7bb5aa0186c71d9dfd75feb87a52a815ecb4be3492",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "RelatedItems",
+              "roots": ["relatedItems"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 139,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1231,
+          "sha256": "9c4ea9159ee9b50b8caf5b8a0d30f90c0b547b30f6f47d51446865df89f2b3dc",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 177,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1248,
+          "sha256": "7511704afc7ae5b1c231508ac3df918ffdba5e39807733a0a0504f0fdff34f40",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "PopularItems",
+              "roots": ["popularItems"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 130,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1256,
+          "sha256": "8148ca362cbf57bcdf6ef1da3c799a25fc86e07fcc8102c773f07c1fdef11382",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Banners", "roots": ["banners"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 135,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1268,
+          "sha256": "ef8dea2ab3124bf0047af4256213ea39641dc02c11e823f1c4e76d9015096fe7",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Zones", "roots": ["zones"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 137,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1279,
+          "sha256": "35af1fdf0c9aef76b6ef0bbe1ecf9ba4dedcf8c14dbe0e6d6863134928022980",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "GetVersions", "roots": ["getVersions"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 115,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1290,
           "sha256": "6b6d706cd69be3c1f05261a4022eaf013bcf01e568a5f866c48e603f30b6fad8",
           "status": "VALID_STATIC_DOCUMENT",
           "operations": [
@@ -4756,13 +6055,14 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 102,
           "minimumHttpBodyExceedsLimit": false
         },
         {
           "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1308,
+          "line": 1300,
           "sha256": "3d13df5c15063a3afccd8aee29dcdb886c0df65dcdf839a79dde6a2b03f8abd8",
           "status": "VALID_STATIC_DOCUMENT",
           "operations": [
@@ -4774,13 +6074,14 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 187,
           "minimumHttpBodyExceedsLimit": false
         },
         {
           "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1317,
+          "line": 1309,
           "sha256": "ebf292ff1b8b0562b6ff8aca4f2a265fa1c6706bdc0b07e9ef5290b21cc8669c",
           "status": "VALID_STATIC_DOCUMENT",
           "operations": [
@@ -4792,8 +6093,123 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 135,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1336,
+          "sha256": "4e0a26804cc62e6203fcc9eb125d250352c1c0ae2a4dc2b4b79a151d3c33aa60",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "NearByRestaurantsCuisines",
+              "roots": ["nearByRestaurantsCuisines"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 287,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/subscriptions.js",
+          "line": 1,
+          "sha256": "023b59310489a4fdeff851e9f24760ac573d4e56ad8330d8efd42bfa0f23bb6d",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "subscription",
+              "name": "SubscriptionOrder",
+              "roots": ["subscriptionOrder"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 468,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/subscriptions.js",
+          "line": 18,
+          "sha256": "aa8ffd24934fc5f761d9e1e0dc5aead28c2532b5706ec7d14c21446463c129ab",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "subscription",
+              "name": "SubscriptionOrderTracking",
+              "roots": ["subscriptionOrderTracking"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 534,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/subscriptions.js",
+          "line": 33,
+          "sha256": "ad524f84c19d81fb620cbf67474adce58f6b281ca4ac0278e45abae18b3058e9",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "subscription",
+              "name": "SubscriptionRiderLocation",
+              "roots": ["subscriptionRiderLocation"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 180,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/subscriptions.js",
+          "line": 40,
+          "sha256": "d58c638e95a18a7b90f2a6281da11d2d9f3386e6a8ed326db5fed82aed1ac132",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "subscription",
+              "name": "OrderStatusChanged",
+              "roots": ["orderStatusChanged"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1582,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/subscriptions.js",
+          "line": 130,
+          "sha256": "d4f7e2c953b1e4f35995d9cbc3a894f313d2748fe7df00306e3ff23b5fff654c",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "subscription",
+              "name": "SubscriptionNewMessage",
+              "roots": ["subscriptionNewMessage"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 201,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -4810,6 +6226,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 342,
           "minimumHttpBodyExceedsLimit": false
@@ -4828,6 +6245,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 243,
           "minimumHttpBodyExceedsLimit": false
@@ -4842,8 +6260,22 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 369,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/components/ItemDetail/Row.js",
+          "line": 17,
+          "sha256": "9c4ea9159ee9b50b8caf5b8a0d30f90c0b547b30f6f47d51446865df89f2b3dc",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 177,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -4860,6 +6292,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 139,
           "minimumHttpBodyExceedsLimit": false
@@ -4874,6 +6307,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1088,
           "minimumHttpBodyExceedsLimit": false
@@ -4892,6 +6326,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 468,
           "minimumHttpBodyExceedsLimit": false
@@ -4910,6 +6345,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 243,
           "minimumHttpBodyExceedsLimit": false
@@ -4924,6 +6360,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 369,
           "minimumHttpBodyExceedsLimit": false
@@ -4942,6 +6379,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 975,
           "minimumHttpBodyExceedsLimit": false
@@ -4960,6 +6398,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 243,
           "minimumHttpBodyExceedsLimit": false
@@ -4974,6 +6413,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 369,
           "minimumHttpBodyExceedsLimit": false
@@ -4992,6 +6432,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 975,
           "minimumHttpBodyExceedsLimit": false
@@ -5010,6 +6451,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 468,
           "minimumHttpBodyExceedsLimit": false
@@ -5028,6 +6470,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 468,
           "minimumHttpBodyExceedsLimit": false
@@ -5046,6 +6489,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 468,
           "minimumHttpBodyExceedsLimit": false
@@ -5060,6 +6504,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 117,
           "minimumHttpBodyExceedsLimit": false
@@ -5078,6 +6523,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 180,
           "minimumHttpBodyExceedsLimit": false
@@ -5092,6 +6538,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 891,
           "minimumHttpBodyExceedsLimit": false
@@ -5110,6 +6557,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1313,
           "minimumHttpBodyExceedsLimit": false
@@ -5124,6 +6572,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 115,
           "minimumHttpBodyExceedsLimit": false
@@ -5142,6 +6591,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 374,
           "minimumHttpBodyExceedsLimit": false
@@ -5160,6 +6610,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 355,
           "minimumHttpBodyExceedsLimit": false
@@ -5174,6 +6625,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 137,
           "minimumHttpBodyExceedsLimit": false
@@ -5192,6 +6644,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1689,
           "minimumHttpBodyExceedsLimit": false
@@ -5210,6 +6663,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1685,
           "minimumHttpBodyExceedsLimit": false
@@ -5228,6 +6682,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1582,
           "minimumHttpBodyExceedsLimit": false
@@ -5246,6 +6701,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1984,
           "minimumHttpBodyExceedsLimit": false
@@ -5260,6 +6716,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 369,
           "minimumHttpBodyExceedsLimit": false
@@ -5278,6 +6735,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 429,
           "minimumHttpBodyExceedsLimit": false
@@ -5292,6 +6750,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 118,
           "minimumHttpBodyExceedsLimit": false
@@ -5306,6 +6765,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 118,
           "minimumHttpBodyExceedsLimit": false
@@ -5324,6 +6784,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 319,
           "minimumHttpBodyExceedsLimit": false
@@ -5342,6 +6803,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 146,
           "minimumHttpBodyExceedsLimit": false
@@ -5360,6 +6822,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 158,
           "minimumHttpBodyExceedsLimit": false
@@ -5378,6 +6841,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 225,
           "minimumHttpBodyExceedsLimit": false
@@ -5396,6 +6860,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 243,
           "minimumHttpBodyExceedsLimit": false
@@ -5410,6 +6875,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 83,
           "minimumHttpBodyExceedsLimit": false
@@ -5428,6 +6894,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 139,
           "minimumHttpBodyExceedsLimit": false
@@ -5442,8 +6909,22 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1088,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/screens/Cart/Section.js",
+          "line": 20,
+          "sha256": "9c4ea9159ee9b50b8caf5b8a0d30f90c0b547b30f6f47d51446865df89f2b3dc",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 177,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -5460,6 +6941,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 245,
           "minimumHttpBodyExceedsLimit": false
@@ -5474,6 +6956,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 158,
           "minimumHttpBodyExceedsLimit": false
@@ -5492,6 +6975,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 308,
           "minimumHttpBodyExceedsLimit": false
@@ -5510,6 +6994,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 113,
           "minimumHttpBodyExceedsLimit": false
@@ -5528,6 +7013,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 201,
           "minimumHttpBodyExceedsLimit": false
@@ -5546,6 +7032,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1808,
           "minimumHttpBodyExceedsLimit": false
@@ -5560,6 +7047,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 83,
           "minimumHttpBodyExceedsLimit": false
@@ -5574,6 +7062,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 235,
           "minimumHttpBodyExceedsLimit": false
@@ -5592,6 +7081,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 55,
           "minimumHttpBodyExceedsLimit": false
@@ -5606,6 +7096,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 505,
           "minimumHttpBodyExceedsLimit": false
@@ -5620,6 +7111,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 505,
           "minimumHttpBodyExceedsLimit": false
@@ -5638,6 +7130,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 277,
           "minimumHttpBodyExceedsLimit": false
@@ -5656,6 +7149,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 975,
           "minimumHttpBodyExceedsLimit": false
@@ -5674,6 +7168,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 109,
           "minimumHttpBodyExceedsLimit": false
@@ -5692,6 +7187,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 174,
           "minimumHttpBodyExceedsLimit": false
@@ -5706,6 +7202,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 505,
           "minimumHttpBodyExceedsLimit": false
@@ -5724,6 +7221,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 82,
           "minimumHttpBodyExceedsLimit": false
@@ -5742,6 +7240,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 881,
           "minimumHttpBodyExceedsLimit": false
@@ -5760,6 +7259,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 245,
           "minimumHttpBodyExceedsLimit": false
@@ -5774,6 +7274,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 135,
           "minimumHttpBodyExceedsLimit": false
@@ -5788,6 +7289,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 111,
           "minimumHttpBodyExceedsLimit": false
@@ -5806,6 +7308,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 245,
           "minimumHttpBodyExceedsLimit": false
@@ -5820,6 +7323,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 111,
           "minimumHttpBodyExceedsLimit": false
@@ -5838,6 +7342,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 287,
           "minimumHttpBodyExceedsLimit": false
@@ -5856,6 +7361,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 281,
           "minimumHttpBodyExceedsLimit": false
@@ -5870,6 +7376,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 116,
           "minimumHttpBodyExceedsLimit": false
@@ -5888,6 +7395,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 468,
           "minimumHttpBodyExceedsLimit": false
@@ -5906,6 +7414,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 201,
           "minimumHttpBodyExceedsLimit": false
@@ -5924,6 +7433,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 499,
           "minimumHttpBodyExceedsLimit": false
@@ -5942,6 +7452,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 534,
           "minimumHttpBodyExceedsLimit": false
@@ -5960,6 +7471,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 109,
           "minimumHttpBodyExceedsLimit": false
@@ -5978,6 +7490,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 508,
           "minimumHttpBodyExceedsLimit": false
@@ -5996,6 +7509,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 109,
           "minimumHttpBodyExceedsLimit": false
@@ -6014,6 +7528,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 121,
           "minimumHttpBodyExceedsLimit": false
@@ -6032,6 +7547,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 342,
           "minimumHttpBodyExceedsLimit": false
@@ -6046,6 +7562,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1605,
           "minimumHttpBodyExceedsLimit": false
@@ -6064,6 +7581,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 342,
           "minimumHttpBodyExceedsLimit": false
@@ -6082,6 +7600,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 158,
           "minimumHttpBodyExceedsLimit": false
@@ -6100,6 +7619,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 975,
           "minimumHttpBodyExceedsLimit": false
@@ -6118,6 +7638,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1313,
           "minimumHttpBodyExceedsLimit": false
@@ -6136,6 +7657,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 82,
           "minimumHttpBodyExceedsLimit": false
@@ -6154,8 +7676,22 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 130,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/screens/Restaurant/Restaurant.js",
+          "line": 54,
+          "sha256": "c405910f5d258420168fb8657f46acc0a37a32f967ea400786f55c092432bead",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 177,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -6172,6 +7708,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 430,
           "minimumHttpBodyExceedsLimit": false
@@ -6190,6 +7727,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 281,
           "minimumHttpBodyExceedsLimit": false
@@ -6208,6 +7746,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 277,
           "minimumHttpBodyExceedsLimit": false
@@ -6226,6 +7765,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 881,
           "minimumHttpBodyExceedsLimit": false
@@ -6244,6 +7784,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 530,
           "minimumHttpBodyExceedsLimit": false
@@ -6262,6 +7803,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 547,
           "minimumHttpBodyExceedsLimit": false
@@ -6280,6 +7822,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 666,
           "minimumHttpBodyExceedsLimit": false
@@ -6294,6 +7837,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 118,
           "minimumHttpBodyExceedsLimit": false
@@ -6312,6 +7856,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 319,
           "minimumHttpBodyExceedsLimit": false
@@ -6326,6 +7871,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 369,
           "minimumHttpBodyExceedsLimit": false
@@ -6340,6 +7886,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1605,
           "minimumHttpBodyExceedsLimit": false
@@ -6354,6 +7901,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1088,
           "minimumHttpBodyExceedsLimit": false
@@ -6372,6 +7920,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 881,
           "minimumHttpBodyExceedsLimit": false
@@ -6390,6 +7939,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 530,
           "minimumHttpBodyExceedsLimit": false
@@ -6408,8 +7958,22 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 130,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/ui/hooks/useRestaurantScreenData.js",
+          "line": 17,
+          "sha256": "c405910f5d258420168fb8657f46acc0a37a32f967ea400786f55c092432bead",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 177,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -6426,6 +7990,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 345,
           "minimumHttpBodyExceedsLimit": false
@@ -6444,6 +8009,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 345,
           "minimumHttpBodyExceedsLimit": false
@@ -6462,6 +8028,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 197,
           "minimumHttpBodyExceedsLimit": false
@@ -6480,6 +8047,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 405,
           "minimumHttpBodyExceedsLimit": false
@@ -6498,94 +8066,9 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 194,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1,
-          "sha256": "e5197dd211dc76e96c633ee50dfa02d8248d5bdb8c6369464f112061792b7aa1",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "GetCountryByIso",
-              "roots": ["getCountryByIso"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 166,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1,
-          "sha256": "c71be95f861ee94c346d009db4b625a1b37c55e3edd6bd22dabaf1328ae121ea",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "Restaurants",
-              "roots": ["nearByRestaurants"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 1671,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1,
-          "sha256": "3cd72aae91ecde11c033f5e4cec2423168c80215f0bdd0e5c0c9136f4709edfb",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            { "kind": "query", "name": "Taxes", "roots": ["taxes"] }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 87,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1,
-          "sha256": "988e38dbf01be55ee48c19e7d9ea8971b2793602b06b615f22e98ffd75855728",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "TopRatedVendors",
-              "roots": ["topRatedVendors"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 375,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-app/src/apollo/mutations.js",
-          "line": 1,
-          "sha256": "007cfdaccd28f523ce88314475880e3b734c41d3cc8a29f61a55205ceeef7499",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "createActivity",
-              "roots": ["createActivity"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 271,
           "minimumHttpBodyExceedsLimit": false
         }
       ]
@@ -6593,8 +8076,8 @@
     {
       "app": "enatega-multivendor-store",
       "filesScanned": 259,
-      "totalDocuments": 26,
-      "validDocuments": 26,
+      "totalDocuments": 33,
+      "validDocuments": 33,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -6614,6 +8097,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 263,
           "minimumHttpBodyExceedsLimit": false
@@ -6632,6 +8116,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 206,
           "minimumHttpBodyExceedsLimit": false
@@ -6650,6 +8135,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 328,
           "minimumHttpBodyExceedsLimit": false
@@ -6668,6 +8154,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 314,
           "minimumHttpBodyExceedsLimit": false
@@ -6682,6 +8169,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 83,
           "minimumHttpBodyExceedsLimit": false
@@ -6700,6 +8188,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 283,
           "minimumHttpBodyExceedsLimit": false
@@ -6718,6 +8207,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 150,
           "minimumHttpBodyExceedsLimit": false
@@ -6736,6 +8226,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 337,
           "minimumHttpBodyExceedsLimit": false
@@ -6754,6 +8245,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 168,
           "minimumHttpBodyExceedsLimit": false
@@ -6772,6 +8264,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 181,
           "minimumHttpBodyExceedsLimit": false
@@ -6790,6 +8283,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 131,
           "minimumHttpBodyExceedsLimit": false
@@ -6808,6 +8302,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 532,
           "minimumHttpBodyExceedsLimit": false
@@ -6822,6 +8317,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 470,
           "minimumHttpBodyExceedsLimit": false
@@ -6836,6 +8332,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1541,
           "minimumHttpBodyExceedsLimit": false
@@ -6854,6 +8351,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1674,
           "minimumHttpBodyExceedsLimit": false
@@ -6868,6 +8366,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 349,
           "minimumHttpBodyExceedsLimit": false
@@ -6882,6 +8381,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 219,
           "minimumHttpBodyExceedsLimit": false
@@ -6900,6 +8400,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 145,
           "minimumHttpBodyExceedsLimit": false
@@ -6918,6 +8419,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 180,
           "minimumHttpBodyExceedsLimit": false
@@ -6932,6 +8434,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 502,
           "minimumHttpBodyExceedsLimit": false
@@ -6950,6 +8453,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 598,
           "minimumHttpBodyExceedsLimit": false
@@ -6964,6 +8468,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 385,
           "minimumHttpBodyExceedsLimit": false
@@ -6982,6 +8487,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1820,
           "minimumHttpBodyExceedsLimit": false
@@ -7000,6 +8506,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 380,
           "minimumHttpBodyExceedsLimit": false
@@ -7018,6 +8525,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 380,
           "minimumHttpBodyExceedsLimit": false
@@ -7036,8 +8544,146 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 184,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-store/scripts/check-single-vendor-store-auth.js",
+          "line": 105,
+          "sha256": "dbfdaec13f7479d1949b331ca8b113da9e5c4abf1e1db79ec2c0bedff59d5700",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "subscription",
+              "name": "StoreOrderHandshake",
+              "roots": ["subscribePlaceOrder"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 184,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-store/scripts/check-single-vendor-store-auth.js",
+          "line": 161,
+          "sha256": "4dc1288ced21e86bc5fee7b22b95d10103dc9fa546518ddf88676524f1a3c6d5",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "StoreLoginSmokeTest",
+              "roots": ["restaurantLogin"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 182,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-store/scripts/check-single-vendor-store-auth.js",
+          "line": 181,
+          "sha256": "e520861c309044111bae737fbb50a98935a360187e29f91d95a37300b5a079da",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "StoreConfigurationSmokeTest",
+              "roots": ["configuration"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 145,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-store/scripts/check-single-vendor-store-auth.js",
+          "line": 197,
+          "sha256": "373321177ab413b5d0c8919fe09fb0191a06654b5bb15e623f40395cc86445f3",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "StoreProfileSmokeTest",
+              "roots": ["restaurant"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 334,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-store/scripts/check-single-vendor-store-auth.js",
+          "line": 225,
+          "sha256": "d0b85ed9a9171f82cbe24827266ad643acbaeeea50cdc04058889acf5931e2bc",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "StoreOrdersSmokeTest",
+              "roots": ["restaurantOrders"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 121,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-store/scripts/check-single-vendor-store-auth.js",
+          "line": 245,
+          "sha256": "88ed9e04333593cbb99960daa5cb2e0ba3b3032b5030d5cfa01b2906d0db525e",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "StoreEarningsGraphSmokeTest",
+              "roots": ["storeEarningsGraph"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 312,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-store/scripts/check-single-vendor-store-auth.js",
+          "line": 277,
+          "sha256": "02f964d0ffc45aa21fb3b08e2ad655e50fbeda58732ef199deee5775222c1e39",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "StoreWalletSmokeTest",
+              "roots": [
+                "earnings",
+                "storeCurrentWithdrawRequest",
+                "transactionHistory"
+              ]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 372,
           "minimumHttpBodyExceedsLimit": false
         }
       ]
@@ -7045,8 +8691,8 @@
     {
       "app": "enatega-multivendor-rider",
       "filesScanned": 317,
-      "totalDocuments": 51,
-      "validDocuments": 51,
+      "totalDocuments": 56,
+      "validDocuments": 56,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -7066,6 +8712,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 290,
           "minimumHttpBodyExceedsLimit": false
@@ -7084,6 +8731,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 126,
           "minimumHttpBodyExceedsLimit": false
@@ -7102,6 +8750,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 82,
           "minimumHttpBodyExceedsLimit": false
@@ -7120,6 +8769,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 82,
           "minimumHttpBodyExceedsLimit": false
@@ -7138,6 +8788,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 135,
           "minimumHttpBodyExceedsLimit": false
@@ -7156,6 +8807,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 147,
           "minimumHttpBodyExceedsLimit": false
@@ -7174,6 +8826,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 146,
           "minimumHttpBodyExceedsLimit": false
@@ -7188,6 +8841,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 455,
           "minimumHttpBodyExceedsLimit": false
@@ -7206,6 +8860,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 135,
           "minimumHttpBodyExceedsLimit": false
@@ -7224,6 +8879,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 148,
           "minimumHttpBodyExceedsLimit": false
@@ -7242,6 +8898,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 308,
           "minimumHttpBodyExceedsLimit": false
@@ -7260,6 +8917,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 307,
           "minimumHttpBodyExceedsLimit": false
@@ -7278,6 +8936,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 184,
           "minimumHttpBodyExceedsLimit": false
@@ -7296,6 +8955,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 167,
           "minimumHttpBodyExceedsLimit": false
@@ -7314,6 +8974,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 165,
           "minimumHttpBodyExceedsLimit": false
@@ -7328,6 +8989,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 116,
           "minimumHttpBodyExceedsLimit": false
@@ -7346,6 +9008,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1300,
           "minimumHttpBodyExceedsLimit": false
@@ -7364,6 +9027,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1775,
           "minimumHttpBodyExceedsLimit": false
@@ -7378,6 +9042,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 197,
           "minimumHttpBodyExceedsLimit": false
@@ -7396,6 +9061,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 365,
           "minimumHttpBodyExceedsLimit": false
@@ -7414,6 +9080,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 365,
           "minimumHttpBodyExceedsLimit": false
@@ -7432,6 +9099,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 97,
           "minimumHttpBodyExceedsLimit": false
@@ -7450,6 +9118,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 254,
           "minimumHttpBodyExceedsLimit": false
@@ -7468,6 +9137,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 254,
           "minimumHttpBodyExceedsLimit": false
@@ -7486,6 +9156,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 270,
           "minimumHttpBodyExceedsLimit": false
@@ -7504,6 +9175,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 372,
           "minimumHttpBodyExceedsLimit": false
@@ -7522,6 +9194,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 113,
           "minimumHttpBodyExceedsLimit": false
@@ -7540,6 +9213,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 133,
           "minimumHttpBodyExceedsLimit": false
@@ -7554,6 +9228,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 158,
           "minimumHttpBodyExceedsLimit": false
@@ -7568,6 +9243,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 159,
           "minimumHttpBodyExceedsLimit": false
@@ -7586,6 +9262,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 613,
           "minimumHttpBodyExceedsLimit": false
@@ -7600,6 +9277,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 878,
           "minimumHttpBodyExceedsLimit": false
@@ -7614,8 +9292,22 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1313,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/queries/order/order-2.query.ts",
+          "line": 3,
+          "sha256": "1823f3e5c9d01ccd73549db0cf9f3dfc021fcc3080d0e9309406836499e6bff8",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 998,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -7632,8 +9324,41 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 392,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/queries/resturant/configuration.query.ts",
+          "line": 1,
+          "sha256": "27e17edeb1f20d21920e2d55d64dccbdf2b1d7e7516a3484df17f52dcca6f8d4",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "Configuration",
+              "roots": ["configuration"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 126,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/queries/resturant/resturant-2.query.ts",
+          "line": 1,
+          "sha256": "e7b5d5fda0fa8678ad996d9b6f381698d3c86fa324933458517c6feb4e37fc8b",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "FRAGMENT_LIBRARY",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 352,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -7650,6 +9375,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1687,
           "minimumHttpBodyExceedsLimit": false
@@ -7668,6 +9394,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1066,
           "minimumHttpBodyExceedsLimit": false
@@ -7682,6 +9409,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 223,
           "minimumHttpBodyExceedsLimit": false
@@ -7700,6 +9428,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 145,
           "minimumHttpBodyExceedsLimit": false
@@ -7718,6 +9447,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 180,
           "minimumHttpBodyExceedsLimit": false
@@ -7732,6 +9462,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 808,
           "minimumHttpBodyExceedsLimit": false
@@ -7746,6 +9477,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 118,
           "minimumHttpBodyExceedsLimit": false
@@ -7760,6 +9492,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1434,
           "minimumHttpBodyExceedsLimit": false
@@ -7778,6 +9511,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1521,
           "minimumHttpBodyExceedsLimit": false
@@ -7796,6 +9530,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 201,
           "minimumHttpBodyExceedsLimit": false
@@ -7814,6 +9549,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 202,
           "minimumHttpBodyExceedsLimit": false
@@ -7832,6 +9568,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1388,
           "minimumHttpBodyExceedsLimit": false
@@ -7850,6 +9587,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1418,
           "minimumHttpBodyExceedsLimit": false
@@ -7868,6 +9606,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1378,
           "minimumHttpBodyExceedsLimit": false
@@ -7886,6 +9625,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1408,
           "minimumHttpBodyExceedsLimit": false
@@ -7904,8 +9644,47 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 196,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/services/background-location.ts",
+          "line": 70,
+          "sha256": "138b95526d4eb701f629f4cb2dfd23bb04b08d84f4e913cb855119a53e11fed3",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "BackgroundRiderLocation",
+              "roots": ["updateRiderLocation"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 369,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/services/background-location.ts",
+          "line": 100,
+          "sha256": "6424c5e0b8fb3bd60721d6c707df8766f9c1c075110ced89424742e5b3bb2a96",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "BackgroundPublicToken",
+              "roots": ["metricsGeneral"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "documentKind": "OPERATION",
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 98,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -7922,6 +9701,7 @@
           ],
           "missingRoots": [],
           "errors": [],
+          "documentKind": "OPERATION",
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 91,
           "minimumHttpBodyExceedsLimit": false

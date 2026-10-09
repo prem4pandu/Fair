@@ -175,6 +175,93 @@ input GeneralConfigurationInput {
   isAppLaunched: Boolean!
 }
 
+# Additive fields selected only by the pinned single-vendor clients. These
+# extend the shared multivendor response types without changing their shapes.
+extend type Banner {
+  buttonText: String
+}
+extend type CreateBannerCreateBanner {
+  buttonText: String
+}
+extend type EditBannerEditBanner {
+  buttonText: String
+}
+extend type SaveGoogleApiKeyConfigurationSaveGoogleApiKeyConfiguration {
+  googleApiKey: String
+}
+extend type CreateRestaurantCouponCreateRestaurantCoupon {
+  startDate: String
+  endDate: String
+}
+extend type EditRestaurantCouponEditRestaurantCoupon {
+  startDate: String
+  endDate: String
+}
+extend type RestaurantCouponsRestaurantCoupons {
+  startDate: String
+  endDate: String
+}
+extend type NotificationsNotifications {
+  recipientType: NotificationRecipientType
+}
+extend type GetActiveOrdersOrders {
+  deliveryType: String
+}
+extend type OrdersByRestIdOrders {
+  completionTime: String
+  preparationTime: String
+  eta: OrderEta
+}
+extend type OrdersByRestIdWithoutPaginationOrdersByRestIdWithoutPagination {
+  completionTime: String
+  preparationTime: String
+  eta: OrderEta
+}
+extend type AllOrdersAllOrders {
+  completionTime: String
+  preparationTime: String
+  eta: OrderEta
+}
+extend type AllOrdersWithoutPaginationAllOrdersWithoutPagination {
+  completionTime: String
+  preparationTime: String
+  eta: OrderEta
+}
+extend type SubscribePlaceOrderOrder {
+  completionTime: String
+}
+extend type SubscriptionDispatcherSubscriptionDispatcher {
+  deliveryType: String
+}
+extend type PlaceOrderPlaceOrder {
+  status: String
+  paymentStatus: String
+  reason: String
+  isActive: Boolean
+  updatedAt: String
+  selectedPrepTime: String
+  isRinged: Boolean
+  isRiderRinged: Boolean
+}
+extend type CreateSupportTicketCreateSupportTicket {
+  userType: String
+}
+extend type GetSingleUserSupportTicketsTickets {
+  userType: String
+}
+extend type GetTicketMessagesMessages {
+  ticket: String
+}
+extend type GetTicketMessagesTicket {
+  description: String
+  category: String
+  orderId: String
+  otherDetails: String
+  createdAt: String
+  updatedAt: String
+  userType: String
+}
+
 # ---------- catalog ----------
 type DealSummary {
   id: ID!

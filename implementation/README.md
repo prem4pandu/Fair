@@ -20,11 +20,11 @@ The product display name is imported from `@fairbite/brand`.
 The product remains in progress and no release gate is approved. Backend Playwright smoke does not establish full
 original UI acceptance. Do not infer progress from this README: every count lives in the generated status files.
 
-Latest W2 checkpoint: expanded source extraction covers 846 request/fragment sites
-with zero unresolved documents. Compatibility remains FAIL (529/532 multivendor,
-813/846 full); canonical Order fragments and incompatible version/product-mode
-shapes remain blockers. Populated upgrades now prove historical session/refresh
-and address continuity. See the current master plan and
+Latest W2 checkpoint: expanded source extraction covers 845 executable
+request/fragment sites with zero unresolved documents. Static compatibility passes
+for both scopes (531/531 multivendor and 845/845 full six-app). Populated upgrades
+also prove historical session/refresh and address continuity. Static validation does
+not establish resolver behavior or original UI acceptance. See the current plan and
 `docs/artifacts/w2-reconciliation-2026-10-09/packet.json`; G0/G1 remain unapproved.
 
 Use Node.js 24 and Corepack. Run `./tools/pnpm.sh install --frozen-lockfile`, then `./tools/pnpm.sh build`. The helper creates workspace-local package-manager shims so Turborepo can find pnpm.

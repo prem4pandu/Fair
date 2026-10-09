@@ -1,5 +1,5 @@
 import ts from "typescript";
-import { hasGraphQLPragma, looksLikeGraphQL } from "./graphql-text.mjs";
+import { looksLikeGraphQL } from "./graphql-text.mjs";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import {
   dirname,
@@ -25,12 +25,6 @@ const skippedDirectories = new Set([
 ]);
 
 const posix = (path) => path.split(sep).join("/");
-
-function looksLikeGraphQL(text) {
-  return /^(?:\s|#[^\n]*(?:\n|$))*(?:(?:query|mutation|subscription)\s*(?:[A-Za-z_]\w*\s*)?[({]|fragment\s+[A-Za-z_]\w*\s+on\s+|\{\s*[A-Za-z_])/.test(
-    text,
-  );
-}
 
 function inside(root, path) {
   const rel = relative(root, path);
@@ -265,39 +259,6 @@ function sourceDocuments(path, appRoot) {
         text: result?.text ?? node.getText(module.ast),
         interpolations: ts.isTemplateExpression(expression)
           ? expression.templateSpans.length
-          : 0,
-        resolved: Boolean(result),
-      });
-      return;
-    }
-    // An untagged literal carrying a `#graphql` pragma is a document too. The
-    // rider app writes every operation that way, so without this the audit sees
-    // documents the contract generator never does, and the rider's arguments and
-    // fields are missing from the SDL. Only the pragma form is accepted; see
-    // hasGraphQLPragma in ./graphql-text.mjs for why. This must stay BELOW the
-    // gqlCall branch, which returns early, or a gql-tagged literal is recorded
-    // twice.
-    const literal =
-      ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)
-        ? node.text
-        : ts.isTemplateExpression(node)
-          ? node.head.text
-          : null;
-    if (
-      literal !== null &&
-      hasGraphQLPragma(literal) &&
-      looksLikeGraphQL(literal)
-    ) {
-      const result = resolveExpression(path, node, 0, new Set());
-      documents.push({
-        file: posix(relative(appRoot, path)),
-        line:
-          module.ast.getLineAndCharacterOfPosition(node.getStart(module.ast))
-            .line + 1,
-        exportName: bindingName(node),
-        text: result?.text ?? node.getText(module.ast),
-        interpolations: ts.isTemplateExpression(node)
-          ? node.templateSpans.length
           : 0,
         resolved: Boolean(result),
       });

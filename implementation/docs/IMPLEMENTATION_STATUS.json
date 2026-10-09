@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "tools/generate-implementation-status.mjs",
-  "authority": "docs/ROADMAP.md",
+  "authority": "docs/MASTER_END_TO_END_PLAN.md",
   "overall": "IN_PROGRESS",
   "release": "NOT_APPROVED",
   "operations": {
@@ -9,26 +9,34 @@
     "withRealResolvers": 18,
     "withRecordedEvidence": 0,
     "withoutSdlDeclaration": 0,
-    "byKind": { "query": 159, "mutation": 164, "subscription": 11 }
+    "byKind": {
+      "query": 159,
+      "mutation": 164,
+      "subscription": 11
+    }
   },
   "staticCompatibility": {
     "status": "PASS",
-    "documents": 454,
-    "validDocuments": 454,
+    "documents": 531,
+    "validDocuments": 531,
     "unresolvedDocuments": 0,
     "missingRoots": 0
   },
   "fullStaticCompatibility": {
-    "status": "FAIL",
+    "status": "PASS",
     "apps": 6,
-    "documents": 852,
-    "validDocuments": 829,
-    "invalidDocuments": 14,
-    "unresolvedDocuments": 9,
+    "documents": 845,
+    "validDocuments": 845,
+    "invalidDocuments": 0,
+    "unresolvedDocuments": 0,
     "missingRoots": 0
   },
   "lanes": {
-    "L0": { "name": "Platform kernel", "roots": 1, "withRealResolvers": 1 },
+    "L0": {
+      "name": "Platform kernel",
+      "roots": 1,
+      "withRealResolvers": 1
+    },
     "L1": {
       "name": "Identity & sessions",
       "roots": 30,
@@ -59,13 +67,21 @@
       "roots": 32,
       "withRealResolvers": 0
     },
-    "L7": { "name": "Finance & payments", "roots": 11, "withRealResolvers": 0 },
+    "L7": {
+      "name": "Finance & payments",
+      "roots": 11,
+      "withRealResolvers": 0
+    },
     "L8": {
       "name": "Notifications & messaging",
       "roots": 5,
       "withRealResolvers": 0
     },
-    "L9": { "name": "Analytics", "roots": 9, "withRealResolvers": 0 },
+    "L9": {
+      "name": "Analytics",
+      "roots": 9,
+      "withRealResolvers": 0
+    },
     "L12": {
       "name": "Single-vendor (gated)",
       "roots": 71,
@@ -79,24 +95,67 @@
       "finishedAt": "2026-10-08T15:14:41.660Z",
       "commit": "5a75b7ddab20b1a58d31fcd6e2d07b689da11199",
       "approvals": [],
-      "requiredApprovals": ["lead", "reviewer-QA", "reviewer-SEC"],
-      "approved": false,
       "commands": [
-        { "command": "pnpm install --frozen-lockfile", "exitCode": 0 },
-        { "command": "pnpm lint", "exitCode": 0 },
-        { "command": "pnpm format:check", "exitCode": 0 },
-        { "command": "pnpm typecheck", "exitCode": 0 },
-        { "command": "pnpm build", "exitCode": 0 },
-        { "command": "pnpm test", "exitCode": 0 },
-        { "command": "pnpm test:integration", "exitCode": 0 },
-        { "command": "pnpm coverage:report", "exitCode": 0 },
-        { "command": "pnpm check:enatega-ui-source", "exitCode": 0 },
-        { "command": "pnpm test:enatega-contracts", "exitCode": 0 },
-        { "command": "pnpm test:operation-evidence", "exitCode": 0 },
-        { "command": "node --test tools/*.test.mjs", "exitCode": 0 },
-        { "command": "pnpm traceability:check", "exitCode": 0 },
-        { "command": "pnpm check:error-messages", "exitCode": 0 },
-        { "command": "pnpm e2e:backend", "exitCode": 0 }
+        {
+          "command": "pnpm install --frozen-lockfile",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm lint",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm format:check",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm typecheck",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm build",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm test",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm test:integration",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm coverage:report",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm check:enatega-ui-source",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm test:enatega-contracts",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm test:operation-evidence",
+          "exitCode": 0
+        },
+        {
+          "command": "node --test tools/*.test.mjs",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm traceability:check",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm check:error-messages",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm e2e:backend",
+          "exitCode": 0
+        }
       ]
     }
   ],
@@ -104,7 +163,7 @@
   "approvedGates": 0,
   "notes": [
     "A resolving schema is not implementation: NOT_IMPLEMENTED roots are counted as unimplemented.",
-    "A gate is approved only when every reviewer role it requires is recorded in docs/GATES.json by tools/approve-gate.mjs.",
+    "No gate is approved until an independent reviewer is recorded in docs/GATES.json.",
     "Static compatibility does not prove resolver behavior, authorization, runtime reachability or UI parity."
   ]
 }

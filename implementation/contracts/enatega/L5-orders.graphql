@@ -1,5 +1,18 @@
 # Generated from pinned Enatega documents. Lane owners refine this schema.
 
+input ReviewInput {
+  comments: String
+  description: String
+  order: String
+  rating: Int
+}
+
+input ScheduleData {
+  dayId: ID
+  isScheduled: Boolean
+  scheduleTimeId: ID
+}
+
 type AbortOrderAbortOrder {
   _id: ID
   cancelledAt: String
@@ -266,6 +279,36 @@ type OrderItemAddon {
   quantityMaximum: String
   quantityMinimum: String
   title: String
+}
+
+type Order {
+  _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  eta: OrderEta
+  expectedTime: String
+  isPickedUp: Boolean
+  items: [OrderItem]
+  orderAmount: Float
+  orderDate: String
+  orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  pickedAt: String
+  preparationTime: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  taxationAmount: Float
+  tipping: Float
+  user: User
 }
 
 type OrderOrder {
@@ -646,18 +689,23 @@ extend type Mutation {
   orderPickedUp(_id: String): OrderPickedUpOrderPickedUp
   placeOrder(
     address: AddressInput
+    checkoutQuoteId: String
     couponCode: String
     deliveryCharges: Float
+    idempotencyKey: String
     instructions: String
     isPickedUp: Boolean
+    isPriority: Boolean
     orderDate: String
     orderInput: [OrderInput]
     paymentMethod: String
     restaurant: String
+    scheduleData: ScheduleData
+    specialInstructions: String
     taxationAmount: Float
     tipping: Float
   ): PlaceOrderPlaceOrder
-  reviewOrder(reviewInput: ReviewOrderReviewInputInput): ReviewOrderReviewOrder
+  reviewOrder(reviewInput: ReviewInput): ReviewOrderReviewOrder
   updateStatus(id: String, orderStatus: String): UpdateStatusUpdateStatus
 }
 

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "timezone": "Asia/Kuala_Lumpur",
+  "baseCommit": "7952d4d",
+  "scope": "W2 static contract closure and presentation-preserving Enatega transport corrections",
+  "phaseApproved": false,
+  "frontendModified": true,
+  "frontendBoundary": "The complete pinned Enatega presentation remains the product UI. The three vendor edits are limited to GraphQL transport documents, are recorded in SOURCE_PROVENANCE.json, and do not change layouts, navigation, screens, styling, assets or interaction flows.",
+  "changes": [
+    "Added the canonical Order type selected by the pinned customer and rider cache fragments",
+    "Added exact single-vendor response fields, inputs, enums and arguments required by the pinned documents",
+    "Removed one unreachable scalar getVersions export while preserving the live object-shaped ForceUpdate and admin contract",
+    "Aligned single-vendor emailExist and phoneExist transport documents with the Boolean values their unchanged consumers already map",
+    "Regenerated the vendor source manifest, type requirements, compatibility reports, traceability and implementation status"
+  ],
+  "checks": [
+    {
+      "command": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --scope multivendor --check",
+      "exitCode": 0,
+      "documents": 531,
+      "validDocuments": 531,
+      "unresolvedDocuments": 0,
+      "missingRoots": 0
+    },
+    {
+      "command": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.full.json --check",
+      "exitCode": 0,
+      "documents": 845,
+      "validDocuments": 845,
+      "unresolvedDocuments": 0,
+      "missingRoots": 0
+    },
+    {
+      "command": "PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm test",
+      "exitCode": 0,
+      "apiTestsPassed": 181,
+      "workerTestsPassed": 10,
+      "contractPackageTestsPassed": 4,
+      "toolingTestsPassed": 59
+    },
+    {
+      "command": "DOCKER_HOST=unix:///Users/premkumarmamidi/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm test:integration",
+      "exitCode": 0,
+      "testFilesPassed": 13,
+      "testsPassed": 76,
+      "durationSeconds": 152.22
+    },
+    {
+      "command": "PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm build",
+      "exitCode": 0,
+      "note": "A concurrent typecheck/build attempt first hit a Prisma generated-directory EEXIST race; the required serial build passed."
+    },
+    {
+      "command": "PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm exec eslint . --ignore-pattern tools/scratch-recon.mjs --ignore-pattern tools/lib/scratch-documents.mjs",
+      "exitCode": 0,
+      "note": "The two user-owned scratch audit tools remain untracked and outside this commit."
+    },
+    {
+      "command": "PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm e2e:backend",
+      "exitCode": 0,
+      "testsPassed": 5,
+      "note": "Backend boundary checks only; this is not original Enatega UI or native acceptance."
+    },
+    {
+      "command": "node tools/manifest-enatega-ui.mjs --check",
+      "exitCode": 0,
+      "files": 4137,
+      "entriesSha256": "635f126fe83815af6992823457d070714c7949bb3b1b21f74a414fdc07dd16c4"
+    },
+    {
+      "command": "node tools/reconcile-dynamic-documents.mjs --check",
+      "exitCode": 0,
+      "interpolatedSites": 132,
+      "manualResolutions": 5
+    }
+  ],
+  "independentReview": {
+    "agent": "/root/final_review",
+    "result": "Approved after the evidence packet was added; no presentation change, fabricated resolver behavior or unrecorded vendor edit was found.",
+    "phaseGateApproval": false,
+    "independentlyRun": [
+      "531/531 multivendor compatibility",
+      "845/845 full six-app compatibility",
+      "runtime schema composition",
+      "vendor source manifest verification",
+      "22 focused schema, compatibility and manifest tests"
+    ]
+  },
+  "remaining": [
+    "Only 18 of 334 inventoried operations have real resolvers and no exact-operation evidence is recorded",
+    "Previously applied L2 migration checksum and drift reconciliation",
+    "Canonical data model and cross-lane ports semantic review",
+    "Original Enatega UI browser journeys and native device acceptance",
+    "Strict coverage, provider evidence and independent G0/G1/release approvals"
+  ]
+}

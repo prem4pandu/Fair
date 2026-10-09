@@ -6,28 +6,28 @@
       "app": "enatega-multivendor-app",
       "file": "src/apollo/queries.js",
       "exportName": "cities",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "lane": "L2"
     },
     {
       "app": "enatega-multivendor-app",
       "file": "src/apollo/queries.js",
       "exportName": "restaurantList",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "lane": "L3"
     },
     {
       "app": "enatega-multivendor-app",
       "file": "src/apollo/queries.js",
       "exportName": "getTaxation",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "lane": "L2"
     },
     {
       "app": "enatega-multivendor-app",
       "file": "src/apollo/queries.js",
       "exportName": "topRatedVendorsInfoPreview",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "lane": "L3"
     },
     {
@@ -105,7 +105,7 @@
       "file": "src/apollo/queries.js",
       "line": 490,
       "exportName": "orderTracking",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "documentSha256": "77f816625588af8f4e06685441ca2c9ce6c89eba7b762d106905517f408544a0",
       "definitions": [{ "kind": "query", "name": "OrderTracking" }]
     },
@@ -114,7 +114,7 @@
       "file": "src/apollo/queries.js",
       "line": 501,
       "exportName": "myOrders",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "documentSha256": "96b1ae09e4c61684f13ec29aa7967420b554d3740cf2e44ca526fc75891b3f21",
       "definitions": [{ "kind": "query", "name": "Orders" }]
     },
@@ -123,7 +123,7 @@
       "file": "src/apollo/queries.js",
       "line": 679,
       "exportName": "getUsersActiveOrders",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "documentSha256": "6d9059a11e162485c81d0c298a8b7b57a36fdf701b9f2445fcdf6a351877d644",
       "definitions": [{ "kind": "query", "name": "GetUsersActiveOrders" }]
     },
@@ -132,7 +132,7 @@
       "file": "src/apollo/queries.js",
       "line": 684,
       "exportName": "getUsersPastOrders",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "documentSha256": "d195d18ae8d70c78bb8fa05beb9efa4bf85dbe01ffca0ab230a116ab05668755",
       "definitions": [{ "kind": "query", "name": "GetUsersPastOrders" }]
     },
@@ -141,7 +141,7 @@
       "file": "src/apollo/queries.js",
       "line": 841,
       "exportName": "topRatedVendorsInfo",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "documentSha256": "f3a5249bf1745b9334beda971a589bb07d980eb2ecdffe7969d82e4199429f54",
       "definitions": [
         { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
@@ -153,7 +153,7 @@
       "file": "src/apollo/queries.js",
       "line": 1041,
       "exportName": "orderFragment",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "documentSha256": "99f6128c44623d45a9c1c13a22ce92ac1d5f1bf9bea4e56a9b1631496821947d",
       "definitions": [{ "kind": "fragment", "name": "NewOrder" }]
     },
@@ -162,7 +162,7 @@
       "file": "src/apollo/queries.js",
       "line": 1159,
       "exportName": "recentOrderRestaurantsQuery",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "documentSha256": "90244eba7582cc31a10c6b1ecd444db684421669d519b1a2f3673800fcee3eaf",
       "definitions": [
         { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
@@ -174,7 +174,7 @@
       "file": "src/apollo/queries.js",
       "line": 1193,
       "exportName": "mostOrderedRestaurantsQuery",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "sourceSha256": "bb5771aec51ec5fe9832c7a7ee8da1437ffffa50cfa75f8f89b268884b1d6c4e",
       "documentSha256": "3bbf4f5316372eb1d809aa85dd6c6206885a875c2541f6ae85ddb67651eb5297",
       "definitions": [
         { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },

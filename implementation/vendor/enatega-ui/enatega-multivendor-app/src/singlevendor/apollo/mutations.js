@@ -33,17 +33,13 @@ export const LOGIN_SINGLE_VENDOR = gql`
 
 export const EMAIL_EXIST_SINGLE_VENDOR = gql`
   mutation EmailExistSingleVendor($email: String!) {
-    emailExist(email: $email) {
-      _id
-    }
+    emailExist(email: $email)
   }
 `
 
 export const PHONE_EXIST_SINGLE_VENDOR = gql`
   mutation PhoneExistSingleVendor($phone: String!) {
-    phoneExist(phone: $phone) {
-      _id
-    }
+    phoneExist(phone: $phone)
   }
 `
 

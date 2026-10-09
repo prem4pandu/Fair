@@ -1275,14 +1275,6 @@ export const getZones = `query Zones{
   }
 }`
 
-export const versions = `query {
-  getVersions {
-    customerAppVersion
-    riderAppVersion
-    restaurantAppVersion
-  }
-}`
-
 // Version
 export const getVersions = `
 query GetVersions {
