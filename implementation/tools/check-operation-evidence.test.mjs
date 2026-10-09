@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { checkOperationEvidence } from "./check-operation-evidence.mjs";
 const inventory = {
   total: 1,
@@ -120,7 +121,9 @@ test("CLI default inventory is honest, strict mode fails, reports do not overwri
       spawnSync(
         process.execPath,
         [
-          new URL("./check-operation-evidence.mjs", import.meta.url).pathname,
+          fileURLToPath(
+            new URL("./check-operation-evidence.mjs", import.meta.url),
+          ),
           "--root",
           root,
           "--inventory",

@@ -17,17 +17,17 @@
   },
   "staticCompatibility": {
     "status": "PASS",
-    "documents": 439,
-    "validDocuments": 439,
+    "documents": 443,
+    "validDocuments": 443,
     "unresolvedDocuments": 0,
     "missingRoots": 0
   },
   "fullStaticCompatibility": {
     "status": "FAIL",
     "apps": 6,
-    "documents": 852,
-    "validDocuments": 800,
-    "invalidDocuments": 43,
+    "documents": 856,
+    "validDocuments": 810,
+    "invalidDocuments": 37,
     "unresolvedDocuments": 9,
     "missingRoots": 0
   },

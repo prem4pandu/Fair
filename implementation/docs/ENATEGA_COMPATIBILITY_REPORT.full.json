@@ -63,8 +63,8 @@
   ],
   "summary": {
     "apps": 6,
-    "documents": 852,
-    "validDocuments": 800,
+    "documents": 856,
+    "validDocuments": 810,
     "unresolvedDocuments": 9,
     "outOfScopeDocuments": 0,
     "missingRoots": []
@@ -74,7 +74,7 @@
       "app": "enatega-multivendor-web",
       "filesScanned": 566,
       "totalDocuments": 111,
-      "validDocuments": 104,
+      "validDocuments": 107,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -2008,15 +2008,10 @@
           "file": "enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts",
           "line": 9,
           "sha256": "67396c99a11bed7d394180efad2f1ec9171a073d57d7e0b8f36b487edfe78c9b",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Fragment \"FoodItem\" is never used.",
-              "locations": [{ "line": 2, "column": 3 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 193,
           "minimumHttpBodyExceedsLimit": false
@@ -2025,15 +2020,10 @@
           "file": "enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts",
           "line": 27,
           "sha256": "3c6b49beda3e601936bd86489260182c862762fd246460d7df93773c29229d1b",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Fragment \"RestaurantPreviewFields\" is never used.",
-              "locations": [{ "line": 2, "column": 3 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 330,
           "minimumHttpBodyExceedsLimit": false
@@ -2042,15 +2032,10 @@
           "file": "enatega-multivendor-web/lib/api/graphql/queries/restaurants/index.ts",
           "line": 58,
           "sha256": "49e23cfa60aed6d07a2676795ff2400bdbe1e97fba2b88cb90cffefff9e142e1",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Fragment \"RestaurantCarouselPreviewFields\" is never used.",
-              "locations": [{ "line": 2, "column": 3 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 346,
           "minimumHttpBodyExceedsLimit": false
@@ -8883,8 +8868,8 @@
     {
       "app": "enatega-multivendor-app",
       "filesScanned": 790,
-      "totalDocuments": 267,
-      "validDocuments": 245,
+      "totalDocuments": 271,
+      "validDocuments": 251,
       "unresolvedDocuments": 9,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -12390,6 +12375,74 @@
           "minimumHttpBodyExceedsLimit": false
         },
         {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1,
+          "sha256": "77f816625588af8f4e06685441ca2c9ce6c89eba7b762d106905517f408544a0",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "OrderTracking",
+              "roots": ["orderTracking"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 499,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1,
+          "sha256": "96b1ae09e4c61684f13ec29aa7967420b554d3740cf2e44ca526fc75891b3f21",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Orders", "roots": ["orders"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1605,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1,
+          "sha256": "6d9059a11e162485c81d0c298a8b7b57a36fdf701b9f2445fcdf6a351877d644",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "GetUsersActiveOrders",
+              "roots": ["getUsersActiveOrders"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1689,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1,
+          "sha256": "d195d18ae8d70c78bb8fa05beb9efa4bf85dbe01ffca0ab230a116ab05668755",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "GetUsersPastOrders",
+              "roots": ["getUsersPastOrders"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1685,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
           "file": "enatega-multivendor-app/src/apollo/mutations.js",
           "line": 3,
           "sha256": "8830b37ec803372c9f94d3482b613c617ada6852be0dae035f931370f4ec8a9b",
@@ -12986,10 +13039,6 @@
             {
               "message": "Cannot query field \"sections\" on type \"Restaurant\". Did you mean \"options\" or \"location\"?",
               "locations": [{ "line": 214, "column": 5 }]
-            },
-            {
-              "message": "Fragment \"RestaurantFields\" is never used.",
-              "locations": [{ "line": 2, "column": 3 }]
             }
           ],
           "backendOperationLimits": [],
@@ -13000,15 +13049,10 @@
           "file": "enatega-multivendor-app/src/apollo/queries.js",
           "line": 361,
           "sha256": "759fe8f15c0e966fd1fcf3a265aeb0895302eeaae709b4f61349b713d5babefe",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Fragment \"RestaurantCarouselPreviewFields\" is never used.",
-              "locations": [{ "line": 2, "column": 3 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 344,
           "minimumHttpBodyExceedsLimit": false
@@ -13356,15 +13400,10 @@
           "file": "enatega-multivendor-app/src/apollo/queries.js",
           "line": 1231,
           "sha256": "9c4ea9159ee9b50b8caf5b8a0d30f90c0b547b30f6f47d51446865df89f2b3dc",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Fragment \"FoodItem\" is never used.",
-              "locations": [{ "line": 1, "column": 1 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 177,
           "minimumHttpBodyExceedsLimit": false
@@ -14294,7 +14333,7 @@
       "app": "enatega-multivendor-rider",
       "filesScanned": 317,
       "totalDocuments": 56,
-      "validDocuments": 50,
+      "validDocuments": 51,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -15146,10 +15185,6 @@
             {
               "message": "Unknown type \"Order\". Did you mean \"Owner\", \"Rider\", \"OrderEta\", or \"User\"?",
               "locations": [{ "line": 2, "column": 22 }]
-            },
-            {
-              "message": "Fragment \"NewOrder\" is never used.",
-              "locations": [{ "line": 2, "column": 1 }]
             }
           ],
           "backendOperationLimits": [],
@@ -15196,15 +15231,10 @@
           "file": "enatega-multivendor-rider/lib/apollo/queries/resturant/resturant-2.query.ts",
           "line": 1,
           "sha256": "e7b5d5fda0fa8678ad996d9b6f381698d3c86fa324933458517c6feb4e37fc8b",
-          "status": "INVALID",
+          "status": "VALID_STATIC_DOCUMENT",
           "operations": [],
           "missingRoots": [],
-          "errors": [
-            {
-              "message": "Fragment \"RestaurantPreviewFields\" is never used.",
-              "locations": [{ "line": 3, "column": 3 }]
-            }
-          ],
+          "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 352,
           "minimumHttpBodyExceedsLimit": false

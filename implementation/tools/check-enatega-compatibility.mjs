@@ -7,9 +7,17 @@ import {
   Kind,
   GraphQLError,
   print,
+  specifiedRules,
+  NoUnusedFragmentsRule,
 } from "graphql";
 import { readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
-import { resolve, relative as nativeRelative, extname, sep } from "node:path";
+import {
+  resolve,
+  relative as nativeRelative,
+  extname,
+  basename,
+  sep,
+} from "node:path";
 // Report paths are POSIX-style on every platform so reports stay byte-stable.
 const relative = (from, to) => nativeRelative(from, to).split(sep).join("/");
 import { fileURLToPath } from "node:url";
@@ -143,13 +151,13 @@ export function audit(source, contracts, appNames = apps, options = {}) {
   const generatedDirectory = resolve(contracts, "enatega");
   if (existsSync(generatedDirectory)) {
     schemaFiles = files(generatedDirectory, [".graphql"]);
-    if (schemaFiles.some((path) => path.endsWith("/core.graphql")))
+    if (schemaFiles.some((path) => basename(path) === "core.graphql"))
       schemaFiles = schemaFiles.filter(
-        (path) => !path.endsWith("/kernel.graphql"),
+        (path) => basename(path) !== "kernel.graphql",
       );
     if (options.scope === "multivendor")
       schemaFiles = schemaFiles.filter(
-        (path) => !path.endsWith("/L12-single-vendor.graphql"),
+        (path) => basename(path) !== "L12-single-vendor.graphql",
       );
   }
   if (!schemaFiles.length) throw new Error("No backend SDL files found");
@@ -247,7 +255,16 @@ export function audit(source, contracts, appNames = apps, options = {}) {
             documents.push(document);
             return;
           }
-          document.errors = validate(schema, ast, undefined, {
+          // A fragment-only export (e.g. a shared fragment interpolated into
+          // other documents) is never sent as a document on its own, so
+          // NoUnusedFragments must not condemn it. Every other rule still
+          // applies, so a fragment selecting an unknown field still fails.
+          const rules = ast.definitions.some(
+            (definition) => definition.kind === Kind.OPERATION_DEFINITION,
+          )
+            ? undefined
+            : specifiedRules.filter((rule) => rule !== NoUnusedFragmentsRule);
+          document.errors = validate(schema, ast, rules, {
             maxErrors: 10000,
           }).map((error) => ({
             message: error.message,

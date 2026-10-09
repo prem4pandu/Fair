@@ -59,8 +59,8 @@
   ],
   "summary": {
     "apps": 5,
-    "documents": 439,
-    "validDocuments": 439,
+    "documents": 443,
+    "validDocuments": 443,
     "unresolvedDocuments": 0,
     "outOfScopeDocuments": 0,
     "missingRoots": []
@@ -4505,8 +4505,8 @@
     {
       "app": "enatega-multivendor-app",
       "filesScanned": 790,
-      "totalDocuments": 122,
-      "validDocuments": 122,
+      "totalDocuments": 126,
+      "validDocuments": 126,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -6586,6 +6586,74 @@
           "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 271,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1,
+          "sha256": "77f816625588af8f4e06685441ca2c9ce6c89eba7b762d106905517f408544a0",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "OrderTracking",
+              "roots": ["orderTracking"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 499,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1,
+          "sha256": "96b1ae09e4c61684f13ec29aa7967420b554d3740cf2e44ca526fc75891b3f21",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Orders", "roots": ["orders"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1605,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1,
+          "sha256": "6d9059a11e162485c81d0c298a8b7b57a36fdf701b9f2445fcdf6a351877d644",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "GetUsersActiveOrders",
+              "roots": ["getUsersActiveOrders"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1689,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-app/src/apollo/queries.js",
+          "line": 1,
+          "sha256": "d195d18ae8d70c78bb8fa05beb9efa4bf85dbe01ffca0ab230a116ab05668755",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "GetUsersPastOrders",
+              "roots": ["getUsersPastOrders"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1685,
           "minimumHttpBodyExceedsLimit": false
         }
       ]

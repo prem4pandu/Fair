@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { format } from "prettier";
@@ -387,7 +387,12 @@ export function generate(requirements, typeMap, lanes) {
       `# Generated from pinned Enatega documents. Lane owners refine this schema.\n\n${sections.get(lane).join("\n\n") || `scalar ${lane}DeferredContract`}\n`,
     ]),
   );
-  return { files, review: [...new Set(review)].sort() };
+  // A lane the requirements say nothing about must never overwrite an existing
+  // hand-curated contract with a DeferredContract placeholder.
+  const emptyLanes = new Set(
+    Object.keys(laneFiles).filter((lane) => sections.get(lane).length === 0),
+  );
+  return { files, review: [...new Set(review)].sort(), emptyLanes };
 }
 
 export async function run() {
@@ -401,10 +406,21 @@ export async function run() {
     readFileSync(resolve(root, "docs/OPERATION_LANES.json")),
   );
   const result = generate(requirements, typeMap, lanes);
-  for (const [filename, text] of Object.entries(result.files))
+  result.preserved = [];
+  for (const [lane, filename] of Object.entries(laneFiles)) {
+    const target = resolve(root, "contracts/enatega", filename);
+    if (result.emptyLanes.has(lane) && existsSync(target)) {
+      result.preserved.push(filename);
+      continue;
+    }
     writeFileSync(
-      resolve(root, "contracts/enatega", filename),
-      await format(text, { parser: "graphql" }),
+      target,
+      await format(result.files[filename], { parser: "graphql" }),
+    );
+  }
+  if (result.preserved.length)
+    console.warn(
+      `Preserved existing contracts with no generated content: ${result.preserved.join(", ")}`,
     );
   writeFileSync(
     resolve(root, "docs/SDL_TYPE_REVIEW.md"),

@@ -125,6 +125,59 @@ test("valid static fragments, aliases and multiline comments validate determinis
   assert.deepEqual(first.apps[0].documents[0].operations[0].roots, ["viewer"]);
 });
 
+test("a standalone shared fragment export is a valid static document", (t) => {
+  const report = fixture(
+    t,
+    "export const DETAILS = gql`fragment Details on User { id child { id } }`;",
+  )();
+  const document = report.apps[0].documents[0];
+  assert.deepEqual(document.operations, []);
+  assert.deepEqual(document.errors, []);
+  assert.deepEqual(document.missingRoots, []);
+  assert.equal(document.status, "VALID_STATIC_DOCUMENT");
+});
+
+test("a fragment-only document selecting an absent field still fails", (t) => {
+  const report = fixture(
+    t,
+    "export const DETAILS = gql`fragment Details on User { unavailable }`;",
+  )();
+  const document = report.apps[0].documents[0];
+  assert.equal(document.status, "INVALID");
+  assert.ok(
+    document.errors.some((error) =>
+      error.message.includes("Cannot query field"),
+    ),
+  );
+  assert.equal(report.staticCompatibility, "FAIL");
+});
+
+test("a fragment-only document on an unknown type condition still fails", (t) => {
+  const report = fixture(
+    t,
+    "export const DETAILS = gql`fragment Details on Absent { id }`;",
+  )();
+  const document = report.apps[0].documents[0];
+  assert.equal(document.status, "INVALID");
+  assert.ok(
+    document.errors.some((error) => error.message.includes("Unknown type")),
+  );
+  assert.equal(report.staticCompatibility, "FAIL");
+});
+
+test("an unused fragment beside an operation is still rejected", (t) => {
+  const report = fixture(
+    t,
+    "const doc = gql`query Q { viewer { ...Used } } fragment Used on User { id } fragment Unused on User { id }`;",
+  )();
+  const document = report.apps[0].documents[0];
+  assert.equal(document.status, "INVALID");
+  assert.ok(
+    document.errors.some((error) => error.message.includes("never used")),
+  );
+  assert.equal(report.staticCompatibility, "FAIL");
+});
+
 test("field, argument and variable-type mismatches fail beyond root-name matching", (t) => {
   const result = fixture(
     t,
