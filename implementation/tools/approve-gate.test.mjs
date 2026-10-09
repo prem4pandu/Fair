@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ApprovalError, applyApproval } from "./approve-gate.mjs";
+import {
+  ApprovalError,
+  applyApproval,
+  listApprovalState,
+} from "./approve-gate.mjs";
 import { approvalState } from "./lib/gate-approval.mjs";
 
 const gate = { id: "GX", approvals: ["lead", "reviewer-QA"] };
@@ -198,4 +202,56 @@ test("approving a tree older than HEAD is deliberate, not accidental", () => {
   assert.equal(record.approvedStaleTree, true);
   assert.equal(record.commit, "a".repeat(40));
   assert.equal(record.headAtApproval, head);
+});
+
+test("list state cannot hide recorder self-approval in a projected latest summary", () => {
+  const definition = { id: "GX", approvals: ["owner"] };
+  const registry = registryWith();
+  const run = registry.gates.GX.runs[0];
+  const record = {
+    role: "owner",
+    reviewer: "Runner <runner@example.com>",
+    at: "2026-01-01T00:11:00.000Z",
+    runFinishedAt: run.finishedAt,
+    commit: run.commit,
+  };
+  run.approvals = ["owner"];
+  run.approvalRecords = [record];
+  registry.gates.GX.latest = {
+    ...registry.gates.GX.latest,
+    approvals: ["owner"],
+    approvalRecords: [record],
+  };
+
+  const state = listApprovalState(
+    definition,
+    registry.gates.GX,
+    () => "different-author@example.com",
+  );
+  assert.equal(state.approved, false);
+  assert.match(state.invalid.join(" "), /recorded or authored the run/);
+});
+
+test("list state ignores approval evidence forged only in latest", () => {
+  const definition = { id: "GX", approvals: ["owner"] };
+  const registry = registryWith();
+  const run = registry.gates.GX.runs[0];
+  registry.gates.GX.latest = {
+    ...registry.gates.GX.latest,
+    approvals: ["owner"],
+    approvalRecords: [
+      {
+        role: "owner",
+        reviewer: "reviewer@example.com",
+        at: "2026-01-01T00:11:00.000Z",
+        runFinishedAt: run.finishedAt,
+        commit: run.commit,
+      },
+    ],
+  };
+
+  const state = listApprovalState(definition, registry.gates.GX);
+  assert.equal(state.approved, false);
+  assert.deepEqual(state.recorded, []);
+  assert.deepEqual(state.missing, ["owner"]);
 });

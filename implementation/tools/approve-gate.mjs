@@ -23,6 +23,7 @@ import { format } from "prettier";
 import {
   approvalState,
   identity,
+  judgedRun,
   requiredRoles,
 } from "./lib/gate-approval.mjs";
 
@@ -38,6 +39,10 @@ export class ApprovalError extends Error {}
 const fail = (message) => {
   throw new ApprovalError(message);
 };
+
+export function listApprovalState(gate, entry, commitAuthor = () => null) {
+  return approvalState(gate, judgedRun(entry), { commitAuthor });
+}
 
 /**
  * Pure core: returns a new registry with the approval applied, or throws
@@ -184,7 +189,9 @@ if (isMain) {
   if (args.includes("--list")) {
     for (const gate of gates.values()) {
       const entry = registry.gates?.[gate.id];
-      const state = approvalState(gate, entry?.latest);
+      const state = listApprovalState(gate, entry, (commit) =>
+        commit ? git(["log", "-1", "--format=%ae", commit]) : null,
+      );
       process.stdout.write(
         `${gate.id}: ${state.passed ? "commands passed" : "not passing"}; ` +
           `approvals ${state.recorded.length}/${state.required.length}` +
