@@ -1,4 +1,6 @@
 import { execFile } from "node:child_process";
+import { createHmac, randomBytes, randomUUID } from "node:crypto";
+import { SignJWT } from "jose";
 import { readdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
@@ -101,6 +103,47 @@ it("preserves every populated migration-005 row through the complete deployed hi
       "utf8",
     ),
   );
+  // These sessions are persisted and signed against schema 005 before upgrade.
+  // Relative dates retain the original thirty-day family constraint on reruns.
+  const userId = "11111111-1111-4111-8111-111111111111";
+  const sessions = [];
+  for (const state of ["active", "revoked", "consumed"]) {
+    const familyId = randomUUID();
+    const sessionId = randomUUID();
+    const refreshToken = `${sessionId}.${randomBytes(32).toString("base64url")}`;
+    const tokenHash = createHmac("sha256", Buffer.alloc(32, 2))
+      .update(refreshToken)
+      .digest("hex");
+    await upgraded.pool.query(
+      `INSERT INTO "IdentitySessionFamily" VALUES
+      ($1,$2,'CUSTOMER',CURRENT_TIMESTAMP - INTERVAL '1 hour',CURRENT_TIMESTAMP + INTERVAL '1 day',
+       CASE WHEN $3 = 'revoked' THEN CURRENT_TIMESTAMP ELSE NULL END)`,
+      [familyId, userId, state],
+    );
+    await upgraded.pool.query(
+      `INSERT INTO "IdentityRefreshSession" VALUES
+      ($1,$2,$3,$4,CURRENT_TIMESTAMP - INTERVAL '30 minutes',
+       CASE WHEN $5 = 'consumed' THEN CURRENT_TIMESTAMP ELSE NULL END)`,
+      [sessionId, familyId, userId, tokenHash, state],
+    );
+    const issuedAt = Math.floor(Date.now() / 1000);
+    const accessToken = await new SignJWT({ sid: sessionId, app: "CUSTOMER" })
+      .setProtectedHeader({ alg: "HS256", typ: "at+jwt" })
+      .setSubject(userId)
+      .setJti(randomUUID())
+      .setIssuer("fairbite-api")
+      .setAudience("fairbite-apps")
+      .setIssuedAt(issuedAt)
+      .setExpirationTime(issuedAt + 300)
+      .sign(Buffer.alloc(32, 1));
+    sessions.push({ state, accessToken, refreshToken });
+  }
+  const foreignAddressId = "abababab-abab-4bab-8bab-abababababab";
+  await upgraded.pool.query(
+    `INSERT INTO "CustomerAddress" VALUES
+      ($1,'22222222-2222-4222-8222-222222222222','Private','Private Road','',103.7,1.2,true)`,
+    [foreignAddressId],
+  );
   const before = await snapshot(upgraded.pool);
   await migrate(upgraded.databaseUrl, ["deploy"]);
   expect(await snapshot(upgraded.pool)).toEqual(before);
@@ -138,6 +181,106 @@ it("preserves every populated migration-005 row through the complete deployed hi
   );
 
   api = await startApi({ ...stack, ...upgraded });
+  const addressesQuery =
+    "{ customerAddresses { id label deliveryAddress details longitude latitude selected } }";
+  const expectedAddresses = [
+    {
+      id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      label: "Home",
+      deliveryAddress: "10 Historical Road",
+      details: "Floor 2",
+      longitude: 103.8,
+      latitude: 1.3,
+      selected: true,
+    },
+    {
+      id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+      label: "Office",
+      deliveryAddress: "20 Historical Road",
+      details: "",
+      longitude: 103.9,
+      latitude: 1.4,
+      selected: false,
+    },
+  ];
+  const refreshMutation =
+    "mutation($input:SessionRefreshInput!){ refreshSession(input:$input){ accessToken refreshToken user { id } } }";
+  for (const session of sessions) {
+    const addresses = await api.http
+      .withUser(session.accessToken)
+      .query(addressesQuery);
+    if (session.state === "active") {
+      expect(addresses.errors).toEqual([]);
+      expect(addresses.data?.customerAddresses).toEqual(expectedAddresses);
+    } else {
+      expect(addresses.data).toBeNull();
+      expect(addresses.errors.map((error) => error.extensions.code)).toEqual([
+        "AUTHENTICATION_FAILED",
+      ]);
+    }
+  }
+  const activeSession = sessions.find((session) => session.state === "active")!;
+  const foreignSelection = await api.http
+    .withUser(activeSession.accessToken)
+    .query("mutation($id:ID!){ selectCustomerAddress(id:$id){ id } }", {
+      id: foreignAddressId,
+    });
+  expect(foreignSelection.data).toBeNull();
+  expect(foreignSelection.errors.map((error) => error.extensions.code)).toEqual(
+    ["NOT_FOUND"],
+  );
+  const afterReads = await snapshot(upgraded.pool);
+  for (const table of [
+    "CustomerAddress",
+    "IdentityRefreshSession",
+    "IdentitySessionFamily",
+  ])
+    expect(afterReads[table]).toEqual(before[table]);
+  for (const session of sessions) {
+    const refreshed = await api.http.query<{
+      refreshSession: {
+        accessToken: string;
+        refreshToken: string;
+        user: { id: string };
+      };
+    }>(refreshMutation, {
+      input: { application: "CUSTOMER", refreshToken: session.refreshToken },
+    });
+    if (session.state === "active") {
+      expect(refreshed.errors).toEqual([]);
+      const rotated = refreshed.data!.refreshSession;
+      expect(rotated.user.id).toBe(userId);
+      expect(rotated.refreshToken).not.toBe(session.refreshToken);
+      const addresses = await api.http
+        .withUser(rotated.accessToken)
+        .query(addressesQuery);
+      expect(addresses.errors).toEqual([]);
+      expect(addresses.data?.customerAddresses).toEqual(expectedAddresses);
+      const consumed = await api.http
+        .withUser(session.accessToken)
+        .query(addressesQuery);
+      expect(consumed.errors.map((error) => error.extensions.code)).toEqual([
+        "AUTHENTICATION_FAILED",
+      ]);
+      const replay = await api.http.query(refreshMutation, {
+        input: { application: "CUSTOMER", refreshToken: session.refreshToken },
+      });
+      expect(replay.errors.map((error) => error.extensions.code)).toEqual([
+        "AUTHENTICATION_FAILED",
+      ]);
+      const revoked = await api.http
+        .withUser(rotated.accessToken)
+        .query(addressesQuery);
+      expect(revoked.errors.map((error) => error.extensions.code)).toEqual([
+        "AUTHENTICATION_FAILED",
+      ]);
+    } else {
+      expect(refreshed.data).toBeNull();
+      expect(refreshed.errors.map((error) => error.extensions.code)).toEqual([
+        "AUTHENTICATION_FAILED",
+      ]);
+    }
+  }
   const configuration = await api.http.query<{
     configuration: { currency: string; currencySymbol: string };
   }>("{ configuration { currency currencySymbol } }");

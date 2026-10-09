@@ -260,6 +260,9 @@ export function audit(source, contracts, appNames = apps, options = {}) {
           )
             ? undefined
             : specifiedRules.filter((rule) => rule !== NoUnusedFragmentsRule);
+          document.documentKind = document.operations.length
+            ? "OPERATION"
+            : "FRAGMENT_LIBRARY";
           document.errors = validate(schema, ast, rules, {
             maxErrors: 10000,
           }).map((error) => ({
@@ -307,12 +310,7 @@ export function audit(source, contracts, appNames = apps, options = {}) {
     // silently disappearing from the audit.
     const covered = new Set();
     if (suppliedDocuments) {
-      for (const document of suppliedDocuments)
-        if (
-          parse(document.text).definitions.some(
-            (definition) => definition.kind === Kind.OPERATION_DEFINITION,
-          )
-        ) {
+      for (const document of suppliedDocuments) {
           // reconcile() compares against relative(source, path), which always
           // carries the app prefix; document.file is app-relative.
           covered.add(
@@ -325,7 +323,7 @@ export function audit(source, contracts, appNames = apps, options = {}) {
             document.text,
             !document.resolved,
           );
-        }
+      }
     }
     // When the caller supplies a resolution set it is the whole audit, unless it
     // explicitly asks for reconciliation. The CLI enables reconciliation in full

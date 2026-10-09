@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "timezone": "Asia/Kuala_Lumpur",
+  "baseCommit": "826e4e9",
+  "workingTree": true,
+  "scope": "W2 source document reconciliation, additive contracts and historical session/address continuity",
+  "phaseApproved": false,
+  "frontendModified": false,
+  "changes": [
+    "Extract bare GraphQL strings/templates and imported cache fragment wrappers without executing source",
+    "Pin 132 automatically expanded interpolated sites with source/document hashes; retain five manual alias-import resolutions",
+    "Reject missing, stale, duplicate and obsolete manual/automatic resolution entries",
+    "Deduplicate seven supplemental exports against their actual source sites",
+    "Reconcile lexical omissions in both compatibility scopes",
+    "Validate cache fragment libraries without NoUnusedFragments; retain all specified rules for requests",
+    "Add source-confirmed rider OTP arguments and restaurant/review selection fields; resolvers remain unimplemented",
+    "Verify pre-upgrade sessions, refresh rotation/replay rejection, address preservation and cross-owner denial"
+  ],
+  "checks": [
+    {
+      "command": "PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm test",
+      "exitCode": 0,
+      "apiTestsPassed": 181,
+      "workerTestsPassed": 10,
+      "contractTestsPassed": 4,
+      "toolingTestsPassed": 56,
+      "note": "Before final inventory/parity additions; final tooling rerun below covers those changes."
+    },
+    {
+      "command": "node --test tools/*.test.mjs tools/lib/*.test.mjs",
+      "exitCode": 0,
+      "testsPassed": 64
+    },
+    {
+      "command": "DOCKER_HOST=unix:///Users/premkumarmamidi/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock ./tools/pnpm.sh test:integration",
+      "exitCode": 0,
+      "testsPassed": 76,
+      "testFilesPassed": 13,
+      "durationSeconds": 152.45
+    },
+    {
+      "command": "./tools/pnpm.sh e2e:backend",
+      "exitCode": 0,
+      "testsPassed": 5,
+      "note": "Backend boundary checks only; no original UI/native acceptance."
+    },
+    {
+      "command": "PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh build",
+      "exitCode": 0
+    },
+    {
+      "command": "./tools/pnpm.sh lint",
+      "exitCode": 1,
+      "note": "Pre-existing untracked tools/scratch-recon.mjs unused sep import; left untouched."
+    },
+    {
+      "command": "PATH=\"$PWD/.toolchain/bin:$PATH\" .toolchain/bin/pnpm exec eslint . --ignore-pattern tools/scratch-recon.mjs --ignore-pattern tools/lib/scratch-documents.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "node_modules/.bin/prettier --check <all tracked changed files> tools/reconcile-dynamic-documents.mjs",
+      "exitCode": 0,
+      "note": "Exact changed tracked paths obtained from git diff --name-only; untracked scratch tools excluded."
+    },
+    {
+      "command": "./tools/pnpm.sh codegen:check",
+      "exitCode": 0
+    },
+    {
+      "command": "node tools/manifest-enatega-ui.mjs --check",
+      "exitCode": 0,
+      "files": 4137
+    },
+    {
+      "command": "node tools/reconcile-dynamic-documents.mjs --check",
+      "exitCode": 0,
+      "interpolatedSites": 132,
+      "manualResolutions": 5
+    },
+    {
+      "command": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --scope multivendor --check",
+      "exitCode": 1,
+      "validDocuments": 529,
+      "documents": 532,
+      "unresolvedDocuments": 0,
+      "missingRoots": 0
+    },
+    {
+      "command": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.full.json --check",
+      "exitCode": 1,
+      "validDocuments": 813,
+      "documents": 846,
+      "unresolvedDocuments": 0,
+      "missingRoots": 0
+    },
+    {
+      "command": "node tools/generate-operation-traceability.mjs --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node tools/generate-implementation-status.mjs --check",
+      "exitCode": 0
+    }
+  ],
+  "independentReview": {
+    "agent": "/root/packet_review",
+    "result": "No introduced blocking findings; 33 focused tests independently passed",
+    "phaseGateApproval": false,
+    "limitations": [
+      "Reviewer did not independently execute real-stack integration suite."
+    ]
+  },
+  "priorFailures": [
+    "Concurrent corepack shim setup caused EEXIST; initialized serially and used the initialized shim for concurrent verification.",
+    "Sandbox HTTP suite failed listen EPERM; same suite passed with local listener permission."
+  ],
+  "remaining": [
+    "Canonical Order cache-fragment type alignment",
+    "Within-multivendor scalar/object getVersions conflict requiring an exact integration contract",
+    "Separate single-vendor contracts for emailExist/phoneExist return shapes and other remaining single-vendor gaps",
+    "Previously applied L2 migration checksum/drift reconciliation without automatic checksum rewrite",
+    "Canonical schema/model and cross-lane ports semantic review; global identifier cutover",
+    "Original Enatega UI smoke/journeys, native/provider gates, strict coverage and per-operation evidence",
+    "Independent G0/G1 and release approvals; full repository lint still fails on untracked scratch input"
+  ],
+  "sourceSha256": {
+    "tools/lib/documents.mjs": "a5c6beebb6f71fbccc548ed67e9d198bd7a61a7e1d269de8a4cb13017760efd2",
+    "tools/lib/documents.test.mjs": "371d18cd58d416e418ac165cfef5c72ee25cadecfc2e513165aaa85d8a6b4b95",
+    "tools/check-enatega-compatibility.mjs": "14c29ea83855baa8203565af627891fc6944bded1fed1f9ea18122111ed841df",
+    "tools/check-enatega-compatibility.test.mjs": "7cd98d0b71c0aac59179eca17a103376ba3d62e46e29bb56c2886aa94545d052",
+    "tools/derive-type-requirements.mjs": "16d89f11b2a10ad521375e88dbf108c66e7937f2d235fbe4187b1429e373299e",
+    "tools/derive-type-requirements.test.mjs": "b9858e629078d441e390436d8d37383a5ee43ed0038e796e84cd4ddd89c7b12a",
+    "tools/reconcile-dynamic-documents.mjs": "f4162d5727ab0331c0938e24aa523de3b3e402c66ac3cebb82a4f4380ef18a10",
+    "contracts/enatega/L1-identity.graphql": "0c91459d6c82f4395e48c4a925bb898c6f7a2a459ee7917cf38d556d8897d662",
+    "contracts/enatega/L3-vendors-catalog.graphql": "3b7b7aee763a05fed3eee6f01ce6fb0d38ab627d321e7dc80e98d26b387229e6",
+    "services/api/test/integration/schema/upgrade.integration.spec.ts": "3c889f71d12b1770b3cd157ea443c003a0e2e1c445b805c55ab953efd5e794bb",
+    "docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json": "504db8d6ed5062e4adad135355991777f25a3e64c92823e411b7a4ffadfa187f",
+    "docs/ENATEGA_COMPATIBILITY_REPORT.json": "976dc70ce2d2763310291e8ae775751cb0d3d2e5200a0c69dd156ab579059af3",
+    "docs/ENATEGA_COMPATIBILITY_REPORT.full.json": "d22a8ee545a5d6512dc8472897d98d9cd2b632f993e7a3680ca0d8b9632680d7"
+  }
+}

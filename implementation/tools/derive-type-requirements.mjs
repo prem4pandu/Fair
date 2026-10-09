@@ -274,49 +274,92 @@ export function contractDocuments(documents, lanes) {
   });
 }
 
+// Keep reconciliation independently testable: duplicate entries must never be
+// silently overwritten by Map, and every manual entry must still match its site.
+export function reconcileDocumentSites(documents, artifact, sourceHash) {
+  const resolutions = new Map();
+  for (const item of artifact.resolutions ?? []) {
+    const key = `${item.app}:${item.file}:${item.line}`;
+    if (resolutions.has(key))
+      throw new Error(`Duplicate dynamic document resolution ${key}`);
+    resolutions.set(key, item);
+  }
+  const seen = new Set();
+  const result = documents.map((document) => {
+    if (document.resolved) return document;
+    const key = `${document.app}:${document.file}:${document.line}`;
+    const resolution = resolutions.get(key);
+    if (!resolution) throw new Error(`Unresolved document ${key}`);
+    if (sourceHash(document) !== resolution.sourceSha256)
+      throw new Error(`Stale dynamic document resolution ${key}`);
+    if (seen.has(key))
+      throw new Error(`Duplicate dynamic document site ${key}`);
+    parse(resolution.text);
+    seen.add(key);
+    return { ...document, text: resolution.text, resolved: true };
+  });
+  const stale = [...resolutions.keys()].filter((key) => !seen.has(key));
+  if (stale.length)
+    throw new Error(`Stale resolution entries: ${stale.join(", ")}`);
+  return result;
+}
+
+export function verifyAutomaticSites(documents, entries, sourceHash) {
+  const index = new Map();
+  for (const entry of entries) {
+    const key = `${entry.app}:${entry.file}:${entry.line}`;
+    if (index.has(key))
+      throw new Error(`Duplicate automatic document resolution ${key}`);
+    index.set(key, entry);
+  }
+  for (const document of documents.filter((item) => item.interpolations > 0)) {
+    const key = `${document.app}:${document.file}:${document.line}`;
+    const entry = index.get(key);
+    if (!entry) throw new Error(`Unrecorded interpolated document ${key}`);
+    const documentSha256 = createHash("sha256")
+      .update(document.text)
+      .digest("hex");
+    if (
+      sourceHash(document) !== entry.sourceSha256 ||
+      documentSha256 !== entry.documentSha256
+    )
+      throw new Error(`Stale automatic document resolution ${key}`);
+    index.delete(key);
+  }
+  if (index.size)
+    throw new Error(
+      `Obsolete automatic document resolutions: ${[...index.keys()].join(", ")}`,
+    );
+}
+
 export function resolvedDocuments(options = {}) {
   const resolutionPath = resolve(
     root,
     "docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json",
   );
   const artifact = JSON.parse(readFileSync(resolutionPath, "utf8"));
-  const resolutions = new Map(
-    artifact.resolutions.map((item) => [
-      `${item.app}:${item.file}:${item.line}`,
-      item,
-    ]),
+  const documents = reconcileDocumentSites(
+    apps.flatMap((app) =>
+      listDocuments(app).map((document) => ({ app, ...document })),
+    ),
+    artifact,
+    ({ app, file }) =>
+      createHash("sha256")
+        .update(readFileSync(resolve(root, "vendor/enatega-ui", app, file)))
+        .digest("hex"),
   );
-  const seen = new Set();
-  const documents = [];
-  for (const app of apps) {
-    for (const document of listDocuments(app)) {
-      if (document.resolved) {
-        documents.push({ app, ...document });
-        continue;
-      }
-      const key = `${app}:${document.file}:${document.line}`;
-      const resolution = resolutions.get(key);
-      if (!resolution) throw new Error(`Unresolved document ${key}`);
-      const source = readFileSync(
-        resolve(root, "vendor/enatega-ui", app, document.file),
-      );
-      const hash = createHash("sha256").update(source).digest("hex");
-      if (hash !== resolution.sourceSha256)
-        throw new Error(`Stale dynamic document resolution ${key}`);
-      if (seen.has(key))
-        throw new Error(`Duplicate dynamic document resolution ${key}`);
-      seen.add(key);
-      documents.push({
-        app,
-        ...document,
-        text: resolution.text,
-        resolved: true,
-      });
-    }
-  }
-  const stale = [...resolutions.keys()].filter((key) => !seen.has(key));
-  if (stale.length)
-    throw new Error(`Stale resolution entries: ${stale.join(", ")}`);
+  if (
+    artifact.automaticallyResolvedSites &&
+    options.checkAutomaticSites !== false
+  )
+    verifyAutomaticSites(
+      documents,
+      artifact.automaticallyResolvedSites,
+      ({ app, file }) =>
+        createHash("sha256")
+          .update(readFileSync(resolve(root, "vendor/enatega-ui", app, file)))
+          .digest("hex"),
+    );
   for (const supplemental of artifact.supplementalDocuments ?? []) {
     const source = readFileSync(
       resolve(root, "vendor/enatega-ui", supplemental.app, supplemental.file),
@@ -326,16 +369,30 @@ export function resolvedDocuments(options = {}) {
       throw new Error(
         `Stale supplemental document ${supplemental.app}:${supplemental.file}:${supplemental.exportName}`,
       );
+    const text = loadDocument(
+      supplemental.app,
+      supplemental.file,
+      supplemental.exportName,
+    );
+    const existing = documents.find(
+      (document) =>
+        document.app === supplemental.app &&
+        document.file === supplemental.file &&
+        document.exportName === supplemental.exportName,
+    );
+    if (existing) {
+      if (existing.text !== text)
+        throw new Error(
+          `Conflicting supplemental document ${supplemental.exportName}`,
+        );
+      continue;
+    }
     documents.push({
       app: supplemental.app,
       file: supplemental.file,
       line: 1,
       exportName: supplemental.exportName,
-      text: loadDocument(
-        supplemental.app,
-        supplemental.file,
-        supplemental.exportName,
-      ),
+      text,
       resolved: true,
     });
   }

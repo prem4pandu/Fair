@@ -100,8 +100,6 @@ type CreateRestaurantCouponCreateRestaurantCoupon {
   _id: ID
   discount: Float
   enabled: Boolean
-  endDate: String
-  startDate: String
   title: String
 }
 
@@ -216,8 +214,6 @@ type EditRestaurantCouponEditRestaurantCoupon {
   _id: ID
   discount: Float
   enabled: Boolean
-  endDate: String
-  startDate: String
   title: String
 }
 
@@ -423,9 +419,39 @@ type NearByRestaurantsPreviewSections {
 }
 
 type NearByRestaurantsRestaurantsReviewDataReviewsOrder {
+  # Customer app src/apollo/queries.js:114 RestaurantFields review order.
   _id: ID
+  acceptedAt: String
+  assignedAt: String
+  cancelledAt: String
+  completionTime: String
+  createdAt: String
+  deliveredAt: String
+  deliveryAddress: Address
+  deliveryCharges: Float
+  expectedTime: String
+  isActive: Boolean
+  isPickedUp: Boolean
+  isRinged: Boolean
+  isRiderRinged: Boolean
   items: OrderItem
+  orderAmount: Float
+  orderDate: String
   orderId: String
+  orderStatus: String
+  paidAmount: Float
+  paymentMethod: String
+  paymentStatus: String
+  pickedAt: String
+  preparationTime: String
+  reason: String
+  restaurant: Restaurant
+  review: Review
+  rider: Rider
+  status: String
+  taxationAmount: Float
+  tipping: Float
+  updatedAt: String
   user: User
 }
 
@@ -512,6 +538,8 @@ type Restaurant {
   restaurantUrl: String
   reviewCount: Int
   reviewData: ReviewData
+  # Customer app src/apollo/queries.js:114 RestaurantFields selects sections.
+  sections: [String]
   shopType: String
   slug: String
   stripeDetailsSubmitted: String
@@ -598,8 +626,6 @@ type RestaurantCouponsRestaurantCoupons {
   _id: ID
   discount: Float
   enabled: Boolean
-  endDate: String
-  startDate: String
   title: String
 }
 
@@ -661,6 +687,7 @@ type RestaurantOrdersRestaurantOrders {
 }
 
 type RestaurantPreview {
+  # Rider lib/apollo/queries/resturant/resturant-2.query.ts:122.
   _id: ID
   acceptVouchers: String
   address: String
@@ -674,7 +701,7 @@ type RestaurantPreview {
   image: String
   isActive: Boolean
   isAvailable: Boolean
-  keywords: String
+  keywords: [String]
   location: RestaurantPreview
   logo: String
   minimumOrder: Float
@@ -686,7 +713,7 @@ type RestaurantPreview {
   rating: Float
   reviewAverage: String
   reviewCount: Int
-  sections: String
+  sections: [String]
   shopType: String
   slug: String
   stripeDetailsSubmitted: String

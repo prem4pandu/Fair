@@ -5,7 +5,119 @@ import {
   contractDocuments,
   deriveFromDocuments,
   multivendorDocuments,
+  reconcileDocumentSites,
+  verifyAutomaticSites,
+  resolvedDocuments,
 } from "./derive-type-requirements.mjs";
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+
+test("expanded six-app documents account for every inventoried root without introducing unowned roots", () => {
+  const requirements = deriveFromDocuments(resolvedDocuments());
+  const lanes = JSON.parse(
+    readFileSync(
+      new URL("../docs/OPERATION_LANES.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const expected = lanes.operations
+    .map((operation) => `${operation.type}.${operation.name}`)
+    .sort();
+  const actual = ["query", "mutation", "subscription"]
+    .flatMap((kind) =>
+      Object.keys(requirements[kind]).map((name) => `${kind}.${name}`),
+    )
+    .sort();
+  assert.deepEqual(actual, expected);
+});
+
+test("checked-in interpolation inventory matches every current static expansion", () => {
+  execFileSync(
+    process.execPath,
+    ["tools/reconcile-dynamic-documents.mjs", "--check"],
+    { cwd: new URL("..", import.meta.url) },
+  );
+});
+
+test("automatic interpolation inventory detects changed sources, expansions and new sites", () => {
+  const doc = {
+    app: "web",
+    file: "query.ts",
+    line: 1,
+    text: "query { viewer { id } }",
+    interpolations: 1,
+  };
+  const entry = {
+    ...doc,
+    sourceSha256: "source",
+    documentSha256: createHash("sha256").update(doc.text).digest("hex"),
+  };
+  verifyAutomaticSites([doc], [entry], () => "source");
+  assert.throws(
+    () => verifyAutomaticSites([doc], [], () => "source"),
+    /Unrecorded/,
+  );
+  assert.throws(
+    () => verifyAutomaticSites([doc], [entry], () => "changed"),
+    /Stale/,
+  );
+  assert.throws(
+    () =>
+      verifyAutomaticSites(
+        [{ ...doc, text: "query { other }" }],
+        [entry],
+        () => "source",
+      ),
+    /Stale/,
+  );
+  assert.throws(
+    () => verifyAutomaticSites([doc], [entry, entry], () => "source"),
+    /Duplicate/,
+  );
+  assert.throws(
+    () => verifyAutomaticSites([], [entry], () => "source"),
+    /Obsolete/,
+  );
+});
+
+test("manual reconciliation fails closed on missing, stale, duplicate and obsolete sites", () => {
+  const site = {
+    app: "web",
+    file: "query.ts",
+    line: 3,
+    text: "gql(imported)",
+    resolved: false,
+  };
+  const entry = {
+    ...site,
+    text: "query { viewer { id } }",
+    sourceSha256: "source-hash",
+  };
+  const resolve = (sites, entries, hash = "source-hash") =>
+    reconcileDocumentSites(sites, { resolutions: entries }, () => hash);
+  assert.deepEqual(resolve([site], [entry]), [
+    { ...site, text: entry.text, resolved: true },
+  ]);
+  assert.throws(() => resolve([site], []), /Unresolved document/);
+  assert.throws(() => resolve([site], [entry], "changed"), /Stale dynamic/);
+  assert.throws(
+    () => resolve([site], [entry, entry]),
+    /Duplicate dynamic document resolution/,
+  );
+  assert.throws(
+    () => resolve([site, site], [entry]),
+    /Duplicate dynamic document site/,
+  );
+  assert.throws(
+    () => resolve([{ ...site, resolved: true }], [entry]),
+    /Stale resolution entries/,
+  );
+  assert.throws(
+    () => resolve([site], [{ ...entry, text: "query {" }]),
+    /Syntax Error/,
+  );
+});
 
 test("merges selections, argument types and fragment type conditions per root", () => {
   const result = deriveFromDocuments([

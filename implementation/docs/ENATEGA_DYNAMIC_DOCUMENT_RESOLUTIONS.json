@@ -98,5 +98,1246 @@
       "lane": "L5",
       "text": "subscription OrderStatusChanged($userId: String!) { orderStatusChanged(userId: $userId) { userId origin order { _id orderId restaurant { _id name image slug shopType address location { coordinates } } deliveryAddress { location { coordinates } deliveryAddress } items { _id title food description quantity variation { _id title price discounted } addons { _id options { _id title description price } title description quantityMinimum quantityMaximum } } user { _id name phone } rider { _id name } review { _id } paymentMethod paidAmount orderAmount orderStatus deliveryCharges tipping taxationAmount orderDate expectedTime isPickedUp createdAt completionTime preparationTime acceptedAt assignedAt pickedAt deliveredAt cancelledAt eta { phase source readyAt baseArrivalAt estimatedArrivalAt windowStartAt windowEndAt durationSeconds distanceMeters encodedPolyline calculatedAt lastLocationAt version } } } }"
     }
+  ],
+  "automaticallyResolvedSites": [
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "line": 490,
+      "exportName": "orderTracking",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "documentSha256": "77f816625588af8f4e06685441ca2c9ce6c89eba7b762d106905517f408544a0",
+      "definitions": [{ "kind": "query", "name": "OrderTracking" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "line": 501,
+      "exportName": "myOrders",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "documentSha256": "96b1ae09e4c61684f13ec29aa7967420b554d3740cf2e44ca526fc75891b3f21",
+      "definitions": [{ "kind": "query", "name": "Orders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "line": 679,
+      "exportName": "getUsersActiveOrders",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "documentSha256": "6d9059a11e162485c81d0c298a8b7b57a36fdf701b9f2445fcdf6a351877d644",
+      "definitions": [{ "kind": "query", "name": "GetUsersActiveOrders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "line": 684,
+      "exportName": "getUsersPastOrders",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "documentSha256": "d195d18ae8d70c78bb8fa05beb9efa4bf85dbe01ffca0ab230a116ab05668755",
+      "definitions": [{ "kind": "query", "name": "GetUsersPastOrders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "line": 841,
+      "exportName": "topRatedVendorsInfo",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "documentSha256": "f3a5249bf1745b9334beda971a589bb07d980eb2ecdffe7969d82e4199429f54",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "TopRatedVendors" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "line": 1041,
+      "exportName": "orderFragment",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "documentSha256": "99f6128c44623d45a9c1c13a22ce92ac1d5f1bf9bea4e56a9b1631496821947d",
+      "definitions": [{ "kind": "fragment", "name": "NewOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "line": 1159,
+      "exportName": "recentOrderRestaurantsQuery",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "documentSha256": "90244eba7582cc31a10c6b1ecd444db684421669d519b1a2f3673800fcee3eaf",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "GetRecentOrderRestaurants" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/queries.js",
+      "line": 1193,
+      "exportName": "mostOrderedRestaurantsQuery",
+      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
+      "documentSha256": "3bbf4f5316372eb1d809aa85dd6c6206885a875c2541f6ae85ddb67651eb5297",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "GetMostOrderedRestaurants" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Account/EditName/EditName.js",
+      "line": 21,
+      "exportName": "UPDATEUSER",
+      "sourceSha256": "29e1a36635584c88d24acb1dcfb202cd63afdfd21de59da086af57ac732deba6",
+      "documentSha256": "5227ce7f900b9c84991c6c46bf0cace5e06fe268f8fefd38bc1eaa25df976dbe",
+      "definitions": [{ "kind": "mutation", "name": "UpdateUser" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/FavButton/useFavorite.js",
+      "line": 11,
+      "exportName": "ADD_FAVOURITE",
+      "sourceSha256": "90e8830d76a8676207502154d0faebdfab400cc32c0df9a7b57aef53d2692dd9",
+      "documentSha256": "cde3ad2b5e490bdb8781ad6d1b8ed270b76fc519fedd5e908836b4d6bfaacf0d",
+      "definitions": [{ "kind": "mutation", "name": "AddFavourite" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/FavButton/useFavorite.js",
+      "line": 14,
+      "exportName": "PROFILE",
+      "sourceSha256": "90e8830d76a8676207502154d0faebdfab400cc32c0df9a7b57aef53d2692dd9",
+      "documentSha256": "3bc090005ad38a8c4e853d314e57de7f87b122849e8800a532c2ebeb3d8695f9",
+      "definitions": [{ "kind": "query", "name": null }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/ItemDetail/Row.js",
+      "line": 17,
+      "exportName": "FOOD",
+      "sourceSha256": "d9799f730bb0dbee21f8998069bf19bc67522bd547681de1d3205c09d5e46ab1",
+      "documentSha256": "9c4ea9159ee9b50b8caf5b8a0d30f90c0b547b30f6f47d51446865df89f2b3dc",
+      "definitions": [{ "kind": "fragment", "name": "FoodItem" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/ItemDetail/Section.js",
+      "line": 15,
+      "exportName": "RELATED_ITEMS",
+      "sourceSha256": "f1b75653cf742c18d2d1b11826afeeeb9ea672315534fec3e158658eb2b87f28",
+      "documentSha256": "adad954f28d1222533785e64f0656cddad2197bc0c2626f3bf78f24802a30d70",
+      "definitions": [{ "kind": "query", "name": "RelatedItems" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/ItemDetail/Section.js",
+      "line": 18,
+      "exportName": "RESTAURANT",
+      "sourceSha256": "f1b75653cf742c18d2d1b11826afeeeb9ea672315534fec3e158658eb2b87f28",
+      "documentSha256": "b115bfefb858deb08d7846f6d5b56bc70231bc56e71a7ec68fbb369162958ddd",
+      "definitions": [{ "kind": "query", "name": "Restaurant" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Main/ActiveOrders/ProgressBar.js",
+      "line": 63,
+      "exportName": "ProgressBar",
+      "sourceSha256": "029a392145f7e8ff65afa91c80aacd8ceaa1b6097d7560c6dbfd341ac5f2ae4e",
+      "documentSha256": "f8bac8ea43046ea100903168cf1e7359e5840da966971fbbab04fdc660a042c9",
+      "definitions": [{ "kind": "subscription", "name": "SubscriptionOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Main/Item/Item.js",
+      "line": 23,
+      "exportName": "ADD_FAVOURITE",
+      "sourceSha256": "a15e04f22bf546031c7e12d4c8c4ac253d079e22d73f82888b0d31128e895569",
+      "documentSha256": "cde3ad2b5e490bdb8781ad6d1b8ed270b76fc519fedd5e908836b4d6bfaacf0d",
+      "definitions": [{ "kind": "mutation", "name": "AddFavourite" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Main/Item/Item.js",
+      "line": 26,
+      "exportName": "PROFILE",
+      "sourceSha256": "a15e04f22bf546031c7e12d4c8c4ac253d079e22d73f82888b0d31128e895569",
+      "documentSha256": "3bc090005ad38a8c4e853d314e57de7f87b122849e8800a532c2ebeb3d8695f9",
+      "definitions": [{ "kind": "query", "name": null }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Main/Item/Item.js",
+      "line": 29,
+      "exportName": "FAVOURITERESTAURANTS",
+      "sourceSha256": "a15e04f22bf546031c7e12d4c8c4ac253d079e22d73f82888b0d31128e895569",
+      "documentSha256": "656e731150b2736a4969f3d8a07349affa82b1f21644f514c759102aad79a787",
+      "definitions": [{ "kind": "query", "name": "UserFavourite" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Main/RestaurantCard/NewRestaurantCard.js",
+      "line": 28,
+      "exportName": "ADD_FAVOURITE",
+      "sourceSha256": "80530d1cf66e60fcc3bdf839430c62a48e0740ab0caa3a5d87ba15ac5949ff91",
+      "documentSha256": "cde3ad2b5e490bdb8781ad6d1b8ed270b76fc519fedd5e908836b4d6bfaacf0d",
+      "definitions": [{ "kind": "mutation", "name": "AddFavourite" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Main/RestaurantCard/NewRestaurantCard.js",
+      "line": 31,
+      "exportName": "PROFILE",
+      "sourceSha256": "80530d1cf66e60fcc3bdf839430c62a48e0740ab0caa3a5d87ba15ac5949ff91",
+      "documentSha256": "3bc090005ad38a8c4e853d314e57de7f87b122849e8800a532c2ebeb3d8695f9",
+      "definitions": [{ "kind": "query", "name": null }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Main/RestaurantCard/NewRestaurantCard.js",
+      "line": 34,
+      "exportName": "FAVOURITERESTAURANTS",
+      "sourceSha256": "80530d1cf66e60fcc3bdf839430c62a48e0740ab0caa3a5d87ba15ac5949ff91",
+      "documentSha256": "656e731150b2736a4969f3d8a07349affa82b1f21644f514c759102aad79a787",
+      "definitions": [{ "kind": "query", "name": "UserFavourite" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/MyOrders/ActiveOrders.js",
+      "line": 57,
+      "exportName": "Item",
+      "sourceSha256": "df03a49e5b9c884d10b38e061ad2c3501cfdf30188c09f354aeb403f3c54f917",
+      "documentSha256": "f8bac8ea43046ea100903168cf1e7359e5840da966971fbbab04fdc660a042c9",
+      "definitions": [{ "kind": "subscription", "name": "SubscriptionOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/MyOrders/ActiveOrderV2.js",
+      "line": 55,
+      "exportName": "Item",
+      "sourceSha256": "4744bb407cdd65b9241ab7ca5d6bddcb65ddfa31b8f53f4817bff2d32a7a4c9c",
+      "documentSha256": "f8bac8ea43046ea100903168cf1e7359e5840da966971fbbab04fdc660a042c9",
+      "definitions": [{ "kind": "subscription", "name": "SubscriptionOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/MyOrders/PastOrders.js",
+      "line": 98,
+      "exportName": "Item",
+      "sourceSha256": "00fcd0fc3f9a84b8b53be1dc8166a5f813965352550f53557c06ae1664e76920",
+      "documentSha256": "f8bac8ea43046ea100903168cf1e7359e5840da966971fbbab04fdc660a042c9",
+      "definitions": [{ "kind": "subscription", "name": "SubscriptionOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/OrderDetail/TrackingRider/TrackingRider.js",
+      "line": 9,
+      "exportName": "RIDER",
+      "sourceSha256": "14f9206c55ce8323a35664fcf74427a31d6df5c5cf1aaf0233758ed61a290219",
+      "documentSha256": "c5dda660ce62db03d7147c5cd12bedc31fcc3b807536c60d7e58d909d5ac7e37",
+      "definitions": [{ "kind": "query", "name": "Rider" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/OrderDetail/TrackingRider/TrackingRider.js",
+      "line": 12,
+      "exportName": "RIDER_LOCATION",
+      "sourceSha256": "14f9206c55ce8323a35664fcf74427a31d6df5c5cf1aaf0233758ed61a290219",
+      "documentSha256": "5a3a81ee4cfbe135c48520c24db37c6cd93c7dfa333a13804e75ac17293caad2",
+      "definitions": [
+        { "kind": "subscription", "name": "SubscriptionRiderLocation" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Review/index.js",
+      "line": 22,
+      "exportName": "ORDER",
+      "sourceSha256": "f14451949372e7da2e4bf49a36809f48c5dd27ddff41ccd39db7cde22448f5c4",
+      "documentSha256": "89b8c17d94d7775f693bd6915a18426c8ac2373c65974cf29984c41aba676048",
+      "definitions": [{ "kind": "query", "name": "Order" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Review/index.js",
+      "line": 23,
+      "exportName": "REVIEWORDER",
+      "sourceSha256": "f14451949372e7da2e4bf49a36809f48c5dd27ddff41ccd39db7cde22448f5c4",
+      "documentSha256": "fd3daa840d6fcdc4d59f03534c7c96f5e1824882a122184c15859aa30ed25b80",
+      "definitions": [{ "kind": "mutation", "name": "ReviewOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/components/Update/ForceUpdate.js",
+      "line": 20,
+      "exportName": "VERSIONS",
+      "sourceSha256": "e65089d3eef569218d0662000134edfc2607c2c3f10b6414a7fc78d612e7fe7e",
+      "documentSha256": "823b5c54248480ea6ca81db2f00330f44b8a535bbf767e7c90781a8cb4c22b66",
+      "definitions": [{ "kind": "query", "name": "GetVersions" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/context/Configuration.js",
+      "line": 9,
+      "exportName": "GETCONFIGURATION",
+      "sourceSha256": "c2bf88b3ee5438aac8612f8f052abc06834062695d40f1a7703748e91c029030",
+      "documentSha256": "72128e623ddde4f20db0e5d00e7d0ed3c20f4d702ee3eff50766a1c557285a3b",
+      "definitions": [{ "kind": "query", "name": "Configuration" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/context/Location.js",
+      "line": 18,
+      "exportName": "GET_ZONES",
+      "sourceSha256": "91ce03377b0bd931b3e30dc109117415c71fe99d4dfc0d8d3c5cc8cb30147587",
+      "documentSha256": "7dab4021c04e009fdbf7a4f493b207343784e48f9bc21021be346b8da0440086",
+      "definitions": [{ "kind": "query", "name": "Zones" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/context/Orders.js",
+      "line": 17,
+      "exportName": "ACTIVE_ORDERS",
+      "sourceSha256": "7458ff8fa06244b1e58857ea6bb0f8f1176ad93ec0b480a1d5aae0400f368d06",
+      "documentSha256": "35da861992a923e4cfb023339d5462d45e168fc9110a69ff9e10b1c95ce9aac0",
+      "definitions": [{ "kind": "query", "name": "GetUsersActiveOrders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/context/Orders.js",
+      "line": 20,
+      "exportName": "PAST_ORDERS",
+      "sourceSha256": "7458ff8fa06244b1e58857ea6bb0f8f1176ad93ec0b480a1d5aae0400f368d06",
+      "documentSha256": "3097d5138eb3cb8175f237a39520448acabd2b2f8800daccc8e8ba5a2cd5ccf2",
+      "definitions": [{ "kind": "query", "name": "GetUsersPastOrders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/context/Orders.js",
+      "line": 23,
+      "exportName": "SUBSCRIPTION_ORDERS",
+      "sourceSha256": "7458ff8fa06244b1e58857ea6bb0f8f1176ad93ec0b480a1d5aae0400f368d06",
+      "documentSha256": "11754ac6d9fb5ce89bb63e644532f6bab6dddd534427f46040f9794bbff4e7de",
+      "definitions": [{ "kind": "subscription", "name": "OrderStatusChanged" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/context/Orders.js",
+      "line": 26,
+      "exportName": "SINGLE_SUBSCRIPTION_ORDERS",
+      "sourceSha256": "7458ff8fa06244b1e58857ea6bb0f8f1176ad93ec0b480a1d5aae0400f368d06",
+      "documentSha256": "dd8d546e0f9de82f0f10ef01a85fa4836c75626d7cffe88de0d9c9b4753232c4",
+      "definitions": [{ "kind": "subscription", "name": "OrderStatusChanged" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/context/User.js",
+      "line": 28,
+      "exportName": "PROFILE",
+      "sourceSha256": "675d6ec5e445e8e874c2823e89582713366ecbda3f6da338250576aed337eb53",
+      "documentSha256": "3bc090005ad38a8c4e853d314e57de7f87b122849e8800a532c2ebeb3d8695f9",
+      "definitions": [{ "kind": "query", "name": null }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/mode/ModeNotificationRegistration.js",
+      "line": 13,
+      "exportName": "MULTIVENDOR_PUSH_TOKEN",
+      "sourceSha256": "0918461659f92230ed09afd52bf47764dc75b8583b694d2e734f41904639f542",
+      "documentSha256": "567897298454da8476e8fc5ce4022dc6d091698a7141ee1753df1e42646b05e4",
+      "definitions": [{ "kind": "mutation", "name": "PushToken" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Account/Account.js",
+      "line": 31,
+      "exportName": "PUSH_TOKEN",
+      "sourceSha256": "eb3ba8ed4642f14464fa91014e04cf2b31e52af407f466d4156edc67efbb94b8",
+      "documentSha256": "567897298454da8476e8fc5ce4022dc6d091698a7141ee1753df1e42646b05e4",
+      "definitions": [{ "kind": "mutation", "name": "PushToken" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Account/Account.js",
+      "line": 34,
+      "exportName": "UPDATE_NOTIFICATION_TOKEN",
+      "sourceSha256": "eb3ba8ed4642f14464fa91014e04cf2b31e52af407f466d4156edc67efbb94b8",
+      "documentSha256": "b8e1ca041bd493ee03b40a96b4600dc0bcfdc53ae495862dfdbf3ca83e9490b0",
+      "definitions": [
+        { "kind": "mutation", "name": "UpdateNotificationStatus" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Account/Account.js",
+      "line": 38,
+      "exportName": "DEACTIVATE",
+      "sourceSha256": "eb3ba8ed4642f14464fa91014e04cf2b31e52af407f466d4156edc67efbb94b8",
+      "documentSha256": "c81b99ba7f7644bc6265117c3c1399f5bc851468037f09429c72b14e1b99e83e",
+      "definitions": [{ "kind": "mutation", "name": "deactivated" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Account/ChangePassword.js",
+      "line": 17,
+      "exportName": "CHANGE_PASSWORD",
+      "sourceSha256": "ab3d74eec30f9c271e262a21abd388029157ed3e46e38f710b999181bf226e15",
+      "documentSha256": "5d2da7812ec1a9ea6ed5b8eb7f0f9aa4651cab39165b68906972c52df44e2392",
+      "definitions": [{ "kind": "mutation", "name": "ChangePassword" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Addresses/Addresses.js",
+      "line": 34,
+      "exportName": "DELETE_ADDRESS",
+      "sourceSha256": "31346cd1eb42b080e7aeaa7187de33e4dce9140434c746b9293b818e0a1bfdb7",
+      "documentSha256": "ee709d64b8ca495c19098526ab1acda2da4b40cc51895ca5431a7c2a42a212d8",
+      "definitions": [{ "kind": "mutation", "name": "DeleteAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Addresses/Addresses.js",
+      "line": 37,
+      "exportName": "DELETE_BULK_ADDRESSES",
+      "sourceSha256": "31346cd1eb42b080e7aeaa7187de33e4dce9140434c746b9293b818e0a1bfdb7",
+      "documentSha256": "95b26dd6a160a91511ff2a6280db1a43ffe97daba3a73fd0b01554682f9bd760",
+      "definitions": [{ "kind": "mutation", "name": "DeleteBulkAddresses" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Cart/Cart.js",
+      "line": 37,
+      "exportName": "TIPPING",
+      "sourceSha256": "a3b1236e6216e62bbf810f5578aca397296480bd961f8a6b6ebc33c5e264268e",
+      "documentSha256": "5b7489dfa0a0b0af222ceaff7e6c8ff71b1e0a70340f9c7504cc811de5ea0995",
+      "definitions": [{ "kind": "query", "name": "Tips" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Cart/Section.js",
+      "line": 18,
+      "exportName": "RELATED_ITEMS",
+      "sourceSha256": "e6be292e3c3a577fc8facf0001aa9c9699c80964c65838fb0defebd466e5352d",
+      "documentSha256": "259fb9f346c83c160bc23f7bb5aa0186c71d9dfd75feb87a52a815ecb4be3492",
+      "definitions": [{ "kind": "query", "name": "RelatedItems" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Cart/Section.js",
+      "line": 19,
+      "exportName": "RESTAURANT",
+      "sourceSha256": "e6be292e3c3a577fc8facf0001aa9c9699c80964c65838fb0defebd466e5352d",
+      "documentSha256": "9eb4977d6dd7de2e35a383cd61568449d9ab6a265be219894677edb35f73c377",
+      "definitions": [{ "kind": "query", "name": "Restaurant" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Cart/Section.js",
+      "line": 20,
+      "exportName": "FOOD",
+      "sourceSha256": "e6be292e3c3a577fc8facf0001aa9c9699c80964c65838fb0defebd466e5352d",
+      "documentSha256": "9c4ea9159ee9b50b8caf5b8a0d30f90c0b547b30f6f47d51446865df89f2b3dc",
+      "definitions": [{ "kind": "fragment", "name": "FoodItem" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/CartAddress/CartAddress.js",
+      "line": 27,
+      "exportName": "SELECT_ADDRESS",
+      "sourceSha256": "925a5228cd32ff0429a79c4e1d9d9d1568d08623960ed0ed6a74d4ca22165466",
+      "documentSha256": "c611e6d8175bdb0b9216527905d478c0f15bfb51535e0f907240e805953b5644",
+      "definitions": [{ "kind": "mutation", "name": "SelectAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/ChatWithRider/useChatScreen.js",
+      "line": 23,
+      "exportName": "useChatScreen",
+      "sourceSha256": "f88289a97abb9b0619e515260be34d4974d9631de3cc56a8eb6b37a6ce46f855",
+      "documentSha256": "0229464d5f7d6aeeb59c8573770471f3383e13695fad767ca70ef818b5749fd7",
+      "definitions": [{ "kind": "query", "name": "Chat" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/ChatWithRider/useChatScreen.js",
+      "line": 33,
+      "exportName": "useChatScreen",
+      "sourceSha256": "f88289a97abb9b0619e515260be34d4974d9631de3cc56a8eb6b37a6ce46f855",
+      "documentSha256": "c1f3ddb7d022dc5bf9cdd94c760b379363a6eafb69efb68f6c8409da2b3f55bf",
+      "definitions": [{ "kind": "mutation", "name": "SendChatMessage" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/ChatWithRider/useChatScreen.js",
+      "line": 42,
+      "exportName": "useChatScreen",
+      "sourceSha256": "f88289a97abb9b0619e515260be34d4974d9631de3cc56a8eb6b37a6ce46f855",
+      "documentSha256": "a566d726d98c2751bb85139b57eb65e2eb48869ae64a5cb35fe677c123f88273",
+      "definitions": [{ "kind": "mutation", "name": "UploadImageToS3" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/ChatWithRider/useChatScreen.js",
+      "line": 131,
+      "exportName": "unsubscribe",
+      "sourceSha256": "f88289a97abb9b0619e515260be34d4974d9631de3cc56a8eb6b37a6ce46f855",
+      "documentSha256": "796dbcb3551c4b336a81513c556adfb06f9219bb55c8da09b67dc04a80a3fe84",
+      "definitions": [
+        { "kind": "subscription", "name": "SubscriptionNewMessage" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Checkout/Checkout.js",
+      "line": 56,
+      "exportName": "PLACEORDER",
+      "sourceSha256": "5604b1eef4a18fb56244e1bc8880efab08954f27e6705e7af1fd182818d21ef7",
+      "documentSha256": "10e3b7482bb702193701438b256ca1f0507eb92990954e679a682224b5f998bf",
+      "definitions": [{ "kind": "mutation", "name": "PlaceOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Checkout/Checkout.js",
+      "line": 59,
+      "exportName": "TIPPING",
+      "sourceSha256": "5604b1eef4a18fb56244e1bc8880efab08954f27e6705e7af1fd182818d21ef7",
+      "documentSha256": "5b7489dfa0a0b0af222ceaff7e6c8ff71b1e0a70340f9c7504cc811de5ea0995",
+      "definitions": [{ "kind": "query", "name": "Tips" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Checkout/Checkout.js",
+      "line": 62,
+      "exportName": "APPLY_COUPON",
+      "sourceSha256": "5604b1eef4a18fb56244e1bc8880efab08954f27e6705e7af1fd182818d21ef7",
+      "documentSha256": "23b943084031ab1985a46fe25309a5e27e7d7cc80d95a830e22320655309f552",
+      "definitions": [{ "kind": "mutation", "name": "Coupon" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/CreateAccount/useCreateAccount.android.js",
+      "line": 33,
+      "exportName": "LOGIN",
+      "sourceSha256": "a9c19deada12287aaccfb75a152f2869a432e990037ee757ca66c8313c730f75",
+      "documentSha256": "a06d540a38ded7dc5e9527c29c3331bb1d8b8dbc276d0fad0124a0c1a784cc38",
+      "definitions": [{ "kind": "mutation", "name": "Login" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/CreateAccount/useCreateAccount.ios.js",
+      "line": 35,
+      "exportName": "LOGIN",
+      "sourceSha256": "53c82acfc46e42fc0c2c7fb324b3dc91953ecbd4ca1626d906554934c0871f3f",
+      "documentSha256": "a06d540a38ded7dc5e9527c29c3331bb1d8b8dbc276d0fad0124a0c1a784cc38",
+      "definitions": [{ "kind": "mutation", "name": "Login" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/EditAddress/EditAddress.js",
+      "line": 39,
+      "exportName": "EDIT_ADDRESS",
+      "sourceSha256": "4f255e2d147a21d59d83e5ff5c193b6a81bbe91ad396748115ce5eea6ea35342",
+      "documentSha256": "df7741d848d30380d7dc08e99285f87e322223bed52ef6b4dd4f914216bfe30c",
+      "definitions": [{ "kind": "mutation", "name": "EditAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Favourite/Favourite.js",
+      "line": 38,
+      "exportName": "RESTAURANTS",
+      "sourceSha256": "1880a4300b1ef05e81d4b69dd4bd121794b5aa5dbb39e845ab2dd32f88f10cb5",
+      "documentSha256": "656e731150b2736a4969f3d8a07349affa82b1f21644f514c759102aad79a787",
+      "definitions": [{ "kind": "query", "name": "UserFavourite" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/ForgotPassword/useForgotPassword.js",
+      "line": 12,
+      "exportName": "FORGOT_PASSWORD",
+      "sourceSha256": "dd8be5d929a1bc9ee0ed62feffcddee319740f996ee9ed47bfecd10a3ee75d8a",
+      "documentSha256": "55364fc9f2623a2518081139a87a919da6168a18243a76cf6794fe2bc30e61dc",
+      "definitions": [{ "kind": "mutation", "name": "ForgotPassword" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/ForgotPassword/useResetYourPassword.js",
+      "line": 15,
+      "exportName": "RESET_PASSWORD",
+      "sourceSha256": "5e12fda1fff78fde526568ca4f085d4f89513fa9df5ba327c62a807ab57ab473",
+      "documentSha256": "03e683bfc474d7a13d798b4dd8abf7e02489e88d01e7fd895ddff4f0e72e67ff",
+      "definitions": [{ "kind": "mutation", "name": "ResetPassword" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Login/useLogin.js",
+      "line": 25,
+      "exportName": "LOGIN",
+      "sourceSha256": "11621157cd8e9f34dc537dceb9123a0f8c84fa37f7be4790c77037dcbd66f21e",
+      "documentSha256": "a06d540a38ded7dc5e9527c29c3331bb1d8b8dbc276d0fad0124a0c1a784cc38",
+      "definitions": [{ "kind": "mutation", "name": "Login" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Login/useLogin.js",
+      "line": 28,
+      "exportName": "EMAIL",
+      "sourceSha256": "11621157cd8e9f34dc537dceb9123a0f8c84fa37f7be4790c77037dcbd66f21e",
+      "documentSha256": "08bdc4c9b82645302e8bf1d287571d3ff0e1980bb15d6aab2c06e3db66abb725",
+      "definitions": [{ "kind": "mutation", "name": "EmailExist" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Main/Main.js",
+      "line": 45,
+      "exportName": "RESTAURANTS",
+      "sourceSha256": "12bc3dbc34fb520d2cc7790ad31ca71c1ac9f903cd6f791dff5a06e3ed9135cc",
+      "documentSha256": "81cd863e078dff1085819d45392379d1da32e6c3d0e17c53eddbf8659630e355",
+      "definitions": [{ "kind": "query", "name": "Restaurants" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Main/Main.js",
+      "line": 48,
+      "exportName": "SELECT_ADDRESS",
+      "sourceSha256": "12bc3dbc34fb520d2cc7790ad31ca71c1ac9f903cd6f791dff5a06e3ed9135cc",
+      "documentSha256": "c611e6d8175bdb0b9216527905d478c0f15bfb51535e0f907240e805953b5644",
+      "definitions": [{ "kind": "mutation", "name": "SelectAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Main/Main.js",
+      "line": 51,
+      "exportName": "GET_BANNERS",
+      "sourceSha256": "12bc3dbc34fb520d2cc7790ad31ca71c1ac9f903cd6f791dff5a06e3ed9135cc",
+      "documentSha256": "517dcf446a1d28c20607a8a1d0665e5ac80922c8931ba8747ec848b11c3d79b3",
+      "definitions": [{ "kind": "query", "name": "Banners" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Main/Main.js",
+      "line": 54,
+      "exportName": "GET_CUISINES",
+      "sourceSha256": "12bc3dbc34fb520d2cc7790ad31ca71c1ac9f903cd6f791dff5a06e3ed9135cc",
+      "documentSha256": "7e6debf426b63f1df293531cace5070d263473e85ae29e64abac97837604658b",
+      "definitions": [{ "kind": "query", "name": "Cuisines" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Menu/Menu.js",
+      "line": 45,
+      "exportName": "SELECT_ADDRESS",
+      "sourceSha256": "2fdcd4c222f792aeb3dc7cea63904b7e7f2435c44a089384b9a00e665733059e",
+      "documentSha256": "c611e6d8175bdb0b9216527905d478c0f15bfb51535e0f907240e805953b5644",
+      "definitions": [{ "kind": "mutation", "name": "SelectAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Menu/Menu.js",
+      "line": 48,
+      "exportName": "GET_CUISINES",
+      "sourceSha256": "2fdcd4c222f792aeb3dc7cea63904b7e7f2435c44a089384b9a00e665733059e",
+      "documentSha256": "7e6debf426b63f1df293531cace5070d263473e85ae29e64abac97837604658b",
+      "definitions": [{ "kind": "query", "name": "Cuisines" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Menu/Menu.js",
+      "line": 51,
+      "exportName": "GET_RESTAURANTS_CUISINES",
+      "sourceSha256": "2fdcd4c222f792aeb3dc7cea63904b7e7f2435c44a089384b9a00e665733059e",
+      "documentSha256": "3162b4b8db4102027c2f76029f01397a6577951f4a0a8b62d1300a119c6e4332",
+      "definitions": [{ "kind": "query", "name": "NearByRestaurantsCuisines" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/NewAddress/NewAddress.js",
+      "line": 29,
+      "exportName": "CREATE_ADDRESS",
+      "sourceSha256": "31370d5918e3a8b6c86ccbce658a94d50b9baf2654211bc10b70d9878bd4414a",
+      "documentSha256": "1d362d2b5d69a18c34618c5f81468bfac5fe36e35a235e93962cf3e3d0772407",
+      "definitions": [{ "kind": "mutation", "name": "CreateAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/OrderDetail/OrderDetail.js",
+      "line": 43,
+      "exportName": "CANCEL_ORDER",
+      "sourceSha256": "9c22afb1b3ff2c7858af563e02c2101406ff8f5c26919209277bafa99b125e67",
+      "documentSha256": "8ab27935e9fbda2a7763561bd96705cbec32cef9b1de88b2847424eed9f7ebd8",
+      "definitions": [{ "kind": "mutation", "name": null }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/OrderDetail/OrderDetail.js",
+      "line": 46,
+      "exportName": "SUBSCRIPTION_ORDER",
+      "sourceSha256": "9c22afb1b3ff2c7858af563e02c2101406ff8f5c26919209277bafa99b125e67",
+      "documentSha256": "e9c4242e6fea8d9a5d5ebdea3097e0162894261b4e627e369bae46e9a68fd22e",
+      "definitions": [{ "kind": "subscription", "name": "SubscriptionOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/OrderDetail/OrderDetail.js",
+      "line": 50,
+      "exportName": "SUBSCRIPTION_NEW_MESSAGE",
+      "sourceSha256": "9c22afb1b3ff2c7858af563e02c2101406ff8f5c26919209277bafa99b125e67",
+      "documentSha256": "5afbf7cfc5390a94cee1d95d76175c46829f0ecfe2f73caeb74501dbaf672aba",
+      "definitions": [
+        { "kind": "subscription", "name": "SubscriptionNewMessage" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/OrderDetail/OrderDetail.js",
+      "line": 53,
+      "exportName": "ORDER_TRACKING",
+      "sourceSha256": "9c22afb1b3ff2c7858af563e02c2101406ff8f5c26919209277bafa99b125e67",
+      "documentSha256": "dcb32c66f91ec08ea4453ecd16677a388461e8262de9df9e27972e3615fd9edc",
+      "definitions": [{ "kind": "query", "name": "OrderTracking" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/OrderDetail/OrderDetail.js",
+      "line": 56,
+      "exportName": "SUBSCRIPTION_ORDER_TRACKING",
+      "sourceSha256": "9c22afb1b3ff2c7858af563e02c2101406ff8f5c26919209277bafa99b125e67",
+      "documentSha256": "5df4d0f5b4d9090f1a6ba10c6283a3a922e890803a007b6ccf6b042b4ce9b767",
+      "definitions": [
+        { "kind": "subscription", "name": "SubscriptionOrderTracking" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Otp/Email/useEmailOtp.js",
+      "line": 19,
+      "exportName": "SEND_OTP_TO_EMAIL",
+      "sourceSha256": "f9e1d2e7b95e636bd386b9460ea8f892926988201eba80fd7bb0c4cf5f82a651",
+      "documentSha256": "da27fb892b362e5ea835bc156fb39394549cb3c8b163d555966085e7c1ed6093",
+      "definitions": [{ "kind": "mutation", "name": "SendOtpToEmail" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Otp/Email/useEmailOtp.js",
+      "line": 22,
+      "exportName": "CREATEUSER",
+      "sourceSha256": "f9e1d2e7b95e636bd386b9460ea8f892926988201eba80fd7bb0c4cf5f82a651",
+      "documentSha256": "8a949b9cc936718deb2eeb7d8c447a59b3bcb9c6f02414e9cfb0e29edb4fb03c",
+      "definitions": [{ "kind": "mutation", "name": "CreateUser" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Otp/ForgotPassword/useForgotPasswordOtp.js",
+      "line": 15,
+      "exportName": "FORGOT_PASSWORD",
+      "sourceSha256": "86539c27c2a3c5d1d054ae7f96373d806c2171258854753847f3f8620a8d189a",
+      "documentSha256": "55364fc9f2623a2518081139a87a919da6168a18243a76cf6794fe2bc30e61dc",
+      "definitions": [{ "kind": "mutation", "name": "ForgotPassword" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Otp/Phone/usePhoneOtp.js",
+      "line": 23,
+      "exportName": "SEND_OTP_TO_PHONE",
+      "sourceSha256": "b4adf61e553f93c4e75a7423de28b69d125b6ebed657c9fca1f487a2e492c229",
+      "documentSha256": "dd187037f8a73a0bbe519e3d53c569364f3f2ddb4e8f386f1f740c078e7c8b79",
+      "definitions": [{ "kind": "mutation", "name": "SendOtpToPhoneNumber" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Otp/Phone/usePhoneOtp.js",
+      "line": 26,
+      "exportName": "UPDATEUSER",
+      "sourceSha256": "b4adf61e553f93c4e75a7423de28b69d125b6ebed657c9fca1f487a2e492c229",
+      "documentSha256": "5227ce7f900b9c84991c6c46bf0cace5e06fe268f8fefd38bc1eaa25df976dbe",
+      "definitions": [{ "kind": "mutation", "name": "UpdateUser" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Paypal/Paypal.js",
+      "line": 15,
+      "exportName": "MYORDERS",
+      "sourceSha256": "9e54241dee167dfcbf677e329b047fa8d8c96d27e28af07f948d81d797ebe756",
+      "documentSha256": "d6436d94429cf5a7077991d9e75587f61a85dd7c78e5f8abfd278f9aa0655ea6",
+      "definitions": [{ "kind": "query", "name": "Orders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/PhoneNumber/usePhoneNumber.js",
+      "line": 18,
+      "exportName": "UPDATEUSER",
+      "sourceSha256": "dadb2bb79414795eac2e17057c2c32ca2a5d736805c2f6fd4de0e78d036e5a93",
+      "documentSha256": "5227ce7f900b9c84991c6c46bf0cace5e06fe268f8fefd38bc1eaa25df976dbe",
+      "definitions": [{ "kind": "mutation", "name": "UpdateUser" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Profile/ChangePassword.js",
+      "line": 17,
+      "exportName": "CHANGE_PASSWORD",
+      "sourceSha256": "3def3dc2bd06152666873fc089b270a0fb1bbe14536b83f79c6f83f7f6f62426",
+      "documentSha256": "5d2da7812ec1a9ea6ed5b8eb7f0f9aa4651cab39165b68906972c52df44e2392",
+      "definitions": [{ "kind": "mutation", "name": "ChangePassword" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Profile/Profile.js",
+      "line": 48,
+      "exportName": "RESTAURANTS",
+      "sourceSha256": "821f5f0483a03ed0964a150dbc01550d9faf32c948b4633c92f0d01858328e63",
+      "documentSha256": "656e731150b2736a4969f3d8a07349affa82b1f21644f514c759102aad79a787",
+      "definitions": [{ "kind": "query", "name": "UserFavourite" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/RateAndReview/RateAndReview.js",
+      "line": 32,
+      "exportName": "REVIEWORDER",
+      "sourceSha256": "3db01236fcf3d85761dc6a7cf0ea56004b31fc5f4fb21a2ae12a293e53ad74f0",
+      "documentSha256": "fd3daa840d6fcdc4d59f03534c7c96f5e1824882a122184c15859aa30ed25b80",
+      "definitions": [{ "kind": "mutation", "name": "ReviewOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Register/useRegister.js",
+      "line": 18,
+      "exportName": "PHONE",
+      "sourceSha256": "0fe8f3d7dbfdb0cb5f1e1e77859c3be655fe169032ab60a80e1f57bc9e89e8af",
+      "documentSha256": "451c8ce16a4051c635a34220794419c71b3e9151e45c67b0511a626adf0311e9",
+      "definitions": [{ "kind": "mutation", "name": "PhoneExist" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Restaurant/Restaurant.js",
+      "line": 51,
+      "exportName": "POPULAR_ITEMS",
+      "sourceSha256": "e157cefeaf761b8a5d56c96fcd4f8ea720603f768fda6095f67a26537651f902",
+      "documentSha256": "be52aec01d72a9cad693a0b7f84cafaff1ab6f09b32739ad1269dcfe60171584",
+      "definitions": [{ "kind": "query", "name": "PopularItems" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Restaurant/Restaurant.js",
+      "line": 54,
+      "exportName": "FOOD",
+      "sourceSha256": "e157cefeaf761b8a5d56c96fcd4f8ea720603f768fda6095f67a26537651f902",
+      "documentSha256": "c405910f5d258420168fb8657f46acc0a37a32f967ea400786f55c092432bead",
+      "definitions": [{ "kind": "fragment", "name": "FoodItem" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Reviews/index.js",
+      "line": 28,
+      "exportName": "Review",
+      "sourceSha256": "65e8dc684cc781ec1266b0a29583fea13d4cbb5a19d12e1b84433207edc09b63",
+      "documentSha256": "ea0a8b06c4b9496bdfed936c781f3b663d817391ca78f32090c0b20d2dff9996",
+      "definitions": [{ "kind": "query", "name": "GetReviewsByRestaurant" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/SaveAddress/SaveAddress.js",
+      "line": 38,
+      "exportName": "CREATE_ADDRESS",
+      "sourceSha256": "c8a5a69681a6e42544805bcf3608313f8dc9ca71731f4af65e8128da54dc3313",
+      "documentSha256": "1d362d2b5d69a18c34618c5f81468bfac5fe36e35a235e93962cf3e3d0772407",
+      "definitions": [{ "kind": "mutation", "name": "CreateAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/SaveAddress/SaveAddress.js",
+      "line": 41,
+      "exportName": "EDIT_ADDRESS",
+      "sourceSha256": "c8a5a69681a6e42544805bcf3608313f8dc9ca71731f4af65e8128da54dc3313",
+      "documentSha256": "df7741d848d30380d7dc08e99285f87e322223bed52ef6b4dd4f914216bfe30c",
+      "definitions": [{ "kind": "mutation", "name": "EditAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Search/SearchScreen.js",
+      "line": 27,
+      "exportName": "RESTAURANTS",
+      "sourceSha256": "8da8bcf3c375c2973ab6dedbca35182e19f115aed6b1ce56bd0630e3d736c1cd",
+      "documentSha256": "81cd863e078dff1085819d45392379d1da32e6c3d0e17c53eddbf8659630e355",
+      "definitions": [{ "kind": "query", "name": "Restaurants" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Search/SearchScreen.js",
+      "line": 31,
+      "exportName": "TOP_RATED_VENDORS",
+      "sourceSha256": "8da8bcf3c375c2973ab6dedbca35182e19f115aed6b1ce56bd0630e3d736c1cd",
+      "documentSha256": "e05e9154f9543c0162f65044b9bb86075c86628dbf89e5743a79200b55a9d068",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "TopRatedVendors" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Search/SearchScreen.js",
+      "line": 35,
+      "exportName": "RECENT_ORDER_RESTAURANTS",
+      "sourceSha256": "8da8bcf3c375c2973ab6dedbca35182e19f115aed6b1ce56bd0630e3d736c1cd",
+      "documentSha256": "883f07e9ce52d133638a686c57af6e256cf75ebe5e41e3678e726253c9f6cf2b",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "GetRecentOrderRestaurants" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Search/SearchScreen.js",
+      "line": 39,
+      "exportName": "MOST_ORDERED_RESTAURANTS",
+      "sourceSha256": "8da8bcf3c375c2973ab6dedbca35182e19f115aed6b1ce56bd0630e3d736c1cd",
+      "documentSha256": "688c6b2ef342780fa8cdc388301e0077665a035bb79b3b3c32644a1f81a3a85c",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "GetMostOrderedRestaurants" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Settings/Settings.js",
+      "line": 58,
+      "exportName": "PUSH_TOKEN",
+      "sourceSha256": "849d22edbfbf73ba6fd066898d492f057f336331026330ada8ee23f1d85088cd",
+      "documentSha256": "567897298454da8476e8fc5ce4022dc6d091698a7141ee1753df1e42646b05e4",
+      "definitions": [{ "kind": "mutation", "name": "PushToken" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Settings/Settings.js",
+      "line": 61,
+      "exportName": "UPDATE_NOTIFICATION_TOKEN",
+      "sourceSha256": "849d22edbfbf73ba6fd066898d492f057f336331026330ada8ee23f1d85088cd",
+      "documentSha256": "b8e1ca041bd493ee03b40a96b4600dc0bcfdc53ae495862dfdbf3ca83e9490b0",
+      "definitions": [
+        { "kind": "mutation", "name": "UpdateNotificationStatus" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Settings/Settings.js",
+      "line": 64,
+      "exportName": "PROFILE",
+      "sourceSha256": "849d22edbfbf73ba6fd066898d492f057f336331026330ada8ee23f1d85088cd",
+      "documentSha256": "3bc090005ad38a8c4e853d314e57de7f87b122849e8800a532c2ebeb3d8695f9",
+      "definitions": [{ "kind": "query", "name": null }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/screens/Stripe/StripeCheckout.js",
+      "line": 16,
+      "exportName": "MYORDERS",
+      "sourceSha256": "0e174fc238ac4a137662c35ce2f6529c20e681b9eb543e670994009dff8042d7",
+      "documentSha256": "d6436d94429cf5a7077991d9e75587f61a85dd7c78e5f8abfd278f9aa0655ea6",
+      "definitions": [{ "kind": "query", "name": "Orders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/components/OrderHistory/ActiveOrdersList.js",
+      "line": 19,
+      "exportName": "ACTIVE_ORDERS_QUERY",
+      "sourceSha256": "4365ff74ad9a7d3e8e4fcd4a62a22e3c9c7aa4cf86593700fc1ab3f15ae0c688",
+      "documentSha256": "d9f23b0e78f1a3a8a9a07e032006abee29e0024909f3b777fe16134868b6af4c",
+      "definitions": [{ "kind": "query", "name": "GetUsersActiveOrders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/components/OrderHistory/useActiveOrders.js",
+      "line": 7,
+      "exportName": "ACTIVE_ORDERS_QUERY",
+      "sourceSha256": "0c0aa7223805f4cade74f8fb711e73003baa707a6893d82cc8d17337984333b5",
+      "documentSha256": "d9f23b0e78f1a3a8a9a07e032006abee29e0024909f3b777fe16134868b6af4c",
+      "definitions": [{ "kind": "query", "name": "GetUsersActiveOrders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/components/OrderHistory/usePastOrders.js",
+      "line": 7,
+      "exportName": "PAST_ORDERS_QUERY",
+      "sourceSha256": "38c0047f3afb9cfe5322a25378223fff33da67e9733a195b97e0eeeaad3bdec4",
+      "documentSha256": "a4314322b98dbaa4242bcb4b9cabbf697c6cb72daeab37d4c003cb97a68a6c3b",
+      "definitions": [{ "kind": "query", "name": "GetUsersPastOrders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/components/OrderHistory/useScheduledOrders.js",
+      "line": 7,
+      "exportName": "SCHEDULED_ORDERS_QUERY",
+      "sourceSha256": "1690d13a041f5cd98668c2f17a2f4f4ead864cc171ac6091a1a405dbbbc932a5",
+      "documentSha256": "ea79585587c0ebbd9f346cc650284571b00ccf2109de65590379f33076fb9101",
+      "definitions": [{ "kind": "query", "name": "ScheduledOrders" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/components/Profile/AccountManagement.js",
+      "line": 16,
+      "exportName": "DEACTIVATE",
+      "sourceSha256": "b4630e1cac1249f0799f9179c65fed6af78b1cf810ba3e281d21191c8cc8121a",
+      "documentSha256": "c81b99ba7f7644bc6265117c3c1399f5bc851468037f09429c72b14e1b99e83e",
+      "definitions": [{ "kind": "mutation", "name": "deactivated" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/AddAddress/useAddAddress.js",
+      "line": 23,
+      "exportName": "CREATE_ADDRESS",
+      "sourceSha256": "dc0ee1175937aaa1c991f509452f09e5aefeb29f49c0dd9f9454b02d4cd77e93",
+      "documentSha256": "1d362d2b5d69a18c34618c5f81468bfac5fe36e35a235e93962cf3e3d0772407",
+      "definitions": [{ "kind": "mutation", "name": "CreateAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/AddAddress/useAddAddress.js",
+      "line": 27,
+      "exportName": "EDIT_ADDRESS",
+      "sourceSha256": "dc0ee1175937aaa1c991f509452f09e5aefeb29f49c0dd9f9454b02d4cd77e93",
+      "documentSha256": "df7741d848d30380d7dc08e99285f87e322223bed52ef6b4dd4f914216bfe30c",
+      "definitions": [{ "kind": "mutation", "name": "EditAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/Checkout/SingleVendorPaymentCheckout.js",
+      "line": 17,
+      "exportName": "PAYMENT_SUCCESS",
+      "sourceSha256": "0cbac866cde4f032c863f1a4993ba3b91f5bc2fe5bd7e3dd29635a6884cc6e1f",
+      "documentSha256": "20525ec129e71bbe8d93b01d9db0e26585babf7d41720c22bfb3b7dbfa73bd7e",
+      "definitions": [{ "kind": "subscription", "name": "PaymentSuccess" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/Checkout/useOrderTracking.js",
+      "line": 12,
+      "exportName": "ORDER_SUBSCRIPTION",
+      "sourceSha256": "f0dc303b50f43bb52e7f9b213afb35109a27d3981325fa3799d07e4567818e68",
+      "documentSha256": "dd8d546e0f9de82f0f10ef01a85fa4836c75626d7cffe88de0d9c9b4753232c4",
+      "definitions": [{ "kind": "subscription", "name": "OrderStatusChanged" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/Checkout/useOrderTracking.js",
+      "line": 15,
+      "exportName": "ORDER_TRACKING",
+      "sourceSha256": "f0dc303b50f43bb52e7f9b213afb35109a27d3981325fa3799d07e4567818e68",
+      "documentSha256": "4bd32c0736144f661ba379053c8d73a33507993a60209b0a45abb458288e63a7",
+      "definitions": [{ "kind": "query", "name": "SingleVendorOrderTracking" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/Checkout/useOrderTracking.js",
+      "line": 16,
+      "exportName": "TRACKING_SUBSCRIPTION",
+      "sourceSha256": "f0dc303b50f43bb52e7f9b213afb35109a27d3981325fa3799d07e4567818e68",
+      "documentSha256": "6ee89ad0c8cf9f490aa90f463b548315ce5c006c7f4e9538350c9b39df71de1b",
+      "definitions": [
+        { "kind": "subscription", "name": "SingleVendorOrderTrackingUpdated" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/EditName/EditName.js",
+      "line": 29,
+      "exportName": "UPDATEUSER",
+      "sourceSha256": "4cc134afed94f420d3792cfe651a44a7c18dd1ed76ee48b041e7534801ea94d5",
+      "documentSha256": "5227ce7f900b9c84991c6c46bf0cace5e06fe268f8fefd38bc1eaa25df976dbe",
+      "definitions": [{ "kind": "mutation", "name": "UpdateUser" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/FeedBack/FeedBack.js",
+      "line": 18,
+      "exportName": "REVIEWORDER",
+      "sourceSha256": "2f4c31614ea3b8b2285ec681eb121a041a5b03a04812030b62a67945f7219ea8",
+      "documentSha256": "97d13e9634409b107fc10a791a4d2884eb458d6441adf4853717d8509220f839",
+      "definitions": [{ "kind": "mutation", "name": "ReviewOrder" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/FeedBack/FeedBack.js",
+      "line": 21,
+      "exportName": "GIVEFEEDBACK",
+      "sourceSha256": "2f4c31614ea3b8b2285ec681eb121a041a5b03a04812030b62a67945f7219ea8",
+      "documentSha256": "7c8e453e59be0ba5d53a0aab56a38f625d71ce5166fdf59eb5c835153ba28537",
+      "definitions": [{ "kind": "mutation", "name": "GiveFeedback" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/singlevendor/screens/Home/useHome.js",
+      "line": 20,
+      "exportName": "SELECT_ADDRESS",
+      "sourceSha256": "315c75e653989ab4022690a9d9305b6898c7c870c34a0a5b9d76d3a1afe47d90",
+      "documentSha256": "c611e6d8175bdb0b9216527905d478c0f15bfb51535e0f907240e805953b5644",
+      "definitions": [{ "kind": "mutation", "name": "SelectAddress" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/ui/hooks/useRestaurant.js",
+      "line": 5,
+      "exportName": "RESTAURANT",
+      "sourceSha256": "e28f42c17ea73ae1e81d9783ac7a3ef73c9a3ab0b431cc92c372658bb6997b51",
+      "documentSha256": "b115bfefb858deb08d7846f6d5b56bc70231bc56e71a7ec68fbb369162958ddd",
+      "definitions": [{ "kind": "query", "name": "Restaurant" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/ui/hooks/useRestaurantQueries.js",
+      "line": 10,
+      "exportName": "RESTAURANTS",
+      "sourceSha256": "e8df2b6933038ec9f5513398c74925afc6c676e0a93185207b6bde37990bc661",
+      "documentSha256": "81cd863e078dff1085819d45392379d1da32e6c3d0e17c53eddbf8659630e355",
+      "definitions": [{ "kind": "query", "name": "Restaurants" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/ui/hooks/useRestaurantQueries.js",
+      "line": 14,
+      "exportName": "TOP_BRANDS",
+      "sourceSha256": "e8df2b6933038ec9f5513398c74925afc6c676e0a93185207b6bde37990bc661",
+      "documentSha256": "e05e9154f9543c0162f65044b9bb86075c86628dbf89e5743a79200b55a9d068",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "TopRatedVendors" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/ui/hooks/useRestaurantScreenData.js",
+      "line": 14,
+      "exportName": "POPULAR_ITEMS",
+      "sourceSha256": "7fb68b2e875ecbc4134bad331de045ef9f21e87828d7d09862f831c866b272df",
+      "documentSha256": "be52aec01d72a9cad693a0b7f84cafaff1ab6f09b32739ad1269dcfe60171584",
+      "definitions": [{ "kind": "query", "name": "PopularItems" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/ui/hooks/useRestaurantScreenData.js",
+      "line": 17,
+      "exportName": "FOOD",
+      "sourceSha256": "7fb68b2e875ecbc4134bad331de045ef9f21e87828d7d09862f831c866b272df",
+      "documentSha256": "c405910f5d258420168fb8657f46acc0a37a32f967ea400786f55c092432bead",
+      "definitions": [{ "kind": "fragment", "name": "FoodItem" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/ui/hooks/useRestaurantScreenData.js",
+      "line": 20,
+      "exportName": "POPULAR_FOOD_ITEMS",
+      "sourceSha256": "7fb68b2e875ecbc4134bad331de045ef9f21e87828d7d09862f831c866b272df",
+      "documentSha256": "b6e32123438d985bc18a34be4f1860198d174f5c028862d5441856cc169292c5",
+      "definitions": [{ "kind": "query", "name": "popularFoodItems" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/ui/hooks/useRestaurantScreenNewDesign.js",
+      "line": 6,
+      "exportName": "POPULAR_FOOD_ITEMS",
+      "sourceSha256": "39c3a7b3c5b7fcd716dcf7dc8e3f14bac6b6a62d9ab0150b41b56e333c98eb5a",
+      "documentSha256": "b6e32123438d985bc18a34be4f1860198d174f5c028862d5441856cc169292c5",
+      "definitions": [{ "kind": "query", "name": "popularFoodItems" }]
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/ui/hooks/useRestaurantScreenNewDesign.js",
+      "line": 9,
+      "exportName": "FETCH_CATEGORY_DETAILS",
+      "sourceSha256": "39c3a7b3c5b7fcd716dcf7dc8e3f14bac6b6a62d9ab0150b41b56e333c98eb5a",
+      "documentSha256": "58fa32b96ee956809bd1907d312fca733fb13a48823c8607671cb6ac5b76b8ae",
+      "definitions": [
+        { "kind": "query", "name": "fetchCategoryDetailsByStoreIdForMobile" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/queries/restaurants/index.ts",
+      "line": 85,
+      "exportName": "RECENT_ORDER_RESTAURANTS",
+      "sourceSha256": "97c461aba07dafd5f4f053edf36772b779cbdcc47aa63023ad93965f2b4ff358",
+      "documentSha256": "be0069fe0dbf55ee585b91c623452f4a25e3a1c5a014b1d1126cfafc9294d26a",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "GetRecentOrderRestaurants" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/queries/restaurants/index.ts",
+      "line": 94,
+      "exportName": "MOST_ORDER_RESTAURANTS",
+      "sourceSha256": "97c461aba07dafd5f4f053edf36772b779cbdcc47aa63023ad93965f2b4ff358",
+      "documentSha256": "dae77bd8e8c429d4b4b8f4cbf7be07803664b2f20db1c3d62f2098aaba826309",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "GetMostOrderedRestaurants" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/queries/restaurants/index.ts",
+      "line": 115,
+      "exportName": "NEAR_BY_RESTAURANTS_PREVIEW",
+      "sourceSha256": "97c461aba07dafd5f4f053edf36772b779cbdcc47aa63023ad93965f2b4ff358",
+      "documentSha256": "1cc53f24b64229eb031aede4e91a67d2eeaa007ea01ea2be4a9b181aae038aed",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantPreviewFields" },
+        { "kind": "query", "name": "Restaurants" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/queries/vendors/index.ts",
+      "line": 6,
+      "exportName": "TOP_RATED_VENDORS",
+      "sourceSha256": "4859aadf89cb252d697274d84e12adfd22a9ed24b0d66d3daf34fea27425f2a0",
+      "documentSha256": "ba2951608b34cdff8364cb694a9a0572eacaefdeaf0b3d0d5d8e669530b7dcda",
+      "definitions": [
+        { "kind": "fragment", "name": "RestaurantCarouselPreviewFields" },
+        { "kind": "query", "name": "TopRatedVendors" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/context/User/User.context.tsx",
+      "line": 56,
+      "exportName": "SUBSCRIPTION_ORDERS",
+      "sourceSha256": "d39f8fddfcf75ac59d1d597fe30478ce9806cdc7aeb1f0c60ef806308ce56003",
+      "documentSha256": "b42d08d3257b8d61fde5015fd54b34c96426719a214e0c4a6cf2414987ae9f18",
+      "definitions": [{ "kind": "subscription", "name": "OrderStatusChanged" }]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/context/User/User.context.tsx",
+      "line": 59,
+      "exportName": "SAVE_NOTIFICATION_TOKEN_WEB",
+      "sourceSha256": "d39f8fddfcf75ac59d1d597fe30478ce9806cdc7aeb1f0c60ef806308ce56003",
+      "documentSha256": "5a2aebc80afeb80eec8a19fbc25c2fd665f7ddf476d387c688af1b76d8af76eb",
+      "definitions": [
+        { "kind": "mutation", "name": "SaveNotificationTokenWeb" }
+      ]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/ui/screen-components/un-protected/Home/Cities/CitilesTiles/CitiesTiles.tsx",
+      "line": 24,
+      "exportName": "CITIES",
+      "sourceSha256": "a2b2e546ef4299db0b0165dc2f7725c846ce4f56f55ed3348af7646d96cfeefd",
+      "documentSha256": "4927ddd21793f6b8a6e54f6897ac3d90b5d1e2fff9ed91e358e6f9e03d1c1dfc",
+      "definitions": [{ "kind": "query", "name": "getCitiesByCountry" }]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/ui/screen-components/un-protected/Home/Cities/index.tsx",
+      "line": 11,
+      "exportName": "COUNTRIES",
+      "sourceSha256": "5324d5c2db08fedc8fd3e6a49ab66b1c8c0b270eb80d007387f21dec5722de0c",
+      "documentSha256": "fcfac2be4468ba1239cd4bf456cd7f057ebade99bb8840e51d3097d30c7bc476",
+      "definitions": [{ "kind": "query", "name": "getCountries" }]
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/ui/screens/protected/profile/order-history/index.tsx",
+      "line": 20,
+      "exportName": "ORDER_STATUS_CHANGED",
+      "sourceSha256": "dc31255540059da0723e204b2779b41840d386f76f2a0bf12aaf6eabee43db11",
+      "documentSha256": "b42d08d3257b8d61fde5015fd54b34c96426719a214e0c4a6cf2414987ae9f18",
+      "definitions": [{ "kind": "subscription", "name": "OrderStatusChanged" }]
+    }
   ]
 }

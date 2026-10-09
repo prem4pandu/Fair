@@ -26,6 +26,12 @@ const skippedDirectories = new Set([
 
 const posix = (path) => path.split(sep).join("/");
 
+function looksLikeGraphQL(text) {
+  return /^(?:\s|#[^\n]*(?:\n|$))*(?:(?:query|mutation|subscription)\s*(?:[A-Za-z_]\w*\s*)?[({]|fragment\s+[A-Za-z_]\w*\s+on\s+|\{\s*[A-Za-z_])/.test(
+    text,
+  );
+}
+
 function inside(root, path) {
   const rel = relative(root, path);
   return rel === "" || (!rel.startsWith(`..${sep}`) && rel !== "..");
@@ -233,7 +239,21 @@ function sourceDocuments(path, appRoot) {
   const module = parseModule(path);
   const documents = [];
   const visit = (node) => {
-    const expression = gqlCall(node, module.ast);
+    const wrapped = gqlCall(node, module.ast);
+    const literal =
+      ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)
+        ? node
+        : ts.isTemplateExpression(node)
+          ? node
+          : null;
+    const expression =
+      wrapped ??
+      (literal &&
+      looksLikeGraphQL(
+        ts.isTemplateExpression(literal) ? literal.head.text : literal.text,
+      )
+        ? literal
+        : null);
     if (expression) {
       const result = resolveExpression(path, node, 0, new Set());
       documents.push({

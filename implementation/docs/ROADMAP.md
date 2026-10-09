@@ -73,6 +73,14 @@ on their date and must not be quoted as current.
 
 ---
 
+### 1.7 W2 extraction and continuity checkpoint — 2026-10-09
+
+Bare GraphQL request strings/templates now participate in the same static import/interpolation resolver as gql wrappers. Supplemental exports are deduplicated against actual source sites, retaining their original lines. The resolution artifact records 132 automatically expanded interpolated sites with source/document hashes, plus five manual alias-import resolutions. Verification rejects stale sources or expansions, new/obsolete sites and duplicate manual/automatic entries. Both audit scopes reconcile uncovered lexical sites. Standalone cache fragment libraries skip only the unused-fragment rule; request documents retain all normal GraphQL rules.
+
+The more complete inventory changes the scoped result to **FAIL: 529/532** and the full six-app result to **FAIL: 813/846**, both with zero unresolved documents and zero missing roots. These totals include fragment-library sites; they are not operation implementation counts. Additive source-confirmed rider OTP arguments and restaurant/review selections are present, but their domain behavior is still unimplemented. The remaining scoped failures are two cache fragments on the missing canonical `Order` type and the customer app's scalar `getVersions` fields conflicting with other multivendor object selections. Single-vendor `emailExist`/`phoneExist` also conflict with multivendor scalar return shapes. A shared combined schema cannot represent both shapes; mode-specific contracts and presentation-preserving integration adapters require further work. No vendor source was edited.
+
+The populated upgrade test now proves pre-upgrade access/refresh continuity, exact historical address reads, revoked/consumed denial, refresh replay revocation and cross-owner selection rejection. This establishes a bounded preservation check, not G1 approval. Previously applied L2 migration drift, canonical model/ports review, original UI smoke, strict coverage and all phase approvals remain open. Detailed execution evidence is in `docs/artifacts/w2-reconciliation-2026-10-09/packet.json`.
+
 ## 2. Definition of done
 
 ### 2.1 Owner boundary (verbatim; must appear in every frontend/mobile handoff)

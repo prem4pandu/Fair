@@ -295,6 +295,7 @@ extend type Mutation {
   deleteStaff(id: String): DeleteStaffDeleteStaff
   editStaff(staffInput: StaffInput): EditStaffEditStaff
   emailExist(email: String): Boolean
+  # Rider authentication.mutation.ts:46 supplies otp; other apps omit it.
   forgotPassword(email: String, otp: String): ForgotPasswordForgotPassword
   login(
     appleId: String
@@ -336,10 +337,11 @@ extend type Mutation {
     isEnabled: Boolean
     token: String
   ): SaveRestaurantTokenSaveRestaurantToken
+  # Rider authentication.mutation.ts:11,18 supplies otp; other apps omit it.
   sendOtpToEmail(email: String, otp: String): SendOtpToEmailSendOtpToEmail
   sendOtpToPhoneNumber(
-    otp: String
     phone: String
+    otp: String
   ): SendOtpToPhoneNumberSendOtpToPhoneNumber
   updateNotificationStatus(
     offerNotification: Boolean
