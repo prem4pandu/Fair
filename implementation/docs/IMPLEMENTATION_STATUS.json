@@ -76,15 +76,15 @@
     {
       "id": "GP0",
       "passed": false,
-      "finishedAt": "2026-10-09T15:54:34.663Z",
-      "commit": "08bcd146261f7eaec8807d28bd3b147fcfe21248",
+      "finishedAt": "2026-10-09T16:14:49.104Z",
+      "commit": "15143221402b93c55f414f5fe79ef936a49afbd5",
       "approvals": [],
       "requiredApprovals": ["lead", "reviewer-QA", "reviewer-SEC"],
       "approved": false,
       "commands": [
         { "command": "pnpm install --frozen-lockfile", "exitCode": 0 },
         { "command": "pnpm lint", "exitCode": 0 },
-        { "command": "pnpm format:check", "exitCode": 1 },
+        { "command": "pnpm format:check", "exitCode": 0 },
         { "command": "pnpm typecheck", "exitCode": 0 },
         { "command": "pnpm build", "exitCode": 0 },
         { "command": "pnpm test", "exitCode": 0 },
