@@ -2,7 +2,7 @@ import { readConfig } from "./config.js";
 import { startWorker } from "./worker.js";
 try {
   const config = readConfig(process.env);
-  const runtime = await startWorker(config.REDIS_URL);
+  const runtime = await startWorker(config.REDIS_URL, config.DATABASE_URL);
   let closing = false;
   const close = async () => {
     if (closing) return;

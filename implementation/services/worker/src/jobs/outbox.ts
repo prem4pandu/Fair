@@ -61,11 +61,16 @@ async function claimDue(
 ): Promise<OutboxEvent[]> {
   const leaseSeconds = boundedInteger(options.leaseSeconds ?? 30, 1, 300);
   const batchSize = boundedInteger(options.batchSize ?? 100, 1, 100);
+  const eventTypes = [
+    ...new Set(options.consumers.flatMap((consumer) => consumer.eventTypes)),
+  ];
+  if (eventTypes.length === 0) return [];
   return transaction(options.database, async (client) => {
     const result = await client.query<OutboxEvent>(
       `WITH due AS (
          SELECT id FROM "DomainEvent"
          WHERE "processedAt" IS NULL AND "deadLetteredAt" IS NULL
+           AND type = ANY($4::text[])
            AND "availableAt" <= now()
            AND ("claimExpiresAt" IS NULL OR "claimExpiresAt" <= now())
          ORDER BY "createdAt", id
@@ -78,7 +83,7 @@ async function claimDue(
            attempts = attempts + 1
        FROM due WHERE event.id = due.id
        RETURNING event.id, event.type, event.payload, event.attempts`,
-      [batchSize, options.workerId, leaseSeconds],
+      [batchSize, options.workerId, leaseSeconds, eventTypes],
     );
     return result.rows;
   });

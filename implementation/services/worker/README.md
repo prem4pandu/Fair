@@ -1,6 +1,14 @@
 # Worker foundation
 
-Separate BullMQ worker process for the explicit synthetic `foundation-probe` queue only. It accepts jobs named `probe` containing exactly `{ "probeId": "<UUID>" }`, returns that identifier and `status: "ok"`, and rejects other job names or payload fields. It implements no payment, order, delivery, notification or provider jobs. Production business capability is pending.
+Separate worker process for the explicit synthetic `foundation-probe` queue and
+the PostgreSQL domain-event outbox runtime. The probe queue accepts only jobs
+named `probe` containing exactly `{ "probeId": "<UUID>" }`.
+
+The outbox loop polls serially, leases only event types with a registered
+consumer, backs off after database failures, and waits for an in-flight batch
+during shutdown. No domain consumers are registered yet, so it leaves domain
+events untouched and reports no business success. Payment, order, delivery,
+notification, and provider jobs remain pending in their owning lanes.
 
 Use Node 24 and the pinned pnpm. Install from the workspace root with `pnpm install --frozen-lockfile` and run `pnpm build`; start using `pnpm --filter @fairbite/worker start`. The API does not start this worker. It has no HTTP listener. Shutdown signals close the BullMQ worker and Redis connection.
 

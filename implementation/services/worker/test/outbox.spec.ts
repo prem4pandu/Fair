@@ -14,7 +14,12 @@ function database(events: OutboxEvent[], inboxInserted = true) {
   const client = {
     query: vi.fn(async (sql: string, values?: unknown[]) => {
       calls.push({ sql, values });
-      if (sql.includes("RETURNING event.id")) return result(events);
+      if (sql.includes("RETURNING event.id")) {
+        const eventTypes = values?.[3] as string[];
+        return result(
+          events.filter((event) => eventTypes.includes(event.type)),
+        );
+      }
       if (sql.includes('INSERT INTO "EventInbox"'))
         return result(
           inboxInserted ? [{ consumer: values?.[0] }] : [],
@@ -60,7 +65,7 @@ describe("outbox dispatcher", () => {
     expect(
       db.calls.find((call) => call.sql.includes("FOR UPDATE SKIP LOCKED"))
         ?.values,
-    ).toEqual([100, "worker-1", 30]);
+    ).toEqual([100, "worker-1", 30, ["user.otp"]]);
   });
 
   it("skips an already acknowledged consumer effect", async () => {
@@ -129,22 +134,44 @@ describe("outbox dispatcher", () => {
     ).toBe(false);
   });
 
-  it("does not acknowledge an event before its consumer is registered", async () => {
+  it("does not connect or claim before a consumer is registered", async () => {
     const db = database([event]);
     const outcome = await dispatchOutboxBatch({
       database: db.pool as never,
       workerId: "worker-1",
       consumers: [],
     });
-    expect(outcome).toEqual({ claimed: 1, processed: 0, failed: 1 });
+    expect(outcome).toEqual({ claimed: 0, processed: 0, failed: 0 });
+    expect(db.pool.connect).not.toHaveBeenCalled();
+    expect(db.calls).toEqual([]);
+  });
+
+  it("leaves event types without a registered consumer unclaimed", async () => {
+    const db = database([event]);
+    const outcome = await dispatchOutboxBatch({
+      database: db.pool as never,
+      workerId: "worker-1",
+      consumers: [
+        {
+          name: "orders",
+          eventTypes: ["order.created"],
+          handle: vi.fn(async () => undefined),
+        },
+      ],
+    });
+
+    expect(outcome).toEqual({ claimed: 0, processed: 0, failed: 0 });
+    const claim = db.calls.find((call) =>
+      call.sql.includes("FOR UPDATE SKIP LOCKED"),
+    );
+    expect(claim?.sql).toContain("type = ANY($4::text[])");
+    expect(claim?.values?.[3]).toEqual(["order.created"]);
+    expect(
+      db.calls.some((call) => call.sql.includes('UPDATE "DomainEvent"')),
+    ).toBe(true);
     expect(
       db.calls.some((call) => call.sql.includes('SET "processedAt" = now()')),
     ).toBe(false);
-    expect(
-      db.calls.some((call) =>
-        call.values?.includes("No outbox consumer for user.otp"),
-      ),
-    ).toBe(true);
   });
 
   it("alerts when the bounded attempt limit is reached", async () => {
