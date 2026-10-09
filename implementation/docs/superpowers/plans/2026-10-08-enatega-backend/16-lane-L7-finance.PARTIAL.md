@@ -14,7 +14,7 @@
 
 **Architecture:** `modules/finance` owns the chart of accounts, pure posting builders, a transactional journal writer (`postEntry`, idempotency key per source event, DB-enforced balance and immutability), SQL-derived balances (`LedgerPort`), read models (earnings rows, day-bucketed graphs, withdraw requests) and the withdrawal lifecycle. `modules/payments` owns the `PaymentProvider`/`ConnectProvider` ports, a dependency-free Stripe adapter (HMAC webhook verification with `node:crypto`, form-encoded HTTPS calls with idempotency keys), checkout sessions, webhooks, Stripe Connect onboarding and refunds; `rest/stripe.controller.ts` exposes them. The worker's `jobs/L7` consumes `order.transitioned` from the outbox and posts settlements idempotently.
 
-**Tech stack:** NestJS 12 (schema-first GraphQL resolvers + Express REST controllers), `pg` 8 with hand-written SQL, PostgreSQL 17 triggers and partial indexes, zod 4, `node:crypto` (no Stripe SDK — the registry is blocked, master §10, and the SDK is not needed), Vitest 4, Testcontainers, supertest, a local fake Stripe HTTP server for contract tests, Playwright (handed to L10).
+**Tech stack:** NestJS 12 (schema-first GraphQL resolvers + Express REST controllers), `pg` 8 with hand-written SQL, PostgreSQL 17 triggers and partial indexes, zod 4, `node:crypto` (no Stripe SDK — the registry is blocked, master §10, and the SDK is not needed), Vitest 4, Testcontainers, supertest, a local fake Stripe HTTP server for contract tests, with browser acceptance handed to W16.
 
 ---
 
@@ -22,7 +22,7 @@
 
 > The product UI MUST be the complete pinned Enatega frontend in `implementation/vendor/enatega-ui/`. FairBite owns the backend and integration layer only. Do not create, redesign, simplify or replace Enatega layouts, navigation, screens, components, styling, assets or interaction flows. Allowed frontend changes are limited to transport/adapters, secure session handling, validated data mapping, configuration and centralized display-name imports. Every edit inside `implementation/vendor/enatega-ui/` must be recorded in the root `SOURCE_PROVENANCE.json` under `allowedModifications`, and `node tools/manifest-enatega-ui.mjs` must be re-run so `SOURCE_MANIFEST.json` matches. An unsupported backend capability is an integration blocker: return a `NOT_IMPLEMENTED` error, never fake success, never fabricate data, never call the upstream Enatega production backend.
 
-L7 never edits `vendor/enatega-ui`. The one frontend change this lane needs (E8 below: the admin's `POST /stripe/account` sends no `Authorization` header) is requested from L10 as a recorded "secure session handling" edit; until it lands the endpoint answers 401 and the admin shows its own "Error connecting to Stripe" toast.
+L7 never edits `vendor/enatega-ui`. The one frontend change this lane needs (E8 below: the admin's `POST /stripe/account` sends no `Authorization` header) is requested from W13 as a recorded "secure session handling" edit; until it lands the endpoint answers 401 and the admin shows its own "Error connecting to Stripe" toast.
 
 ---
 
@@ -55,7 +55,7 @@ The single-vendor admin (`svadmin(sv)`) also calls `earnings`, `transactionHisto
 | `GET /stripe/create-checkout-session?id=<orderRef>[&platform=web]` | APP WebView (P6, `Authorization: Bearer`), WEB top-level navigation (P3, no header)                               | APP: bearer CUSTOMER, must own the order. WEB: no header accepted (R40)                              | 303 to the Stripe Checkout URL for the server-computed order total; HTML error pages otherwise; 503 "Card payments are not available" until Stripe is configured |
 | `GET /stripe/success`, `GET /stripe/cancel`                        | APP WebView detects `stripe/success` / `stripe/cancel` in the URL; must be on the backend host (P6 allowed hosts) | none                                                                                                 | static HTML pages; never change payment state                                                                                                                    |
 | `POST /stripe/webhook`                                             | Stripe                                                                                                            | `Stripe-Signature` HMAC-SHA256 over the raw body                                                     | marks orders paid (via `OrdersPort.markPaid`), posts the payment journal, emits `order.paid`, updates Connect status                                             |
-| `POST /stripe/account` body `{ "restaurantId" }`                   | ADMIN store Payment screen (P1)                                                                                   | bearer R(own)/V(own)/A/S(`Stores`); **the unmodified admin sends no header → 401** until L10 edit E8 | `{ "url": "https://connect.stripe.com/…" }` Stripe Connect onboarding link                                                                                       |
+| `POST /stripe/account` body `{ "restaurantId" }`                   | ADMIN store Payment screen (P1)                                                                                   | bearer R(own)/V(own)/A/S(`Stores`); **the unmodified admin sends no header → 401** until W13 edit E8 | `{ "url": "https://connect.stripe.com/…" }` Stripe Connect onboarding link                                                                                       |
 | `POST /stripe/create-web-checkout-session`                         | WEB single-vendor (P5)                                                                                            | —                                                                                                    | gated behind L12 (D1): HTTP 501 `{ "error": "create-web-checkout-session is not available yet", "code": "NOT_IMPLEMENTED" }`                                     |
 | `GET /paypal`                                                      | APP PayPal WebView (P7; currently reaches `/graphqlpaypal` because of the upstream URL defect)                    | —                                                                                                    | D12: HTTP 503 HTML "PayPal payments are not available". `/graphqlpaypal` is deliberately **not** served (reference/02 §5.7).                                     |
 
@@ -820,7 +820,7 @@ export const AUTH_RESOLVER = Symbol("AUTH_RESOLVER");
 
 **D-L7-6 Worker import:** add to `services/api/package.json` `"exports": { "./finance-ledger": { "types": "./dist/modules/finance/ledger/index.d.ts", "default": "./dist/modules/finance/ledger/index.js" } }`; add `"@fairbite/api": "workspace:*"` (dependency) to `@fairbite/worker`; make the worker build depend on the API build in `turbo.json`; `services/worker/src/jobs/outbox.ts` dispatches to the `handlers` exported by `services/worker/src/jobs/L7/index.ts`, signature `(event: { id: string; type: string; payload: unknown; createdAt: Date }, db: Pool) => Promise<void>`.
 
-**D-L7-7 L10 recorded frontend edit E8 (secure session handling):** in `vendor/enatega-ui/enatega-multivendor-admin/lib/ui/screen-components/protected/restaurant/payment/main/index.tsx:58-60` add an `Authorization` header with value `"Bearer " + (localStorage.getItem("token") ?? "")` to the existing `fetch` headers (token key `token`, `lib/utils/methods/auth.ts:10-17`; the single-vendor admin already sends it, reference/01 §5.2 P2). Record in `SOURCE_PROVENANCE.json` `allowedModifications` and re-run `node tools/manifest-enatega-ui.mjs`. Without it `POST /stripe/account` returns 401 and the admin shows its own "Error connecting to Stripe" toast.
+**D-L7-7 W13 recorded frontend edit E8 (secure session handling):** in `vendor/enatega-ui/enatega-multivendor-admin/lib/ui/screen-components/protected/restaurant/payment/main/index.tsx:58-60` add an `Authorization` header with value `"Bearer " + (localStorage.getItem("token") ?? "")` to the existing `fetch` headers (token key `token`, `lib/utils/methods/auth.ts:10-17`; the single-vendor admin already sends it, reference/01 §5.2 P2). Record in `SOURCE_PROVENANCE.json` `allowedModifications` and re-run `node tools/manifest-enatega-ui.mjs`. Without it `POST /stripe/account` returns 401 and the admin shows its own "Error connecting to Stripe" toast.
 
 ### 5.2 Chart of accounts
 
@@ -3986,23 +3986,334 @@ git commit -m "feat(L7): add finance argument parsing, subject scope, mappers an
 
 ---
 
-## Remaining sections to author (this plan is PARTIAL)
+### Task 6: Finance read repository and the eight query operations
 
-**Status:** PARTIAL. `W9` may not begin implementation on this plan. Completing it is the first task of
-`W9` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+#### Mandatory tagged integration-suite skeleton
 
-**What exists:** §1 boundary, §2 all 11 operations and the Stripe REST surface, §3 contract notes and SDL, §4 data model, constraints and factories, §5 business rules and chart of accounts, and Tasks 1–5 (ledger constraints, posting builders, journal writer, outbox consumer, argument/scope/mapper parsing).
+Tasks 6–8 must include this executable baseline. Each fixture method loads every exact §2 document variant with
+`doc(...)`, creates owner and foreign-tenant journal/request rows through factories, and returns authorised,
+anonymous, insufficient-permission, foreign-owner and invalid-input calls. Mutation fixtures additionally expose a
+database assertion proving journal, audit and outbox atomicity. Rule-specific assertions listed in each task extend
+this baseline and cannot be replaced by it.
 
-**What is missing**, measured against `_lane-plan-brief.md`:
+```ts
+import { describe, expect, it } from "vitest";
+import { op } from "../../support/op.js";
 
-1. **Tasks 6+ — the GraphQL layer.** The ledger core is planned; the 11 operations the apps call are not. Each needs a resolver, service, repository and a tagged integration test with the exact vendored document, including the field-level restrictions in §3 (`platformEarnings` null unless ADMIN/STAFF(Admin), `storeEarnings` null for a rider viewer, masked `toBank.accountNumber`).
-2. **The Stripe controller tasks** — all six REST routes in §2.1, proven against a local fake Stripe: checkout-session creation and its 303, HMAC-SHA256 webhook verification over the raw body, Connect onboarding, the 503 paths when unconfigured, and the deliberate non-serving of `/graphqlpaypal`.
-3. **The withdrawal lifecycle tasks** — `createWithdrawRequest` and `updateWithdrawReqStatus` end to end, including who may call them and the exact copied message strings in §3.
-4. **§8 Worker jobs** beyond Task 4: payout webhooks and settlement reconciliation.
-5. **§9 Playwright and journey handover** to W16/W15 for the admin earnings, transaction-history and withdraw-request screens and the store/rider wallet screens.
-6. **§10 Coverage and gate checklist.**
-7. **§11 Open questions and blockers** — in particular that every card path stays `PROVIDER_UNAVAILABLE` until sandbox keys exist (D12), and that the admin `POST /stripe/account` answers 401 until the recorded session edit lands (edit E8, now owned by **W13**, not the retired L10).
+type FinanceCase = {
+  field: string;
+  success: () => Promise<{
+    data?: Record<string, unknown>;
+    errors?: Array<{ extensions: { code: string } }>;
+  }>;
+  anonymous: () => Promise<{
+    errors?: Array<{ extensions: { code: string } }>;
+  }>;
+  unprivileged: () => Promise<{
+    errors?: Array<{ extensions: { code: string } }>;
+  }>;
+  foreignOwner: () => Promise<{
+    errors?: Array<{ extensions: { code: string } }>;
+  }>;
+  invalid: () => Promise<{ errors?: Array<{ extensions: { code: string } }> }>;
+  assertAtomic?: () => Promise<void>;
+};
 
-The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
-no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
-present in both the operations table and in at least one task's tests.
+const financeCases = (build: () => Promise<FinanceCase>) => {
+  it("executes the pinned document and maps journal-derived values", async () => {
+    const test = await build();
+    const result = await test.success();
+    expect(result.errors).toBeUndefined();
+    expect(result.data?.[test.field]).not.toBeUndefined();
+    await test.assertAtomic?.();
+  });
+  it("enforces authentication, permission, ownership and argument bounds", async () => {
+    const test = await build();
+    expect((await test.anonymous()).errors?.[0]?.extensions.code).toBe(
+      "UNAUTHENTICATED",
+    );
+    expect((await test.unprivileged()).errors?.[0]?.extensions.code).toBe(
+      "FORBIDDEN",
+    );
+    expect(["FORBIDDEN", "NOT_FOUND"]).toContain(
+      (await test.foreignOwner()).errors?.[0]?.extensions.code,
+    );
+    expect((await test.invalid()).errors?.[0]?.extensions.code).toBe(
+      "BAD_USER_INPUT",
+    );
+  });
+};
+
+describe(op("query.commissionRate"), () =>
+  financeCases(() => fixture.commissionRate()),
+);
+describe(op("query.earnings"), () => financeCases(() => fixture.earnings()));
+describe(op("query.riderCurrentWithdrawRequest"), () =>
+  financeCases(() => fixture.riderCurrentWithdrawRequest()),
+);
+describe(op("query.riderEarningsGraph"), () =>
+  financeCases(() => fixture.riderEarningsGraph()),
+);
+describe(op("query.storeCurrentWithdrawRequest"), () =>
+  financeCases(() => fixture.storeCurrentWithdrawRequest()),
+);
+describe(op("query.storeEarningsGraph"), () =>
+  financeCases(() => fixture.storeEarningsGraph()),
+);
+describe(op("query.transactionHistory"), () =>
+  financeCases(() => fixture.transactionHistory()),
+);
+describe(op("query.withdrawRequests"), () =>
+  financeCases(() => fixture.withdrawRequests()),
+);
+describe(op("mutation.createWithdrawRequest"), () =>
+  financeCases(() => fixture.createWithdrawRequest()),
+);
+describe(op("mutation.updateCommission"), () =>
+  financeCases(() => fixture.updateCommission()),
+);
+describe(op("mutation.updateWithdrawReqStatus"), () =>
+  financeCases(() => fixture.updateWithdrawReqStatus()),
+);
+```
+
+**Files:**
+
+- Create `services/api/src/modules/finance/finance.repository.ts`
+- Create `services/api/src/modules/finance/finance.service.ts`
+- Create `services/api/src/modules/finance/finance.resolver.ts`
+- Create `services/api/test/integration/finance/finance-queries.integration.spec.ts`
+
+- [ ] **Step 1: Write the failing integration suite**
+
+Use `startStack()`, `startApi(stack)`, `factories(stack.pool)` and the exact documents in §2. Use the eight literal
+query tags in the mandatory suite above for `earnings`, `transactionHistory`, `withdrawRequests`,
+`riderCurrentWithdrawRequest`, `storeCurrentWithdrawRequest`, `riderEarningsGraph`, `storeEarningsGraph`, and
+`commissionRate`. Seed journal entries and withdraw rows through the factories from §4.4, never by replacing the
+repository. Each block must assert:
+
+1. the successful response shape and exact money/timestamp conversion;
+2. anonymous `UNAUTHENTICATED`, CUSTOMER `FORBIDDEN`, and a STAFF token lacking the named permission `FORBIDDEN`;
+3. foreign store/rider identifiers `FORBIDDEN` and malformed identifiers `BAD_USER_INPUT` with the R10 message;
+4. invalid dates/page values fail with the R8 message;
+5. the operation-specific rule: grand totals ignore pagination; platform totals are null for store/rider callers; rider views have null `storeEarnings`; bank accounts are masked except for ADMIN or the payee; graph buckets use `DD-MM-YYYY`, report only non-empty days and return rider `totalHours: 0`; current requests return only REQUESTED; commission rows remain 0.
+
+Every document is loaded with the exact `doc(app, file, exportName)` tuple from §2. The three app variants of `earnings` and `transactionHistory` are each executed at least once. Assertions name response fields; snapshots are forbidden.
+
+- [ ] **Step 2: Run and observe the failure**
+
+```bash
+pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/finance/finance-queries.integration.spec.ts
+```
+
+Expected: FAIL with `NOT_IMPLEMENTED` for all eight roots.
+
+- [ ] **Step 3: Implement the repository, service and resolvers**
+
+`FinanceRepository` receives `Pool`; all methods accept the parsed scope and execute parameterized SQL only. Implement `listEarnings`, `earningTotals`, `listTransactions`, `listWithdrawRequests`, `currentWithdrawRequest`, `storeGraph`, and `riderGraph`. Join `JournalEntry` to `JournalLine` and `LedgerAccount`, group by entry and account kind, and derive every amount from signed debits/credits. Apply scope predicates before pagination; escape `%`, `_`, and `\\` in search terms. Graph SQL uses `(entry."postedAt" AT TIME ZONE $timezone)::date`, pages distinct days first, then fetches entries for those days. Withdraw SQL never reads a denormalized wallet balance.
+
+`FinanceService` must call the Task 5 parsers and scope helpers, fetch parents in one batched `RidersPort.summaries`/`RestaurantsPort.summaries` call, and map with Task 5 mappers. `commissionRate` delegates paging/search/sort to `RestaurantsPort.list` and overwrites no restaurant field. The eight resolver methods are thin: `const auth = await ctx.auth()`, zod-parse arguments, call exactly one service method, and return it. Decorate each with its exact `@Query("name")`; use `appError`, `requireAuth`, `requirePermission`, and `requireOwnership`, never `GraphQLError`.
+
+- [ ] **Step 4: Run and pass**
+
+Run the Step 2 command. Expected: PASS for eight tagged operation groups and all app-document variants.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add services/api/src/modules/finance services/api/test/integration/finance/finance-queries.integration.spec.ts
+git commit -m "feat(L7): implement finance queries from immutable journals"
+```
+
+### Task 7: Withdrawal lifecycle mutations
+
+**Files:**
+
+- Modify `services/api/src/modules/finance/finance.repository.ts`
+- Modify `services/api/src/modules/finance/finance.service.ts`
+- Modify `services/api/src/modules/finance/finance.resolver.ts`
+- Create `services/api/test/integration/finance/withdrawals.integration.spec.ts`
+
+- [ ] **Step 1: Write the failing tests**
+
+Create tagged groups for `mutation.createWithdrawRequest` and `mutation.updateWithdrawReqStatus`, using every exact document tuple in §2. For creation cover restaurant and rider success, optional matching `userId`, forged `userId`, every rejected role, missing bank details, minimum amount with exact text `The withdraw amount must be atleast 10 or greater`, insufficient available balance, concurrent duplicate requests, and journal/outbox atomicity. For update cover ADMIN and STAFF(`Withdraw Request`), missing permission, missing row, malformed id/status, every transition in the R14 table, the exact already/cannot-change messages, generated `TXN` reference, balanced P10/P11 entries, audit failure rollback, and replay without a second journal entry.
+
+- [ ] **Step 2: Run and observe the failure**
+
+```bash
+pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/finance/withdrawals.integration.spec.ts
+```
+
+Expected: FAIL with `NOT_IMPLEMENTED` for both mutations.
+
+- [ ] **Step 3: Implement atomically**
+
+Add repository methods `withPayeeLock`, `openRequest`, `insertRequest`, and `transitionRequest`, each operating on the caller's `PoolClient`. `withPayeeLock` executes `pg_advisory_xact_lock(hashtextextended($1,0))`. `createWithdrawRequest` follows R13 in its stated order, derives the payee exclusively from auth, reads the payout profile and ledger balance inside one transaction, inserts the request, calls `postEntry` with P9, and calls `enqueue`; map `23505` to the exact pending-request error. `updateWithdrawReqStatus` locks the row, calls the central Task 5 transition function, posts P10 or P11, records the audit, enqueues `withdraw.updated`, and commits once. The resolver exposes the exact SDL arguments and performs no SQL.
+
+- [ ] **Step 4: Run and pass**
+
+Run the Step 2 command. Expected: PASS, including concurrent and rollback cases.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add services/api/src/modules/finance services/api/test/integration/finance/withdrawals.integration.spec.ts
+git commit -m "feat(L7): implement atomic withdrawal lifecycle"
+```
+
+### Task 8: Fixed zero commission mutation
+
+**Files:**
+
+- Modify `services/api/src/modules/finance/finance.service.ts`
+- Modify `services/api/src/modules/finance/finance.resolver.ts`
+- Create `services/api/test/integration/finance/commission.integration.spec.ts`
+
+- [ ] **Step 1:** Execute the exact admin `updateCommission` document. Assert anonymous, permission, malformed id, range validation and missing-restaurant failures, then assert every valid core-plan rate including `0` fails with `BAD_USER_INPUT` and `Commission is fixed at 0% on the core plan`; verify the restaurant and audit tables are unchanged.
+- [ ] **Step 2:** Run `pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/finance/commission.integration.spec.ts`; expect `NOT_IMPLEMENTED`.
+- [ ] **Step 3:** Add `@Mutation("updateCommission")`; call `requirePermission`, parse id and rate, verify existence through `RestaurantsPort`, then always throw the R20 core-plan error. No repository write method is permitted.
+- [ ] **Step 4:** Re-run Step 2; expect PASS.
+- [ ] **Step 5:** Commit with `git commit -m "feat(L7): enforce zero core commission"` after adding only the listed files.
+
+### Task 9: Stripe adapter, checkout and signed webhook
+
+**Files:**
+
+- Create `services/api/src/modules/payments/stripe.adapter.ts`
+- Create `services/api/src/modules/payments/stripe-signature.ts`
+- Create `services/api/src/modules/payments/payments.repository.ts`
+- Create `services/api/src/modules/payments/payments.service.ts`
+- Create `services/api/src/rest/stripe.controller.ts`
+- Create `services/api/test/unit/payments/stripe-signature.spec.ts`
+- Create `services/api/test/integration/payments/stripe-rest.integration.spec.ts`
+
+- [ ] **Step 1: Write tests against a local fake provider**
+
+The unit suite signs raw byte buffers and covers multiple `v1` values, constant-time comparison, stale/future timestamps, malformed headers and byte changes. The REST suite uses a local HTTP fake that records form fields and idempotency headers. Cover all six §2.1 routes and R23–R29: honest 503 when secrets are absent; checkout validation/auth/ownership/state; server-owned amount/currency; deterministic idempotency; safe 303 host; reuse; static success/cancel pages; webhook raw-body signature, dedupe and all named outcomes; account ownership/onboarding; single-vendor 501; PayPal 503; `/graphqlpaypal` 404; fixed client text with no provider error or secret leakage.
+
+- [ ] **Step 2: Run and observe the failure**
+
+```bash
+pnpm --filter @fairbite/api exec vitest run test/unit/payments/stripe-signature.spec.ts
+pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/payments/stripe-rest.integration.spec.ts
+```
+
+Expected: FAIL because the adapter/controller do not exist.
+
+- [ ] **Step 3: Implement the boundary**
+
+Use `node:https`/`fetch` with `URLSearchParams`; set Basic bearer auth from `SecretsPort` only on the server and `Idempotency-Key` on every create/refund call. Reject response URLs unless protocol is `https:` and hostname is `stripe.com` or ends with `.stripe.com`. Implement the R26 signature parser with `createHmac`, `timingSafeEqual`, and a 300-second clock tolerance over the untouched request buffer. Repository methods persist `PaymentSession`, `ProviderEvent`, `StripeConnectAccount`, and `PaymentRefund` with unique keys. Service methods implement R23–R29 exactly, use `OrdersPort` for ownership/current totals/state, and wrap session/event/journal/outbox changes in one DB transaction. Register raw-body capture only for `/stripe/webhook`; JSON parsing elsewhere remains bounded. The controller emits only the fixed status, header and body combinations in R24–R29 and never accepts card fields.
+
+- [ ] **Step 4: Run and pass**
+
+Run both Step 2 commands. Expected: PASS with the fake provider; no external network call.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add services/api/src/modules/payments services/api/src/rest/stripe.controller.ts services/api/test/{unit,integration}/payments
+git commit -m "feat(L7): add server-owned Stripe checkout and signed webhooks"
+```
+
+### Task 10: Refund and reconciliation workers
+
+**Files:**
+
+- Create `services/worker/src/jobs/L7/refunds.ts`
+- Create `services/worker/src/jobs/L7/reconcile.ts`
+- Create `services/worker/test/L7/refunds.spec.ts`
+- Create `services/worker/test/L7/reconcile.spec.ts`
+
+- [ ] **Step 1:** Test `FOR UPDATE SKIP LOCKED` claiming, provider idempotency `refund:<id>`, P7 balanced posting, `OrdersPort.markRefunded` retry after provider success, bounded 1–60 minute backoff, terminal attempt 10, missing-reference failure, duplicate callback delivery, and reconciliation alerts for provider-paid/local-unpaid, local-paid/provider-missing and amount/currency mismatch. Assert no test reports success after a provider/database failure.
+- [ ] **Step 2:** Run `pnpm --filter @fairbite/worker exec vitest run test/L7/refunds.spec.ts test/L7/reconcile.spec.ts`; expect missing-module failure.
+- [ ] **Step 3:** Implement one-row serial claims with leases, release claims on failure, store only fixed provider error categories, post through the journal writer, and emit `finance.reconciliation_mismatch` without mutating money or order state. Shutdown must abort waits, await the in-flight call, then release DB/provider resources.
+- [ ] **Step 4:** Re-run Step 2; expect PASS.
+- [ ] **Step 5:** Commit with `git commit -m "feat(L7): add idempotent refund and reconciliation workers"` after adding the four files.
+
+## 7. Worker jobs and event handlers
+
+| Handler                   | Trigger                             | Effect                                                  | Idempotency                            | Failure behavior                                          |
+| ------------------------- | ----------------------------------- | ------------------------------------------------------- | -------------------------------------- | --------------------------------------------------------- |
+| `settleDeliveredOrder`    | `order.transitioned` to DELIVERED   | Build P1/P2/P3 and post one balanced entry              | `settlement:<orderId>:<transitionId>`  | throw for retry; dead-letter after dispatcher limit       |
+| `scheduleCancelledRefund` | paid order transitions to CANCELLED | insert one PENDING refund                               | unique `PaymentRefund.orderId`         | transaction rollback and retry                            |
+| `runRefund`               | due PENDING refund                  | provider refund, P7, then mark order refunded           | `refund:<refundId>`                    | R28 bounded retry; FAILED at attempt 10                   |
+| `reconcilePayments`       | daily scheduler/manual gate         | compare provider session/refund state to local journals | provider object id + local source id   | alert only; never invent a correction                     |
+| `stripeWebhook`           | signed provider callback            | P5/session/connect updates and outbox event             | unique `ProviderEvent.providerEventId` | 500 infrastructure retry; 200 for named business outcomes |
+
+All handlers use the shared outbox/worker runtime, stop claiming on abort, finish or release an active lease, and close pools. No raw card data is accepted, logged or persisted.
+
+The L7 writer creates only the handler modules and their tests. Registration in the shared worker composition root,
+changes to `services/worker/src/jobs/outbox.ts`, workspace dependencies/exports, `turbo.json`, root scripts,
+`kernel/ports.ts`, `app.ts`, shared factories and evidence documents are the queued **lead-owned requests** in
+§5 D-L7-1 through D-L7-6. L7 must not edit those shared files directly.
+
+## 8. Playwright and journey handover
+
+W16 owns these real-UI specs; W9 supplies seeded state and `@op:` trace tags:
+
+| Spec                                     | Route and actions                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Assertions / tags                                                                                                                                                                                                       |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `e2e/specs/admin/finance.spec.ts`        | Navigate by visible `Earnings` (`enatega-multivendor-admin/lib/ui/screen-components/protected/restaurant/earnings/header/screen-header/index.tsx:18-25`), `Transaction History` (`.../restaurant/transaction-history/header/screen-header/index.tsx:10-13`), and `Commission Rates` (`.../super-admin/commission-rate/view/header/screen-header/index.tsx:9-12`). Filter with the `Search`, `Start Date`, and `End Date` placeholders at earnings table header `:79-104`, and `Search stores`/`Commission Rate` controls at commission table header `:70-81`; inspect and update withdrawal rows through visible status actions. | exact rows/totals/status toast; `@op:query.earnings`, `@op:query.transactionHistory`, `@op:query.withdrawRequests`, `@op:mutation.updateWithdrawReqStatus`, `@op:query.commissionRate`, `@op:mutation.updateCommission` |
+| `e2e/specs/store/wallet.spec.ts`         | Store wallet: use the visible `Earnings` title at `enatega-multivendor-store/lib/ui/screen-components/wallet/screen-header/index.tsx:7-10`, enter the amount and click `Confirm Withdraw` at `.../wallet/view/form/index.tsx:92-114`; apply date filters and refresh.                                                                                                                                                                                                                                                                                                                                                            | wallet derived from journals; exact minimum/pending errors; `@op:query.storeEarningsGraph`, `@op:query.storeCurrentWithdrawRequest`, `@op:mutation.createWithdrawRequest`                                               |
+| `e2e/specs/rider/wallet.spec.ts`         | Rider wallet: enter the amount and submit the visible withdraw control wired at `enatega-multivendor-rider/lib/ui/screen-components/wallet/view/main/index.tsx:144-160` and form footer corresponding to the store's `Confirm Withdraw` flow; assert the success text at `.../withdrawrequest-success/view/main/index.tsx:17-22`.                                                                                                                                                                                                                                                                                                | buckets/tips/deliveries and current request; `@op:query.riderEarningsGraph`, `@op:query.riderCurrentWithdrawRequest`, `@op:mutation.createWithdrawRequest`                                                              |
+| `e2e/specs/customer-web/payment.spec.ts` | In the pinned checkout choose the existing payment option and click the order button translated from `click_to_order_button` at `enatega-multivendor-web/lib/ui/screens/protected/order/checkout/index.tsx:1466-1476`; follow only the same-origin server redirect to the provider fake and return.                                                                                                                                                                                                                                                                                                                              | server amount, signed webhook, paid state; no fake success when provider absent                                                                                                                                         |
+
+The selectors above were verified in the pinned source. W16 uses their native roles plus visible text/placeholders and
+must not introduce test ids or change presentation. W13 owns the narrowly scoped admin session-header edit E8 and
+must record it in `SOURCE_PROVENANCE.json`; W9 does not edit vendor code.
+
+W15 owns `services/api/test/journeys/finance.journey.spec.ts`: replay store earnings → store current request → create request; rider earnings → rider current request → create request; admin withdraw list → update status → transaction history; customer place-order → checkout → signed webhook → order paid → delivered settlement. Use exact `doc(...)` exports from §2 and assert database journals/outbox rows after every boundary.
+
+## 9. Coverage and gate checklist
+
+- [ ] `pnpm --filter @fairbite/api test`
+- [ ] `pnpm --filter @fairbite/api test:integration`
+- [ ] `pnpm --filter @fairbite/worker test`
+- [ ] `pnpm --filter @fairbite/api typecheck && pnpm --filter @fairbite/worker typecheck`
+- [ ] `pnpm --filter @fairbite/api build && pnpm --filter @fairbite/worker build`
+- [ ] `pnpm coverage` enforces at least 90% lines, 90% functions and 85% branches for every authored finance,
+      payments, Stripe REST and L7 worker file.
+- [ ] `pnpm e2e -- --grep '@op:(query|mutation)\\.(commissionRate|earnings|riderCurrentWithdrawRequest|riderEarningsGraph|storeCurrentWithdrawRequest|storeEarningsGraph|transactionHistory|withdrawRequests|createWithdrawRequest|updateCommission|updateWithdrawReqStatus)'`
+- [ ] `pnpm check:enatega && pnpm check:enatega:full && pnpm codegen:check`
+- [ ] `pnpm check:operations` finds evidence artifacts for every operation below.
+- [ ] W23 independently reruns unit/integration tests; W24 reviews ledger invariants, tenant scope, secrets, callbacks and webhook verification.
+
+`docs/OPERATION_COVERAGE.json` must show both `implemented: true` and `integrationTested: true` for exactly: `query.earnings`, `query.transactionHistory`, `query.withdrawRequests`, `query.riderCurrentWithdrawRequest`, `query.storeCurrentWithdrawRequest`, `query.riderEarningsGraph`, `query.storeEarningsGraph`, `query.commissionRate`, `mutation.createWithdrawRequest`, `mutation.updateWithdrawReqStatus`, and `mutation.updateCommission`.
+
+## 10. Open questions and blockers
+
+1. **Provider credentials:** Stripe sandbox secret, webhook secret and Connect capability are owner inputs. Until supplied, every card/Connect path returns the R23/R27 unavailable response. Provider sandbox acceptance belongs to W18.
+2. **Admin Connect authentication:** the pinned admin currently omits authorization on `POST /stripe/account`; W13 must make the recorded secure-session transport edit E8. The backend remains 401 until then.
+3. **Cash liability treatment:** R32 keeps COD cash-held accounts outside withdrawable wallet balances pending an owner accounting decision.
+4. **Web anonymous checkout:** R24 permits anonymous `platform=web` navigation because the pinned web flow cannot attach a bearer header. W24 must approve the order-reference threat model before release.
+5. **Tax/discount allocation and rider delivery share:** R33 defaults are source-informed but unverified; owner/accounting confirmation may change future postings through a new policy version, never by rewriting journals.
+6. **Rider hours:** no authoritative time source exists, so the exact app field remains `0` under R31 until W8 supplies a verified work-session source.
+7. **Payout execution:** v1 is manual confirmation only. Adding a payout provider requires a separately reviewed port and provider evidence; `TRANSFERRED` must never imply an API payout today.
+8. **Refund intervention:** a refund without a provider payment reference becomes FAILED for admin attention; the system must not fabricate a reference or mark the order refunded.
+
+## 11. Implementation readiness
+
+**Status: NOT IMPLEMENTATION-READY; T-005 remains In progress.** Sections 1–10 preserve the exact contracts, full
+ledger schema/migrations, Tasks 1–5 implementation bodies, 11 real operation tags, verified selectors, gates and
+blockers. The following `_lane-plan-brief.md` requirements remain before lead review may move T-005:
+
+1. **Integration fixtures:** implement `fixture.commissionRate`, `earnings`, `riderCurrentWithdrawRequest`,
+   `riderEarningsGraph`, `storeCurrentWithdrawRequest`, `storeEarningsGraph`, `transactionHistory`,
+   `withdrawRequests`, `createWithdrawRequest`, `updateCommission` and `updateWithdrawReqStatus`. Each must contain
+   exact `doc(app,file,exportName)` calls, seeded owner/foreign-tenant rows, valid/invalid variables, exact selected
+   field assertions and atomic journal/audit/outbox checks. The current `financeCases` references are undefined.
+2. **Task 6:** inline complete parameterized SQL for all seven repository methods, service batching/mapping and all
+   eight resolver bodies, plus complete pagination/filter/privacy/graph tests. Behavioral prose is insufficient.
+3. **Task 7:** inline the withdrawal repository/service/resolver code, advisory locking, transaction boundaries,
+   SQL-state mapping and complete concurrent/rollback/transition tests.
+4. **Task 8:** inline the complete fixed-commission resolver/service and executable unchanged-database tests.
+5. **Task 9:** inline raw-body signature code, Stripe HTTP adapter, payment repository/service/controller and local
+   provider fake tests for every route/outcome. No client card data or secret may appear.
+6. **Task 10:** inline refund and reconciliation worker modules plus claim, lease, backoff, shutdown, outage,
+   mismatch and idempotency tests.
+7. **Shared assembly:** provide exact lead-owned patch requests for port/module/worker registration, shared factories,
+   dependencies and operation evidence; W9 must not edit or self-approve those shared artifacts.
+
+The plan must not be described as complete or used to begin W9 implementation until these copy-pasteable bodies are
+present and independently reviewed. This status does not weaken integer minor units, immutable balanced journals,
+zero core commission, server-owned amounts, signed callbacks, provider fail-closed behavior or the pinned frontend.

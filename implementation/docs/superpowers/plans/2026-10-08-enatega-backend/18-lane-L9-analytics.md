@@ -14,7 +14,7 @@
 
 **Architecture:** `src/modules/analytics` is a read-only module. It reads five SQL views created by its own migration (`AnalyticsUserView`, `AnalyticsVendorView`, `AnalyticsRestaurantView`, `AnalyticsRiderView`, `AnalyticsOrderView` over L5's `OrderSummaryView`) through its own read-only `pg` pool, and never writes to PostgreSQL. A thin resolver parses arguments with zod, a scope guard authorizes the caller against the requested vendor/store, a pure date-range module turns the (possibly translated) `dateKeyword` into a half-open UTC interval in the platform timezone, and results are cached in Redis for 30 seconds under a key that contains the authorized scope.
 
-**Tech stack:** Node 24, TypeScript 5.9, NestJS 12 + `@nestjs/graphql` 14 (schema-first), graphql-js 16, `pg` 8 (raw SQL, read-only pool), ioredis 5, zod 4, Vitest 4, Testcontainers 11 (`postgis/postgis:17-3.5`, `redis:7-alpine`), Playwright 1.63 (specs handed to L10).
+**Tech stack:** Node 24, TypeScript 5.9, NestJS 12 + `@nestjs/graphql` 14 (schema-first), graphql-js 16, `pg` 8 (raw SQL, read-only pool), ioredis 5, zod 4, Vitest 4, Testcontainers 11 (`postgis/postgis:17-3.5`, `redis:7-alpine`), Playwright 1.63 (specs handed to W16; journeys handed to W15).
 
 ---
 
@@ -5048,7 +5048,7 @@ Expected: all unit (10 files) and integration (6 files) tests PASS.
 
 - [ ] **Step 2: Coverage** — `pnpm coverage`. Expected: thresholds met for `src/modules/analytics/**` (lines ≥ 90 %, branches ≥ 85 %, functions ≥ 90 %). If below, add unit cases for the uncovered branch (for example `AnalyticsRepository.vendorByIdOrUser` returning `null`) before continuing.
 - [ ] **Step 3: Gates** — `pnpm lint && pnpm format:check && pnpm typecheck && pnpm build && pnpm check:enatega && node tools/check-operations.mjs --lane L9 --require-implemented --require-tests && node tools/check-error-messages.mjs`. Expected: exit 0; the coverage report lists the 9 operations in §9 with `implemented: true`, `integrationTested: true`.
-- [ ] **Step 4: Handoff** — send L10 the specs in §8 and the seed in §8.1; send the lead requests L-1…L-4 status; request L11 review (and L13 for R3–R7 scoping).
+- [ ] **Step 4: Handoff** — send W16 the Playwright specs and W15 the journey specs in §8 and the seed in §8.1; send the lead requests L-1…L-4 status; request W23 QA review (and W24 security review for R3–R7 scoping).
 - [ ] **Step 5: Commit** any formatting fixes: `git commit -am "chore(L9): satisfy lane gate"` (only if files changed).
 
 ---
@@ -5059,16 +5059,16 @@ Expected: all unit (10 files) and integration (6 files) tests PASS.
 
 ---
 
-## 8. Playwright specs to hand to L10
+## 8. Playwright specs to hand to W16
 
 All flows are in the multivendor admin (`http://localhost:3000`, project `admin`). Specs use the real Enatega UI; selectors come from the vendored source. Each test title carries its `@op:` tags. No mobile flows exist for L9 (no journey tests).
 
-### 8.1 Seed (L10 adds to `e2e/seed.ts`, file `e2e/seeds/analytics.ts`)
+### 8.1 Seed (W16 adds to `e2e/seed.ts`, file `e2e/seeds/analytics.ts`)
 
 Platform configuration: currency `USD` (exponent 2), timezone `UTC`. Dates are relative to the current UTC year `Y` so the suite is deterministic all year. Password for every owner: `E2e-Passw0rd!` (stored by L1's user builder as an argon2 hash).
 
 ```ts
-// e2e/seeds/analytics.ts — owned by L10; content specified by L9.
+// e2e/seeds/analytics.ts — owned by W16; content specified by W11.
 import { writeFileSync } from "node:fs";
 import type { Pool } from "pg";
 import { factories } from "../../services/api/test/support/factories.js";
@@ -5584,7 +5584,7 @@ test.describe("dashboard date filter (L9)", () => {
 });
 ```
 
-E2E-only notes for L10: `getRestaurantDashboardOrdersSalesStats` has no multivendor UI call site (§2 row 7); it is covered by integration tests and, in Wave 5, by the svadmin store dashboard. The vendor dashboard also calls `getLiveMonitorData` (L6) and the store view calls `getStoreDetailsByVendorIdPaginated` (L3); these specs do not assert them.
+E2E-only notes for W16: `getRestaurantDashboardOrdersSalesStats` has no multivendor UI call site (§2 row 7); it is covered by integration tests and, in Wave 5, by the svadmin store dashboard. The vendor dashboard also calls `getLiveMonitorData` (L6) and the store view calls `getStoreDetailsByVendorIdPaginated` (L3); these specs do not assert them.
 
 ---
 
@@ -5616,11 +5616,11 @@ Operations that must show `implemented: true` and `integrationTested: true` in `
 8. `query.getRestaurantDashboardSalesOrderCountDetailsByYear`
 9. `query.getRestaurantDashboardOrderSalesDetailsByPaymentMethod`
 
-`e2e: true` is expected for 1–6, 8, 9 after L10 lands §8; 7 has no multivendor UI call site (covered at G5 by svadmin).
+`e2e: true` is expected for 1–6, 8, 9 after W16 lands §8; 7 has no multivendor UI call site (covered at G5 by svadmin).
 
 Self-review performed: every one of the 9 operations appears in §2 and has tagged integration cases (happy path, auth failure, ownership/permission failure, validation failure, and its rules) in Tasks 11–14; unit coverage in Tasks 4–10.
 
-Independent review: L11 (QA) reviews Tasks 1–15; L13 (security) reviews R2–R7 (scoping, cache isolation) and R1 (read-only pool).
+Independent review: W23 (QA) reviews Tasks 1–15; W24 (security) reviews R2–R7 (scoping, cache isolation) and R1 (read-only pool).
 
 ---
 
@@ -5635,7 +5635,7 @@ Independent review: L11 (QA) reviews Tasks 1–15; L13 (security) reviews R2–R
 | Q5  | Labels/semantics of `getDashboardOrdersByType`/`getDashboardSalesByType` rows are UNVERIFIED upstream.                                                                                                                | All / Delivery / Pickup                     | owner                                                  |
 | Q6  | `getDashboardUsersByYear` arrays: monthly new registrations (chosen) vs cumulative totals; `percentageChange` = year over year (selected by the document, not displayed).                                             | monthly new, YoY                            | owner                                                  |
 | Q7  | Cross-lane read contract (§4.3): column names in L1 `User.type`, L3 `Vendor.userId`, `Restaurant.vendorId`, L6 `Rider`, L5 `OrderSummaryView.deliveredAt` + invariant, and eight requested indexes.                   | as listed                                   | L1, L3, L5, L6 via lead                                |
-| Q8  | Harness: factory builder names/fields (§6.0) and `PRINCIPAL_LOADER` providing `vendorId`/`restaurantIds`; E2E user builder accepting `email`/`password`.                                                              | as listed                                   | lead, L1, L10                                          |
+| Q8  | Harness: factory builder names/fields (§6.0) and `PRINCIPAL_LOADER` providing `vendorId`/`restaurantIds`; E2E user builder accepting `email`/`password`.                                                              | as listed                                   | lead, W3, W16                                          |
 | Q9  | `OPERATION_LANES.json` gives L9 `wave: 5`, master plan schedules L9 in Wave 2.                                                                                                                                        | Wave 2                                      | lead (regenerate `tools/operation-lanes.mjs` wave map) |
 | Q10 | `getRestaurantDashboardOrdersSalesStats` is exported but unused by the multivendor admin UI (used by svadmin). Implemented anyway; no multivendor E2E possible.                                                       | implemented                                 | none                                                   |
 | Q11 | Upstream vendor dashboard January defect (`endDate = YYYY-00-31`): picking Custom then APPLY without editing the end date in January returns `Invalid date`. L9 cannot fix the UI; documented as an integration note. | error returned honestly                     | owner (accept)                                         |

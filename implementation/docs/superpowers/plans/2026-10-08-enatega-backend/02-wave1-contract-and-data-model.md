@@ -40,7 +40,9 @@ The 334-root inventory does not close the contract while 132 dynamic/imported/in
 
 ### P3: Finish the executable lane specifications
 
-W1-L and Wave 2 are blocked until final lane plans exist for L1–L8 and the journey/E2E wave. L1–L4 and the journey plan are absent; L5–L8 are `*.PARTIAL.md`. Complete them from `_lane-plan-brief.md`, resolve every continuation marker/TODO and obtain lead review before dispatching lane agents. L9 may proceed only after its cross-lane inputs are frozen. Wave 5 remains gated, but its L12 SDL contract is still required by G1.
+W1-L and Wave 2 are blocked until every lane plan has lead review and its cross-lane inputs are frozen. The L1–L9
+plans and the W15/W16 journey/E2E plan now exist; their presence alone is not approval to dispatch implementation.
+Wave 5 remains gated, but its 71-operation L12 SDL contract is still required by G1.
 
 ---
 
@@ -586,7 +588,7 @@ Each lane agent owns `contracts/enatega/L<n>-*.graphql`, `services/api/prisma/sc
 - [ ] `src/modules/<module>/mappers.ts`: one pure function per owned GraphQL type converting a database row to the GraphQL shape (money via `toMajor` with the configured exponent, ISO/epoch via `kernel/time.ts`, GeoJSON via `kernel/geo.ts`, `_id` from `id`). Unit tests for each mapper in `test/unit/<module>/mappers.spec.ts` with at least: all fields mapped, nulls preserved, money rounding, timestamp convention.
 - [ ] Add the lane's builders only to `test/support/factories/L<n>.ts`; the lead composes them in `factories/index.ts`.
 - [ ] Register the lane's port implementation class(es) with methods that throw `appError("NOT_IMPLEMENTED")`; Wave 2 fills them.
-- [ ] Commit per task; open a PR to the integration branch; request L11 review.
+- [ ] Commit per task; open a PR to the integration branch; request W23 independent QA review.
 
 ---
 
@@ -600,5 +602,5 @@ Each lane agent owns `contracts/enatega/L<n>-*.graphql`, `services/api/prisma/sc
 ### Task W1-Z.2: Gate G1
 
 - [ ] `pnpm verify --integration --coverage --record G1` — must include zero unresolved dynamic documents, `check:enatega` PASS for all multivendor and single-vendor documents, `check:operations --require-schema`, `contract/all-operations` green with L12 runtime `NOT_IMPLEMENTED`, populated migration-005 upgrade and preservation tests, fresh migration deploy, clean drift, outbox lease/inbox/idempotency tests and `codegen:check`.
-- [ ] L11 review of SDL and data model for consistency (type names, nullability, money/time conventions) across lanes; L13 review of field-level restrictions on secret and personal fields.
+- [ ] W23 review of SDL and data model for consistency (type names, nullability, money/time conventions) across lanes; W24 review of field-level restrictions on secret and personal fields.
 - [ ] Commit `docs/GATES.json`.

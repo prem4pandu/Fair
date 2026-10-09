@@ -12,7 +12,7 @@
 
 **Goal:** Take the G3-verified system to a releasable state: real providers in sandbox, independent security review closed, dependency advisories resolved, performance and resilience targets met, observability in place, recorded frontend configuration edits for native builds done, native device runs recorded, and status documents rewritten from evidence.
 
-**Architecture:** No new product behaviour. Provider adapters already exist behind ports (L2, L7, L8); this wave configures them, proves them against sandboxes, and hardens operations. Work runs in four parallel tracks: **R-sec** (L13), **R-perf** (lead + one agent), **R-prov** (L7/L8/L2 owners), **R-native** (L10).
+**Architecture:** No new product behaviour. Provider adapters already exist behind ports (L2, L7, L8); this wave configures them, proves them against sandboxes, and hardens operations. Work runs in four parallel tracks: **R-sec** (W24), **R-perf** (lead + one agent), **R-prov** (L7/L8/L2 owners), **R-native** (W19).
 
 **Tech stack:** as master plan, plus k6 for load tests, OpenTelemetry SDK for traces/metrics, pino for structured logs.
 
@@ -22,7 +22,7 @@
 
 ---
 
-## Track R-sec — security review (L13, independent; may not have written any reviewed code)
+## Track R-sec — security review (W24, independent; may not have written any reviewed code)
 
 ### Task R1: Threat model and review checklist
 
@@ -130,7 +130,7 @@ For each provider with credentials supplied, run the lane's sandbox suite (each 
 
 ---
 
-## Track R-native — native builds and device gate (L10)
+## Track R-native — native builds and device gate (W19)
 
 ### Task R4: Recorded configuration edits for native and release builds
 
@@ -155,4 +155,4 @@ For each provider with credentials supplied, run the lane's sandbox suite (each 
 ### Task R11: Gate G4
 
 - [ ] `pnpm verify --integration --coverage --e2e --record G4` plus `pnpm check:authz`, security suite, perf results within targets, provider suites for every configured provider, native runs recorded.
-- [ ] Release checklist signed by lead, QA (L11) and security (L13): versions pinned, migrations reviewed, rollback plan (database migrations are forward-only; app rollback by image tag; feature flags for card payments), runbooks (on-call, incident, provider outage), monitoring dashboards live.
+- [ ] Release checklist signed by lead, QA (W23) and security (W24): versions pinned, migrations reviewed, rollback plan (database migrations are forward-only; app rollback by image tag; feature flags for card payments), runbooks (on-call, incident, provider outage), monitoring dashboards live.

@@ -337,7 +337,7 @@ Common cases in every task: assert the exact selected business fields, `__typena
 
 Business change plus outbox record commits in the same transaction. Outbox consumers use bounded leases, retry/backoff, consumer inbox deduplication and observable dead-letter state; inject crash after external delivery and before acknowledgement. Do not claim exactly-once provider delivery. Route delivery effects through L8; session invalidation also disconnects WS subscriptions. Cache invalidation is post-commit and versioned. Worker file changes outside this lane require lead/owning-lane integration.
 
-## Playwright and mobile handoff to L10
+## Playwright handoff to W16, journeys to W15, and mobile handoff to W14a/W14b
 
 - [ ] `admin/identity.spec.ts`: /authentication/login → ownerLogin → ownerSession; staff management and resetUserSession; refresh expiry and permission denial.
 - [ ] `web/identity.spec.ts`: original home auth panels → email/phone checks → OTP → createUser/login → profile; password reset, updateUser and deactivation.

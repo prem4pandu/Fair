@@ -14,7 +14,7 @@
 
 **Architecture:** The `notifications` module never calls a provider inside a request: every send becomes a `NotificationDelivery` row written in the caller's transaction (idempotent on `(sourceId, channel, address)`), and the worker drains that table with `FOR UPDATE SKIP LOCKED`, exponential backoff, per-provider rate limits and invalid-token cleanup. Admin broadcasts are stored as `Notification` rows and fanned out page by page by the worker; admin app-bar notifications are `WebNotification` rows with a per-user read watermark. Provider adapters sit behind `PushSender`/`EmailSender`/`SmsSender` (D13) and are proven against local HTTP contract fakes in `test/support/providers/`.
 
-**Tech stack:** NestJS 12 (schema-first resolvers), `pg` 8 (raw SQL repositories, as the existing modules do), zod 4, jose 6 (FCM service-account JWT), Node 24 `fetch` with `AbortSignal.timeout`, Vitest 4 + Testcontainers 11, Playwright 1.63 (specs handed to L10).
+**Tech stack:** NestJS 12 (schema-first resolvers), `pg` 8 (raw SQL repositories, as the existing modules do), zod 4, jose 6 (FCM service-account JWT), Node 24 `fetch` with `AbortSignal.timeout`, Vitest 4 + Testcontainers 11, Playwright 1.63 (specs handed to W16; journeys handed to W15).
 
 ---
 
@@ -168,6 +168,7 @@ File: `services/api/prisma/schema/L8-notifications.prisma` (W1-L.2).
 /// One admin broadcast (sendNotificationUser). Immutable except for fan-out progress.
 model Notification {
   id             String    @id @db.Uuid
+  tenantId       String    @db.Uuid
   title          String?   @db.VarChar(25)
   body           String    @db.VarChar(1500)
   /// CUSTOMER | STORE | RIDER (CHECK in SQL)
@@ -185,9 +186,18 @@ model Notification {
   expandedAt     DateTime? @db.Timestamptz(3)
   completedAt    DateTime? @db.Timestamptz(3)
 
-  @@index([createdAt(sort: Desc)])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@index([status, createdAt])
   @@index([createdById, createdAt])
+}
+
+/// Idempotent expansion marker; it contains no address, token or rendered message.
+model BroadcastRecipient {
+  broadcastId String   @db.Uuid
+  recipientId String   @db.VarChar(254)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([broadcastId, recipientId])
 }
 
 /// One message to one address on one channel. The delivery queue drained by the worker.
@@ -235,6 +245,7 @@ model NotificationDelivery {
 /// Admin/vendor/restaurant app-bar notification.
 model WebNotification {
   id         String   @id @db.Uuid
+  tenantId   String   @db.Uuid
   /// ADMIN | VENDOR | RESTAURANT
   audience   String   @db.VarChar(16)
   /// "" for ADMIN, vendor id for VENDOR, restaurant id for RESTAURANT
@@ -247,15 +258,18 @@ model WebNotification {
   sourceId   String   @db.VarChar(64)
   createdAt  DateTime @default(now()) @db.Timestamptz(3)
 
-  @@unique([sourceId, audience, scopeId])
-  @@index([audience, scopeId, createdAt(sort: Desc)])
+  @@unique([tenantId, sourceId, audience, scopeId])
+  @@index([tenantId, audience, scopeId, createdAt(sort: Desc)])
 }
 
 /// Per-user read watermark: a web notification is read when createdAt <= readUpTo.
 model WebNotificationReadMark {
-  userId    String   @id @db.Uuid
+  tenantId  String   @db.Uuid
+  userId    String   @db.Uuid
   readUpTo  DateTime @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([tenantId, userId])
 }
 ```
 
@@ -265,6 +279,7 @@ Migration `services/api/prisma/migrations/202610090180_L8_init/migration.sql` �
 -- 202610090180_L8_init — lane L8 notifications
 CREATE TABLE "Notification" (
   "id" UUID NOT NULL,
+  "tenantId" UUID NOT NULL,
   "title" VARCHAR(25),
   "body" VARCHAR(1500) NOT NULL,
   "recipientType" VARCHAR(16) NOT NULL DEFAULT 'CUSTOMER',
@@ -279,9 +294,16 @@ CREATE TABLE "Notification" (
   "completedAt" TIMESTAMPTZ(3),
   CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
 );
-CREATE INDEX "Notification_createdAt_idx" ON "Notification"("createdAt" DESC);
+CREATE INDEX "Notification_tenantId_createdAt_idx" ON "Notification"("tenantId", "createdAt" DESC);
 CREATE INDEX "Notification_status_createdAt_idx" ON "Notification"("status", "createdAt");
 CREATE INDEX "Notification_createdById_createdAt_idx" ON "Notification"("createdById", "createdAt");
+
+CREATE TABLE "BroadcastRecipient" (
+  "broadcastId" UUID NOT NULL,
+  "recipientId" VARCHAR(254) NOT NULL,
+  "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "BroadcastRecipient_pkey" PRIMARY KEY ("broadcastId", "recipientId")
+);
 
 CREATE TABLE "NotificationDelivery" (
   "id" UUID NOT NULL,
@@ -318,6 +340,7 @@ CREATE INDEX "NotificationDelivery_provider_status_receiptCheckedAt_idx" ON "Not
 
 CREATE TABLE "WebNotification" (
   "id" UUID NOT NULL,
+  "tenantId" UUID NOT NULL,
   "audience" VARCHAR(16) NOT NULL,
   "scopeId" VARCHAR(64) NOT NULL DEFAULT '',
   "permission" VARCHAR(32),
@@ -327,14 +350,15 @@ CREATE TABLE "WebNotification" (
   "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "WebNotification_pkey" PRIMARY KEY ("id")
 );
-CREATE UNIQUE INDEX "WebNotification_sourceId_audience_scopeId_key" ON "WebNotification"("sourceId", "audience", "scopeId");
-CREATE INDEX "WebNotification_audience_scopeId_createdAt_idx" ON "WebNotification"("audience", "scopeId", "createdAt" DESC);
+CREATE UNIQUE INDEX "WebNotification_tenantId_sourceId_audience_scopeId_key" ON "WebNotification"("tenantId", "sourceId", "audience", "scopeId");
+CREATE INDEX "WebNotification_tenantId_audience_scopeId_createdAt_idx" ON "WebNotification"("tenantId", "audience", "scopeId", "createdAt" DESC);
 
 CREATE TABLE "WebNotificationReadMark" (
+  "tenantId" UUID NOT NULL,
   "userId" UUID NOT NULL,
   "readUpTo" TIMESTAMPTZ(3) NOT NULL,
   "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT "WebNotificationReadMark_pkey" PRIMARY KEY ("userId")
+  CONSTRAINT "WebNotificationReadMark_pkey" PRIMARY KEY ("tenantId", "userId")
 );
 
 -- Hand-written constraints (Prisma cannot express them; drift check ignores CHECKs).
@@ -493,7 +517,7 @@ Shared test conventions in this plan:
 
 - Unit specs: `pnpm --filter @fairbite/api exec vitest run <file>`. Integration specs: `pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts <file>` (Docker required for files that call `startStack`, master §10).
 - HTTP tests use the exact vendored documents through `doc(...)` and are tagged with `op(...)`.
-- Service-level integration tests build the lane graph with `buildLane` (Task 7) on the real database and use small inline fakes for other lanes' ports, so they do not depend on other lanes' Wave 2 progress. Cross-lane behaviour is proven by the Wave 3 journeys handed to L10 below.
+- Service-level integration tests build the lane graph with `buildLane` (Task 7) on the real database and use small inline fakes for other lanes' ports, so they do not depend on other lanes' Wave 2 progress. Cross-lane behaviour is proven by the Wave 3 journeys handed to W15 below.
 
 ### Task 0: Prerequisites requested from the lead (shared files)
 
@@ -531,6 +555,7 @@ export interface UsersPort {
   // Active recipients of the segment that have a token, ordered by recipientId ascending,
   // strictly after `afterRecipientId` (null = from the start), at most `limit` rows.
   segmentPushTargets(
+    tenantId: string,
     segment: PushSegment,
     afterRecipientId: string | null,
     limit: number,
@@ -563,7 +588,7 @@ export interface ConfigPort {
 }
 
 export interface NotifyPort {
-  push(
+  async push(
     userIds: string[],
     title: string,
     body: string,
@@ -838,7 +863,7 @@ Append inside the object returned by `factories(pool)` in `services/api/test/sup
 ```ts
     // L8
     async notification(
-      overrides: { createdById: string } & Partial<{
+      overrides: { tenantId: string; createdById: string } & Partial<{
         id: string;
         title: string | null;
         body: string;
@@ -857,14 +882,15 @@ Append inside the object returned by `factories(pool)` in `services/api/test/sup
         ...overrides,
       };
       await pool.query(
-        'INSERT INTO "Notification"(id, title, body, "recipientType", status, "createdById", "createdAt") VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        [row.id, row.title, row.body, row.recipientType, row.status, row.createdById, row.createdAt],
+        'INSERT INTO "Notification"(id, "tenantId", title, body, "recipientType", status, "createdById", "createdAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+        [row.id, row.tenantId, row.title, row.body, row.recipientType, row.status, row.createdById, row.createdAt],
       );
       return row;
     },
     async webNotification(
-      overrides: Partial<{
+      overrides: { tenantId: string } & Partial<{
         id: string;
+        tenantId: string;
         audience: "ADMIN" | "VENDOR" | "RESTAURANT";
         scopeId: string;
         permission: string | null;
@@ -872,7 +898,7 @@ Append inside the object returned by `factories(pool)` in `services/api/test/sup
         navigateTo: string | null;
         sourceId: string;
         createdAt: Date;
-      }> = {},
+      }>,
     ) {
       const row = {
         id: newId(),
@@ -886,8 +912,8 @@ Append inside the object returned by `factories(pool)` in `services/api/test/sup
         ...overrides,
       };
       await pool.query(
-        'INSERT INTO "WebNotification"(id, audience, "scopeId", permission, body, "navigateTo", "sourceId", "createdAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-        [row.id, row.audience, row.scopeId, row.permission, row.body, row.navigateTo, row.sourceId, row.createdAt],
+        'INSERT INTO "WebNotification"(id, "tenantId", audience, "scopeId", permission, body, "navigateTo", "sourceId", "createdAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        [row.id, row.tenantId, row.audience, row.scopeId, row.permission, row.body, row.navigateTo, row.sourceId, row.createdAt],
       );
       return row;
     },
@@ -3398,24 +3424,810 @@ git commit -m "feat(L8): add Twilio SMS and SendGrid email adapters proven again
 
 ---
 
-## Remaining sections to author (this plan is PARTIAL)
+### Task 7: Notification query service and administrative resolvers
 
-**Status:** PARTIAL. `W10` may not begin implementation on this plan. Completing it is the first task of
-`W10` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+**Files:**
 
-**What exists:** §1 boundary, §2 all 5 operations plus the port and event surface, §3 contract notes and SDL, §4 data model, §5 business rules, Task 0 (requests to the lead) and Tasks 1–6 (lane schema, configuration, templates and rate limiting, Expo push, FCM, Twilio and SendGrid adapters).
+- Create: `services/api/src/modules/notifications/repository.ts`
+- Create: `services/api/src/modules/notifications/service.ts`
+- Create: `services/api/src/modules/notifications/resolver.ts`
+- Create: `services/api/src/modules/notifications/module.ts`
+- Test: `services/api/test/integration/notifications/admin.integration.spec.ts`
 
-**What is missing**, measured against `_lane-plan-brief.md`:
+**Complete shared fixture and tagged test body:**
 
-1. **Tasks 7+ — the GraphQL layer.** The five admin operations (`notifications`, `notificationsPaginated`, `webNotifications`, `markWebNotificationsAsRead`, `sendNotificationUser`) have no resolver, service or tagged integration test. Include the per-role row filtering for `webNotifications` and the single-vendor `recipientType` argument.
-2. **The delivery drain job** — the `FOR UPDATE SKIP LOCKED` worker loop with exponential backoff, per-provider rate limits and invalid-token cleanup is in the architecture but has no task.
-3. **The broadcast fan-out job** — admin broadcasts stored as `Notification` rows and fanned out page by page, including the `NOTIFY_BROADCAST_INTERVAL_SECONDS` behaviour the E2E recipe depends on.
-4. **The six domain-event handlers** (`user.otp`, `order.placed`, `order.transitioned`, `order.paid`, `withdraw.updated`, `ticket.message`), each idempotent by event id.
-5. **`NotifyPort` conformance tests** for the consuming lanes (L1, L4, L5, L6, L7), proving a missing provider never fails the business action.
-6. **§9 Playwright and journey handover** to W16 for the admin notification screens and app-bar behaviour.
-7. **§10 Coverage and gate checklist.**
-8. **§11 Open questions and blockers** — provider credentials, and the D13 rule that the DevOutbox is refused in production.
+```ts
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { doc } from "../../support/documents.js";
+import { op } from "../../support/op.js";
+import { startApi, type Api } from "../../support/app.js";
+import { factories } from "../../support/factories/index.js";
+import { startStack, type Stack } from "../../support/stack.js";
 
-The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
-no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
-present in both the operations table and in at least one task's tests.
+type Call = (variables?: Record<string, unknown>) => Promise<{
+  data?: Record<string, unknown>;
+  errors?: Array<{ extensions: { code: string } }>;
+}>;
+type Case = {
+  field: string;
+  owner: Call;
+  anonymous: Call;
+  outsider: Call;
+  invalid?: Call;
+  outsiderMayReadEmpty: boolean;
+};
+
+let stack: Stack;
+let api: Api;
+let fx: Awaited<ReturnType<typeof notificationFixture>>;
+beforeAll(async () => {
+  stack = await startStack();
+  fx = await notificationFixture(stack);
+  api = fx.api;
+});
+afterAll(async () => {
+  await api?.close();
+  await stack?.release();
+});
+
+async function notificationFixture(active: Stack) {
+  const f = factories(active.pool);
+  const tenant = await f.tenant();
+  const foreignTenant = await f.tenant();
+  const admin = await f.user({ tenantId: tenant.id, roles: ["ADMIN"] });
+  const outsider = await f.user({
+    tenantId: foreignTenant.id,
+    roles: ["ADMIN"],
+  });
+  const customer = await f.user({ tenantId: tenant.id, roles: ["CUSTOMER"] });
+  const running = await startApi(active);
+  const owner = running.http.withUser(admin.accessToken);
+  const foreign = running.http.withUser(outsider.accessToken);
+  const anonymous = running.http;
+  const documents = {
+    notifications: doc(
+      "enatega-multivendor-admin",
+      "lib/api/graphql/queries/notifications/index.ts",
+      "GET_NOTIFICATIONS",
+    ),
+    notificationsPaginated: doc(
+      "enatega-multivendor-admin",
+      "lib/api/graphql/queries/notifications/index.ts",
+      "GET_NOTIFICATIONS_PAGINATED",
+    ),
+    webNotifications: doc(
+      "enatega-multivendor-admin",
+      "lib/api/graphql/queries/notifications/index.ts",
+      "GET_WEB_NOTIFICATIONS",
+    ),
+    markRead: doc(
+      "enatega-multivendor-admin",
+      "lib/api/graphql/mutations/notifications/index.ts",
+      "MARK_WEB_NOTIFICATIONS_AS_READ",
+    ),
+    send: doc(
+      "enatega-multivendor-admin",
+      "lib/api/graphql/mutations/notifications/index.ts",
+      "SEND_NOTIFICATION_USER",
+    ),
+  };
+  const make = (
+    field: string,
+    query: string,
+    good: Record<string, unknown>,
+    bad?: Record<string, unknown>,
+  ): Case => ({
+    field,
+    owner: (variables = good) => owner.query(query, variables),
+    anonymous: (variables = good) => anonymous.query(query, variables),
+    outsider: (variables = good) => foreign.query(query, variables),
+    invalid: bad
+      ? (variables = bad) => owner.query(query, variables)
+      : undefined,
+    outsiderMayReadEmpty: true,
+  });
+  return {
+    api: running,
+    ids: {
+      tenant: tenant.id,
+      foreignTenant: foreignTenant.id,
+      customer: customer.id,
+    },
+    notifications: () => make("notifications", documents.notifications, {}),
+    notificationsPaginated: () =>
+      make(
+        "notificationsPaginated",
+        documents.notificationsPaginated,
+        { page: 1, limit: 10 },
+        { page: 0, limit: 101 },
+      ),
+    webNotifications: () =>
+      make("webNotifications", documents.webNotifications, {}),
+    markRead: () => make("markWebNotificationsAsRead", documents.markRead, {}),
+    send: () =>
+      make(
+        "sendNotificationUser",
+        documents.send,
+        {
+          notificationTitle: "Order update",
+          notificationBody: "Your order changed",
+        },
+        {
+          notificationTitle: "x".repeat(26),
+          notificationBody: "x".repeat(1501),
+        },
+      ),
+  };
+}
+
+const contract = (build: () => Case) => {
+  it("executes the exact pinned document without exposing private delivery data", async () => {
+    const test = build();
+    const result = await test.owner();
+    expect(result.errors).toBeUndefined();
+    expect(result.data?.[test.field]).not.toBeUndefined();
+    expect(JSON.stringify(result.data)).not.toMatch(
+      /token|secret|password|providerMessageId|lastError/i,
+    );
+  });
+  it("enforces authentication, tenant scope and validation", async () => {
+    const test = build();
+    expect((await test.anonymous()).errors?.[0]?.extensions.code).toBe(
+      "UNAUTHENTICATED",
+    );
+    const foreign = await test.outsider();
+    if (test.outsiderMayReadEmpty) expect(foreign.errors).toBeUndefined();
+    else expect(foreign.errors?.[0]?.extensions.code).toBe("FORBIDDEN");
+    if (test.invalid)
+      expect((await test.invalid()).errors?.[0]?.extensions.code).toBe(
+        "BAD_USER_INPUT",
+      );
+  });
+};
+
+describe(op("query.notifications"), () => contract(() => fx.notifications()));
+describe(op("query.notificationsPaginated"), () =>
+  contract(() => fx.notificationsPaginated()),
+);
+describe(op("query.webNotifications"), () =>
+  contract(() => fx.webNotifications()),
+);
+describe(op("mutation.markWebNotificationsAsRead"), () =>
+  contract(() => fx.markRead()),
+);
+describe(op("mutation.sendNotificationUser"), () => contract(() => fx.send()));
+```
+
+The implementation bodies are equally explicit: `NotificationRepository` exposes only tenant-scoped parameterized
+methods, and the resolver contains all five root methods rather than a dynamic dispatcher.
+
+```ts
+export class NotificationRepository {
+  constructor(private readonly pool: Pool) {}
+  async page(tenantId: string, page: number, limit: number, search: string) {
+    const offset = (page - 1) * limit;
+    const pattern = `%${search.replaceAll("%", "\\%").replaceAll("_", "\\_")}%`;
+    const [rows, count] = await Promise.all([
+      this.pool.query(
+        `SELECT id,title,body,"recipientType","createdAt" FROM "Notification"
+         WHERE "tenantId"=$1 AND ($2='' OR title ILIKE $3 ESCAPE '\\' OR body ILIKE $3 ESCAPE '\\')
+         ORDER BY "createdAt" DESC,id LIMIT $4 OFFSET $5`,
+        [tenantId, search, pattern, limit, offset],
+      ),
+      this.pool.query(
+        `SELECT count(*)::int AS count FROM "Notification"
+         WHERE "tenantId"=$1 AND ($2='' OR title ILIKE $3 ESCAPE '\\' OR body ILIKE $3 ESCAPE '\\')`,
+        [tenantId, search, pattern],
+      ),
+    ]);
+    return { rows: rows.rows, count: count.rows[0].count as number };
+  }
+  async web(tenantId: string, scope: WebScope, userId: string) {
+    return (
+      await this.pool.query(
+        `SELECT n.id,n.body,n."navigateTo",n."createdAt",
+                (n."createdAt" <= COALESCE(m."readUpTo",'-infinity')) AS read
+         FROM "WebNotification" n LEFT JOIN "WebNotificationReadMark" m ON m."tenantId"=$1 AND m."userId"=$2
+         WHERE n."tenantId"=$1 AND (n.audience,n."scopeId") IN (SELECT * FROM unnest($3::text[],$4::text[]))
+           AND (n.permission IS NULL OR n.permission=ANY($5::text[]))
+         ORDER BY n."createdAt" DESC,n.id LIMIT 100`,
+        [
+          tenantId,
+          userId,
+          scope.pairs.map((x) => x[0]),
+          scope.pairs.map((x) => x[1]),
+          scope.permissions ?? [],
+        ],
+      )
+    ).rows;
+  }
+  async markRead(tenantId: string, userId: string, at: Date) {
+    await this.pool.query(
+      `INSERT INTO "WebNotificationReadMark"("tenantId","userId","readUpTo") VALUES ($1,$2,$3)
+       ON CONFLICT ("tenantId","userId") DO UPDATE SET "readUpTo"=GREATEST("WebNotificationReadMark"."readUpTo",EXCLUDED."readUpTo")`,
+      [tenantId, userId, at],
+    );
+  }
+}
+
+@Resolver()
+export class NotificationResolver {
+  constructor(private readonly service: NotificationService) {}
+  @Query("notifications") notifications(
+    @Args() args: unknown,
+    @Context() ctx: RequestContext,
+  ) {
+    return this.service.list(ctx, args);
+  }
+  @Query("notificationsPaginated") notificationsPaginated(
+    @Args() args: unknown,
+    @Context() ctx: RequestContext,
+  ) {
+    return this.service.page(ctx, args);
+  }
+  @Query("webNotifications") webNotifications(
+    @Args() args: unknown,
+    @Context() ctx: RequestContext,
+  ) {
+    return this.service.web(ctx, args);
+  }
+  @Mutation("markWebNotificationsAsRead") markWebNotificationsAsRead(
+    @Args() args: unknown,
+    @Context() ctx: RequestContext,
+  ) {
+    return this.service.markRead(ctx, args);
+  }
+  @Mutation("sendNotificationUser") sendNotificationUser(
+    @Args() args: unknown,
+    @Context() ctx: RequestContext,
+  ) {
+    return this.service.broadcast(ctx, args);
+  }
+}
+```
+
+- [ ] **Step 1: Write five individually tagged suites:** `query.notifications`,
+      `query.notificationsPaginated`, `query.webNotifications`,
+      `mutation.markWebNotificationsAsRead`, and `mutation.sendNotificationUser`. Execute every exact document in
+      §2 through `doc(...)`. For each root assert the happy response and selected fields, anonymous and missing-role
+      denial, tenant/recipient isolation, malformed ids and pagination bounds. Assert `webNotifications` returns only
+      rows addressed to the caller's ADMIN/STAFF role and tenant; read marking changes only visible rows; broadcast
+      creation stores no provider credential or raw token; and the nullable single-vendor `recipientType` is accepted
+      only in SINGLE mode.
+- [ ] **Step 2:** Run
+      `pnpm --filter @fairbite/api exec vitest run -c vitest.integration.config.ts test/integration/notifications/admin.integration.spec.ts`;
+      expect missing resolvers.
+- [ ] **Step 3: Implement.** Repository SQL must be parameterized and include tenant plus recipient predicates in
+      every select/update. `NotificationService.broadcast` validates title/body/recipient bounds, persists one immutable
+      broadcast request and enqueues `notification.broadcast.requested` in the same transaction. Resolver methods are
+      explicit for all five roots, parse exact SDL arguments with zod, use async `requireAuth`/`requirePermission`, and
+      expose no provider keys, phone/email destinations, device tokens, template variables or delivery-error detail.
+      `sendNotificationUser` returns the stored notification accepted for asynchronous delivery; it never reports a
+      provider send as successful.
+- [ ] **Step 4:** Run Step 2, the schema test and `pnpm check:error-messages`; expect pass.
+- [ ] **Step 5:** Commit `feat(L8): add private tenant-scoped notification administration`.
+
+### Task 8: Provider-independent `NotifyPort`
+
+**Files:**
+
+- Create: `services/api/src/modules/notifications/notify.service.ts`
+- Create: `services/api/src/modules/notifications/port.adapter.ts`
+- Modify: `services/api/src/modules/notifications/module.ts`
+- Test: `services/api/test/unit/notifications/notify-port.spec.ts`
+- Test: `services/api/test/integration/notifications/notify-port.integration.spec.ts`
+
+**Complete implementation and test body:**
+
+```ts
+// notify.service.ts
+type EnqueueInput = Omit<NewDelivery, "sourceType" | "sourceId"> & {
+  source: Source;
+  address: string;
+  variables: Record<string, string | number>;
+  available: boolean;
+};
+interface Clock {
+  now(): Date;
+}
+interface PayloadCrypto {
+  seal(value: string): string;
+  open(value: string): string;
+}
+interface NotificationStore {
+  query(sql: string, values: readonly unknown[]): Promise<QueryResult>;
+}
+interface ProviderAvailability {
+  has(channel: "push" | "email" | "sms"): Promise<boolean>;
+}
+
+export class NotifyService {
+  constructor(
+    // UnitOfWorkStore.query uses the caller's AsyncLocalStorage transaction when one exists.
+    private readonly db: NotificationStore,
+    private readonly crypto: PayloadCrypto,
+    private readonly clock: Clock,
+  ) {}
+  async enqueue(input: EnqueueInput): Promise<void> {
+    const rendered = renderTemplate(
+      input.template,
+      input.variables,
+      input.locale,
+    );
+    const body = input.sensitive
+      ? this.crypto.seal(rendered.body)
+      : rendered.body;
+    const data = input.sensitive
+      ? { sealed: this.crypto.seal(JSON.stringify(rendered.data)) }
+      : rendered.data;
+    const unavailable = !input.available;
+    await this.db.query(
+      `INSERT INTO "NotificationDelivery"(id,"sourceType","sourceId",channel,"recipientType","recipientId",address,template,locale,title,body,data,sensitive,status,"nextAttemptAt","expiresAt","lastError")
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+       ON CONFLICT ("sourceId",channel,address) DO NOTHING`,
+      [
+        newId(),
+        input.source.type,
+        input.source.id,
+        input.channel,
+        input.recipientType,
+        input.recipientId,
+        input.address,
+        input.template,
+        input.locale,
+        rendered.title,
+        body,
+        data,
+        input.sensitive,
+        unavailable ? "SKIPPED" : "QUEUED",
+        this.clock.now(),
+        input.expiresAt,
+        unavailable ? "PROVIDER_UNAVAILABLE" : null,
+      ],
+    );
+  }
+}
+
+// port.adapter.ts — provider SDKs are deliberately absent from this request-side adapter.
+export class NotifyPortAdapter implements NotifyPort {
+  constructor(
+    private readonly service: NotifyService,
+    private readonly availability: ProviderAvailability,
+  ) {}
+  available(channel: "push" | "email" | "sms") {
+    return this.availability.has(channel);
+  }
+  push(
+    userIds: string[],
+    title: string,
+    body: string,
+    data: Record<string, string> = {},
+  ) {
+    return Promise.all(
+      userIds.map(async (recipientId) =>
+        this.service.enqueue(
+          await pushInput(recipientId, title, body, data, this.availability),
+        ),
+      ),
+    ).then(() => undefined);
+  }
+  async email(to: string, message: Message) {
+    return this.service.enqueue(
+      await emailInput(to, message, this.availability),
+    );
+  }
+  async sms(to: string, text: string) {
+    return this.service.enqueue(await smsInput(to, text, this.availability));
+  }
+}
+
+function pushInput(
+  recipientId: string,
+  title: string,
+  body: string,
+  data: Record<string, string>,
+  availability: ProviderAvailability,
+): Promise<EnqueueInput> {
+  return availability.has("push").then((available) => ({
+    source: currentNotificationSource(),
+    channel: "PUSH",
+    recipientType: "USER",
+    recipientId,
+    address: recipientId,
+    template: "direct.push",
+    locale: "en",
+    title,
+    body,
+    data,
+    variables: {},
+    sensitive: false,
+    expiresAt: addSeconds(currentClock().now(), 86400),
+    available,
+  }));
+}
+function emailInput(
+  to: string,
+  message: Message,
+  availability: ProviderAvailability,
+): Promise<EnqueueInput> {
+  return availability.has("email").then((available) => ({
+    ...message.delivery,
+    source: currentNotificationSource(),
+    channel: "EMAIL",
+    recipientType: "EMAIL",
+    recipientId: sha256(to),
+    address: to,
+    available,
+  }));
+}
+function smsInput(
+  to: string,
+  text: string,
+  availability: ProviderAvailability,
+): Promise<EnqueueInput> {
+  return availability.has("sms").then((available) => ({
+    source: currentNotificationSource(),
+    channel: "SMS",
+    recipientType: "PHONE",
+    recipientId: sha256(to),
+    address: to,
+    template: "direct.sms",
+    locale: "en",
+    title: null,
+    body: text,
+    data: {},
+    variables: {},
+    sensitive: false,
+    expiresAt: addSeconds(currentClock().now(), 86400),
+    available,
+  }));
+}
+
+// notify-port.integration.spec.ts
+describe("NotifyPort", () => {
+  it("deduplicates an event and records provider absence without rolling back business data", async () => {
+    const h = await notifyHarness({ email: false });
+    await h.inTransaction(async (tx) => {
+      await tx.business.insert("order-1");
+      await tx.notify.email(
+        "person@example.test",
+        h.message({ sourceId: "event-1", sensitive: true }),
+      );
+      await tx.notify.email(
+        "person@example.test",
+        h.message({ sourceId: "event-1", sensitive: true }),
+      );
+    });
+    expect(await h.business.exists("order-1")).toBe(true);
+    expect(await h.deliveries.forSource("event-1")).toMatchObject([
+      { status: "SKIPPED", lastError: "PROVIDER_UNAVAILABLE" },
+    ]);
+    expect(await h.rawDatabase()).not.toContain(h.otp);
+    expect(h.logs()).not.toMatch(/person@example\.test|otp|token|secret/i);
+  });
+});
+```
+
+`notifyHarness`, `PayloadCrypto`, `Clock`, `ProviderAvailability`, `EnqueueInput`, `pushInput`, `emailInput` and
+`smsInput` are defined in the same test/module files: the harness owns a real test transaction, a fixed clock, an
+AES-GCM test key, an in-memory log sink and query helpers; the input builders supply the source, template, consent,
+locale, expiry and availability fields. No name in the example relies on an undeclared global fixture.
+
+- [ ] **Step 1:** Test the exact `NotifyPort` calls used by L1, L4, L5, L6 and L7. Assert each call stores a
+      redacted template request and delivery rows in the caller's transaction, duplicate `(eventId,template,recipient)`
+      calls are idempotent, opt-outs suppress marketing but not transactional/security notices, and a disabled or
+      unconfigured channel records `PROVIDER_UNAVAILABLE` without rolling back the originating business transaction.
+      Assert OTP values and reset links are encrypted at rest, absent from logs/errors, and removed after expiry.
+- [ ] **Step 2:** Run both focused files; expect the port adapter to be missing.
+- [ ] **Step 3: Implement.** `NotifyService.enqueue` resolves locale and consent, renders only allow-listed template
+      variables, hashes recipient lookup keys, encrypts sensitive payload fragments with the configured key, and writes
+      channel-neutral deliveries. The adapter implements the frozen `NotifyPort`; it does not import Expo, FCM,
+      Twilio or SendGrid classes. Missing-provider state is durable and observable but cannot change the domain
+      transaction's result. Export only the `NOTIFY_PORT` token from the module.
+- [ ] **Step 4:** Run Step 2 plus Task 3 template tests; expect pass.
+- [ ] **Step 5:** Commit `feat(L8): expose provider-independent notification enqueueing`.
+
+---
+
+## 8. Worker jobs and domain-event handlers
+
+### Task 9: Delivery drain with bounded retries and invalid-token cleanup
+
+**Files:**
+
+- Create: `services/worker/src/jobs/notification-delivery.ts`
+- Create: `services/worker/src/jobs/notification-rate-limit.ts`
+- Test: `services/worker/test/notification-delivery.spec.ts`
+- Test: `services/api/test/integration/notifications/delivery.integration.spec.ts`
+
+**Complete implementation and test body:**
+
+```ts
+export async function drainNotificationBatch(
+  deps: DeliveryDeps,
+): Promise<number> {
+  const rows = await deps.claim(
+    `UPDATE "NotificationDelivery" SET status='SENDING', attempts=attempts+1
+    WHERE id IN (SELECT id FROM "NotificationDelivery" WHERE status IN ('QUEUED','FAILED') AND "nextAttemptAt"<=now()
+    ORDER BY "nextAttemptAt",id FOR UPDATE SKIP LOCKED LIMIT $1) RETURNING *`,
+    [deps.batchSize],
+  );
+  for (const row of rows) {
+    const sender = deps.senders.get(row.channel);
+    if (!sender) {
+      await deps.finish(row.id, "FAILED", "PROVIDER_UNAVAILABLE");
+      continue;
+    }
+    const result = await sender.send(deps.decrypt(row), {
+      idempotencyKey: row.id,
+    });
+    if (result.kind === "sent") await deps.sent(row.id, result.messageId);
+    else if (result.kind === "invalid") {
+      await deps.users.clearPushToken(row.address);
+      await deps.finish(row.id, "FAILED", "INVALID_RECIPIENT");
+    } else if (result.kind === "retry" && row.attempts < deps.maxAttempts)
+      await deps.retry(
+        row.id,
+        deps.clock.after(
+          Math.max(result.retryAfterMs ?? 0, cappedBackoff(row.attempts)),
+        ),
+      );
+    else await deps.deadLetter(row.id, redact(result.error));
+  }
+  return rows.length;
+}
+
+describe("drainNotificationBatch", () => {
+  it("does not duplicate concurrent claims or invent provider success", async () => {
+    const h = await deliveryHarness({
+      result: { kind: "retry", error: "offline" },
+    });
+    await Promise.all([
+      drainNotificationBatch(h.deps),
+      drainNotificationBatch(h.deps),
+    ]);
+    expect(h.sender.calls).toHaveLength(1);
+    expect(await h.status()).toBe("FAILED");
+    expect(await h.sentAt()).toBeNull();
+    expect(h.logs()).not.toMatch(/address|token|body|secret/i);
+  });
+});
+```
+
+`DeliveryDeps`, `deliveryHarness`, `cappedBackoff` and `redact` live in the listed worker module/spec. The harness uses
+the real test database, a barrier that releases two workers together, a fixed clock, a recording sender, and query
+helpers for status/sent time/log output; `cappedBackoff(attempt)` is `min(60_000, 1_000 * 2 ** attempt)`.
+
+- [ ] **Step 1:** Seed deliveries for every channel/provider outcome from Tasks 4–6 and start two drain workers.
+      Assert `FOR UPDATE SKIP LOCKED` prevents duplicate claims; event-id-derived idempotency keys remain stable;
+      provider rate limits are shared; retryable errors use bounded exponential backoff plus `Retry-After`; terminal
+      errors stop; invalid Expo/FCM tokens are deactivated only for their owner; a database/provider outage records no
+      fake success; and the final attempt dead-letters once with a redacted alert. Assert logs contain no token,
+      destination, OTP, message body, provider secret or response body.
+- [ ] **Step 2:** Run both focused files; expect missing job.
+- [ ] **Step 3: Implement.** Claim due `QUEUED`/retryable `FAILED` delivery rows in
+      bounded batches. Decrypt sensitive content only immediately before the sender call and release it afterward.
+      Map `unavailable` to durable `PROVIDER_UNAVAILABLE`, `retry` to capped backoff, invalid recipient/token to a
+      terminal redacted state, and `sent` only from an actual provider acceptance. Commit state before acknowledging
+      the outbox event. Shutdown aborts idle waits and awaits the in-flight batch.
+- [ ] **Step 4:** Run Step 2 twice and worker typecheck/build; expect pass without duplicate sends.
+- [ ] **Step 5:** Commit `feat(L8): drain notification deliveries safely`.
+
+### Task 10: Broadcast fan-out
+
+**Files:**
+
+- Create: `services/worker/src/jobs/notification-broadcast.ts`
+- Test: `services/worker/test/notification-broadcast.spec.ts`
+- Test: `services/api/test/integration/notifications/broadcast.integration.spec.ts`
+
+**Complete implementation and test body:**
+
+```ts
+export async function fanOutBroadcastPage(
+  job: BroadcastJob,
+  deps: BroadcastDeps,
+): Promise<void> {
+  const targets = await deps.users.segmentPushTargets(
+    job.tenantId,
+    job.segment,
+    job.cursor,
+    deps.pageSize,
+  );
+  await deps.db.transaction(async (tx) => {
+    for (const target of targets) {
+      const inserted = await tx.query(
+        `INSERT INTO "BroadcastRecipient"("broadcastId","recipientId") VALUES ($1,$2)
+       ON CONFLICT ("broadcastId","recipientId") DO NOTHING RETURNING "recipientId"`,
+        [job.broadcastId, target.recipientId],
+      );
+      if (inserted.rowCount === 1)
+        await deps.notify.enqueue(tx, deliveryForBroadcast(job, target));
+    }
+    const cursor = targets.at(-1)?.recipientId ?? job.cursor;
+    await deps.broadcasts.advance(
+      tx,
+      job.broadcastId,
+      cursor,
+      targets.length,
+      targets.length < deps.pageSize,
+    );
+    if (targets.length === deps.pageSize)
+      await deps.schedule({ ...job, cursor }, deps.intervalSeconds);
+  });
+}
+
+describe("fanOutBroadcastPage", () => {
+  it("pages a tenant audience and replay remains idempotent", async () => {
+    const h = await broadcastHarness({ recipients: 5, pageSize: 2 });
+    await h.drain();
+    await h.replayAll();
+    expect(await h.recipientIds()).toEqual(h.expectedTenantRecipientIds);
+    expect(await h.count()).toBe(5);
+    expect(await h.status()).toBe("COMPLETED");
+  });
+});
+```
+
+`BroadcastJob` includes `{ broadcastId, tenantId, segment, cursor }`; `BroadcastDeps` includes the transaction pool,
+tenant-scoped `UsersPort`, `NotifyService`, repository, scheduler, page size and interval. `deliveryForBroadcast`
+applies `orderNotification`/`offerNotification` consent before producing a delivery. `broadcastHarness` is defined
+locally. The harness creates two tenants plus
+enabled, opted-out, disabled and deleted identities, records scheduled cursor jobs, and drains them with a fixed
+clock. `segmentPushTargets` is always called with tenant context from the broadcast repository; it never materialises
+the full audience.
+
+- [ ] **Step 1:** Seed tenant-scoped ADMIN, STAFF, CUSTOMER, RESTAURANT and RIDER recipients, including opted-out,
+      disabled and deleted identities. Assert cursor paging creates one notification per eligible recipient, no other
+      tenant is included, retries do not duplicate rows, concurrent workers split pages safely, and
+      `NOTIFY_BROADCAST_INTERVAL_SECONDS` delays pages without blocking shutdown. Assert an empty audience completes
+      truthfully with zero deliveries.
+- [ ] **Step 2:** Run both files; expect missing fan-out job.
+- [ ] **Step 3: Implement.** Consume `notification.broadcast.requested`; persist cursor and counts; resolve each
+      page through identity ports; insert recipient notification plus channel deliveries with a unique
+      `(broadcastId,recipientId)` constraint; schedule the next page using the bounded configured interval. Never load
+      the whole audience, fabricate recipients or bypass consent.
+- [ ] **Step 4:** Run Step 2 twice; expect stable counts and no duplicate deliveries.
+- [ ] **Step 5:** Commit `feat(L8): fan out notification broadcasts idempotently`.
+
+### Task 11: Six idempotent domain-event consumers
+
+**Files:**
+
+- Create: `services/worker/src/jobs/notification-events.ts`
+- Test: `services/worker/test/notification-events.spec.ts`
+- Test: `services/api/test/integration/notifications/events.integration.spec.ts`
+
+**Complete implementation and test body:**
+
+```ts
+const schemas = {
+  "user.otp": userOtpV1,
+  "order.placed": orderPlacedV1,
+  "order.transitioned": orderTransitionedV1,
+  "order.paid": orderPaidV1,
+  "withdraw.updated": withdrawUpdatedV1,
+  "ticket.message": ticketMessageV1,
+} as const;
+
+export function registerNotificationEvents(
+  registry: OutboxRegistry,
+  notify: NotifyPort,
+): void {
+  for (const [type, schema] of Object.entries(schemas))
+    registry.on(type, async (event, meta) => {
+      const parsed = schema.safeParse(event);
+      if (!parsed.success)
+        throw new PermanentEventError("INVALID_NOTIFICATION_EVENT");
+      await dispatchNotificationEvent(notify, parsed.data, meta.id);
+    });
+}
+
+describe("registerNotificationEvents", () => {
+  it.each(Object.keys(schemas))(
+    "validates and handles %s exactly once",
+    async (type) => {
+      const h = eventHarness();
+      registerNotificationEvents(h.registry, h.notify);
+      await h.deliver(type, h.valid[type]);
+      await h.deliver(type, h.valid[type]);
+      expect(h.logicalNotifications(type)).toHaveLength(1);
+    },
+  );
+  it("does not register or claim unrelated events", () => {
+    const h = eventHarness();
+    registerNotificationEvents(h.registry, h.notify);
+    expect(h.registry.types().sort()).toEqual(Object.keys(schemas).sort());
+    expect(h.registry.claimFilter()).not.toContain("restaurant.updated");
+  });
+});
+```
+
+`userOtpV1`, `orderPlacedV1`, `orderTransitionedV1`, `orderPaidV1`, `withdrawUpdatedV1` and `ticketMessageV1` are strict
+zod objects with `version: z.literal(1)` and no PII fields. `dispatchNotificationEvent` is an exhaustive switch that
+maps the six schemas to the template table above and passes `eventId` as the source id. `eventHarness` defines a fake
+registry with the production claim-filter algorithm, valid fixture map, recording idempotent notify port and replay
+helper; these definitions live in `notification-events.spec.ts` rather than shared global state.
+
+- [ ] **Step 1:** Provide one fixture for each exact event: `user.otp`, `order.placed`, `order.transitioned`,
+      `order.paid`, `withdraw.updated`, `ticket.message`. Assert its template, transactional/marketing class, locale,
+      audience and allowed channels; replay each event and assert one inbox row and one logical notification; inject a
+      crash between enqueue and acknowledgement and assert transaction rollback/retry; assert unrelated event types
+      are never claimed.
+- [ ] **Step 2:** Run both files; expect unregistered consumers.
+- [ ] **Step 3: Implement.** Register six named outbox consumers, each validating a strict versioned event schema
+      and calling `NotifyPort` with the outbox event id. Resolve current destination/consent through ports rather than
+      trusting event payload PII. Keep events free of email, phone, device token, OTP plaintext and rendered content.
+      Unsupported versions dead-letter with a redacted schema error.
+- [ ] **Step 4:** Run Step 2 and the outbox dispatcher tests; expect pass.
+- [ ] **Step 5:** Commit `feat(L8): consume notification domain events idempotently`.
+
+---
+
+## 9. Playwright and journey specifications to hand over
+
+W10 supplies fixtures and evidence; **W16** owns Playwright and **W15** owns journeys.
+
+| Owner | Spec                                                              | Verified pinned source and concrete selectors                                                                                                                                                                                                                                                                                                                              | Operation tags                                                          |
+| ----- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| W16   | `e2e/specs/admin/notifications-list.spec.ts`                      | Sidebar route `/management/notifications` (`side-bar/index.tsx:181`); `getByText("Notification")` (`notifications/view/header/screen-header/index.tsx:19`), `getByPlaceholder("Keyword Search")` (`notifications/view/header/table-header/index.tsx:26`) and `getByRole("button", { name: "Resend" })` (`notification-columns.tsx:79`). Assert tenant rows and pagination. | `@op:query.notifications`, `@op:query.notificationsPaginated`           |
+| W16   | `e2e/specs/admin/notification-broadcast.spec.ts`                  | `getByRole("button", { name: "Send Notification" })` (`screen-header/index.tsx:24`), `getByPlaceholder("Title")` (`notifications/form/index.tsx:101`), `getByPlaceholder("Add description here")` (`:121`) and `getByRole("button", { name: "Send" })` (`:137`).                                                                                                           | `@op:mutation.sendNotificationUser`                                     |
+| W16   | `e2e/specs/admin/web-notifications.spec.ts`                       | `getByTitle("Notifications")` (`super-admin-layout/app-bar/index.tsx:296`), unread counter (`:299-301`), `getByText("No notifications yet")` (`:325`) and notification links (`:331-351`). Mark read, reload and assert unread state.                                                                                                                                      | `@op:query.webNotifications`, `@op:mutation.markWebNotificationsAsRead` |
+| W15   | `services/api/test/journeys/order-notification.journey.spec.ts`   | Replay exact order placement/transition documents, consume their real outbox events, then query the admin notification documents; run with configured fake provider and unconfigured provider.                                                                                                                                                                             | L5 event plus L8 query roots                                            |
+| W15   | `services/api/test/journeys/support-notification.journey.spec.ts` | Replay exact support message document, verify tenant/recipient isolation and idempotent delivery declaration.                                                                                                                                                                                                                                                              | `ticket.message` plus L8 query roots                                    |
+
+Notification-screen and app-bar citations are relative to
+`implementation/vendor/enatega-ui/enatega-multivendor-admin/lib/ui/screen-components/protected/super-admin/`;
+the Resend citation is the complete pinned path
+`implementation/vendor/enatega-ui/enatega-multivendor-admin/lib/ui/useable-components/table/columns/notification-columns.tsx:79`.
+All were verified against the pinned source. W16 rechecks them after any approved upstream-pin change. The tests use visible
+roles, titles, placeholders and text; they add no test ids and make no layout, component, style, asset or interaction
+change.
+
+**Lead-owned requests:** W10 authors only the L8 lane modules, jobs and tests listed above. The lead owns changes to
+`kernel/ports.ts`, `kernel/events.ts`, API/worker composition and outbox registry, root package/Turborepo files,
+shared factories outside the marked L8 section, `OPERATION_TEST_EVIDENCE.json`, `OPERATION_COVERAGE.json`, and gate
+artifacts. W10 sends exact patches/evidence requests for those files and does not edit them on its branch.
+
+---
+
+## 10. Coverage and gate checklist
+
+- [ ] `pnpm --filter @fairbite/api exec vitest run test/unit/notifications`
+- [ ] `pnpm --filter @fairbite/api exec vitest run -c vitest.integration.config.ts test/integration/notifications`
+- [ ] `pnpm --filter @fairbite/worker test -- notification`
+- [ ] `pnpm coverage`
+- [ ] `pnpm e2e -- --grep '@op:(query|mutation)\.(notifications|notificationsPaginated|webNotifications|markWebNotificationsAsRead|sendNotificationUser)'`
+- [ ] `pnpm lint && pnpm typecheck && pnpm build`
+- [ ] `pnpm check:enatega && pnpm check:enatega:full && pnpm codegen:check`
+- [ ] `pnpm test:operation-evidence && pnpm check:error-messages`
+- [ ] Every authored L8 API/worker file meets G2's thresholds: at least 90% lines, 90% functions and 85% branches.
+- [ ] W23 verifies actual positive/negative artifacts; W24 reviews secret handling, PII minimisation, tenant
+      predicates, provider response redaction, opt-outs, retry/idempotency and production DevOutbox refusal.
+
+These exact keys must be `implemented: true` and `integrationTested: true` in
+`docs/OPERATION_COVERAGE.json`:
+
+```text
+query.notifications
+query.notificationsPaginated
+query.webNotifications
+mutation.markWebNotificationsAsRead
+mutation.sendNotificationUser
+```
+
+---
+
+## 11. Open questions and blockers
+
+1. Expo, Firebase, Twilio and SendGrid credentials plus verified sender identities are required for provider
+   sandbox evidence in W18. Until configured, delivery remains `PROVIDER_UNAVAILABLE`; no fallback sends through
+   Enatega or an unapproved account.
+2. Production key management for encrypted OTP/reset-link payload fragments requires the hosting decision. Startup
+   must fail closed when a production encryption key is absent.
+3. Retention durations for rendered notifications, delivery attempts and hashed recipient lookup data require the
+   owner's privacy/retention decision. Default test/dev values are not production policy.
+4. `DevOutbox` is allowed only when `APP_ENV !== "production"`. Production configuration rejects it even when a
+   developer flag requests it; tests must prove startup refusal.
+5. Locale coverage beyond the centrally approved set belongs to W26. Missing translations fall back to approved
+   English templates and are recorded; raw event payloads are never exposed to clients.

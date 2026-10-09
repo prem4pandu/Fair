@@ -36,7 +36,7 @@ flowchart LR
 
 ## Files and ownership
 
-L10 creates `e2e/playwright.config.ts`, `e2e/fixtures/session.ts`, `e2e/fixtures/network-audit.ts`, `e2e/fixtures/database.ts`, `e2e/specs/admin/*.spec.ts`, `e2e/specs/web/*.spec.ts`, and `services/api/test/journeys/*.spec.ts`. Root scripts/tools/coverage aggregation belong to lead. Backend failures return to the owning lane; no E2E worker rewrites a lane's domain logic. Only allowed transport/session/configuration mapping edits in `vendor/enatega-ui/**`, recorded in root provenance and source manifest, are permitted. Independent L11 QA verifies evidence and L13 security reviews sensitive journeys.
+W16 creates `e2e/playwright.config.ts`, `e2e/fixtures/session.ts`, `e2e/fixtures/network-audit.ts`, `e2e/fixtures/database.ts`, `e2e/specs/admin/*.spec.ts`, and `e2e/specs/web/*.spec.ts`; W15 creates `services/api/test/journeys/*.spec.ts`. Root scripts/tools/coverage aggregation belong to lead. Backend failures return to the owning lane; no E2E worker rewrites a lane's domain logic. Only allowed transport/session/configuration mapping edits in `vendor/enatega-ui/**`, recorded in root provenance and source manifest, are permitted. Independent W23 QA verifies evidence and W24 security reviews sensitive journeys.
 
 ## Harness tasks before writing journeys
 
@@ -70,7 +70,7 @@ Mobile journeys replay customer/store/rider documents in original screen order v
 
 ## Per-operation journey obligations
 
-The following 264 current multivendor-scope roots each need an executed journey or browser tag. Scope follows lane, not app presence: a root assigned L12 remains Wave 5 even if a multivendor app contains a conditional document. Reconcile additions after unresolved sites are resolved; this table is the current static inventory, not proof every runtime feature is inventoried. Shared L1 ownerLogout is included because its lane is L1; document replay can cover it even where currently only single-vendor source calls it.
+The following 263 current multivendor-scope roots each need an executed journey or browser tag. Scope follows lane, not app presence: a root assigned L12 remains Wave 5 even if a multivendor app contains a conditional document. Reconcile additions after unresolved sites are resolved; this table is the current static inventory, not proof every runtime feature is inventoried. Shared L1 ownerLogout is included because its lane is L1; document replay can cover it even where currently only single-vendor source calls it.
 
 | Operation                                                      | Owner | Suite       | Execution requirement                                                                                                                         |
 | -------------------------------------------------------------- | ----- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -345,7 +345,7 @@ The following 264 current multivendor-scope roots each need an executed journey 
 - [ ] Verify lead has actually added planned scripts before invoking `pnpm test:journeys`, `pnpm e2e`, `pnpm coverage`, `pnpm check:operations --require-e2e`. A missing command/harness is a failed prerequisite, not N/A or passed validation.
 - [ ] Save Playwright HTML/JUnit, screenshots on failures, trace/video on failure, console/network audit, API/worker logs with redaction, migration evidence, coverage report and operation evidence map for the exact commit. Reproduce failed specs and fix in owning lane before final complete-suite run.
 - [ ] Confirm no skipped/quarantined scope operations, no fabricated flags, all 132 unresolved sites reconciled, all applicable G2 gates passed and ≥80% API under-E2E lines. Unit/integration lane coverage remains ≥90% lines/functions and ≥85% branches.
-- [ ] L11 independent QA reviews the operation-to-test map and observed UI journeys; L13 reviews authentication, tenant isolation, providers and sensitive records. Record command, commit, timestamp, scope, artifacts and reviewer in `docs/GATES.json`; do not self-approve.
+- [ ] W23 independent QA reviews the operation-to-test map and observed UI journeys; W24 reviews authentication, tenant isolation, providers and sensitive records. Record command, commit, timestamp, scope, artifacts and reviewer in `docs/GATES.json`; do not self-approve.
 
 ## Release blockers
 

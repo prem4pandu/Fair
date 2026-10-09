@@ -14,7 +14,7 @@
 
 **Architecture:** Two modules. `modules/pricing` is a pure, exhaustively unit-tested engine (integer minor units) plus a thin service that gathers its inputs through `RestaurantsPort`, `CouponsPort` and `ConfigPort`. `modules/orders` owns the `Order` aggregate, its snapshots and history; every status change in the system goes through the PostgreSQL function `l5_transition_order(...)` (allowed-transition table, actor classes, optimistic version, idempotency, timestamps, history row and `order.transitioned` outbox row in one statement), called by `TransitionService` (API, also behind `OrdersPort.transition`) and by the worker accept-timeout sweep; subscription messages are published to Redis after commit and each subscription authorises itself at subscribe time and re-reads the order per event.
 
-**Tech stack:** NestJS 12 schema-first resolvers, `pg` 8 (raw SQL, as the existing modules), PostgreSQL 17 PL/pgSQL, Redis pub/sub (`kernel/pubsub.ts`), BullMQ 6 job scheduler in `services/worker`, zod 4, Vitest 4 + Testcontainers, Playwright 1.63 (specs handed to L10).
+**Tech stack:** NestJS 12 schema-first resolvers, `pg` 8 (raw SQL, as the existing modules), PostgreSQL 17 PL/pgSQL, Redis pub/sub (`kernel/pubsub.ts`), BullMQ 6 job scheduler in `services/worker`, zod 4, Vitest 4 + Testcontainers, Playwright 1.63 (specs handed to W16; journeys handed to W15).
 
 ---
 
@@ -720,7 +720,7 @@ Consumers must filter `"orderStatus"` themselves (e.g. popularity counts only `D
 
 Deliberately **no** FK: `Order.couponId` (snapshot; coupons may be deleted, title and percent are copied), `OrderItem.foodId`, `variationId`, `OrderItemAddon.addonId`, `OrderItemOption.optionId` (snapshots; catalog rows may be deleted after ordering).
 
-### 4.4 Factory section (W1-L.3; append to `services/api/test/support/factories.ts` under `// L5`)
+### 4.4 Factory section (W1-L.3; create `services/api/test/support/factories/L5.ts` and export it from `services/api/test/support/factories/index.ts`)
 
 ```ts
 // L5 — orders. Inserts a priced, balanced COD order with one line. Parents (customer, restaurant)
@@ -816,7 +816,10 @@ export function l5OrderFactory(pool: Pick<Pool, "query">) {
     return { id: seed.id, orderId, version: 1 };
   };
 }
-// Inside factories(pool): order: l5OrderFactory(pool),
+export const l5Factories = (pool: Pick<Pool, "query">) => ({
+  order: l5OrderFactory(pool),
+});
+// In factories/index.ts: return { ...baseFactories(client), ...l5Factories(client) };
 ```
 
 (`randomUUID` from `node:crypto`, `Pool` from `pg`; the factories file already imports both or the lead adds them.) A row seeded as `ASSIGNED`/`PICKED`/`DELIVERED` must pass a `riderId`, otherwise `Order_status_timestamps` rejects it.
@@ -900,7 +903,7 @@ export interface ReviewsPort {
 }
 ```
 
-**CFG-L5-1 configuration** (`services/api/src/config.ts`, `.env.example`): add `ORDER_ACCEPT_TIMEOUT_SECONDS: z.coerce.number().int().min(1).max(3600).default(120)` (D6; `min(1)` so tests can use short windows).
+**CFG-L5-1 configuration** (`services/api/src/config.ts`, `.env.example`): add `ORDER_ACCEPT_TIMEOUT_SECONDS: z.coerce.number().int().min(1).max(3600).default(300)` outside production (D6; `min(1)` lets tests use short windows). The production refinement rejects an omitted value, so production never silently adopts the development default.
 
 **HR-L5-1 provider overrides in the harness** (`services/api/src/app.ts`, `services/api/test/support/app.ts`): `createApp(config, options?: { overrides?: { provide: unknown; useValue: unknown }[] })` registers each override in the global ports module **in place of** the lane implementation for that token (ports, `SESSION_VALIDATOR`, `PRINCIPAL_LOADER`), and `startApi(stack, env = {}, overrides = [])` forwards them. Wave 2 lanes use this to run integration tests against in-memory fakes of other lanes (master §7).
 
@@ -1028,7 +1031,7 @@ Paths are relative to `implementation/`. Branch: `wave2/L5-orders` from `enatega
 
 ```ts
 // services/api/test/unit/pricing/engine.spec.ts
-import { describe, expect, it } from "vitest";
+import { describe, it } from "vitest";
 import {
   deliveryFeeMinor,
   priceOrder,
@@ -2623,25 +2626,658 @@ git commit -m "feat(L5): map translated admin date keywords and order filters"
 
 ---
 
+### Task 6: Atomic order transition function and repository
+
+#### Mandatory tagged integration-suite skeleton
+
+The files in Tasks 7–10 must use the following literal suite declarations. `cases` is complete executable test
+code, not a documentation alias: each call supplies the exact `doc(...)` tuple from §2, a seeded authorised
+principal, an anonymous client, a second-tenant principal, and invalid variables for that root. Mutation cases also
+receive `assertAtomic`, which checks history/outbox rows or their absence in the same database.
+
+```ts
+import { describe, expect, it } from "vitest";
+import { op } from "../../support/op.js";
+
+type OperationCase = {
+  assertSuccess(): Promise<void>;
+  assertAnonymous(): Promise<void>;
+  assertOutsider(): Promise<void>;
+  assertInvalid(): Promise<void>;
+  assertAtomic?: () => Promise<void>;
+};
+
+const cases = (build: () => Promise<OperationCase>) => {
+  it("executes the exact pinned document and returns its selected root", async () => {
+    const test = await build();
+    await test.assertSuccess();
+    await test.assertAtomic?.();
+  });
+  it("rejects anonymous, cross-tenant and invalid input without writes", async () => {
+    const test = await build();
+    await test.assertAnonymous();
+    await test.assertOutsider();
+    await test.assertInvalid();
+  });
+};
+
+describe(op("query.allOrders"), () => cases(() => fixture.allOrders()));
+describe(op("query.allOrdersPaginated"), () =>
+  cases(() => fixture.allOrdersPaginated()),
+);
+describe(op("query.allOrdersWithoutPagination"), () =>
+  cases(() => fixture.allOrdersWithoutPagination()),
+);
+describe(op("query.getUsersActiveOrders"), () =>
+  cases(() => fixture.getUsersActiveOrders()),
+);
+describe(op("query.getUsersPastOrders"), () =>
+  cases(() => fixture.getUsersPastOrders()),
+);
+describe(op("query.order"), () => cases(() => fixture.order()));
+describe(op("query.orderDetails"), () => cases(() => fixture.orderDetails()));
+describe(op("query.orderFilterOptions"), () =>
+  cases(() => fixture.orderFilterOptions()),
+);
+describe(op("query.orders"), () => cases(() => fixture.orders()));
+describe(op("query.ordersByRestId"), () =>
+  cases(() => fixture.ordersByRestId()),
+);
+describe(op("query.ordersByRestIdWithoutPagination"), () =>
+  cases(() => fixture.ordersByRestIdWithoutPagination()),
+);
+describe(op("query.restaurantOrders"), () =>
+  cases(() => fixture.restaurantOrders()),
+);
+describe(op("mutation.abortOrder"), () => cases(() => fixture.abortOrder()));
+describe(op("mutation.acceptOrder"), () => cases(() => fixture.acceptOrder()));
+describe(op("mutation.cancelOrder"), () => cases(() => fixture.cancelOrder()));
+describe(op("mutation.coupon"), () => cases(() => fixture.coupon()));
+describe(op("mutation.muteRing"), () => cases(() => fixture.muteRing()));
+describe(op("mutation.orderPickedUp"), () =>
+  cases(() => fixture.orderPickedUp()),
+);
+describe(op("mutation.placeOrder"), () => cases(() => fixture.placeOrder()));
+describe(op("mutation.reviewOrder"), () => cases(() => fixture.reviewOrder()));
+describe(op("mutation.updateStatus"), () =>
+  cases(() => fixture.updateStatus()),
+);
+describe(op("subscription.orderStatusChanged"), () =>
+  cases(() => fixture.orderStatusChanged()),
+);
+describe(op("subscription.subscribePlaceOrder"), () =>
+  cases(() => fixture.subscribePlaceOrder()),
+);
+describe(op("subscription.subscriptionOrder"), () =>
+  cases(() => fixture.subscriptionOrder()),
+);
+```
+
+`fixture` is implemented in `test/integration/orders/fixtures.ts`. Each method loads its exact §2 document with
+`doc(app,file,exportName)`, seeds both owner and second-tenant data through `factories(stack.pool)`, and provides the
+four assertions above. Query/mutation assertions inspect their GraphQL result directly. Subscription assertions own
+the complete `legacySubscribe` lifecycle: reject before acknowledgement where required, publish one id-only event,
+assert the exact mapped payload, assert no outsider event before the bounded deadline, and call `return()` before
+checking Redis subscriber cleanup. Tasks 7–10 add their rule-specific
+assertions after this common baseline; passing this baseline alone cannot close operation evidence.
+
+**Files:**
+
+- Create: `services/api/src/modules/orders/repository.ts`
+- Create: `services/api/src/modules/orders/transition.service.ts`
+- Modify: `services/api/prisma/migrations/202610100150_L5_lifecycle/migration.sql`
+- Test: `services/api/test/integration/orders/transition.integration.spec.ts`
+
+- [ ] **Step 1: Write the failing integration tests.** Seed one order for every source status and call
+      `l5_transition_order` through `OrderRepository.transitionAuthorized`. Assert the complete allowed-transition
+      matrix and actor classes in R26, including CUSTOMER/user, RESTAURANT/owned-id-set and RIDER/current-rider scope
+      checks under the row lock. Race an assigned rider's PICKED request against an admin reassignment and prove the
+      old rider cannot win after reassignment. Assert SQL-state-to-`appError` mapping, a stale `expectedVersion`
+      conflict, replay of the same idempotency key returning the
+      original result, a different payload with the same key returning `CONFLICT`, and concurrent accept/cancel calls
+      producing exactly one winner. In the same transaction assert one `OrderStatusHistory` row and one
+      `order.transitioned` `DomainEvent`; rollback must leave neither. Tag the suite
+      the literal `mutation.updateStatus` suite declared in the mandatory 24-root skeleton above.
+- [ ] **Step 2: Run**
+      `pnpm --filter @fairbite/api exec vitest run -c vitest.integration.config.ts test/integration/orders/transition.integration.spec.ts`;
+      expect failure because the function and repository do not exist.
+- [ ] **Step 3: Implement**
+      `l5_transition_order(order_id uuid, target text, actor_class text, actor_id uuid, actor_restaurant_ids uuid[], expected_version integer, idempotency_key text, reason text, rider_id uuid, preparation_minutes integer)`
+      as one `SECURITY INVOKER` PL/pgSQL statement. Lock the order `FOR UPDATE`, then validate both the R26 transition
+      row and authenticated scope while the lock is held: CUSTOMER requires `actor_id = Order.userId`; RIDER requires
+      `actor_id = Order.riderId`; RESTAURANT requires `Order.restaurantId = ANY(actor_restaurant_ids)`; ADMIN is allowed
+      by the rule table; SYSTEM is accepted only from the worker database role. The API database role has no grant to
+      request SYSTEM. Compare the version, insert the idempotency record with a hash of every semantic input, set the
+      target-specific timestamps/rider/preparation fields, increment `version`, append immutable history, and insert
+      `order.transitioned` with the complete R27 `OrderSnapshot`. The post-commit outbox consumer publishes only the
+      thin Redis `{id,origin}` message. `OrderRepository.transitionAuthorized` calls only this function and maps its
+      SQL states to `appError`; no separate ownership decision authorizes a later write.
+- [ ] **Step 4:** Run the command from Step 2; expect every matrix, race, rollback and idempotency assertion to pass.
+- [ ] **Step 5:** Commit `feat(L5): centralize immutable order transitions`.
+
+#### Task 6A — complete transition service boundary
+
+The following two files are copy-pasteable and complete this service slice. The repository remains the only caller
+of the SQL function; actor scope and idempotency are derived server-side, and the owning resolver/port supplies an
+`expectedVersion` read from the server row rather than a GraphQL argument.
+
+```ts
+// services/api/src/modules/orders/transition.service.ts
+import { appError } from "../../kernel/errors.js";
+import type { AuthContext } from "../../kernel/auth/guards.js";
+import { parseId } from "../../kernel/ids.js";
+
+export type TransitionTarget =
+  | "ACCEPTED"
+  | "ASSIGNED"
+  | "PICKED"
+  | "DELIVERED"
+  | "CANCELLED";
+// This is an internal service request, never a GraphQL input. The owning
+// resolver/port reads expectedVersion from the current server row.
+export type TransitionRequest = {
+  orderId: string;
+  target: TransitionTarget;
+  expectedVersion: number;
+  reason?: string | null;
+  riderId?: string | null;
+  preparationMinutes?: number | null;
+};
+export type TransitionMetadata = { requestId: string };
+export type TransitionResult = {
+  id: string;
+  status: string;
+  version: number;
+  restaurantId: string;
+  customerId: string;
+  riderId: string | null;
+};
+export interface TransitionRepository {
+  transitionAuthorized(
+    command: TransitionRequest & {
+      actorClass: ActorClass;
+      actorId: string;
+      actorRestaurantIds: string[];
+      idempotencyKey: string;
+    },
+  ): Promise<TransitionResult>;
+}
+type ActorClass = "CUSTOMER" | "RESTAURANT" | "RIDER" | "ADMIN";
+
+const actor = (
+  auth: AuthContext,
+): {
+  actorClass: ActorClass;
+  actorId: string;
+  actorRestaurantIds: string[];
+} => {
+  if (auth.type === "CUSTOMER")
+    return {
+      actorClass: "CUSTOMER",
+      actorId: auth.userId,
+      actorRestaurantIds: [],
+    };
+  if (auth.type === "RESTAURANT" || auth.type === "VENDOR")
+    return {
+      actorClass: "RESTAURANT",
+      actorId: auth.userId,
+      actorRestaurantIds: auth.restaurantIds,
+    };
+  if (auth.type === "RIDER" && auth.riderId)
+    return {
+      actorClass: "RIDER",
+      actorId: auth.riderId,
+      actorRestaurantIds: [],
+    };
+  if (
+    auth.type === "ADMIN" ||
+    (auth.type === "STAFF" && auth.permissions.includes("Orders"))
+  )
+    return {
+      actorClass: "ADMIN",
+      actorId: auth.userId,
+      actorRestaurantIds: [],
+    };
+  throw appError("FORBIDDEN");
+};
+
+export class TransitionService {
+  constructor(private readonly repository: TransitionRepository) {}
+
+  async transition(
+    auth: AuthContext,
+    request: TransitionRequest,
+    metadata: TransitionMetadata,
+  ): Promise<TransitionResult> {
+    if (
+      !Number.isInteger(request.expectedVersion) ||
+      request.expectedVersion < 0
+    )
+      throw appError("BAD_USER_INPUT", "Invalid order version");
+    if (!/^[A-Za-z0-9:_-]{8,128}$/.test(metadata.requestId))
+      throw appError("BAD_USER_INPUT", "Invalid request id");
+    if (
+      request.preparationMinutes != null &&
+      (!Number.isInteger(request.preparationMinutes) ||
+        request.preparationMinutes < 1 ||
+        request.preparationMinutes > 180)
+    )
+      throw appError(
+        "BAD_USER_INPUT",
+        "Preparation time must be between 1 and 180 minutes",
+      );
+
+    const orderId = parseId(request.orderId, "order");
+    const principal = actor(auth);
+    return this.repository.transitionAuthorized({
+      ...request,
+      orderId,
+      ...principal,
+      idempotencyKey: `${metadata.requestId}:${orderId}:${request.target}`,
+    });
+  }
+}
+```
+
+```ts
+// services/api/test/unit/orders/transition.service.spec.ts
+import { describe, expect, it, vi } from "vitest";
+import type { AuthContext } from "../../../src/kernel/auth/guards.js";
+import { appError } from "../../../src/kernel/errors.js";
+import {
+  TransitionService,
+  type TransitionRepository,
+  type TransitionResult,
+} from "../../../src/modules/orders/transition.service.js";
+
+const order = {
+  id: "11111111-1111-4111-8111-111111111111",
+  status: "PENDING",
+  version: 3,
+  restaurantId: "store-1",
+  customerId: "customer-1",
+  riderId: "rider-1",
+};
+const command = {
+  orderId: order.id,
+  target: "CANCELLED" as const,
+  expectedVersion: 3,
+};
+const metadata = { requestId: "request_12345678" };
+const repository = () =>
+  ({
+    transitionAuthorized: vi.fn(async () => ({
+      ...order,
+      status: "CANCELLED",
+      version: 4,
+    })),
+  }) satisfies TransitionRepository;
+const auth = (overrides: Partial<AuthContext> = {}): AuthContext => ({
+  userId: "admin-1",
+  type: "ADMIN",
+  sessionId: "session-1",
+  permissions: [],
+  restaurantIds: [],
+  vendorId: null,
+  riderId: null,
+  ...overrides,
+});
+
+describe("TransitionService", () => {
+  it("derives the customer actor and delegates the bounded command", async () => {
+    const repo = repository();
+    const service = new TransitionService(repo);
+    await expect(
+      service.transition(
+        auth({ type: "CUSTOMER", userId: "customer-1" }),
+        command,
+        metadata,
+      ),
+    ).resolves.toMatchObject({ status: "CANCELLED", version: 4 });
+    expect(repo.transitionAuthorized).toHaveBeenCalledWith({
+      ...command,
+      actorClass: "CUSTOMER",
+      actorId: "customer-1",
+      actorRestaurantIds: [],
+      idempotencyKey: `${metadata.requestId}:${order.id}:CANCELLED`,
+    });
+  });
+
+  it("delegates ownership to the atomic repository boundary", async () => {
+    const repo = repository();
+    repo.transitionAuthorized.mockRejectedValueOnce(appError("FORBIDDEN"));
+    await expect(
+      new TransitionService(repo).transition(
+        auth({ type: "RIDER", riderId: "rider-1" }),
+        command,
+        metadata,
+      ),
+    ).rejects.toMatchObject({ extensions: { code: "FORBIDDEN" } });
+    expect(repo.transitionAuthorized).toHaveBeenCalledWith(
+      expect.objectContaining({
+        actorClass: "RIDER",
+        actorId: "rider-1",
+        actorRestaurantIds: [],
+      }),
+    );
+  });
+
+  it.each([
+    [
+      auth({ type: "RESTAURANT", restaurantIds: ["store-1"] }),
+      "RESTAURANT",
+      "admin-1",
+      ["store-1"],
+    ],
+    [
+      auth({ type: "VENDOR", restaurantIds: ["store-1"] }),
+      "RESTAURANT",
+      "admin-1",
+      ["store-1"],
+    ],
+    [auth({ type: "RIDER", riderId: "rider-1" }), "RIDER", "rider-1", []],
+    [auth(), "ADMIN", "admin-1", []],
+    [auth({ type: "STAFF", permissions: ["Orders"] }), "ADMIN", "admin-1", []],
+  ] as const)(
+    "derives %s actor scope",
+    async (principal, actorClass, actorId, actorRestaurantIds) => {
+      const repo = repository();
+      await new TransitionService(repo).transition(
+        principal,
+        command,
+        metadata,
+      );
+      expect(repo.transitionAuthorized).toHaveBeenCalledWith(
+        expect.objectContaining({ actorClass, actorId, actorRestaurantIds }),
+      );
+    },
+  );
+
+  it("rejects staff without Orders permission and riders without rider identity", async () => {
+    const repo = repository();
+    const service = new TransitionService(repo);
+    await expect(
+      service.transition(auth({ type: "STAFF" }), command, metadata),
+    ).rejects.toMatchObject({ extensions: { code: "FORBIDDEN" } });
+    await expect(
+      service.transition(auth({ type: "RIDER" }), command, metadata),
+    ).rejects.toMatchObject({ extensions: { code: "FORBIDDEN" } });
+    expect(repo.transitionAuthorized).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid version, idempotency and preparation bounds", async () => {
+    const service = new TransitionService(repository());
+    await expect(
+      service.transition(auth(), { ...command, expectedVersion: -1 }, metadata),
+    ).rejects.toMatchObject({ extensions: { code: "BAD_USER_INPUT" } });
+    await expect(
+      service.transition(auth(), command, { requestId: "short" }),
+    ).rejects.toMatchObject({ extensions: { code: "BAD_USER_INPUT" } });
+    await expect(
+      service.transition(
+        auth(),
+        { ...command, preparationMinutes: 181 },
+        metadata,
+      ),
+    ).rejects.toMatchObject({ extensions: { code: "BAD_USER_INPUT" } });
+  });
+});
+```
+
+Run: `pnpm --filter @fairbite/api exec vitest run test/unit/orders/transition.service.spec.ts`. It fails before the
+service file exists and passes after the exact implementation above is added.
+
+### Task 7: Server-owned quote, coupon and placement
+
+**Files:**
+
+- Create: `services/api/src/modules/pricing/service.ts`
+- Create: `services/api/src/modules/orders/placement.service.ts`
+- Create: `services/api/src/modules/orders/resolver.ts`
+- Create: `services/api/src/modules/orders/module.ts`
+- Test: `services/api/test/integration/orders/placement.integration.spec.ts`
+
+- [ ] **Step 1: Write three tagged suites:** `mutation.coupon`, `mutation.placeOrder`, and the placement half of
+      `subscription.subscribePlaceOrder`. Load every app/web/rider document named in §2 with `doc(...)`. Assert a
+      valid quote and placement, anonymous/other-role denial, restaurant/menu ownership, closed/out-of-zone rejection,
+      quantity/addon bounds, expired and wrong-restaurant coupons, minimum-order rejection, duplicate idempotency,
+      concurrent stock exhaustion, and ignored client totals/commission. Assert persisted integer minor units,
+      immutable item/addon/name/price snapshots, core-plan `platformCommissionMinor = 0`, balanced reservation journal,
+      one `order.placed` outbox row, and no row on failure.
+- [ ] **Step 2:** Run
+      `pnpm --filter @fairbite/api exec vitest run -c vitest.integration.config.ts test/integration/orders/placement.integration.spec.ts`;
+      expect missing providers.
+- [ ] **Step 3: Implement.** `PricingService.quote` loads menu/config/coupon/zone inputs server-side and invokes the
+      Task 1 engine. `PlacementService.place` starts a serializable transaction, rechecks publication, opening time,
+      zone, stock and coupon use, writes the immutable order and snapshots, reserves payment through `PaymentsPort`,
+      enqueues `order.placed`, and commits before publication. The resolver exposes explicit `@Mutation("coupon")`
+      and `@Mutation("placeOrder")` methods, parses the exact nullable arguments from §3, requires CUSTOMER, and maps
+      with `toMajor`; it never trusts client price, tax, delivery fee, tip parsing, commission or status.
+- [ ] **Step 4:** Run Step 2 and the Task 1–2 unit suites; expect pass.
+- [ ] **Step 5:** Commit `feat(L5): place orders from server-owned quotes`.
+
+### Task 8: Customer and restaurant reads, cancellation and review
+
+**Files:**
+
+- Modify: `services/api/src/modules/orders/repository.ts`
+- Create: `services/api/src/modules/orders/query.service.ts`
+- Modify: `services/api/src/modules/orders/resolver.ts`
+- Test: `services/api/test/integration/orders/customer-restaurant.integration.spec.ts`
+
+- [ ] **Step 1:** Add individually tagged suites for `query.orders`, `query.order`, `query.orderDetails`,
+      `query.getUsersActiveOrders`, `query.getUsersPastOrders`, `query.restaurantOrders`, `mutation.abortOrder`,
+      `mutation.cancelOrder`, `mutation.acceptOrder`, `mutation.orderPickedUp`, `mutation.reviewOrder`, and
+      `mutation.muteRing`. Each suite executes every §2 document for that root. Assert happy results and exact selected
+      fields, anonymous denial, cross-customer/cross-restaurant denial, malformed ids, pagination bounds, active/past
+      partitions, R/V ownership, transition rules, duplicate review rejection, review range/comment bounds and
+      per-user ring acknowledgement. Assert abort/cancel/accept/pickup all create transition history through Task 6.
+- [ ] **Step 2:** Run
+      `pnpm --filter @fairbite/api exec vitest run -c vitest.integration.config.ts test/integration/orders/customer-restaurant.integration.spec.ts`;
+      expect missing resolver methods.
+- [ ] **Step 3: Implement.** Add one explicit resolver method for each root in Step 1. `QueryService` derives all
+      customer and restaurant predicates from the principal, uses stable `(createdAt,id)` ordering and the kernel
+      paginator, and reuses one mapper whose money conversion occurs only at the GraphQL boundary. Mutation methods
+      call `TransitionService` with the server-read order version and `{requestId: ctx.requestId}`; `reviewOrder` writes once through `ReviewsPort`; `muteRing` upserts
+      `(userId,orderId)` without changing shared order state.
+- [ ] **Step 4:** Run Step 2 plus Tasks 3–4 unit suites; expect pass.
+- [ ] **Step 5:** Commit `feat(L5): serve owned customer and restaurant orders`.
+
+### Task 9: Administrative reads and status control
+
+**Files:**
+
+- Modify: `services/api/src/modules/orders/query.service.ts`
+- Modify: `services/api/src/modules/orders/resolver.ts`
+- Test: `services/api/test/integration/orders/admin.integration.spec.ts`
+
+- [ ] **Step 1:** Add tagged suites for `query.allOrders`, `query.allOrdersPaginated`,
+      `query.allOrdersWithoutPagination`, `query.ordersByRestId`, `query.ordersByRestIdWithoutPagination`,
+      `query.orderFilterOptions`, and `mutation.updateStatus`, executing all admin documents from §2. Cover ADMIN and
+      STAFF(Orders), missing permission, vendor/restaurant isolation, invalid ids/status/date ranges, escaped search,
+      deterministic pages and totals, translated date keywords from Task 5, and every permitted/forbidden admin
+      transition through Task 6.
+- [ ] **Step 2:** Run
+      `pnpm --filter @fairbite/api exec vitest run -c vitest.integration.config.ts test/integration/orders/admin.integration.spec.ts`;
+      expect missing methods.
+- [ ] **Step 3: Implement.** Add the seven named resolver methods with exact SDL arguments. Require ADMIN or
+      `Orders`; pass parsed filters from Task 5 to parameterized repository SQL; intersect requested restaurant with
+      tenant ownership; compute filter options from visible rows only; and route `updateStatus` exclusively through
+      `TransitionService` with the server-read optimistic version and `{requestId: ctx.requestId}`. Neither value is a
+      GraphQL argument.
+- [ ] **Step 4:** Run Step 2 and Task 5's unit suite; expect pass.
+- [ ] **Step 5:** Commit `feat(L5): add tenant-scoped order administration`.
+
+### Task 10: Authorised subscriptions
+
+**Files:**
+
+- Create: `services/api/src/modules/orders/subscriptions.resolver.ts`
+- Create: `services/api/src/modules/orders/subscriptions.service.ts`
+- Test: `services/api/test/integration/orders/subscriptions.integration.spec.ts`
+
+- [ ] **Step 1:** Add tagged suites for `subscription.subscribePlaceOrder`, `subscription.subscriptionOrder`, and
+      `subscription.orderStatusChanged`. Use the exact §2 documents and `legacySubscribe`. Assert store/admin receives
+      a placed order only for its restaurant, each authorised participant receives transitions, a customer receives
+      only its own status changes, cross-tenant/anonymous subscriptions fail before acknowledgement, revoked sessions
+      fail on the next operation, and Redis duplicates/stale versions do not duplicate or regress delivery.
+- [ ] **Step 2:** Run the focused integration file; expect missing subscription resolvers.
+- [ ] **Step 3: Implement.** At subscribe time resolve auth and ownership, subscribe to thin restaurant/order/user
+      topics with kernel filters, then re-read and re-authorise every event. Publish only after transaction commit from
+      an outbox consumer; map errors with `appError`; keep both WebSocket protocols in the kernel unchanged.
+- [ ] **Step 4:** Run the focused file and `test/integration/kernel/ws.integration.spec.ts`; expect pass.
+- [ ] **Step 5:** Commit `feat(L5): stream authorised order lifecycle events`.
+
+### Task 11: Lane assembly and ports
+
+**Files:**
+
+- Create: `services/api/src/modules/orders/index.ts`
+- Modify: `services/api/src/modules/orders/module.ts`
+- Test: `services/api/test/integration/orders/module.integration.spec.ts`
+
+- [ ] **Step 1:** Test that `OrdersModule` exports `ORDERS_PORT`, every one of the 24 schema roots has its concrete
+      resolver, no L5 root returns `NOT_IMPLEMENTED`, and `OrdersPort.transition` uses Task 6.
+- [ ] **Step 2:** Run the test; expect module wiring failure.
+- [ ] **Step 3:** Register the repository, pricing, placement, query, transition and subscription services and
+      resolvers. Export an `OrdersPort` adapter containing `get`, `quote`, `transition` and ownership-safe reads; make
+      no direct imports from another domain module.
+- [ ] **Step 4:** Run the test, all `test/integration/orders/*.spec.ts`, typecheck and lint; expect pass.
+- [ ] **Step 5:** Commit `feat(L5): assemble the orders lane`.
+
 ---
 
-## Remaining sections to author (this plan is PARTIAL)
+## 8. Worker jobs and event handlers
 
-**Status:** PARTIAL. `W7` may not begin implementation on this plan. Completing it is the first task of
-`W7` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+### Task 12: Accept-timeout sweep and post-commit publisher
 
-**What exists:** §1 boundary, §2 all 24 operations, §3 contract notes and SDL, §4 data model and factories, §5 requests to the lead, §6 business rules, and Tasks 1–5 (the pure engines: pricing, menu validation, transition rules, ETA, admin filters).
+**Files:**
 
-**What is missing**, measured against `_lane-plan-brief.md`:
+- Create: `services/worker/src/jobs/order-accept-timeout.ts`
+- Create: `services/worker/src/jobs/order-events.ts`
+- Test: `services/worker/test/order-accept-timeout.spec.ts`
+- Test: `services/api/test/integration/orders/timeout.integration.spec.ts`
 
-1. **Tasks 6+ — the GraphQL layer.** Every one of the 24 operations needs its own resolver method, service and repository code, and its own integration test using the exact vendored document through `doc(...)`, tagged `describe(op("type.name"))`. The pure engines are planned; nothing the apps actually call is. Cover per operation: happy path, auth failure, ownership failure, validation failure, and each business rule in §6.
-2. **The `l5_transition_order` PL/pgSQL function task.** §6 makes it the single point every status change passes through, but no task creates it, nor tests its allowed-transition table, optimistic version check, idempotency key, or its history row and `order.transitioned` outbox write in one statement.
-3. **The three subscriptions** (`subscribePlaceOrder`, `subscriptionOrder`, `orderStatusChanged`): subscribe-time authorisation, per-event re-read, and a legacy-protocol client test for each audience.
-4. **§8 Worker jobs** — the accept-timeout sweep (D6: `PENDING` auto-cancels after `ORDER_ACCEPT_TIMEOUT_SECONDS`; unclaimed `ACCEPTED` is flagged and never auto-cancelled), with exactly-once evidence.
-5. **§9 Playwright and journey handover** — specs for W16 (customer web and admin order flows, selectors cited file:line from the pinned source, `@op:` tags) and mobile document replays for W15.
-6. **§10 Coverage and gate checklist** — the G2 command set and the exact list of operations that must show implemented and integration-tested.
-7. **§11 Open questions and blockers.**
+- [ ] **Step 1:** Use the real database to create overdue/future PENDING orders and ACCEPTED orders. Run two sweep
+      workers concurrently. Assert each overdue PENDING order transitions once to CANCELLED with the exact reason
+      `"Not accepted in time"`, one history row and one event; future PENDING and every ACCEPTED order remain entirely
+      unchanged, with no history, flag or event. Race the sweep against `acceptOrder` and assert exactly one winner.
+      Assert an outage throws and leaves rows unchanged.
+- [ ] **Step 2:** Run both focused files; expect missing consumers.
+- [ ] **Step 3:** Implement a `FOR UPDATE SKIP LOCKED` sweep of at most 50 rows where
+      `status='PENDING' AND acceptDeadlineAt <= now()`. Call `l5_transition_order` as the worker-only SYSTEM actor with
+      the locked version and exact reason `"Not accepted in time"`; never update status directly and never create an
+      overdue flag for ACCEPTED rows. Register consumers for `order.placed` and `order.transitioned`; publish thin Redis messages only after
+      the committed outbox row is consumed. Use the outbox event id as provider idempotency key and expose no fake
+      acknowledgement when PostgreSQL or Redis is unavailable.
+- [ ] **Step 4:** Run both files twice to prove idempotency; expect pass.
+- [ ] **Step 5:** Commit `feat(L5): enforce order acceptance deadlines exactly once`.
 
-The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
-no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
-present in both the operations table and in at least one task's tests.
+---
+
+## 9. Playwright and journey specifications to hand over
+
+W7 supplies fixtures and operation evidence; **W16** owns Playwright files and **W15** owns journey files.
+
+| Owner | Spec                                                        | Route / actions / assertions                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Required tags                                                                                                                                                 |
+| ----- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W16   | `e2e/specs/web/order-checkout.spec.ts`                      | Customer web checkout: click the button whose accessible text is translated from `click_to_order_button` at `enatega-multivendor-web/lib/ui/screens/protected/order/checkout/index.tsx:1466-1476`; select tip controls rendered at `:1263-1288`; assert the server quote, confirmation and tracking status.                                                                                                                                                                                                                  | `@op:mutation.coupon`, `@op:mutation.placeOrder`, `@op:query.orderDetails`, `@op:subscription.orderStatusChanged`                                             |
+| W16   | `e2e/specs/web/order-history.spec.ts`                       | Customer order history: use Active/Past sections mounted at `enatega-multivendor-web/lib/ui/screens/protected/profile/order-history/index.tsx:188-200`; click the cancel button translated from `order_details_cancel_order_button` at `lib/ui/screen-components/protected/order-tracking/components/tracking-order-details.tsx:402-410`; complete the visible rating dialog titled by `how_was_the_delivery_title` at `lib/ui/screen-components/protected/profile/order-history/past-orders/rating/main/index.tsx:116-151`. | `@op:query.orders`, `@op:query.getUsersActiveOrders`, `@op:query.getUsersPastOrders`, `@op:mutation.abortOrder`, `@op:mutation.reviewOrder`                   |
+| W16   | `e2e/specs/admin/orders.spec.ts`                            | Admin orders: navigate by the visible `Orders` header at `enatega-multivendor-admin/lib/ui/screen-components/protected/super-admin/order/header/screen-header/index.tsx:10-15`; use `Search Orders`, `Orders Status`, date tabs and Restaurant/Rider dropdowns at `.../order/header/table-header/index.tsx:76-130`; filter, paginate, open an order and update status, asserting another tenant is absent.                                                                                                                   | `@op:query.allOrdersPaginated`, `@op:query.orderFilterOptions`, `@op:query.ordersByRestId`, `@op:mutation.updateStatus`, `@op:subscription.subscriptionOrder` |
+| W15   | `services/api/test/journeys/customer-order.journey.spec.ts` | Replay app `coupon` → `placeOrder` → `orders` → `getUsersActiveOrders` → `order` → `abortOrder`, then place/deliver/review; use the §2 documents in order.                                                                                                                                                                                                                                                                                                                                                                   | all customer L5 roots                                                                                                                                         |
+| W15   | `services/api/test/journeys/store-order.journey.spec.ts`    | Replay store `subscribePlaceOrder` → `restaurantOrders` → `acceptOrder` → `orderPickedUp` → `muteRing`; include timeout race.                                                                                                                                                                                                                                                                                                                                                                                                | all store L5 roots                                                                                                                                            |
+
+The cited text, labels and source lines were verified against the pinned source. W16 uses `getByRole` when the
+native element exposes a role and otherwise `getByText`/`getByPlaceholder`; it must not add test ids or alter the
+layout. The handover grants no permission to alter components, styling or flows.
+
+---
+
+## 10. Coverage and gate checklist
+
+- [ ] `pnpm --filter @fairbite/api exec vitest run test/unit/orders`
+- [ ] `pnpm --filter @fairbite/api exec vitest run -c vitest.integration.config.ts test/integration/orders`
+- [ ] `pnpm --filter @fairbite/worker test -- order-accept-timeout`
+- [ ] `pnpm test`
+- [ ] `pnpm test:integration`
+- [ ] `pnpm coverage`
+- [ ] `pnpm e2e -- --grep '@op:(query|mutation|subscription)\\.(allOrders|allOrdersPaginated|allOrdersWithoutPagination|getUsersActiveOrders|getUsersPastOrders|order|orderDetails|orderFilterOptions|orders|ordersByRestId|ordersByRestIdWithoutPagination|restaurantOrders|abortOrder|acceptOrder|cancelOrder|coupon|muteRing|orderPickedUp|placeOrder|reviewOrder|updateStatus|orderStatusChanged|subscribePlaceOrder|subscriptionOrder)'`
+- [ ] `pnpm lint && pnpm typecheck && pnpm build`
+- [ ] `pnpm check:enatega && pnpm check:enatega:full && pnpm codegen:check`
+- [ ] `pnpm test:operation-evidence && pnpm check:error-messages`
+- [ ] G2 coverage: every authored L5 API/worker file reaches at least 90% lines, 90% functions and 85% branches.
+- [ ] W23 independently verifies positive/negative evidence; W24 reviews price authority, tenant ownership,
+      transition concurrency, subscription authorisation and journal balance. The author approves neither review.
+
+The following exact 24 keys must be `implemented: true` and `integrationTested: true` in
+`docs/OPERATION_COVERAGE.json`:
+
+```text
+query.allOrders
+query.allOrdersPaginated
+query.allOrdersWithoutPagination
+query.getUsersActiveOrders
+query.getUsersPastOrders
+query.order
+query.orderDetails
+query.orderFilterOptions
+query.orders
+query.ordersByRestId
+query.ordersByRestIdWithoutPagination
+query.restaurantOrders
+mutation.abortOrder
+mutation.acceptOrder
+mutation.cancelOrder
+mutation.coupon
+mutation.muteRing
+mutation.orderPickedUp
+mutation.placeOrder
+mutation.reviewOrder
+mutation.updateStatus
+subscription.orderStatusChanged
+subscription.subscribePlaceOrder
+subscription.subscriptionOrder
+```
+
+---
+
+## 11. Open questions and blockers
+
+1. **Payment provider credentials:** card authorisation, capture and refund evidence remains blocked on W9/W18;
+   COD placement and the provider-independent reservation journal proceed meanwhile.
+2. **Delivery provider credentials:** external-courier fulfilment is W8/W18. L5 persists the selected delivery mode
+   and quoted fee but does not fabricate courier acceptance.
+3. **ORDER_ACCEPT_TIMEOUT_SECONDS:** source does not establish a product value. Default to 300 seconds outside
+   production; production startup must require an explicit owner-approved value.
+4. **Tax and regulatory rounding:** source establishes displayed amounts but no jurisdiction policy. Keep the
+   centrally configured integer-basis-point policy disabled until approved; do not infer tax from client input.
+5. **Core-plan commission:** fixed by owner directive at zero. Any future paid-plan commission requires a separate
+   approved pricing/configuration change and may not mutate historical order snapshots or journals.
+
+## 12. Implementation readiness
+
+**Status: NOT IMPLEMENTATION-READY.** Sections 1–10 define the complete contract, schema, data model, business
+rules, verified UI handoff, commands and 24 exact evidence tags. The following task bodies remain required by
+`_lane-plan-brief.md` before W7 may claim implementation:
+
+1. **Task 6:** Task 6A now supplies the complete transition-service boundary and typed unit tests. Still inline the
+   complete `l5_transition_order` PL/pgSQL body, repository SQL-state mapper, and executable matrix/race/rollback/
+   idempotency integration tests before this task is implementation-ready.
+2. **Task 7:** inline `PricingService.quote`, `PlacementService.place`, both resolver methods, serializable stock and
+   coupon SQL, and full pinned-document tests. The current prose does not define the concrete classes.
+3. **Task 8:** inline all customer/store query repository methods, resolver methods, cancellation/review/ring code,
+   and the twelve complete tagged test bodies.
+4. **Task 9:** inline the administrative filter SQL, seven resolver methods and complete permission/tenant/date/
+   pagination/transition tests.
+5. **Task 10:** inline all three subscription resolver/service implementations, bounded iterator cleanup and full
+   legacy WebSocket re-authorisation tests.
+6. **Task 11:** inline the Nest module/provider/export code and its concrete module-composition test.
+7. **Task 12:** inline both worker job implementations, registration request payload, and real-database concurrent
+   sweep/outage/idempotency tests.
+8. **Shared fixture:** replace the abstract `fixture.*` closures with the complete `fixtures.ts` implementation for
+   every root, including exact `doc(app,file,exportName)` calls, variables, seeded tenant/owner rows and field-level
+   assertions. Until then the mandatory suite is an evidence manifest rather than executable test code.
+
+The plan must not be moved to Done or used to start W7 until these bodies receive lead review. This readiness state
+does not weaken any invariant above and does not authorize replacement UI, client-owned prices, unbalanced journals,
+or fabricated provider success.

@@ -3840,11 +3840,11 @@ Each edit is limited to configuration/transport and preserves the original Enate
 | E7  | `enatega-multivendor-app/app.config.js:236-239`                                                                                                                                                                         | Read Expo `updates.url` and `extra.eas.projectId` from env; disable updates when absent                                                                                                                                                | upstream OTA project                            | 0    |
 | E8  | Web layout EmailJS scripts, Google OAuth providers, Google Maps loaders, and similar startup initializers found by the static scan                                                                                      | Load only from an explicit feature flag plus validated provider configuration; render the existing unavailable/error state when absent                                                                                                 | unconditional external script or SDK load       | 0    |
 
-Wave 0 completes E1–E8 before the first launch. L10 may later add approved provider configuration, but it does not own removal of upstream defaults. Add a static gate that scans all six vendored apps for known Enatega hosts/project IDs/DSNs and unconditional external startup URLs; maintain an explicit allowlist containing only documented package/download URLs that never execute at runtime. The gate must fail on an unknown runtime URL. Then regenerate the manifest, run `pnpm check:enatega-ui-source`, run the static gate, and only then run `pnpm e2e:smoke`. Network logs must show zero attempted requests to blocked upstream hosts.
+Wave 0 completes E1–E8 before the first launch. W12/W13/W14a/W14b may later add approved provider configuration, but it does not own removal of upstream defaults. Add a static gate that scans all six vendored apps for known Enatega hosts/project IDs/DSNs and unconditional external startup URLs; maintain an explicit allowlist containing only documented package/download URLs that never execute at runtime. The gate must fail on an unknown runtime URL. Then regenerate the manifest, run `pnpm check:enatega-ui-source`, run the static gate, and only then run `pnpm e2e:smoke`. Network logs must show zero attempted requests to blocked upstream hosts.
 
 - [ ] Prove each E1–E8 source condition, make the minimum recorded edits, regenerate the manifest, and pass the manifest/static-network gates.
 - [ ] Run admin and web E2E with request-attempt failure hooks; run Expo static configuration tests without starting Metro until its E2/E7 gates pass.
-- [ ] Commit `chore(L10): gate vendored UI transports and external initializers (recorded)`.
+- [ ] Commit `chore(frontend): gate vendored UI transports and external initializers (recorded)`.
 
 ### Task C8: W0-C handoff
 
@@ -3860,5 +3860,5 @@ Wave 0 completes E1–E8 before the first launch. L10 may later add approved pro
 - [ ] Integrate W0-A, then W0-B, then W0-C into `enatega-ui-backend`; resolve only mechanical conflicts. If a semantic conflict appears, return it to the owning packet rather than choosing an unreviewed hybrid.
 - [ ] Run the C7 static network/provenance/manifest gates before starting any frontend. Then run the shared integration stack alone, stop/release it, and run E2E's separate stack; never run both suites against the same database concurrently.
 - [ ] Run `pnpm verify --integration --coverage --e2e --record G0`.
-- [ ] Request independent review (L11 QA, L13 security) of `kernel/**`, `tools/**`, `test/support/**`, `e2e/**`. Address findings.
+- [ ] Request independent review (W23 QA, W24 security) of `kernel/**`, `tools/**`, `test/support/**`, `e2e/**`. Address findings.
 - [ ] Commit `docs/GATES.json` with the G0 entry.

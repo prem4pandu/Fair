@@ -22,7 +22,7 @@
 
 > The product UI MUST be the complete pinned Enatega frontend in `implementation/vendor/enatega-ui/`. FairBite owns the backend and integration layer only. Do not create, redesign, simplify or replace Enatega layouts, navigation, screens, components, styling, assets or interaction flows. Allowed frontend changes are limited to transport/adapters, secure session handling, validated data mapping, configuration and centralized display-name imports. Every edit inside `implementation/vendor/enatega-ui/` must be recorded in the root `SOURCE_PROVENANCE.json` under `allowedModifications`, and `node tools/manifest-enatega-ui.mjs` must be re-run so `SOURCE_MANIFEST.json` matches. An unsupported backend capability is an integration blocker: return a `NOT_IMPLEMENTED` error, never fake success, never fabricate data, never call the upstream Enatega production backend.
 
-L12 makes **no** edit inside `vendor/enatega-ui/`. Single-vendor mode is selected only through each app's environment variables (see "SINGLE mode endpoints" below). This rule must be included in every frontend/mobile implementation handoff that this plan produces (the Playwright and journey handoffs to L10 in §9 repeat it).
+L12 makes **no** edit inside `vendor/enatega-ui/`. Single-vendor mode is selected only through each app's environment variables (see "SINGLE mode endpoints" below). This rule must be included in every frontend/mobile implementation handoff that this plan produces (the Playwright handoffs to W16 and journey handoffs to W15 in §9 repeat it).
 
 ---
 
@@ -80,7 +80,7 @@ API side: `SINGLE_VENDOR_ENABLED=true`, `CORS_ORIGINS` must include the single-v
 
 ## Operations
 
-`OPERATION_LANES.json` lists **71** operations with `lane: "L12"` after the W0-7 generator fix (the earlier **70** was the pre-fix count). Verify with `node -e 'console.log(require("./docs/OPERATION_LANES.json").operations.filter(o=>o.lane==="L12").length)'` → `71`, and reconcile the table below against that list before implementation: **the operation missing from the table must be identified and added as part of completing this plan** (board task T-007).
+`OPERATION_LANES.json` lists **71** operations with `lane: "L12"`. Verify with `node -e 'console.log(require("./docs/OPERATION_LANES.json").operations.filter(o=>o.lane==="L12").length)'` → `71`. The table below contains the same 71 roots; `ownerLogout` is the operation absent from the earlier 70-row draft.
 
 Abbreviations: `SV` = `enatega-singlevendor-admin`, `APP` = `enatega-multivendor-app`, `WEB` = `enatega-multivendor-web`. Document files: `SVQ` = `SV:lib/api/graphql/queries/…`, `SVM` = `SV:lib/api/graphql/mutations/…`, `AQ` = `APP:src/singlevendor/apollo/queries.js`, `AM` = `APP:src/singlevendor/apollo/mutations.js`, `AS` = `APP:src/singlevendor/apollo/subscriptions.js`, `W` = `WEB:lib/api/graphql/single-vendor/index.ts`. Every export name below was verified by parsing the files (they are all `export const`). Callers: **pub** = anonymous allowed (personalised when a customer token is present); **C** = CUSTOMER (own data only); **A** = ADMIN; **S(x)** = STAFF with permission `x`; **V/R(own)** = VENDOR/RESTAURANT owning the restaurant (reference/04 §B).
 
@@ -156,12 +156,15 @@ Abbreviations: `SV` = `enatega-singlevendor-admin`, `APP` = `enatega-multivendor
 | 68  | mutation     | `updateUserCartCount`                                     | APP, WEB     | C (own line)               | AM `UPDATE_USER_CART_COUNT`; W `SINGLE_VENDOR_UPDATE_CART_COUNT`                                                                         | 02 §13      |
 | 69  | mutation     | `userCartData`                                            | APP, WEB     | C                          | AM `UPDATE_USER_CART`; W `SINGLE_VENDOR_UPDATE_CART`                                                                                     | 02 §13      |
 | 70  | subscription | `subscriptionPaymentSuccess`                              | APP, WEB     | C (`userId` = socket user) | AS `paymentSuccess`; W `SINGLE_VENDOR_PAYMENT_SUCCESS`                                                                                   | 01 §5.2 P8  |
+| 71  | mutation     | `ownerLogout`                                             | SV           | A                          | SV `mutations/authentication/index.ts` `OWNER_LOGOUT`                                                                                    | 04 §6.1, §B |
 
 Plus one REST route owned by L12: `POST /stripe/create-web-checkout-session` (WEB `lib/ui/single-vendor/Checkout.tsx:136-157`; reference/01 §5.2 P5).
 
 ### Shared operations whose single-vendor shapes differ
 
-These roots belong to other lanes. L12 does **not** implement their resolvers; it (a) states the required behaviour, (b) supplies field resolvers for single-vendor-only fields from its own module, and (c) proves both with replay tests in `test/integration/singlevendor/shared-modes.integration.spec.ts` (Task 22). The owning-lane changes are listed in Task 0 (P2–P6) and are made by the owners.
+These roots belong to other lanes. L12 does **not** implement their resolvers; it states the required behaviour,
+supplies L12-owned field resolvers, and proves both in `test/integration/singlevendor/shared-modes.integration.spec.ts`
+(Task 9). Every owning-lane change is an explicit lead-owned request; W21 never edits another lane.
 
 | Root (owner)                                                                                                    | SINGLE document                                                                                                                                                                                                        | Difference                                                                                                                                                                                                                                             | Who provides it                                                                                                                                               |
 | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1474,7 +1477,8 @@ ALTER TABLE "SvDeal" ADD CONSTRAINT "SvDeal_no_overlap" EXCLUDE USING gist (
   "variationId" WITH =, tstzrange("startsAt", "endsAt") WITH &&) WHERE ("isActive" AND "deletedAt" IS NULL);
 ```
 
-Cross-lane foreign keys for `docs/CROSS_LANE_FKS.md` (lead adds them in a Wave 5 migration `20261020199_L12_cross_lane_fks`; table names are those of the owning lanes' Prisma models — confirm in Task 0 Step 4):
+Cross-lane foreign keys below are an explicit lead-owned request for `docs/CROSS_LANE_FKS.md` and migration
+`20261020199_L12_cross_lane_fks`. The lead confirms owning-lane table names during Task 1 schema review:
 
 | Column                                                                                                                                                                                                                                                                           | References              | On delete                         |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | --------------------------------- |
@@ -1558,22 +1562,973 @@ Credits, membership, referrals, feedback, notifications, dashboard, payments
 
 ---
 
-## Remaining sections to author (this plan is PARTIAL)
+## Tasks
 
-**Status:** PARTIAL. `W21` may not begin implementation on this plan. Completing it is the first task of
-`W21` (see `docs/TASK_BOARD.md`), reviewed by the lead before any code is written — `ROADMAP.md` §12.3.
+**Roadmap task T007: In progress.** Task 1 below is implementation-ready. Tasks 2–9 still require complete task-local
+test and implementation bodies before this plan can be marked implementation-ready or the roadmap task can advance.
 
-**What exists:** §1 boundary, the single-vendor design decisions, an operations table, contract notes, data model and business rules R1–R47.
+Implementation is blocked until the owner records approval for **D1** and **D-S1**. This plan does not approve either decision and supplies no missing product policy. Before approval, the runtime behavior for every L12 root is the explicit `NOT_IMPLEMENTED` response in Task 1; Tasks 2–9 remain unclaimed.
 
-**What is missing**, measured against `_lane-plan-brief.md`:
+Every integration spec uses `startStack()`, `startApi(stack)` and exact vendored documents through `doc(...)`.
+The 71 literal tags and executable shared cases below are mandatory. Assertions name fields and durable rows;
+snapshots and mocked success are forbidden.
 
-1. **The operation-count reconciliation.** The table lists 70 rows; `OPERATION_LANES.json` holds **71** after the W0-7 generator fix. Identify the missing operation, add it, and state the verified count.
-2. **The entire Tasks section (§7).** No task, test or implementation code exists in this plan.
-3. **§8 Worker jobs** — the `order.transitioned` handler maintaining `SvOrder.lastStatus` and `cancelledAt` (R46), and the `order.paid` handler publishing `subscriptionPaymentSuccess` (R44).
-4. **§9 Playwright and journey handover** to W16 for the single-vendor admin, and to W15 for the single-vendor code paths of the shared customer apps.
-5. **§10 Coverage and gate checklist** for G5.
-6. **§11 Open questions** — above all that **FB15 (membership, credits, referrals, deals) lives entirely in this lane**, so declining owner decision D1/D-S1 means the product ships without those capabilities. See `ROADMAP.md` §11, decision D-S1.
+```ts
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { startApi, type Api } from "../../support/app.js";
+import { doc } from "../../support/documents.js";
+import { factories, type Factories } from "../../support/factories/index.js";
+import { op } from "../../support/op.js";
+import { startStack, type Stack } from "../../support/stack.js";
+import { L12_ROOTS } from "../../../src/modules/singlevendor/mode.js";
+import { allSingleVendorCaseGroups } from "./case-groups.js";
+import { buildSingleVendorCases, type SvCase } from "./fixtures.js";
 
-The quality bar in `_lane-plan-brief.md` applies to every added section: complete code in every step, no TBD,
-no "similar to Task N", exact upstream strings and misspellings preserved, and every operation of the lane
-present in both the operations table and in at least one task's tests.
+type Root = (typeof L12_ROOTS)[number];
+let stack: Stack;
+let api: Api;
+let fx: Factories;
+let cases: Record<Root, SvCase>;
+
+beforeAll(async () => {
+  stack = await startStack();
+  api = await startApi(stack, {
+    ENATEGA_SCHEMA_MODE: "SINGLE",
+    SINGLE_VENDOR_ENABLED: "true",
+  });
+  fx = factories(stack.pool);
+  cases = await buildSingleVendorCases(
+    { api, fx, doc },
+    allSingleVendorCaseGroups,
+  );
+});
+afterAll(async () => {
+  await api?.close();
+  await stack?.release();
+});
+
+function singleVendorCases(root: Root) {
+  it("executes the pinned document and returns persisted state", async () => {
+    const c = cases[root];
+    const result = await c.owner.query(c.document, c.variables);
+    expect(result.errors).toBeUndefined();
+    c.assert(result.data as Record<string, unknown>);
+  });
+  it("enforces the operation-specific anonymous, ownership and input rules", async () => {
+    const c = cases[root];
+    await c.assertAnonymous(api.http);
+    await c.assertForeign();
+    await c.assertInvalid();
+  });
+}
+
+describe(op("query.adminConfiguration"), () =>
+  singleVendorCases("query.adminConfiguration"),
+);
+describe(op("query.bannerRestaurant"), () =>
+  singleVendorCases("query.bannerRestaurant"),
+);
+describe(op("query.bannerRestaurants"), () =>
+  singleVendorCases("query.bannerRestaurants"),
+);
+describe(op("query.calculateCheckout"), () =>
+  singleVendorCases("query.calculateCheckout"),
+);
+describe(op("query.couponsbyRestaurant"), () =>
+  singleVendorCases("query.couponsbyRestaurant"),
+);
+// prettier-ignore
+describe(op("query.getAllCategoriesWithSubCategoriesDataSeeAllSingleVendor"), () => singleVendorCases("query.getAllCategoriesWithSubCategoriesDataSeeAllSingleVendor"));
+// prettier-ignore
+describe(op("query.getAllCategoriesWithSubCategoriesOnlySeeAllSingleVendor"), () => singleVendorCases("query.getAllCategoriesWithSubCategoriesOnlySeeAllSingleVendor"));
+describe(op("query.getAllCreditsRecords"), () =>
+  singleVendorCases("query.getAllCreditsRecords"),
+);
+describe(op("query.getAllFoodDealsAdmin"), () =>
+  singleVendorCases("query.getAllFoodDealsAdmin"),
+);
+describe(op("query.getAllSubscriptionPlans"), () =>
+  singleVendorCases("query.getAllSubscriptionPlans"),
+);
+describe(op("query.getAllUserCredits"), () =>
+  singleVendorCases("query.getAllUserCredits"),
+);
+describe(op("query.getAllUsersDropDownSearch"), () =>
+  singleVendorCases("query.getAllUsersDropDownSearch"),
+);
+describe(op("query.getAllfoods"), () => singleVendorCases("query.getAllfoods"));
+describe(op("query.getAllfoodsPaginated"), () =>
+  singleVendorCases("query.getAllfoodsPaginated"),
+);
+describe(op("query.getCategoryItemsSingleVendor"), () =>
+  singleVendorCases("query.getCategoryItemsSingleVendor"),
+);
+describe(op("query.getCategoryProducts"), () =>
+  singleVendorCases("query.getCategoryProducts"),
+);
+describe(op("query.getDashboardOrderSalesDetailsByPaymentMethod"), () =>
+  singleVendorCases("query.getDashboardOrderSalesDetailsByPaymentMethod"),
+);
+describe(op("query.getEstimatedDeliveryTime"), () =>
+  singleVendorCases("query.getEstimatedDeliveryTime"),
+);
+describe(op("query.getFavoriteFoodsSingleVendor"), () =>
+  singleVendorCases("query.getFavoriteFoodsSingleVendor"),
+);
+describe(op("query.getFavoriteFoodsStatus"), () =>
+  singleVendorCases("query.getFavoriteFoodsStatus"),
+);
+describe(op("query.getFoodDetails"), () =>
+  singleVendorCases("query.getFoodDetails"),
+);
+describe(op("query.getLimitedTimeFoodsDeals"), () =>
+  singleVendorCases("query.getLimitedTimeFoodsDeals"),
+);
+describe(op("query.getMyFreeDeliveries"), () =>
+  singleVendorCases("query.getMyFreeDeliveries"),
+);
+describe(op("query.getMyReferralCode"), () =>
+  singleVendorCases("query.getMyReferralCode"),
+);
+describe(op("query.getNewOffersFoodsDeals"), () =>
+  singleVendorCases("query.getNewOffersFoodsDeals"),
+);
+describe(op("query.getRecommendedFoods"), () =>
+  singleVendorCases("query.getRecommendedFoods"),
+);
+describe(op("query.getRestaurantCategoriesSingleVendor"), () =>
+  singleVendorCases("query.getRestaurantCategoriesSingleVendor"),
+);
+describe(op("query.getRestaurantSchedule"), () =>
+  singleVendorCases("query.getRestaurantSchedule"),
+);
+describe(op("query.getScheduleByDay"), () =>
+  singleVendorCases("query.getScheduleByDay"),
+);
+describe(op("query.getScheduleUntilNextDayOff"), () =>
+  singleVendorCases("query.getScheduleUntilNextDayOff"),
+);
+describe(op("query.getSimilarFoods"), () =>
+  singleVendorCases("query.getSimilarFoods"),
+);
+describe(op("query.getUserCart"), () => singleVendorCases("query.getUserCart"));
+describe(op("query.getUserCreditsHistory"), () =>
+  singleVendorCases("query.getUserCreditsHistory"),
+);
+describe(op("query.getWeeklyFoodsDeals"), () =>
+  singleVendorCases("query.getWeeklyFoodsDeals"),
+);
+describe(op("query.orderDetailsPage"), () =>
+  singleVendorCases("query.orderDetailsPage"),
+);
+describe(op("query.pastNotificationsByToken"), () =>
+  singleVendorCases("query.pastNotificationsByToken"),
+);
+describe(op("query.recentActiveOrder"), () =>
+  singleVendorCases("query.recentActiveOrder"),
+);
+describe(op("query.scheduledOrders"), () =>
+  singleVendorCases("query.scheduledOrders"),
+);
+describe(op("query.searchFood"), () => singleVendorCases("query.searchFood"));
+describe(op("query.searchSingleVendorFoods"), () =>
+  singleVendorCases("query.searchSingleVendorFoods"),
+);
+describe(op("query.singleVendorBanners"), () =>
+  singleVendorCases("query.singleVendorBanners"),
+);
+describe(op("query.singleVendorDeals"), () =>
+  singleVendorCases("query.singleVendorDeals"),
+);
+describe(op("query.singleVendorDiscovery"), () =>
+  singleVendorCases("query.singleVendorDiscovery"),
+);
+describe(op("query.todayNotificationsByToken"), () =>
+  singleVendorCases("query.todayNotificationsByToken"),
+);
+describe(op("mutation.cancelSubscription"), () =>
+  singleVendorCases("mutation.cancelSubscription"),
+);
+describe(op("mutation.checkReferralCodeExists"), () =>
+  singleVendorCases("mutation.checkReferralCodeExists"),
+);
+describe(op("mutation.clearCart"), () =>
+  singleVendorCases("mutation.clearCart"),
+);
+describe(op("mutation.createBannerRestaurant"), () =>
+  singleVendorCases("mutation.createBannerRestaurant"),
+);
+describe(op("mutation.createFoodDeal"), () =>
+  singleVendorCases("mutation.createFoodDeal"),
+);
+describe(op("mutation.createFoodSingleVendor"), () =>
+  singleVendorCases("mutation.createFoodSingleVendor"),
+);
+describe(op("mutation.createPriceForProduct"), () =>
+  singleVendorCases("mutation.createPriceForProduct"),
+);
+describe(op("mutation.createSubscription"), () =>
+  singleVendorCases("mutation.createSubscription"),
+);
+describe(op("mutation.deactivatePrice"), () =>
+  singleVendorCases("mutation.deactivatePrice"),
+);
+describe(op("mutation.deleteBannerRestaurant"), () =>
+  singleVendorCases("mutation.deleteBannerRestaurant"),
+);
+describe(op("mutation.deleteFoodDeal"), () =>
+  singleVendorCases("mutation.deleteFoodDeal"),
+);
+describe(op("mutation.editBannerRestaurant"), () =>
+  singleVendorCases("mutation.editBannerRestaurant"),
+);
+describe(op("mutation.editSingleVendorCartItem"), () =>
+  singleVendorCases("mutation.editSingleVendorCartItem"),
+);
+describe(op("mutation.editUserCreditsHistory"), () =>
+  singleVendorCases("mutation.editUserCreditsHistory"),
+);
+describe(op("mutation.giveFeedback"), () =>
+  singleVendorCases("mutation.giveFeedback"),
+);
+describe(op("mutation.giveUserCredits"), () =>
+  singleVendorCases("mutation.giveUserCredits"),
+);
+describe(op("mutation.ownerLogout"), () =>
+  singleVendorCases("mutation.ownerLogout"),
+);
+describe(op("mutation.saveGeneralConfiguration"), () =>
+  singleVendorCases("mutation.saveGeneralConfiguration"),
+);
+describe(op("mutation.saveVendorTypeToggle"), () =>
+  singleVendorCases("mutation.saveVendorTypeToggle"),
+);
+describe(op("mutation.toggleFavoriteFoodSingleVendor"), () =>
+  singleVendorCases("mutation.toggleFavoriteFoodSingleVendor"),
+);
+describe(op("mutation.updateFoodDeal"), () =>
+  singleVendorCases("mutation.updateFoodDeal"),
+);
+describe(op("mutation.updateFoodSingleVendor"), () =>
+  singleVendorCases("mutation.updateFoodSingleVendor"),
+);
+describe(op("mutation.updateScheduleTimings"), () =>
+  singleVendorCases("mutation.updateScheduleTimings"),
+);
+describe(op("mutation.updateSubscription"), () =>
+  singleVendorCases("mutation.updateSubscription"),
+);
+describe(op("mutation.updateUserCartCount"), () =>
+  singleVendorCases("mutation.updateUserCartCount"),
+);
+describe(op("mutation.userCartData"), () =>
+  singleVendorCases("mutation.userCartData"),
+);
+describe(op("subscription.subscriptionPaymentSuccess"), () =>
+  singleVendorCases("subscription.subscriptionPaymentSuccess"),
+);
+```
+
+The fixture registry itself is complete shared infrastructure. Each Tasks 2–8 implementation exports one case group
+for its owned roots with the exact `doc(app,file,exportName)` tuple from §2, persisted seed state, field-level
+assertion and three explicit callbacks above. Public reads assert their public response in `assertAnonymous`;
+protected roots assert `UNAUTHENTICATED`. `buildSingleVendorCases` refuses to return until all 71 registrations are
+present, so Task 9 cannot accidentally run a partial matrix. No generic access or validation oracle is used.
+
+```ts
+// services/api/test/integration/singlevendor/fixtures.ts
+import type { App } from "../../support/documents.js";
+import type { Factories } from "../../support/factories/index.js";
+import type { GqlClient } from "../../support/gql.js";
+import {
+  L12_ROOTS,
+  type L12Root,
+} from "../../../src/modules/singlevendor/mode.js";
+
+export type SvCase = {
+  document: string;
+  variables: Record<string, unknown>;
+  owner: GqlClient;
+  assert(data: Record<string, unknown>): void;
+  assertAnonymous(client: GqlClient): Promise<void>;
+  assertForeign(): Promise<void>;
+  assertInvalid(): Promise<void>;
+};
+
+export type SvCaseDependencies = {
+  api: { http: GqlClient };
+  fx: Factories;
+  doc(app: App, file: string, exportName: string): string;
+};
+
+export type SvCaseFactory = (
+  dependencies: SvCaseDependencies,
+) => Promise<SvCase> | SvCase;
+export type SvCaseGroup = Readonly<Partial<Record<L12Root, SvCaseFactory>>>;
+
+export async function buildSingleVendorCases(
+  dependencies: SvCaseDependencies,
+  groups: readonly SvCaseGroup[],
+): Promise<Record<L12Root, SvCase>> {
+  const registrations = new Map<L12Root, SvCaseFactory>();
+  for (const group of groups)
+    for (const [root, factory] of Object.entries(group) as Array<
+      [L12Root, SvCaseFactory]
+    >) {
+      if (registrations.has(root))
+        throw new Error(`Duplicate single-vendor case registration: ${root}`);
+      registrations.set(root, factory);
+    }
+  const missing = L12_ROOTS.filter((root) => !registrations.has(root));
+  if (missing.length)
+    throw new Error(`Missing single-vendor cases: ${missing.join(", ")}`);
+  const entries = await Promise.all(
+    L12_ROOTS.map(
+      async (root) =>
+        [root, await registrations.get(root)!(dependencies)] as const,
+    ),
+  );
+  return Object.fromEntries(entries) as Record<L12Root, SvCase>;
+}
+```
+
+Task 9 creates this explicit import aggregator; there is no side-effect registration and no reliance on test-file
+import order:
+
+```ts
+// services/api/test/integration/singlevendor/case-groups.ts
+import { settingsCases } from "./cases/settings.js";
+import { catalogCases } from "./cases/catalog.js";
+import { cartCases } from "./cases/cart.js";
+import { orderCases } from "./cases/orders.js";
+import { creditCases } from "./cases/credits.js";
+import { membershipCases } from "./cases/membership.js";
+import { engagementCases } from "./cases/engagement.js";
+import type { SvCaseGroup } from "./fixtures.js";
+
+export const allSingleVendorCaseGroups = [
+  settingsCases,
+  catalogCases,
+  cartCases,
+  orderCases,
+  creditCases,
+  membershipCases,
+  engagementCases,
+] as const satisfies readonly SvCaseGroup[];
+```
+
+### Task 1: Mode-specific schema and disabled runtime
+
+**Files:** Create `services/api/src/modules/singlevendor/{mode,provider-registry,singlevendor.module,singlevendor-disabled.resolver}.ts`; modify the W1-owned schema assembly only through the exact reviewed lead handoff below; test `services/api/test/integration/singlevendor/mode.integration.spec.ts`.
+
+- [ ] **Step 1 — add the failing test.** Create the following complete test. It compares the implementation constant
+      with the authoritative inventory, proves that both MULTI and SINGLE schemas retain all 71 G1 roots, and invokes
+      every disabled resolver provider in both MULTI and disabled SINGLE modes. Direct provider invocation is
+      intentional here: GraphQL validates required document variables before resolver execution, while this test must
+      prove the disabled boundary runs before authentication and database access. Exact vendored-document validation
+      remains in `check:enatega:full` and every enabled-operation test in Tasks 2–8.
+
+```ts
+// services/api/test/integration/singlevendor/mode.integration.spec.ts
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { getIntrospectionQuery } from "graphql";
+import { afterAll, describe, expect, it } from "vitest";
+import { startApi, type Api } from "../../support/app.js";
+import { startStack, type Stack } from "../../support/stack.js";
+import {
+  L12_MUTATIONS,
+  L12_QUERIES,
+  L12_ROOTS,
+  L12_SUBSCRIPTIONS,
+  parseSingleVendorMode,
+} from "../../../src/modules/singlevendor/mode.js";
+import { disabledResolverProviders } from "../../../src/modules/singlevendor/singlevendor-disabled.resolver.js";
+import { SingleVendorModule } from "../../../src/modules/singlevendor/singlevendor.module.js";
+
+type IntrospectionType = { name?: string; fields?: Array<{ name: string }> };
+
+function inventoryRoots(): string[] {
+  const file = resolve(process.cwd(), "../../docs/OPERATION_LANES.json");
+  const parsed = JSON.parse(readFileSync(file, "utf8")) as {
+    operations: Array<{ lane: string; type: string; name: string }>;
+  };
+  return parsed.operations
+    .filter(({ lane }) => lane === "L12")
+    .map(({ type, name }) => `${type}.${name}`)
+    .sort();
+}
+
+async function schemaRoots(api: Awaited<ReturnType<typeof startApi>>) {
+  const result = await api.http.query(getIntrospectionQuery(), {});
+  expect(result.errors).toBeUndefined();
+  const types = (result.data as { __schema: { types: IntrospectionType[] } })
+    .__schema.types;
+  const fields = (typeName: string) =>
+    new Set(
+      types
+        .find(({ name }) => name === typeName)
+        ?.fields?.map(({ name }) => name) ?? [],
+    );
+  return {
+    query: fields("Query"),
+    mutation: fields("Mutation"),
+    subscription: fields("Subscription"),
+  };
+}
+
+function expectDisabled(
+  Provider: new () => { resolve(): never },
+  operation: string,
+) {
+  const name = operation.slice(operation.indexOf(".") + 1);
+  try {
+    new Provider().resolve();
+    throw new Error("Disabled resolver returned");
+  } catch (error) {
+    expect(error).toMatchObject({
+      message: `${name} is not available yet`,
+      extensions: { code: "NOT_IMPLEMENTED" },
+    });
+  }
+}
+
+describe("single-vendor process mode", () => {
+  const apis: Api[] = [];
+  const stacks: Stack[] = [];
+  afterAll(async () => {
+    await Promise.all(apis.map((api) => api.close()));
+    await Promise.all(stacks.map((stack) => stack.release()));
+  });
+
+  it("keeps the checked-in root set equal to OPERATION_LANES.json", () => {
+    expect([...L12_ROOTS].sort()).toEqual(inventoryRoots());
+    expect(L12_ROOTS).toHaveLength(71);
+  });
+
+  it("retains L12 roots in MULTI mode and resolves each fail-closed", async () => {
+    const mode = parseSingleVendorMode({
+      ENATEGA_SCHEMA_MODE: "MULTI",
+      SINGLE_VENDOR_ENABLED: "false",
+    });
+    const providers = disabledResolverProviders(mode);
+    expect(providers).toHaveLength(71);
+    providers.forEach((Provider, index) =>
+      expectDisabled(Provider, L12_ROOTS[index]),
+    );
+    const stack = await startStack();
+    stacks.push(stack);
+    const api = await startApi(stack, {
+      ENATEGA_SCHEMA_MODE: "MULTI",
+      SINGLE_VENDOR_ENABLED: "false",
+    });
+    apis.push(api);
+    const roots = await schemaRoots(api);
+    for (const name of L12_QUERIES) expect(roots.query.has(name)).toBe(true);
+    for (const name of L12_MUTATIONS)
+      expect(roots.mutation.has(name)).toBe(true);
+    for (const name of L12_SUBSCRIPTIONS)
+      expect(roots.subscription.has(name)).toBe(true);
+  });
+
+  it("installs all roots in disabled SINGLE mode and fails before dependencies", async () => {
+    const mode = parseSingleVendorMode({
+      ENATEGA_SCHEMA_MODE: "SINGLE",
+      SINGLE_VENDOR_ENABLED: "false",
+    });
+    const providers = disabledResolverProviders(mode);
+    expect(providers).toHaveLength(71);
+    for (const [index, Provider] of providers.entries()) {
+      expectDisabled(Provider, L12_ROOTS[index]);
+    }
+
+    const stack = await startStack();
+    stacks.push(stack);
+    const api = await startApi(stack, {
+      ENATEGA_SCHEMA_MODE: "SINGLE",
+      SINGLE_VENDOR_ENABLED: "false",
+    });
+    apis.push(api);
+    const roots = await schemaRoots(api);
+    for (const name of L12_QUERIES) expect(roots.query.has(name)).toBe(true);
+    for (const name of L12_MUTATIONS)
+      expect(roots.mutation.has(name)).toBe(true);
+    for (const name of L12_SUBSCRIPTIONS)
+      expect(roots.subscription.has(name)).toBe(true);
+  });
+
+  it("refuses partial enabled registration and accepts an exact 71-root map", () => {
+    const mode = parseSingleVendorMode({
+      ENATEGA_SCHEMA_MODE: "SINGLE",
+      SINGLE_VENDOR_ENABLED: "true",
+    });
+    expect(() => SingleVendorModule.register(mode, new Map())).toThrowError(
+      /Incomplete L12 provider registry; missing=/,
+    );
+    class CompleteResolver {}
+    const complete = new Map(
+      L12_ROOTS.map((root) => [root, CompleteResolver] as const),
+    );
+    expect(SingleVendorModule.register(mode, complete).providers).toEqual([
+      CompleteResolver,
+    ]);
+  });
+});
+```
+
+- [ ] **Step 2 — red:** run
+      `pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/singlevendor/mode.integration.spec.ts`;
+      expect module-resolution failures for the three Task 1 files.
+- [ ] **Step 3 — implement the immutable process mode and the exact root inventory.** The environment is read once
+      during bootstrap. No request value can select a schema or enable SINGLE behavior.
+
+```ts
+// services/api/src/modules/singlevendor/mode.ts
+import { z } from "zod";
+import { appError } from "../../kernel/errors.js";
+
+export const L12_QUERIES = [
+  "adminConfiguration",
+  "bannerRestaurant",
+  "bannerRestaurants",
+  "calculateCheckout",
+  "couponsbyRestaurant",
+  "getAllCategoriesWithSubCategoriesDataSeeAllSingleVendor",
+  "getAllCategoriesWithSubCategoriesOnlySeeAllSingleVendor",
+  "getAllCreditsRecords",
+  "getAllFoodDealsAdmin",
+  "getAllSubscriptionPlans",
+  "getAllUserCredits",
+  "getAllUsersDropDownSearch",
+  "getAllfoods",
+  "getAllfoodsPaginated",
+  "getCategoryItemsSingleVendor",
+  "getCategoryProducts",
+  "getDashboardOrderSalesDetailsByPaymentMethod",
+  "getEstimatedDeliveryTime",
+  "getFavoriteFoodsSingleVendor",
+  "getFavoriteFoodsStatus",
+  "getFoodDetails",
+  "getLimitedTimeFoodsDeals",
+  "getMyFreeDeliveries",
+  "getMyReferralCode",
+  "getNewOffersFoodsDeals",
+  "getRecommendedFoods",
+  "getRestaurantCategoriesSingleVendor",
+  "getRestaurantSchedule",
+  "getScheduleByDay",
+  "getScheduleUntilNextDayOff",
+  "getSimilarFoods",
+  "getUserCart",
+  "getUserCreditsHistory",
+  "getWeeklyFoodsDeals",
+  "orderDetailsPage",
+  "pastNotificationsByToken",
+  "recentActiveOrder",
+  "scheduledOrders",
+  "searchFood",
+  "searchSingleVendorFoods",
+  "singleVendorBanners",
+  "singleVendorDeals",
+  "singleVendorDiscovery",
+  "todayNotificationsByToken",
+] as const;
+
+export const L12_MUTATIONS = [
+  "cancelSubscription",
+  "checkReferralCodeExists",
+  "clearCart",
+  "createBannerRestaurant",
+  "createFoodDeal",
+  "createFoodSingleVendor",
+  "createPriceForProduct",
+  "createSubscription",
+  "deactivatePrice",
+  "deleteBannerRestaurant",
+  "deleteFoodDeal",
+  "editBannerRestaurant",
+  "editSingleVendorCartItem",
+  "editUserCreditsHistory",
+  "giveFeedback",
+  "giveUserCredits",
+  "ownerLogout",
+  "saveGeneralConfiguration",
+  "saveVendorTypeToggle",
+  "toggleFavoriteFoodSingleVendor",
+  "updateFoodDeal",
+  "updateFoodSingleVendor",
+  "updateScheduleTimings",
+  "updateSubscription",
+  "updateUserCartCount",
+  "userCartData",
+] as const;
+
+export const L12_SUBSCRIPTIONS = ["subscriptionPaymentSuccess"] as const;
+export const L12_ROOTS = [
+  ...L12_QUERIES.map((name) => `query.${name}` as const),
+  ...L12_MUTATIONS.map((name) => `mutation.${name}` as const),
+  ...L12_SUBSCRIPTIONS.map((name) => `subscription.${name}` as const),
+] as const;
+export type L12Root = (typeof L12_ROOTS)[number];
+
+const environmentSchema = z.object({
+  ENATEGA_SCHEMA_MODE: z.enum(["MULTI", "SINGLE"]).default("MULTI"),
+  SINGLE_VENDOR_ENABLED: z.enum(["true", "false"]).default("false"),
+});
+
+export type SingleVendorMode = Readonly<{
+  schema: "MULTI" | "SINGLE";
+  enabled: boolean;
+}>;
+
+export function parseSingleVendorMode(
+  environment: Record<string, string | undefined>,
+): SingleVendorMode {
+  const value = environmentSchema.parse(environment);
+  return Object.freeze({
+    schema: value.ENATEGA_SCHEMA_MODE,
+    enabled: value.SINGLE_VENDOR_ENABLED === "true",
+  });
+}
+
+export function assertSingleVendorEnabled(
+  mode: SingleVendorMode,
+  operation: L12Root,
+): void {
+  if (mode.schema !== "SINGLE" || !mode.enabled) {
+    const name = operation.slice(operation.indexOf(".") + 1);
+    throw appError("NOT_IMPLEMENTED", `${name} is not available yet`);
+  }
+}
+```
+
+The disabled resolver providers are generated from the immutable root list. This is ordinary Nest decorator
+application, not runtime GraphQL document construction; the SINGLE SDL remains the authority for arguments and
+return types. Each provider closes over exactly one operation and has no injected authentication or database
+dependency, which makes the fail-closed ordering structural.
+
+```ts
+// services/api/src/modules/singlevendor/singlevendor-disabled.resolver.ts
+import { Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
+import {
+  assertSingleVendorEnabled,
+  L12_MUTATIONS,
+  L12_QUERIES,
+  L12Root,
+  L12_SUBSCRIPTIONS,
+  SingleVendorMode,
+} from "./mode.js";
+
+export type DisabledResolver = new () => { resolve(): never };
+
+function provider(
+  kind: "query" | "mutation" | "subscription",
+  name: string,
+  mode: SingleVendorMode,
+): DisabledResolver {
+  const operation = `${kind}.${name}` as L12Root;
+  class SingleVendorDisabledResolver {
+    resolve(): never {
+      assertSingleVendorEnabled(mode, operation);
+      throw new Error("unreachable");
+    }
+  }
+  const descriptor = Object.getOwnPropertyDescriptor(
+    SingleVendorDisabledResolver.prototype,
+    "resolve",
+  )!;
+  const decorator =
+    kind === "query"
+      ? Query(name)
+      : kind === "mutation"
+        ? Mutation(name)
+        : Subscription(name);
+  decorator(SingleVendorDisabledResolver.prototype, "resolve", descriptor);
+  Resolver()(SingleVendorDisabledResolver);
+  Object.defineProperty(SingleVendorDisabledResolver, "name", {
+    value: `Disabled_${kind}_${name}`,
+  });
+  return SingleVendorDisabledResolver;
+}
+
+export function disabledResolverProviders(
+  mode: SingleVendorMode,
+): DisabledResolver[] {
+  // MULTI always retains the G1 L12 surface but cannot enable L12 behavior.
+  // SINGLE uses these providers until D1 enables the complete implementation.
+  if (mode.schema === "SINGLE" && mode.enabled) return [];
+  return [
+    ...L12_QUERIES.map((name) => provider("query", name, mode)),
+    ...L12_MUTATIONS.map((name) => provider("mutation", name, mode)),
+    ...L12_SUBSCRIPTIONS.map((name) => provider("subscription", name, mode)),
+  ];
+}
+```
+
+```ts
+// services/api/src/modules/singlevendor/provider-registry.ts
+import type { Type } from "@nestjs/common";
+import { L12_ROOTS, type L12Root } from "./mode.js";
+
+export type SingleVendorProviderRegistry = ReadonlyMap<L12Root, Type<unknown>>;
+
+export function mergeSingleVendorProviderGroups(
+  groups: readonly SingleVendorProviderRegistry[],
+): SingleVendorProviderRegistry {
+  const merged = new Map<L12Root, Type<unknown>>();
+  for (const group of groups)
+    for (const [root, provider] of group) {
+      if (merged.has(root))
+        throw new Error(`Duplicate L12 provider registration: ${root}`);
+      merged.set(root, provider);
+    }
+  return merged;
+}
+
+export function completeSingleVendorProviders(
+  registry: SingleVendorProviderRegistry,
+): Type<unknown>[] {
+  const missing = L12_ROOTS.filter((root) => !registry.has(root));
+  const extra = [...registry.keys()].filter(
+    (root) => !L12_ROOTS.includes(root as L12Root),
+  );
+  if (missing.length || extra.length)
+    throw new Error(
+      `Incomplete L12 provider registry; missing=[${missing.join(",")}], extra=[${extra.join(",")}]`,
+    );
+  return [...new Set(L12_ROOTS.map((root) => registry.get(root)!))];
+}
+```
+
+```ts
+// services/api/src/modules/singlevendor/singlevendor.module.ts
+import { DynamicModule, Module } from "@nestjs/common";
+import { disabledResolverProviders } from "./singlevendor-disabled.resolver.js";
+import type { SingleVendorMode } from "./mode.js";
+import {
+  completeSingleVendorProviders,
+  type SingleVendorProviderRegistry,
+} from "./provider-registry.js";
+
+@Module({})
+export class SingleVendorModule {
+  static register(
+    mode: SingleVendorMode,
+    enabledRegistry: SingleVendorProviderRegistry = new Map(),
+  ): DynamicModule {
+    const providers =
+      mode.schema === "SINGLE" && mode.enabled
+        ? completeSingleVendorProviders(enabledRegistry)
+        : disabledResolverProviders(mode);
+    return {
+      module: SingleVendorModule,
+      providers,
+    };
+  }
+}
+```
+
+The lead applies these exact integration changes. The SDL is mode-invariant: remove
+`"L12-single-vendor.graphql"` from `EXCLUDED_ENATEGA_CONTRACTS` in `src/kernel/schema.ts`, so G1 and both runtime
+modes expose the same contract. Add these two fields to `src/config.ts`'s zod object and therefore to `Config`:
+
+```ts
+const schema = z.object({
+  // Preserve every existing config field, then add:
+  ENATEGA_SCHEMA_MODE: z.enum(["MULTI", "SINGLE"]).default("MULTI"),
+  SINGLE_VENDOR_ENABLED: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
+});
+```
+
+Create the enabled registry aggregator now; Tasks 2–8 add explicit group imports and spreads to this file. The empty
+Task 1 registry is deliberate: `SINGLE_VENDOR_ENABLED=true` fails startup through
+`completeSingleVendorProviders` until all 71 roots have concrete providers.
+
+```ts
+// services/api/src/modules/singlevendor/enabled-providers.ts
+import type { SingleVendorProviderRegistry } from "./provider-registry.js";
+
+export const singleVendorProviderRegistry: SingleVendorProviderRegistry =
+  new Map();
+```
+
+Task 9 replaces only that file body with explicit imports; every feature group maps each owned root to the Nest
+resolver class that implements it:
+
+```ts
+import { settingsProviders } from "./settings/providers.js";
+import { catalogProviders } from "./catalog/providers.js";
+import { cartProviders } from "./cart/providers.js";
+import { orderProviders } from "./orders/providers.js";
+import { creditProviders } from "./credits/providers.js";
+import { membershipProviders } from "./membership/providers.js";
+import { engagementProviders } from "./engagement/providers.js";
+import { mergeSingleVendorProviderGroups } from "./provider-registry.js";
+
+export const singleVendorProviderRegistry = mergeSingleVendorProviderGroups([
+  settingsProviders,
+  catalogProviders,
+  cartProviders,
+  orderProviders,
+  creditProviders,
+  membershipProviders,
+  engagementProviders,
+]);
+```
+
+In `src/app.ts`, import `SingleVendorModule` and `singleVendorProviderRegistry`, then add this module to the root
+`imports` array in both modes:
+
+```ts
+const singleVendorModule = SingleVendorModule.register(
+  {
+    schema: config.ENATEGA_SCHEMA_MODE,
+    enabled: config.SINGLE_VENDOR_ENABLED,
+  },
+  singleVendorProviderRegistry,
+);
+```
+
+Also add both variables with safe defaults to `.env.example`. Bootstrap uses only parsed `Config`; request headers,
+hostname, tokens and GraphQL variables never select mode. MULTI always receives the 71 explicit disabled providers.
+SINGLE receives them while the flag is false and receives the complete registry only when the flag is true.
+
+- [ ] **Step 4 — green:** rerun the Step 2 command, then run
+      `pnpm check:enatega:full && pnpm --filter @fairbite/api typecheck`; expect 71 inventory roots in both modes, 71
+      explicit disabled providers in MULTI and disabled SINGLE, exact `NOT_IMPLEMENTED` codes/messages and no type
+      errors. Starting SINGLE with `SINGLE_VENDOR_ENABLED=true` must fail with the missing-root list until Tasks 2–8
+      populate the complete provider registry.
+- [ ] **Step 5 — commit:** `feat(L12): add fail-closed single-vendor mode boundary`.
+
+### Task 2: Settings, banners and schedules
+
+**Operations:** `adminConfiguration`, `bannerRestaurant`, `bannerRestaurants`, `getRestaurantSchedule`, `getScheduleByDay`, `getScheduleUntilNextDayOff`, `singleVendorBanners`, `createBannerRestaurant`, `editBannerRestaurant`, `deleteBannerRestaurant`, `saveGeneralConfiguration`, `saveVendorTypeToggle`, `updateScheduleTimings`, `ownerLogout`.
+
+**Files:** Create `services/api/src/modules/singlevendor/{settings,banners,schedules}/{repository,service,resolver}.ts`; test `services/api/test/integration/singlevendor/settings.integration.spec.ts`.
+
+- [ ] Test all 14 roots with exact documents: singleton/designated-store locks, permissions and ownership, schedule overlap/capacity/time-zone rules, active banner ordering, environment-derived secret flags, logout revocation, and the exact one-active-store error. Prove MULTI configuration is unchanged.
+- [ ] Run the spec and expect unavailable roots; implement parameterized repositories, thin resolvers, atomic schedule replacement, media identifiers through `MediaPort`, audit/outbox writes and no stored secrets; rerun to PASS.
+- [ ] Commit `feat(L12): implement settings banners and schedules`.
+
+### Task 3: Catalog, deals and favourites
+
+**Operations:** `couponsbyRestaurant`, `getAllCategoriesWithSubCategoriesDataSeeAllSingleVendor`, `getAllCategoriesWithSubCategoriesOnlySeeAllSingleVendor`, `getAllFoodDealsAdmin`, `getAllfoods`, `getAllfoodsPaginated`, `getCategoryItemsSingleVendor`, `getCategoryProducts`, `getFavoriteFoodsSingleVendor`, `getFavoriteFoodsStatus`, `getFoodDetails`, `getLimitedTimeFoodsDeals`, `getNewOffersFoodsDeals`, `getRecommendedFoods`, `getRestaurantCategoriesSingleVendor`, `getSimilarFoods`, `getWeeklyFoodsDeals`, `searchFood`, `searchSingleVendorFoods`, `singleVendorDeals`, `singleVendorDiscovery`, `createFoodDeal`, `createFoodSingleVendor`, `deleteFoodDeal`, `toggleFavoriteFoodSingleVendor`, `updateFoodDeal`, `updateFoodSingleVendor`.
+
+**Files:** Create `services/api/src/modules/singlevendor/{catalog,deals,favourites}/{repository,service,resolver,mapper}.ts`; test `services/api/test/integration/singlevendor/catalog.integration.spec.ts`.
+
+- [ ] Test all 27 roots, public/customer/admin boundaries, designated-store scope, exact pagination, deal windows and integer-minor discounts, out-of-stock behavior, favourite isolation, media ownership and misspelled wire fields. Assert prices originate only from `CatalogPort`.
+- [ ] Run and expect unavailable roots; implement L12 extras in `SvFoodDetail`, `SvDeal`, `SvFavoriteFood`, batch shared reads through `CatalogPort`, and one server pricing function reused by discovery/detail/cart. Rerun to PASS.
+- [ ] Commit `feat(L12): implement catalog projections deals and favourites`.
+
+### Task 4: Cart and checkout quote
+
+**Operations:** `calculateCheckout`, `getUserCart`, `clearCart`, `editSingleVendorCartItem`, `updateUserCartCount`, `userCartData`.
+
+**Files:** Create `services/api/src/modules/singlevendor/cart/{repository,pricing,service,resolver}.ts`; test `services/api/test/integration/singlevendor/cart.integration.spec.ts`.
+
+- [ ] Test all six roots with app/web documents: customer isolation, quantities/addons, identical-line merge, revision conflicts, live repricing, coupon/deal computation, pickup/delivery, all fees, quote TTL and recomputation. Assert credits, membership and free delivery remain zero without D-S1 policy.
+- [ ] Run and expect unavailable roots; implement locked revision increments, identifier/quantity-only cart storage, server-owned integer-minor totals and persisted quote/policy versions. Re-run to PASS.
+- [ ] Commit `feat(L12): add revisioned cart and checkout quotes`.
+
+### Task 5: Orders, delivery estimate and payment event
+
+**Operations:** `getEstimatedDeliveryTime`, `orderDetailsPage`, `recentActiveOrder`, `scheduledOrders`, `subscriptionPaymentSuccess`; REST `POST /stripe/create-web-checkout-session`.
+
+**Files:** Create `services/api/src/modules/singlevendor/{orders,delivery}/{repository,service,resolver,subscription}.ts`; create `services/api/test/integration/singlevendor/orders.integration.spec.ts`; modify L7 REST only through W9 ownership.
+
+- [ ] Test ownership, UUID/human order lookup, SV13 state mapping, immutable snapshots, schedule capacity, authenticated subscription filters, signed paid-event publication, server-owned checkout amounts, provider absence and `MapsPort` absence. No straight-line route or checkout URL may be fabricated.
+- [ ] Run and expect unavailable/provider errors; implement via `OrdersPort`, `MapsPort`, `PaymentsPort` and filtered `PUBSUB`, preserving snapshots in the order transaction. Rerun provider-free cases to PASS; sandbox proof stays W18.
+- [ ] Commit `feat(L12): add order views delivery and payment boundaries`.
+
+### Task 6: Credits, referrals and free-delivery reads
+
+**Operations:** `getAllCreditsRecords`, `getAllUserCredits`, `getAllUsersDropDownSearch`, `getMyFreeDeliveries`, `getMyReferralCode`, `getUserCreditsHistory`, `checkReferralCodeExists`, `editUserCreditsHistory`, `giveUserCredits`.
+
+**Files:** Create `services/api/src/modules/singlevendor/{credits,referrals}/{repository,service,resolver}.ts`; test `services/api/test/integration/singlevendor/credits.integration.spec.ts`.
+
+- [ ] Test all nine roots, stable unique codes, no rewards, zero ungranted deliveries, permissions/ownership, positive integer-minor adjustments, append-only history, balanced immutable journals, replay and concurrent edits.
+- [ ] Run and expect unavailable roots; implement balances through `LedgerPort`, delta-only adjustments with idempotency keys, and lookup-only referral behavior. Rerun to PASS.
+- [ ] Commit `feat(L12): add journal-backed credits and referral codes`.
+
+### Task 7: Membership provider boundary
+
+**Operations:** `getAllSubscriptionPlans`, `cancelSubscription`, `createPriceForProduct`, `createSubscription`, `deactivatePrice`, `updateSubscription`.
+
+**Files:** Create `services/api/src/modules/singlevendor/membership/{repository,service,resolver}.ts`; test `services/api/test/integration/singlevendor/membership.integration.spec.ts`.
+
+- [ ] Test all six roots, validation, absent secrets as `PROVIDER_UNAVAILABLE`, configured-but-unbuilt Billing as `NOT_IMPLEMENTED`, and exact no-active-membership errors. Assert no plan, membership, benefit or journal row is fabricated.
+- [ ] Run and expect the explicit boundary; implement read-only stored plans and an unavailable `MembershipProvider` adapter, with no inferred discount/free-delivery/referral policy. Rerun to PASS.
+- [ ] Commit `feat(L12): add honest membership provider boundary`.
+
+### Task 8: Feedback, notifications and dashboard
+
+**Operations:** `getDashboardOrderSalesDetailsByPaymentMethod`, `pastNotificationsByToken`, `todayNotificationsByToken`, `giveFeedback`.
+
+**Files:** Create `services/api/src/modules/singlevendor/{feedback,notifications,dashboard}/{repository,service,resolver}.ts`; test `services/api/test/integration/singlevendor/engagement.integration.spec.ts`.
+
+- [ ] Test all four roots, feedback validation, token ownership/day split/pagination, restaurant/date scoping, payment/order-type buckets and integer-minor aggregation.
+- [ ] Run and expect unavailable roots; persist feedback, delegate feeds to `NotificationFeedPort`, and aggregate immutable orders for the designated store. Rerun to PASS.
+- [ ] Commit `feat(L12): add feedback notifications and dashboard projections`.
+
+### Task 9: Complete 71-root evidence and mode isolation
+
+**Files:** Create `services/api/test/journeys/singlevendor.journey.spec.ts`; evidence registry changes belong to W25.
+
+- [ ] Replay exact pinned admin/customer web/customer mobile/store/rider SINGLE documents in source order. Enumerate all 71 `@op:` tags from inventory and fail on set drift. Run an isolated MULTI session concurrently and prove no schema, cache, tenant or data crossover.
+- [ ] Run `pnpm test:journeys`; failures remain honest until Tasks 2–8 and shared lanes are ready. Fix only exact adapter failures; unsupported policy stays an error. Require 71 evidenced roots before passing.
+- [ ] Commit `test(L12): prove single-vendor journeys and isolation`.
+
+## Worker jobs and event handlers
+
+| Handler                     | Trigger                        | Effect                                                 | Safety                                        |
+| --------------------------- | ------------------------------ | ------------------------------------------------------ | --------------------------------------------- |
+| `snapshotSingleVendorOrder` | `order.created` in SINGLE mode | persist immutable order/line/address/amount snapshot   | event-id idempotency; retry atomically        |
+| `updateSingleVendorOrder`   | `order.transitioned`           | update `lastStatus`; cancellation releases booked slot | conditional version update; no price mutation |
+| `publishPaymentSuccess`     | verified `order.paid`          | publish to authenticated owning customer               | provider-event dedupe and filtered topic      |
+| `expireCheckoutQuotes`      | scheduler                      | expire bounded quote batches                           | `SKIP LOCKED`; never changes an order         |
+
+Jobs use the shared abortable, non-overlapping worker runtime, release claims on error and close resources. No job grants credits, deliveries, referral rewards or membership benefits without D-S1 policy.
+
+## Playwright and journey handoff
+
+W16 owns these real-UI specs against the pinned applications:
+
+| Spec                                            | Route and verified selectors                                                                                                                                                                                                                                                                                                                                             | Assertions                                                             |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `e2e/specs/admin/singlevendor-settings.spec.ts` | Store/settings routes; `getByTitle("Add Store")`, `getByPlaceholder("Search Stores")` from `enatega-singlevendor-admin/lib/ui/screen-components/protected/vendor/restaurants/view/main/index.tsx:48-58`; schedule `getByPlaceholder("Start Time")`, `"End Time"`, `getByRole("button", {name:"Save"})` from `vendor/restaurants/add-form/restaurant-timing.tsx:192-300`. | designated store, mode/config and saved schedule                       |
+| `e2e/specs/admin/singlevendor-catalog.spec.ts`  | Banner route; `getByTitle("Add Food Banner")` from `restaurant/banners/view/header/screen-header/index.tsx:25-26`; category form `getByPlaceholder("Title")`, `getByTitle("Add More")`, `getByRole("button", {name:"Submit"})` from `restaurant/category/add-subcategories/index.tsx:211-243`.                                                                           | food/category/banner/deal appears with exact server prices             |
+| `e2e/specs/web/singlevendor-shopping.spec.ts`   | SINGLE browse route; `getByPlaceholder("search_for_food_items_placeholder")` from `enatega-multivendor-web/lib/ui/single-vendor/Browse.tsx:75`; checkout referral `getByPlaceholder("Enter code")` from `CheckoutExtras.tsx:61`; active order `getByRole("button", {name:"Track your order"})` verified by `ActiveOrderCard.test.tsx:51-61`.                             | discovery, cart, quote, provider boundary and tracking use original UI |
+
+W15 owns Task 9's API replay. W14a/W14b own native SINGLE customer/store/rider device flows. Each handoff repeats
+the frontend boundary verbatim, changes only transport/session/config adapters, records vendor edits in
+`SOURCE_PROVENANCE.json`, and never creates replacement screens.
+
+## Coverage and gate checklist
+
+- [ ] D1 and D-S1 approvals are recorded before Tasks 2–9 are claimed.
+- [ ] `pnpm check:enatega && pnpm check:enatega:full && pnpm codegen:check`
+- [ ] API unit/integration/typecheck/build and `pnpm test:journeys` pass.
+- [ ] `pnpm coverage` enforces at least 90% lines, 90% functions and 85% branches for every authored L12 API/worker file.
+- [ ] `pnpm e2e -- --grep '@op:(query|mutation|subscription)\\.'` runs the lane-tagged original-UI acceptance set.
+- [ ] W16 browser and W14 native gates pass against the original pinned apps.
+- [ ] `pnpm check:operations` reports all 71 L12 roots implemented and integration-tested.
+- [ ] MULTI and SINGLE retain all 71 L12 SDL roots for G1; MULTI and disabled SINGLE resolve every root with explicit
+      `NOT_IMPLEMENTED`, while enabled SINGLE uses only the complete 71-root provider registry.
+- [ ] W23 reviews behavior; W24 reviews mode/tenant isolation, pricing, journals, callbacks, secrets and providers.
+
+Shared contract changes, cross-lane FKs, factory exports, app/module registration, roadmap status and
+`docs/OPERATION_TEST_EVIDENCE.json` rows are exact lead-owned requests. W21 supplies proposed patches and evidence
+paths but does not edit or approve those shared artifacts.
+
+## Open questions and blockers
+
+1. D1: owner decision to ship single-vendor mode. Without approval, all L12 roots remain unavailable.
+2. D-S1: approved policy for credits, membership, free deliveries, referrals, deals and schedules. No benefit or reward is inferred.
+3. Stripe Billing/payment, maps and notification credentials are absent; provider acceptance belongs to W18.
+4. Credit redemption order, expiry and refund policy is undefined; `creditsUsed` remains zero.
+5. Membership discount/free-delivery grants are undefined; mutations stop at the provider boundary.
+6. Referral rewards are undefined; code generation/checking has no financial side effect.
+7. L3/L5/L6/L7/L8 shared ports and gates must close before end-to-end SINGLE journeys.
