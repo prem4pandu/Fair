@@ -25,14 +25,14 @@ map to.
 
 ## Ready to claim
 
-| Task  | Workstream | Subject                                                                                                                                                                                                               | Write scope       | Depends | Acceptance                                                                                                                                                                                                                                            | Evidence path     | Owner       | Reviewer |
-| ----- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ----------- | -------- |
-| T-001 | W0         | Record the three independent approvals for GP0, or re-run it and record the failure. GP0's commands passed with zero approvals, so Batch 1 is not closed and every later workstream is formally "proceeding at risk". | `docs/GATES.json` | T-015   | `pnpm record-gate --gate GP0` on a clean tree at `HEAD`, then `pnpm approve-gate --gate GP0 --role <lead\|reviewer-QA\|reviewer-SEC> --reviewer "<identity>"` once per role, by three distinct identities, none of them the one that recorded the run | `docs/GATES.json` | _unclaimed_ | W23      |
+| Task | Workstream | Subject | Write scope | Depends | Acceptance | Evidence path | Owner | Reviewer |
+| ---- | ---------- | ------- | ----------- | ------- | ---------- | ------------- | ----- | -------- |
 
 ## In progress
 
 | Task  | Workstream | Subject                                                                           | Owner        | Started    | Acceptance                                                      | Reviewer |
 | ----- | ---------- | --------------------------------------------------------------------------------- | ------------ | ---------- | --------------------------------------------------------------- | -------- |
+| T-001 | W0         | Re-run GP0 on a clean tree and record three independent approvals.                | agent-GP0    | 2026-10-09 | complete clean-tree run plus lead, W23 and W24 approvals        | W23/W24  |
 | T-003 | W7         | Complete `14-lane-L5-orders.PARTIAL.md` against `_lane-plan-brief.md`.            | agent-L5     | 2026-10-09 | lead review of the completed plan                               | lead     |
 | T-004 | W8         | Complete `15-lane-L6-dispatch.PARTIAL.md` against `_lane-plan-brief.md`.          | agent-L6     | 2026-10-09 | lead review of the completed plan                               | lead     |
 | T-005 | W9         | Complete `16-lane-L7-finance.PARTIAL.md` against `_lane-plan-brief.md`.           | agent-L7     | 2026-10-09 | lead review of the completed plan                               | lead     |
