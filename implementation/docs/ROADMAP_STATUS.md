@@ -20,15 +20,15 @@ repository can prove.
 
 ## Gates
 
-| Gate  | Last run        | Finished                 | Commit         | Approvals              |
-| ----- | --------------- | ------------------------ | -------------- | ---------------------- |
-| `GP0` | commands passed | 2026-10-08T15:14:41.660Z | `5a75b7ddab20` | **none** of 3 required |
-| `G0`  | never run       | —                        | —              | **none** of 2 required |
-| `G1`  | never run       | —                        | —              | **none** of 2 required |
-| `G2`  | never run       | —                        | —              | **none** of 2 required |
-| `G3`  | never run       | —                        | —              | **none** of 2 required |
-| `G4`  | never run       | —                        | —              | **none** of 3 required |
-| `G5`  | never run       | —                        | —              | **none** of 3 required |
+| Gate  | Last run   | Finished                 | Commit         | Approvals              |
+| ----- | ---------- | ------------------------ | -------------- | ---------------------- |
+| `GP0` | **FAILED** | 2026-10-09T15:33:11.166Z | `b4f7fd59146d` | **none** of 3 required |
+| `G0`  | never run  | —                        | —              | **none** of 2 required |
+| `G1`  | never run  | —                        | —              | **none** of 2 required |
+| `G2`  | never run  | —                        | —              | **none** of 2 required |
+| `G3`  | never run  | —                        | —              | **none** of 2 required |
+| `G4`  | never run  | —                        | —              | **none** of 3 required |
+| `G5`  | never run  | —                        | —              | **none** of 3 required |
 
 A gate is closed only when its commands passed **and** every reviewer role it
 declares in `ROADMAP.json` is recorded. "commands passed" with no approval does
@@ -38,37 +38,37 @@ refuses self-approval and refuses a failing or dirty-tree run.
 
 ## Workstreams
 
-| ID     | Workstream                                                             | Lanes | State                  | Measured                              | Dependencies                    |
-| ------ | ---------------------------------------------------------------------- | ----- | ---------------------- | ------------------------------------- | ------------------------------- |
-| `W0`   | Baseline repair and gate instrumentation                               | —     | GATE_PASSED_UNAPPROVED | GP0 recorded 2026-10-08T15:14:41.660Z | —                               |
-| `W1`   | Kernel and transport completion                                        | L0    | RESOLVERS_ONLY         | 1/1 resolvers · 0/1 evidenced         | waiting on W0                   |
-| `W2`   | Contract and data-model freeze                                         | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W0                   |
-| `W3`   | Identity, roles, staff scopes, MFA, recovery, OTP/social               | L1    | IN_PROGRESS            | 8/30 resolvers · 0/30 evidenced       | waiting on W2                   |
-| `W4`   | Platform configuration, maps and media REST                            | L2    | IN_PROGRESS            | 2/54 resolvers · 0/54 evidenced       | waiting on W2                   |
-| `W5a`  | Vendors, outlets, onboarding, publication, hours, media                | L3    | IN_PROGRESS            | 2/75 resolvers · 0/75 evidenced       | waiting on W2                   |
-| `W6`   | Customers, addresses, favourites, support, privacy                     | L4    | IN_PROGRESS            | 5/22 resolvers · 0/22 evidenced       | waiting on W2, W3               |
-| `W5b`  | Catalog items, variations, addons, discovery, search, reviews, coupons | L3    | IN_PROGRESS            | 2/75 resolvers · 0/75 evidenced       | waiting on W2, W3               |
-| `W7`   | Cart, quotes, pricing policy versions, immutable orders, lifecycle     | L5    | NOT_STARTED            | 0/24 resolvers · 0/24 evidenced       | waiting on W6                   |
-| `W12`  | Customer web integration                                               | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W2, W3, W4, W6       |
-| `W13`  | Admin web and single-vendor admin integration                          | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W2, W3, W4, W5a      |
-| `W8`   | Dispatch, own fleet, rider state, tracking, chat, realtime             | L6    | NOT_STARTED            | 0/32 resolvers · 0/32 evidenced       | waiting on W7                   |
-| `W9`   | Payments, Stripe REST, ledger, refunds, payables, settlements          | L7    | NOT_STARTED            | 0/11 resolvers · 0/11 evidenced       | waiting on W7                   |
-| `W14a` | Customer mobile integration (Expo)                                     | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W2, W3, W6           |
-| `W14b` | Store mobile and rider mobile integration                              | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W2, W3, W5a, W8      |
-| `W10`  | Notifications, push/email/SMS ports, worker jobs, chat media           | L8    | NOT_STARTED            | 0/5 resolvers · 0/5 evidenced         | waiting on W8                   |
-| `W11`  | Dashboards, reports, analytics                                         | L9    | NOT_STARTED            | 0/9 resolvers · 0/9 evidenced         | waiting on W9, W7               |
-| `W15`  | Cross-lane journey suites replaying exact app documents                | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W7, W8, W9, W10, W11 |
-| `W26`  | Server-side localization                                               | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W4, W10              |
-| `W16`  | Playwright web E2E against the real stack                              | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W12, W13, W15        |
-| `W17`  | Coverage closure                                                       | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W15, W16             |
-| `W18`  | Provider adapters and sandbox evidence                                 | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W9, W10              |
-| `W19`  | Native device E2E for the three mobile apps                            | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W14a, W14b           |
-| `W20`  | Hardening: security, advisories, load, restore, observability          | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W17                  |
-| `W21`  | Single-vendor mode including its SDL, resolvers and admin app          | L12   | NOT_STARTED            | 0/71 resolvers · 0/71 evidenced       | waiting on W2, W16              |
-| `W22`  | Release package and owner acceptance run                               | —     | NO_MACHINE_SIGNAL      | no recorded gate run                  | waiting on W18, W19, W20, W21   |
-| `W23`  | Independent QA review                                                  | —     | CONTINUOUS             | ongoing                               | —                               |
-| `W24`  | Independent security and architecture review                           | —     | CONTINUOUS             | ongoing                               | —                               |
-| `W25`  | Documentation and traceability upkeep                                  | —     | CONTINUOUS             | ongoing                               | —                               |
+| ID     | Workstream                                                             | Lanes | State             | Measured                              | Dependencies                    |
+| ------ | ---------------------------------------------------------------------- | ----- | ----------------- | ------------------------------------- | ------------------------------- |
+| `W0`   | Baseline repair and gate instrumentation                               | —     | GATE_FAILED       | GP0 recorded 2026-10-09T15:33:11.166Z | —                               |
+| `W1`   | Kernel and transport completion                                        | L0    | RESOLVERS_ONLY    | 1/1 resolvers · 0/1 evidenced         | waiting on W0                   |
+| `W2`   | Contract and data-model freeze                                         | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W0                   |
+| `W3`   | Identity, roles, staff scopes, MFA, recovery, OTP/social               | L1    | IN_PROGRESS       | 8/30 resolvers · 0/30 evidenced       | waiting on W2                   |
+| `W4`   | Platform configuration, maps and media REST                            | L2    | IN_PROGRESS       | 2/54 resolvers · 0/54 evidenced       | waiting on W2                   |
+| `W5a`  | Vendors, outlets, onboarding, publication, hours, media                | L3    | IN_PROGRESS       | 2/75 resolvers · 0/75 evidenced       | waiting on W2                   |
+| `W6`   | Customers, addresses, favourites, support, privacy                     | L4    | IN_PROGRESS       | 5/22 resolvers · 0/22 evidenced       | waiting on W2, W3               |
+| `W5b`  | Catalog items, variations, addons, discovery, search, reviews, coupons | L3    | IN_PROGRESS       | 2/75 resolvers · 0/75 evidenced       | waiting on W2, W3               |
+| `W7`   | Cart, quotes, pricing policy versions, immutable orders, lifecycle     | L5    | NOT_STARTED       | 0/24 resolvers · 0/24 evidenced       | waiting on W6                   |
+| `W12`  | Customer web integration                                               | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W2, W3, W4, W6       |
+| `W13`  | Admin web and single-vendor admin integration                          | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W2, W3, W4, W5a      |
+| `W8`   | Dispatch, own fleet, rider state, tracking, chat, realtime             | L6    | NOT_STARTED       | 0/32 resolvers · 0/32 evidenced       | waiting on W7                   |
+| `W9`   | Payments, Stripe REST, ledger, refunds, payables, settlements          | L7    | NOT_STARTED       | 0/11 resolvers · 0/11 evidenced       | waiting on W7                   |
+| `W14a` | Customer mobile integration (Expo)                                     | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W2, W3, W6           |
+| `W14b` | Store mobile and rider mobile integration                              | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W2, W3, W5a, W8      |
+| `W10`  | Notifications, push/email/SMS ports, worker jobs, chat media           | L8    | NOT_STARTED       | 0/5 resolvers · 0/5 evidenced         | waiting on W8                   |
+| `W11`  | Dashboards, reports, analytics                                         | L9    | NOT_STARTED       | 0/9 resolvers · 0/9 evidenced         | waiting on W9, W7               |
+| `W15`  | Cross-lane journey suites replaying exact app documents                | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W7, W8, W9, W10, W11 |
+| `W26`  | Server-side localization                                               | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W4, W10              |
+| `W16`  | Playwright web E2E against the real stack                              | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W12, W13, W15        |
+| `W17`  | Coverage closure                                                       | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W15, W16             |
+| `W18`  | Provider adapters and sandbox evidence                                 | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W9, W10              |
+| `W19`  | Native device E2E for the three mobile apps                            | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W14a, W14b           |
+| `W20`  | Hardening: security, advisories, load, restore, observability          | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W17                  |
+| `W21`  | Single-vendor mode including its SDL, resolvers and admin app          | L12   | NOT_STARTED       | 0/71 resolvers · 0/71 evidenced       | waiting on W2, W16              |
+| `W22`  | Release package and owner acceptance run                               | —     | NO_MACHINE_SIGNAL | no recorded gate run                  | waiting on W18, W19, W20, W21   |
+| `W23`  | Independent QA review                                                  | —     | CONTINUOUS        | ongoing                               | —                               |
+| `W24`  | Independent security and architecture review                           | —     | CONTINUOUS        | ongoing                               | —                               |
+| `W25`  | Documentation and traceability upkeep                                  | —     | CONTINUOUS        | ongoing                               | —                               |
 
 State meanings: `NOT_STARTED` no resolver in its lanes · `IN_PROGRESS` some
 resolvers · `RESOLVERS_ONLY` every operation resolves but evidence is missing ·

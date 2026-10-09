@@ -75,9 +75,9 @@
   "gates": [
     {
       "id": "GP0",
-      "passed": true,
-      "finishedAt": "2026-10-08T15:14:41.660Z",
-      "commit": "5a75b7ddab20b1a58d31fcd6e2d07b689da11199",
+      "passed": false,
+      "finishedAt": "2026-10-09T15:33:11.166Z",
+      "commit": "b4f7fd59146d2d3b9637e2fe9c0b307118ff4ad8",
       "approvals": [],
       "requiredApprovals": ["lead", "reviewer-QA", "reviewer-SEC"],
       "approved": false,
@@ -85,16 +85,17 @@
         { "command": "pnpm install --frozen-lockfile", "exitCode": 0 },
         { "command": "pnpm lint", "exitCode": 0 },
         { "command": "pnpm format:check", "exitCode": 0 },
-        { "command": "pnpm typecheck", "exitCode": 0 },
+        { "command": "pnpm typecheck", "exitCode": 2 },
         { "command": "pnpm build", "exitCode": 0 },
         { "command": "pnpm test", "exitCode": 0 },
-        { "command": "pnpm test:integration", "exitCode": 0 },
+        { "command": "pnpm test:integration", "exitCode": 1 },
         { "command": "pnpm coverage:report", "exitCode": 0 },
         { "command": "pnpm check:enatega-ui-source", "exitCode": 0 },
         { "command": "pnpm test:enatega-contracts", "exitCode": 0 },
         { "command": "pnpm test:operation-evidence", "exitCode": 0 },
         { "command": "node --test tools/*.test.mjs", "exitCode": 0 },
         { "command": "pnpm traceability:check", "exitCode": 0 },
+        { "command": "pnpm roadmap:check", "exitCode": 0 },
         { "command": "pnpm check:error-messages", "exitCode": 0 },
         { "command": "pnpm e2e:backend", "exitCode": 0 }
       ]
