@@ -30,18 +30,18 @@ map to.
 
 ## In progress
 
-| Task  | Workstream | Subject                                                                           | Owner        | Started    | Acceptance                                                      | Reviewer |
-| ----- | ---------- | --------------------------------------------------------------------------------- | ------------ | ---------- | --------------------------------------------------------------- | -------- |
-| T-003 | W7         | Complete `14-lane-L5-orders.PARTIAL.md` against `_lane-plan-brief.md`.            | agent-l5     | 2026-10-09 | lead review of the completed plan                               | lead     |
-| T-004 | W8         | Complete `15-lane-L6-dispatch.PARTIAL.md` against `_lane-plan-brief.md`.          | agent-l6     | 2026-10-09 | lead review of the completed plan                               | lead     |
-| T-005 | W9         | Complete `16-lane-L7-finance.PARTIAL.md` against `_lane-plan-brief.md`.           | agent-l7     | 2026-10-09 | lead review of the completed plan                               | lead     |
-| T-006 | W10        | Complete `17-lane-L8-notifications.PARTIAL.md` against `_lane-plan-brief.md`.     | agent-l8     | 2026-10-09 | lead review of the completed plan                               | lead     |
-| T-007 | W21        | Complete `22-wave5-single-vendor.PARTIAL.md` and correct its L12 inventory.       | agent-l12    | 2026-10-09 | lead review; `pnpm roadmap:check`                               | lead     |
-| T-008 | W12        | Audit and integrate the pinned customer-web package without presentation changes. | agent-fe-web | 2026-10-09 | package lint/typecheck and evidence under `docs/artifacts/w12/` | W24      |
-| T-019 | W3         | Continue L1 identity implementation (8/30 resolvers) per `10-lane-L1-identity.md`. | agent-l1     | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead  | W23      |
-| T-020 | W4         | Continue L2 platform configuration + maps/media REST per `11-lane-L2-configuration.md`. | agent-l2   | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead  | W23      |
-| T-021 | W5a        | Continue L3 vendors/outlets implementation per `12-lane-L3-catalog.md` (vendors half). | agent-l3a   | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead  | W23      |
-| T-022 | W6         | Continue L4 customers/addresses/support implementation per `13-lane-L4-discovery.md`. | agent-l4    | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead  | W23      |
+| Task  | Workstream | Subject                                                                                 | Owner        | Started    | Acceptance                                                      | Reviewer |
+| ----- | ---------- | --------------------------------------------------------------------------------------- | ------------ | ---------- | --------------------------------------------------------------- | -------- |
+| T-003 | W7         | Complete `14-lane-L5-orders.PARTIAL.md` against `_lane-plan-brief.md`.                  | agent-l5     | 2026-10-09 | lead review of the completed plan                               | lead     |
+| T-004 | W8         | Complete `15-lane-L6-dispatch.PARTIAL.md` against `_lane-plan-brief.md`.                | agent-l6     | 2026-10-09 | lead review of the completed plan                               | lead     |
+| T-005 | W9         | Complete `16-lane-L7-finance.PARTIAL.md` against `_lane-plan-brief.md`.                 | agent-l7     | 2026-10-09 | lead review of the completed plan                               | lead     |
+| T-006 | W10        | Complete `17-lane-L8-notifications.PARTIAL.md` against `_lane-plan-brief.md`.           | agent-l8     | 2026-10-09 | lead review of the completed plan                               | lead     |
+| T-007 | W21        | Complete `22-wave5-single-vendor.PARTIAL.md` and correct its L12 inventory.             | agent-l12    | 2026-10-09 | lead review; `pnpm roadmap:check`                               | lead     |
+| T-008 | W12        | Audit and integrate the pinned customer-web package without presentation changes.       | agent-fe-web | 2026-10-09 | package lint/typecheck and evidence under `docs/artifacts/w12/` | W24      |
+| T-019 | W3         | Continue L1 identity implementation (8/30 resolvers) per `10-lane-L1-identity.md`.      | agent-l1     | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead | W23      |
+| T-020 | W4         | Continue L2 platform configuration + maps/media REST per `11-lane-L2-configuration.md`. | agent-l2     | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead | W23      |
+| T-021 | W5a        | Continue L3 vendors/outlets implementation per `12-lane-L3-catalog.md` (vendors half).  | agent-l3a    | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead | W23      |
+| T-022 | W6         | Continue L4 customers/addresses/support implementation per `13-lane-L4-discovery.md`.   | agent-l4     | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead | W23      |
 
 ## Blocked
 
