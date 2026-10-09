@@ -75,12 +75,12 @@
   "gates": [
     {
       "id": "GP0",
-      "passed": false,
-      "finishedAt": "2026-10-09T16:14:49.104Z",
-      "commit": "15143221402b93c55f414f5fe79ef936a49afbd5",
-      "approvals": [],
+      "passed": true,
+      "finishedAt": "2026-10-09T17:23:06.917Z",
+      "commit": "08a702b86aedfbb7abfa74b457e098278d27d5c4",
+      "approvals": ["lead", "reviewer-QA", "reviewer-SEC"],
       "requiredApprovals": ["lead", "reviewer-QA", "reviewer-SEC"],
-      "approved": false,
+      "approved": true,
       "commands": [
         { "command": "pnpm install --frozen-lockfile", "exitCode": 0 },
         { "command": "pnpm lint", "exitCode": 0 },
@@ -88,7 +88,7 @@
         { "command": "pnpm typecheck", "exitCode": 0 },
         { "command": "pnpm build", "exitCode": 0 },
         { "command": "pnpm test", "exitCode": 0 },
-        { "command": "pnpm test:integration", "exitCode": 1 },
+        { "command": "pnpm test:integration", "exitCode": 0 },
         { "command": "pnpm coverage:report", "exitCode": 0 },
         { "command": "pnpm check:enatega-ui-source", "exitCode": 0 },
         { "command": "pnpm test:enatega-contracts", "exitCode": 0 },
@@ -102,7 +102,7 @@
     }
   ],
   "recordedGateRuns": 1,
-  "approvedGates": 0,
+  "approvedGates": 1,
   "notes": [
     "A resolving schema is not implementation: NOT_IMPLEMENTED roots are counted as unimplemented.",
     "A gate is approved only when every reviewer role it requires is recorded in docs/GATES.json by tools/approve-gate.mjs.",
