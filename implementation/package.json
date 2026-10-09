@@ -8,7 +8,7 @@
   "scripts": {
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test && node --test tools/*.test.mjs",
+    "test": "turbo run test && node --test tools/*.test.mjs tools/lib/*.test.mjs",
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "test:integration": "pnpm --filter @fairbite/api test:integration",

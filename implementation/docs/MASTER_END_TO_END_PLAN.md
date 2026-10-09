@@ -669,7 +669,7 @@ DOCKER_HOST=unix://$HOME/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKE
 ./tools/pnpm.sh test:operation-evidence
 ./tools/pnpm.sh check:operations
 ./tools/pnpm.sh e2e:backend
-node --test tools/*.test.mjs
+node --test tools/*.test.mjs tools/lib/*.test.mjs
 node tools/generate-operation-traceability.mjs [--check]
 node tools/manifest-enatega-ui.mjs [--check]
 ```

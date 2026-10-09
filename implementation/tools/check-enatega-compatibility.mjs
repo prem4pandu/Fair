@@ -24,6 +24,7 @@ import { fileURLToPath } from "node:url";
 import { runInNewContext } from "node:vm";
 import { createHash } from "node:crypto";
 import { resolvedDocuments } from "./derive-type-requirements.mjs";
+import { looksLikeGraphQL } from "./lib/graphql-text.mjs";
 
 export const apps = [
   "enatega-multivendor-web",
@@ -51,11 +52,6 @@ function files(directory, extensions) {
         return ignored.has(entry.name) ? [] : files(path, extensions);
       return entry.isFile() && extensions.includes(extname(path)) ? [path] : [];
     });
-}
-function looksLikeGraphQL(text) {
-  return /^(?:\s|#[^\n]*(?:\n|$))*(?:(?:query|mutation|subscription)\s*(?:[A-Za-z_]\w*\s*)?[({]|fragment\s+[A-Za-z_]\w*\s+on\s+|\{\s*[A-Za-z_])/.test(
-    text,
-  );
 }
 function limitBytes(value) {
   const match = /^(\d+)(kb|mb)$/.exec(value);

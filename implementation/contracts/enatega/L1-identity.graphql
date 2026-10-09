@@ -295,7 +295,7 @@ extend type Mutation {
   deleteStaff(id: String): DeleteStaffDeleteStaff
   editStaff(staffInput: StaffInput): EditStaffEditStaff
   emailExist(email: String): Boolean
-  forgotPassword(email: String): ForgotPasswordForgotPassword
+  forgotPassword(email: String, otp: String): ForgotPasswordForgotPassword
   login(
     appleId: String
     appleNonce: String
@@ -336,8 +336,11 @@ extend type Mutation {
     isEnabled: Boolean
     token: String
   ): SaveRestaurantTokenSaveRestaurantToken
-  sendOtpToEmail(email: String): SendOtpToEmailSendOtpToEmail
-  sendOtpToPhoneNumber(phone: String): SendOtpToPhoneNumberSendOtpToPhoneNumber
+  sendOtpToEmail(email: String, otp: String): SendOtpToEmailSendOtpToEmail
+  sendOtpToPhoneNumber(
+    otp: String
+    phone: String
+  ): SendOtpToPhoneNumberSendOtpToPhoneNumber
   updateNotificationStatus(
     offerNotification: Boolean
     orderNotification: Boolean

@@ -22,7 +22,7 @@
     },
     {
       "file": "enatega/L1-identity.graphql",
-      "sha256": "2fd0b17baac79ec64074086a3ee2113ec2435ef4e93f76dc2aec566575db4dd6"
+      "sha256": "9de728081921233b6e5c685e8ff5f2d3ad01d685fd7b678d1a4f1dfd3f043721"
     },
     {
       "file": "enatega/L12-single-vendor.graphql",
@@ -34,7 +34,7 @@
     },
     {
       "file": "enatega/L3-vendors-catalog.graphql",
-      "sha256": "f770855f426193d46e1675931ec6735a1978a154fc6da868706a8b1c9eb8c75f"
+      "sha256": "1b01d9b30503fb89699b3f956101660fbaaaacf1c622b7050d9c7eab71f743f1"
     },
     {
       "file": "enatega/L4-customers-support.graphql",
@@ -63,7 +63,7 @@
   ],
   "summary": {
     "apps": 6,
-    "documents": 856,
+    "documents": 852,
     "validDocuments": 829,
     "unresolvedDocuments": 9,
     "outOfScopeDocuments": 0,
@@ -8730,8 +8730,8 @@
     {
       "app": "enatega-multivendor-app",
       "filesScanned": 790,
-      "totalDocuments": 271,
-      "validDocuments": 252,
+      "totalDocuments": 267,
+      "validDocuments": 248,
       "unresolvedDocuments": 9,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -12232,74 +12232,6 @@
           "minimumHttpBodyExceedsLimit": false
         },
         {
-          "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1,
-          "sha256": "77f816625588af8f4e06685441ca2c9ce6c89eba7b762d106905517f408544a0",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "OrderTracking",
-              "roots": ["orderTracking"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 499,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1,
-          "sha256": "96b1ae09e4c61684f13ec29aa7967420b554d3740cf2e44ca526fc75891b3f21",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            { "kind": "query", "name": "Orders", "roots": ["orders"] }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 1605,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1,
-          "sha256": "6d9059a11e162485c81d0c298a8b7b57a36fdf701b9f2445fcdf6a351877d644",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "GetUsersActiveOrders",
-              "roots": ["getUsersActiveOrders"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 1689,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-app/src/apollo/queries.js",
-          "line": 1,
-          "sha256": "d195d18ae8d70c78bb8fa05beb9efa4bf85dbe01ffca0ab230a116ab05668755",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "GetUsersPastOrders",
-              "roots": ["getUsersPastOrders"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 1685,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
           "file": "enatega-multivendor-app/src/apollo/mutations.js",
           "line": 3,
           "sha256": "8830b37ec803372c9f94d3482b613c617ada6852be0dae035f931370f4ec8a9b",
@@ -14190,7 +14122,7 @@
       "app": "enatega-multivendor-rider",
       "filesScanned": 317,
       "totalDocuments": 56,
-      "validDocuments": 51,
+      "validDocuments": 55,
       "unresolvedDocuments": 0,
       "outOfScopeDocuments": 0,
       "missingRoots": [],
@@ -14230,6 +14162,146 @@
           "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 126,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
+          "line": 1,
+          "sha256": "90864380b2bcc03c4abb3519bec0b5bd1719f5a1564ae5f43614819a9f83d300",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "EmailExist",
+              "roots": ["emailExist"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 82,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
+          "line": 6,
+          "sha256": "433f5c258f715d3c217ff78b931768be3554d8cf9839b93e30fe2c4b30ef471e",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "PhoneExist",
+              "roots": ["phoneExist"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 82,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
+          "line": 11,
+          "sha256": "e085170f8c780394dfa124369241fd216019301e4ec6c1701202b90012f8d62b",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "SendOtpToEmail",
+              "roots": ["sendOtpToEmail"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 135,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
+          "line": 18,
+          "sha256": "1c7629d0d729d3ab6841bb0fa18f0cd8982f3f9738a5fa62108584c587745ec3",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "SendOtpToPhoneNumber",
+              "roots": ["sendOtpToPhoneNumber"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 147,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
+          "line": 25,
+          "sha256": "32351ed98dc4ba1e75ead00bcfadb4a5bf4cfbee93ef961fb0318ce5ea2d753e",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "deactivated",
+              "roots": ["Deactivate"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 146,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
+          "line": 32,
+          "sha256": "be48318378a4393f07e073be5b3e055032cac166c77cbeafe63285aecf7333df",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "mutation", "name": "Login", "roots": ["login"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 455,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
+          "line": 46,
+          "sha256": "897b1a1e95d289006f695cdf022072489597a9f5d19c513c7b2b65b5c9059732",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "ForgotPassword",
+              "roots": ["forgotPassword"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 135,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
+          "line": 56,
+          "sha256": "dd006e32ace97085e71bc8c55791c6a983f4b541234b4e5f2c9fc3786e97fe0a",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "ResetPassword",
+              "roots": ["resetPassword"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 148,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -14324,6 +14396,20 @@
         },
         {
           "file": "enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts",
+          "line": 26,
+          "sha256": "0058cc1bdd4c7987d68174ed7def28faea6c42aab3e718e1155635cbdc787934",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "mutation", "name": null, "roots": ["abortOrder"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 116,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts",
           "line": 34,
           "sha256": "03ad8d2dbba297cc6d1c91e77e1b5219487ca9c9772c48caa265646ae0543d3c",
           "status": "VALID_STATIC_DOCUMENT",
@@ -14338,6 +14424,24 @@
           "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 1300,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts",
+          "line": 117,
+          "sha256": "7f32ec2b62b8111c32de5d12a09160373479538da0e7b5dfe111bba3b5297452",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "mutation",
+              "name": "PlaceOrder",
+              "roots": ["placeOrder"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1775,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -14560,6 +14664,88 @@
           "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 613,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/queries/order/order-1.query.ts",
+          "line": 1,
+          "sha256": "56d3a211bde34a0ac40ab35c048fff9abac33a9def6d355219bcb5f0772a934c",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Order", "roots": ["order"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 878,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/queries/order/order-1.query.ts",
+          "line": 59,
+          "sha256": "cbaba526a82b3362667347752a652e46f2db7b60e746eaed589f571cec240fd2",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            { "kind": "query", "name": "Orders", "roots": ["orders"] }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1313,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/queries/order/order-2.query.ts",
+          "line": 87,
+          "sha256": "4827e94d4e37734e6dd9994584ddc9c1c09d7b8ac23329793c779bd6e5b19e50",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "GetRecentOrderRestaurants",
+              "roots": ["recentOrderRestaurants"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 392,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/queries/resturant/resturant-2.query.ts",
+          "line": 30,
+          "sha256": "3410e87b700486f6d26c7d21fe4bae1b904c0145013d7181c4634e60de7ba430",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "Restaurants",
+              "roots": ["nearByRestaurants"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1687,
+          "minimumHttpBodyExceedsLimit": false
+        },
+        {
+          "file": "enatega-multivendor-rider/lib/apollo/queries/resturant/resturant-2.query.ts",
+          "line": 122,
+          "sha256": "810ffd196615e8d50c0a60b851de45d4c1b5ac6420a8e7f7f1e0fddccecfc04c",
+          "status": "VALID_STATIC_DOCUMENT",
+          "operations": [
+            {
+              "kind": "query",
+              "name": "Restaurants",
+              "roots": ["nearByRestaurantsPreview"]
+            }
+          ],
+          "missingRoots": [],
+          "errors": [],
+          "backendOperationLimits": [],
+          "minimumHttpBodyBytes": 1066,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -14817,221 +15003,6 @@
           "minimumHttpBodyExceedsLimit": false
         },
         {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
-          "line": 1,
-          "sha256": "90864380b2bcc03c4abb3519bec0b5bd1719f5a1564ae5f43614819a9f83d300",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "EmailExist",
-              "roots": ["emailExist"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 82,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
-          "line": 6,
-          "sha256": "433f5c258f715d3c217ff78b931768be3554d8cf9839b93e30fe2c4b30ef471e",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "PhoneExist",
-              "roots": ["phoneExist"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 82,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
-          "line": 11,
-          "sha256": "e085170f8c780394dfa124369241fd216019301e4ec6c1701202b90012f8d62b",
-          "status": "INVALID",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "SendOtpToEmail",
-              "roots": ["sendOtpToEmail"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [
-            {
-              "message": "Unknown argument \"otp\" on field \"Mutation.sendOtpToEmail\".",
-              "locations": [{ "line": 3, "column": 35 }]
-            }
-          ],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 135,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
-          "line": 18,
-          "sha256": "1c7629d0d729d3ab6841bb0fa18f0cd8982f3f9738a5fa62108584c587745ec3",
-          "status": "INVALID",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "SendOtpToPhoneNumber",
-              "roots": ["sendOtpToPhoneNumber"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [
-            {
-              "message": "Unknown argument \"otp\" on field \"Mutation.sendOtpToPhoneNumber\".",
-              "locations": [{ "line": 3, "column": 41 }]
-            }
-          ],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 147,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
-          "line": 25,
-          "sha256": "32351ed98dc4ba1e75ead00bcfadb4a5bf4cfbee93ef961fb0318ce5ea2d753e",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "deactivated",
-              "roots": ["Deactivate"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 146,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
-          "line": 32,
-          "sha256": "be48318378a4393f07e073be5b3e055032cac166c77cbeafe63285aecf7333df",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            { "kind": "mutation", "name": "Login", "roots": ["login"] }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 455,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
-          "line": 46,
-          "sha256": "897b1a1e95d289006f695cdf022072489597a9f5d19c513c7b2b65b5c9059732",
-          "status": "INVALID",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "ForgotPassword",
-              "roots": ["forgotPassword"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [
-            {
-              "message": "Unknown argument \"otp\" on field \"Mutation.forgotPassword\".",
-              "locations": [{ "line": 3, "column": 33 }]
-            }
-          ],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 135,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/authentication.mutation.ts",
-          "line": 56,
-          "sha256": "dd006e32ace97085e71bc8c55791c6a983f4b541234b4e5f2c9fc3786e97fe0a",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "ResetPassword",
-              "roots": ["resetPassword"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 148,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts",
-          "line": 26,
-          "sha256": "0058cc1bdd4c7987d68174ed7def28faea6c42aab3e718e1155635cbdc787934",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            { "kind": "mutation", "name": null, "roots": ["abortOrder"] }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 116,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/mutations/order.mutation.ts",
-          "line": 117,
-          "sha256": "7f32ec2b62b8111c32de5d12a09160373479538da0e7b5dfe111bba3b5297452",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "mutation",
-              "name": "PlaceOrder",
-              "roots": ["placeOrder"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 1775,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/queries/order/order-1.query.ts",
-          "line": 1,
-          "sha256": "56d3a211bde34a0ac40ab35c048fff9abac33a9def6d355219bcb5f0772a934c",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            { "kind": "query", "name": "Order", "roots": ["order"] }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 878,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/queries/order/order-1.query.ts",
-          "line": 59,
-          "sha256": "cbaba526a82b3362667347752a652e46f2db7b60e746eaed589f571cec240fd2",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            { "kind": "query", "name": "Orders", "roots": ["orders"] }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 1313,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
           "file": "enatega-multivendor-rider/lib/apollo/queries/order/order-2.query.ts",
           "line": 3,
           "sha256": "1823f3e5c9d01ccd73549db0cf9f3dfc021fcc3080d0e9309406836499e6bff8",
@@ -15046,24 +15017,6 @@
           ],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 998,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/queries/order/order-2.query.ts",
-          "line": 87,
-          "sha256": "4827e94d4e37734e6dd9994584ddc9c1c09d7b8ac23329793c779bd6e5b19e50",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "GetRecentOrderRestaurants",
-              "roots": ["recentOrderRestaurants"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 392,
           "minimumHttpBodyExceedsLimit": false
         },
         {
@@ -15094,87 +15047,6 @@
           "errors": [],
           "backendOperationLimits": [],
           "minimumHttpBodyBytes": 352,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/queries/resturant/resturant-2.query.ts",
-          "line": 30,
-          "sha256": "3410e87b700486f6d26c7d21fe4bae1b904c0145013d7181c4634e60de7ba430",
-          "status": "VALID_STATIC_DOCUMENT",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "Restaurants",
-              "roots": ["nearByRestaurants"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 1687,
-          "minimumHttpBodyExceedsLimit": false
-        },
-        {
-          "file": "enatega-multivendor-rider/lib/apollo/queries/resturant/resturant-2.query.ts",
-          "line": 122,
-          "sha256": "810ffd196615e8d50c0a60b851de45d4c1b5ac6420a8e7f7f1e0fddccecfc04c",
-          "status": "INVALID",
-          "operations": [
-            {
-              "kind": "query",
-              "name": "Restaurants",
-              "roots": ["nearByRestaurantsPreview"]
-            }
-          ],
-          "missingRoots": [],
-          "errors": [
-            {
-              "message": "Cannot query field \"orderId\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 17, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"orderPrefix\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 18, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"address\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 21, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"username\" on type \"RestaurantPreview\". Did you mean \"name\"?",
-              "locations": [{ "line": 22, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"sections\" on type \"RestaurantPreview\". Did you mean \"location\"?",
-              "locations": [{ "line": 25, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"rating\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 26, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"stripeDetailsSubmitted\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 30, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"commissionRate\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 31, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"notificationToken\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 33, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"enableNotification\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 34, "column": 7 }]
-            },
-            {
-              "message": "Cannot query field \"keywords\" on type \"RestaurantPreview\".",
-              "locations": [{ "line": 37, "column": 7 }]
-            }
-          ],
-          "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 1066,
           "minimumHttpBodyExceedsLimit": false
         },
         {

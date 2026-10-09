@@ -50,42 +50,6 @@
       "exportName": "editTaxation",
       "sourceSha256": "2f5f53b272cbadb5ec676189cc9bdfe1690e9d287e3a4461cdec41b749b8b555",
       "lane": "L2"
-    },
-    {
-      "app": "enatega-multivendor-app",
-      "file": "src/apollo/queries.js",
-      "exportName": "orderTracking",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
-      "lane": "L6"
-    },
-    {
-      "app": "enatega-multivendor-app",
-      "file": "src/apollo/queries.js",
-      "exportName": "myOrders",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
-      "lane": "L5"
-    },
-    {
-      "app": "enatega-multivendor-app",
-      "file": "src/apollo/queries.js",
-      "exportName": "getUsersActiveOrders",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
-      "lane": "L5"
-    },
-    {
-      "app": "enatega-multivendor-app",
-      "file": "src/apollo/queries.js",
-      "exportName": "getUsersPastOrders",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
-      "lane": "L5"
-    },
-    {
-      "app": "enatega-multivendor-app",
-      "file": "src/apollo/queries.js",
-      "exportName": "orderFragment",
-      "sourceSha256": "1c3c1569595607675798e2c2070c49429ba8ff1c81f555648a734330a443bb18",
-      "lane": null,
-      "note": "Fragment-only document (fragment NewOrder on Order). It declares no root operation, so docs/OPERATION_LANES.json assigns it no lane owner, and the pinned app source has no consumer that spreads it."
     }
   ],
   "resolutions": [

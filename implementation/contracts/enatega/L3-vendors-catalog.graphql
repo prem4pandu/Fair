@@ -663,25 +663,36 @@ type RestaurantOrdersRestaurantOrders {
 type RestaurantPreview {
   _id: ID
   acceptVouchers: String
+  address: String
+  commissionRate: Float
   coordinates: String
   cuisines: [String]
   deliveryTime: String
   distanceWithCurrentLocation: String
+  enableNotification: String
   freeDelivery: String
   image: String
   isActive: Boolean
   isAvailable: Boolean
+  keywords: String
   location: RestaurantPreview
   logo: String
   minimumOrder: Float
   name: String
+  notificationToken: String
   openingTimes: [OpeningTimes]
+  orderId: String
+  orderPrefix: String
+  rating: Float
   reviewAverage: String
   reviewCount: Int
+  sections: String
   shopType: String
   slug: String
+  stripeDetailsSubmitted: String
   tags: [String]
   tax: Float
+  username: String
 }
 
 type RestaurantReviewsPaginatedData {

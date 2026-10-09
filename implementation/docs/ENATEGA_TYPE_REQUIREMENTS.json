@@ -4512,7 +4512,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-app"]
+      "apps": ["enatega-multivendor-app", "enatega-multivendor-rider"]
     },
     "nearByRestaurantsCuisines": {
       "arguments": {
@@ -4621,6 +4621,12 @@
                 "typeConditions": [],
                 "fields": {}
               },
+              "address": { "leaf": true, "typeConditions": [], "fields": {} },
+              "commissionRate": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
               "cuisines": {
                 "leaf": true,
                 "typeConditions": ["RestaurantPreview"],
@@ -4632,6 +4638,11 @@
                 "fields": {}
               },
               "distanceWithCurrentLocation": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "enableNotification": {
                 "leaf": true,
                 "typeConditions": [],
                 "fields": {}
@@ -4656,6 +4667,7 @@
                 "typeConditions": ["RestaurantPreview"],
                 "fields": {}
               },
+              "keywords": { "leaf": true, "typeConditions": [], "fields": {} },
               "location": {
                 "leaf": false,
                 "typeConditions": ["RestaurantPreview"],
@@ -4680,6 +4692,11 @@
               "name": {
                 "leaf": true,
                 "typeConditions": ["RestaurantPreview"],
+                "fields": {}
+              },
+              "notificationToken": {
+                "leaf": true,
+                "typeConditions": [],
                 "fields": {}
               },
               "openingTimes": {
@@ -4709,6 +4726,13 @@
                   }
                 }
               },
+              "orderId": { "leaf": true, "typeConditions": [], "fields": {} },
+              "orderPrefix": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
+              "rating": { "leaf": true, "typeConditions": [], "fields": {} },
               "reviewAverage": {
                 "leaf": true,
                 "typeConditions": ["RestaurantPreview"],
@@ -4719,6 +4743,7 @@
                 "typeConditions": [],
                 "fields": {}
               },
+              "sections": { "leaf": true, "typeConditions": [], "fields": {} },
               "shopType": {
                 "leaf": true,
                 "typeConditions": ["RestaurantPreview"],
@@ -4729,8 +4754,14 @@
                 "typeConditions": ["RestaurantPreview"],
                 "fields": {}
               },
+              "stripeDetailsSubmitted": {
+                "leaf": true,
+                "typeConditions": [],
+                "fields": {}
+              },
               "tags": { "leaf": true, "typeConditions": [], "fields": {} },
-              "tax": { "leaf": true, "typeConditions": [], "fields": {} }
+              "tax": { "leaf": true, "typeConditions": [], "fields": {} },
+              "username": { "leaf": true, "typeConditions": [], "fields": {} }
             }
           },
           "sections": {
@@ -4748,7 +4779,11 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "notifications": {
       "arguments": {},
@@ -4954,7 +4989,7 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-app"]
+      "apps": ["enatega-multivendor-app", "enatega-multivendor-rider"]
     },
     "orderDetails": {
       "arguments": {
@@ -5571,7 +5606,11 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "ordersByRestId": {
       "arguments": {
@@ -6742,7 +6781,7 @@
           "tax": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-app"]
+      "apps": ["enatega-multivendor-app", "enatega-multivendor-rider"]
     },
     "recentOrderRestaurantsPreview": {
       "arguments": {
@@ -10634,7 +10673,11 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "acceptOrder": {
       "arguments": {
@@ -11832,7 +11875,11 @@
           "name": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "deleteAddon": {
       "arguments": {
@@ -13078,11 +13125,22 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "forgotPassword": {
       "arguments": {
         "email": {
+          "variableTypes": ["String!"],
+          "literalKinds": [],
+          "objectKeys": [],
+          "objectFieldTypes": {},
+          "enumValues": []
+        },
+        "otp": {
           "variableTypes": ["String!"],
           "literalKinds": [],
           "objectKeys": [],
@@ -13097,7 +13155,11 @@
           "result": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "hardDeleteRestaurant": {
       "arguments": {
@@ -13230,7 +13292,11 @@
           "userTypeId": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "markWebNotificationsAsRead": {
       "arguments": {},
@@ -13407,7 +13473,11 @@
         }
       },
       "selection": { "leaf": true, "typeConditions": [], "fields": {} },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "placeOrder": {
       "arguments": {
@@ -13740,7 +13810,11 @@
           }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "pushToken": {
       "arguments": {
@@ -13924,7 +13998,11 @@
           "result": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "resetUserSession": {
       "arguments": {
@@ -14938,6 +15016,13 @@
           "objectKeys": [],
           "objectFieldTypes": {},
           "enumValues": []
+        },
+        "otp": {
+          "variableTypes": ["String!"],
+          "literalKinds": [],
+          "objectKeys": [],
+          "objectFieldTypes": {},
+          "enumValues": []
         }
       },
       "selection": {
@@ -14947,10 +15032,21 @@
           "result": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "sendOtpToPhoneNumber": {
       "arguments": {
+        "otp": {
+          "variableTypes": ["String!"],
+          "literalKinds": [],
+          "objectKeys": [],
+          "objectFieldTypes": {},
+          "enumValues": []
+        },
         "phone": {
           "variableTypes": ["String!"],
           "literalKinds": [],
@@ -14966,7 +15062,11 @@
           "result": { "leaf": true, "typeConditions": [], "fields": {} }
         }
       },
-      "apps": ["enatega-multivendor-app", "enatega-multivendor-web"]
+      "apps": [
+        "enatega-multivendor-app",
+        "enatega-multivendor-rider",
+        "enatega-multivendor-web"
+      ]
     },
     "setVersions": {
       "arguments": {
