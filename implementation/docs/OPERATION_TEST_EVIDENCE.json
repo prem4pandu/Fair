@@ -1312,10 +1312,29 @@
       "apps": ["admin", "svadmin(sv)"],
       "status": "NOT_VERIFIED",
       "tests": {
-        "unit": [],
-        "integration": [],
-        "playwright": [],
-        "device": []
+        "unit": [
+          {
+            "path": "services/api/test/unit/identity/ownerSession.spec.ts",
+            "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/ownerSession.spec.ts",
+            "result": {
+              "status": "passed",
+              "exitCode": 0,
+              "evidenceFiles": ["docs/artifacts/w3/ownerSession.json"]
+            }
+          }
+        ],
+        "integration": [
+          {
+            "path": "services/api/test/integration/identity/ownerSession.integration.spec.ts",
+            "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/ownerSession.integration.spec.ts",
+            "result": {
+              "status": "passed",
+              "exitCode": 0,
+              "evidenceFiles": ["docs/artifacts/w3/ownerSession.json"]
+            }
+          }
+        ],
+        "playwright": []
       }
     },
     {

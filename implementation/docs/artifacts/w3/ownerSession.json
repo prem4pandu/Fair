@@ -1,0 +1,43 @@
+{
+  "operation": "query.ownerSession",
+  "lane": "L1",
+  "workstream": "W3",
+  "commit": "899c159",
+  "sourceDocument": {
+    "app": "enatega-multivendor-admin",
+    "file": "lib/api/graphql/queries/authentication/index.ts",
+    "exportName": "OWNER_SESSION",
+    "note": "Loaded through tools/lib/documents.mjs; the single-vendor admin declares the same document."
+  },
+  "commands": [
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/ownerSession.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "3 tests: mapper projection, no refresh-token minting, inactive principal."
+    },
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/ownerSession.integration.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "7 tests against the real HTTP server, PostgreSQL and Redis: exact pinned document, own-principal isolation, anonymous/revoked/suspended/non-owner rejection, no writes on rejection."
+    },
+    {
+      "command": "pnpm test:integration",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "15 files / 87 tests green on commit 899c159."
+    }
+  ],
+  "evidenceStatus": {
+    "unit": "passed",
+    "integration": "passed",
+    "playwright": "not-run",
+    "reason": "The apps list includes admin and svadmin(sv), so the evidence checker also requires web (playwright/webJourney) evidence. That harness is W16 and is not built yet, so this record stays NOT_VERIFIED and is never counted as evidenced."
+  },
+  "knownLimits": [
+    "Unverified upstream behaviour, recorded rather than invented: userTypeId is the caller's own id (the same convention restaurantLogin already uses for a merchant principal), permissions is the caller's role list (as ownerLogin already returns), and restaurants is [] for ADMIN/STAFF. STAFF/VENDOR/RESTAURANT projections need the ownership records W5a adds.",
+    "No subscription event or browser shell is involved in this root."
+  ],
+  "reviewer": null
+}
