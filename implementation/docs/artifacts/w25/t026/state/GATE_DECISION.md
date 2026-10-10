@@ -35,6 +35,24 @@ Reasons, in order of severity:
    run being re-derived, and every command in the old run still reproduces the same
    PASS results (verified by task-2's acceptance).
 
+## Second gate in the same window: G0 (`pnpm e2e:smoke`)
+
+task-1 rewrote how `e2e/smoke/run.mjs` builds the environment of every child process
+it spawns, and changed the shape of `test-results/e2e-smoke.json` (it now records the
+excluded ambient secret names and each child's key set/fingerprint). The G0 run
+recorded in `docs/GATES.json` (commit `76d8fd2`) therefore reflects the pre-T-026
+harness.
+
+What did **not** change: the command string, the flag surface, the exit-code
+convention (0 pass / 1 fail), the check count and the check list — the post-fix run
+reports the same `PASS — 12 checks` as the recorded G0 run. The recorded verdict still
+holds; what is stale is the artifact *shape* a re-run would produce.
+
+Decision: **same window as G1.** Re-record G0 together with G1 when the tree is clean
+and Batch 3 has settled, so a single re-approval cycle covers both, rather than
+re-opening G0 twice. Until then, any handoff that cites G0 must say it was recorded on
+the pre-T-026 smoke harness and name this file.
+
 ## Conditions the re-record must satisfy (carry into the next session)
 
 - [ ] The shared working tree is clean (`git status --porcelain` empty) because the
