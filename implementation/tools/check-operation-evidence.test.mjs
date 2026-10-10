@@ -194,16 +194,25 @@ test("schema readiness fails for missing SDL or an unwired fallback", () => {
 });
 
 test("the repository check accepts the L12 roots now declared in the runtime contract", () => {
-  const declared = checkOperationSchema({
-    total: 1,
-    operations: [
-      {
-        type: "query",
-        name: "adminConfiguration",
-        apps: ["svadmin(sv)"],
-      },
-    ],
-  });
+  const declared = checkOperationSchema(
+    {
+      total: 1,
+      operations: [
+        {
+          type: "query",
+          name: "adminConfiguration",
+          apps: ["svadmin(sv)"],
+        },
+      ],
+    },
+    {
+      homes: new Map([
+        ["query.adminConfiguration", "L12-single-vendor.graphql"],
+      ]),
+      implemented: new Set(),
+      fallbackEnabled: true,
+    },
+  );
   // W2 serves the L12 declarations, so the fallback covers them explicitly.
   assert.equal(declared.ready, true);
   assert.equal(declared.explicitNotImplemented, 1);
@@ -211,14 +220,50 @@ test("the repository check accepts the L12 roots now declared in the runtime con
 });
 
 test("the repository check still rejects a root no contract declares", () => {
-  const absent = checkOperationSchema({
-    total: 1,
-    operations: [
-      { type: "query", name: "inventedRoot", apps: ["svadmin(sv)"] },
-    ],
-  });
+  const absent = checkOperationSchema(
+    {
+      total: 1,
+      operations: [
+        { type: "query", name: "inventedRoot", apps: ["svadmin(sv)"] },
+      ],
+    },
+    {
+      homes: new Map(),
+      implemented: new Set(),
+      fallbackEnabled: true,
+    },
+  );
   assert.equal(absent.ready, false);
   assert.equal(absent.missing[0].reason, "SDL_MISSING");
+});
+
+test("a served root missing from the inventory fails unless it is an exempted kernel placeholder", () => {
+  const inventory = {
+    total: 1,
+    operations: [{ type: "query", name: "orders", apps: ["web"] }],
+  };
+  const extra = checkOperationSchema(inventory, {
+    homes: new Map([
+      ["query.orders", "L5-orders.graphql"],
+      ["query.unlisted", "L9-analytics.graphql"],
+    ]),
+    implemented: new Set(),
+    fallbackEnabled: true,
+  });
+  assert.equal(extra.ready, false);
+  assert.deepEqual(extra.missing, [
+    { type: "query", name: "unlisted", reason: "UNINVENTORIED_SDL_ROOT" },
+  ]);
+  const exempt = checkOperationSchema(inventory, {
+    homes: new Map([
+      ["query.orders", "L5-orders.graphql"],
+      ["query._kernel", "core.graphql"],
+    ]),
+    implemented: new Set(),
+    fallbackEnabled: true,
+  });
+  assert.equal(exempt.ready, true);
+  assert.deepEqual(exempt.missing, []);
 });
 
 test("zero inventories, unsupported types, and missing or unknown apps cannot pass", () => {

@@ -200,6 +200,24 @@ describe("runtime contract completeness", () => {
       .map((operation) => `${operation.type}.${operation.name}`)
       .filter((key) => !served.has(key));
     expect(missing).toEqual([]);
+    // And the reverse: the running server must serve exactly the contract that
+    // `loadTypeDefs` declares (Enatega lanes plus the retained legacy roots), so
+    // a root can never appear at runtime without being declared. The
+    // inventory-to-contract direction in both directions is enforced separately
+    // by `check:operations:schema`.
+    const declaredSchema = servedSchema();
+    const declared = new Set([
+      ...Object.keys(rootFields(declaredSchema, "query")).map(
+        (name) => `query.${name}`,
+      ),
+      ...Object.keys(rootFields(declaredSchema, "mutation")).map(
+        (name) => `mutation.${name}`,
+      ),
+      ...Object.keys(rootFields(declaredSchema, "subscription")).map(
+        (name) => `subscription.${name}`,
+      ),
+    ]);
+    expect([...served].sort()).toEqual([...declared].sort());
     expect(inventory.operations.length).toBe(334);
   });
 

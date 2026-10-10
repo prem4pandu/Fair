@@ -17,6 +17,16 @@ const supportedTypes = new Set(["query", "mutation", "subscription"]);
 const declarationNotice =
   "Declaration completeness with operation-associated artifacts; not release proof.";
 
+// Served roots that are deliberately not part of the app-operation inventory:
+// the kernel's own inert placeholders in contracts/enatega/core.graphql. They
+// exist so codegen and the standalone contract set have root types; listing
+// them here is the only way a served-but-uninventoried root may pass, so any
+// new one fails the check instead of silently disappearing from every artifact.
+export const UNINVENTORIED_SERVED_ROOTS = new Set([
+  "query._kernel",
+  "subscription._kernel",
+]);
+
 export function checkOperationSchema(
   inventory,
   {
@@ -24,6 +34,7 @@ export function checkOperationSchema(
     implemented = implementedRoots({ implementation }),
     homes = runtimeSdlHomes(implementation),
     fallbackEnabled = defaultFallbackEnabled(implementation),
+    uninventoriedExemptions = UNINVENTORIED_SERVED_ROOTS,
   } = {},
 ) {
   const errors = [];
@@ -40,6 +51,12 @@ export function checkOperationSchema(
       errors: ["Inventory must contain at least one operation"],
     };
   const missing = [];
+  const inventoryKeys = new Set(
+    inventory.operations.map(
+      (operation) =>
+        `${String(operation?.type ?? "").toLowerCase()}.${operation?.name ?? ""}`,
+    ),
+  );
   let implementedCount = 0;
   let fallbackCount = 0;
   for (const operation of inventory.operations) {
@@ -61,6 +78,18 @@ export function checkOperationSchema(
         reason: "NO_RESOLVER_OR_NOT_IMPLEMENTED_FALLBACK",
       });
   }
+  // The reverse direction: a root the runtime serves but the inventory never
+  // lists would be invisible to every generated artifact, so it must fail here
+  // unless it is an explicitly reviewed kernel placeholder.
+  for (const key of homes.keys())
+    if (!inventoryKeys.has(key) && !uninventoriedExemptions.has(key)) {
+      const [type, ...rest] = key.split(".");
+      missing.push({
+        type,
+        name: rest.join("."),
+        reason: "UNINVENTORIED_SDL_ROOT",
+      });
+    }
   if (inventory.total !== inventory.operations.length)
     errors.push("Inventory total does not match operation count");
   return {
