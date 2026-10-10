@@ -16,7 +16,7 @@
     "codegen:check": "node tools/check-codegen.mjs",
     "check:enatega-ui-source": "node tools/manifest-enatega-ui.mjs --check",
     "check:enatega": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check --scope multivendor",
-    "check:enatega:full": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.full.json",
+    "check:enatega:full": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.full.json --check",
     "check:enatega:singlevendor": "node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.singlevendor.json --check --scope singlevendor",
     "test:enatega-contracts": "node --test tools/check-enatega-compatibility.test.mjs",
     "coverage:report": "pnpm --filter @fairbite/api exec vitest run --config vitest.coverage.config.ts --coverage",

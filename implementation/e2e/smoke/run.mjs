@@ -192,7 +192,7 @@ async function openFrameClient(url, protocol, params = {}) {
 }
 
 /** Replicates the server's bounded-operation rule to measure real documents. */
-function measureDocument(text) {
+function measureDocument(text, limits) {
   const document = parse(text);
   const fragments = new Map();
   for (const definition of document.definitions)
@@ -202,11 +202,11 @@ function measureDocument(text) {
   let fields = 0;
   let aliases = 0;
   let depth = 0;
-  let exceeded = document.definitions.length > 60;
+  let exceeded = document.definitions.length > limits.definitions;
 
   const walk = (selection, level, seen) => {
     depth = Math.max(depth, level);
-    if (level > 15 || fields > 600) {
+    if (level > limits.depth || fields > limits.fields) {
       exceeded = true;
       return;
     }
@@ -227,7 +227,7 @@ function measureDocument(text) {
         if (fragment)
           walk(fragment.selectionSet, level, new Set([...seen, name]));
       }
-      if (fields > 600 || aliases > 30) {
+      if (fields > limits.fields || aliases > limits.aliases) {
         exceeded = true;
         return;
       }
@@ -612,7 +612,7 @@ async function main() {
     for (const app of APPS) {
       for (const document of listDocuments(app)) {
         if (!document.resolved) continue;
-        const measured = measureDocument(document.text);
+        const measured = measureDocument(document.text, LIMITS);
         if (measured.exceeded)
           throw new Error(
             `pinned document ${app} ${document.file}:${document.line} exceeds the server limits`,
@@ -653,8 +653,36 @@ async function main() {
       throw new Error(
         `the largest pinned document was rejected by the limit rule: ${JSON.stringify(limitsResponse.body)}`,
       );
+
+    // Negative control: the size check above only means something if the served
+    // rule can actually reject an over-limit document. Build one that exceeds
+    // the alias budget with a real, servable root and require the exact limit
+    // error, so a removed validation rule fails this smoke instead of passing.
+    const overLimit = `query OverLimit { ${Array.from(
+      { length: LIMITS.aliases + 1 },
+      (_, index) => `a${index}: configuration { currency }`,
+    ).join(" ")} }`;
+    const overLimitResponse = await post(
+      port,
+      { query: overLimit, operationName: "OverLimit" },
+      {
+        nonce: minted.nonce,
+        "bop-auth": `Bearer ${minted.metrics.experience}`,
+      },
+    );
+    const overLimitRejected = JSON.stringify(
+      overLimitResponse.body ?? {},
+    ).includes("Operation exceeds allowed limits");
+    if (!overLimitRejected)
+      throw new Error(
+        `the server did not enforce the bounded-operation rule on an over-limit document (aliases ${LIMITS.aliases + 1}): HTTP ${overLimitResponse.status} ${JSON.stringify(overLimitResponse.body).slice(0, 300)}`,
+      );
+
     record("limits.largest-document", {
       summary: `${largest.app} ${largest.document.file} measured ${largest.measured.fields}/${LIMITS.fields} fields, depth ${largest.measured.depth}/${LIMITS.depth}; served without a limit error`,
+    });
+    record("limits.negative-control", {
+      summary: `an over-limit document (${LIMITS.aliases + 1} aliases > ${LIMITS.aliases}) was rejected with "Operation exceeds allowed limits"`,
     });
 
     writeArtifact(true, null);

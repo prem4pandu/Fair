@@ -518,6 +518,7 @@
       "workstreams": ["W1"],
       "requires": ["GP0"],
       "commands": ["pnpm e2e:smoke"],
+      "requirement": "Transport-level smoke against the real stack: the exact pinned admin and customer web request documents replay over HTTP and both WebSocket frame sets; the metricsGeneral/bop-auth handshake mints a token bound to its nonce; the customer web configuration query returns the active server-owned version; each pinned subscription reaches its explicit terminal frame on both protocols and real configuration data is delivered over both; limits are proven against the largest real document with an over-limit negative control. Browser loading of the admin and customer web shells is the W16 Playwright gate at G3, not this gate.",
       "approvals": ["lead", "reviewer-QA"]
     },
     {
@@ -527,6 +528,7 @@
       "commands": [
         "pnpm check:enatega",
         "pnpm check:enatega:full",
+        "pnpm check:enatega:singlevendor",
         "pnpm codegen:check",
         "pnpm test:integration",
         "pnpm check:operations:schema"

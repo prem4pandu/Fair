@@ -1,7 +1,12 @@
 # contracts/enatega/L12-single-vendor.graphql
-# Lane L12 — single-vendor. Every root is gated by SINGLE_VENDOR_ENABLED (master D1):
-# while disabled it returns NOT_IMPLEMENTED "<operation> is not available yet".
-# Money: Float major units. Timestamps: ISO-8601 strings. Ids: UUID strings.
+# Lane L12 — single-vendor. These declarations are served for contract completeness only.
+# No L12 root has a resolver, so the kernel fallback (`fillNotImplemented`) answers every one of
+# them with NOT_IMPLEMENTED "<operation> is not available yet". There is deliberately no
+# enable/disable flag to bypass that: activating any L12 behavior requires the owner's D1/W21
+# decision and the W21 implementation, never a runtime switch.
+# Money: Float major units in these pin-derived declarations; Wave 5 must reconcile them with the
+# binding integer-minor-units invariant before any L12 behavior is activated.
+# Timestamps: ISO-8601 strings. Ids: UUID strings.
 
 enum CreditRecordType {
   credit

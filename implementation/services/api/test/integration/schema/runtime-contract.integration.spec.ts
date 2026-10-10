@@ -110,7 +110,13 @@ const selectionFor = (type: GraphQLOutputType, depth = 0): string => {
   return "{ __typename }";
 };
 
-/** The same SDL composition the runtime loads, for argument metadata. */
+/**
+ * The same SDL composition the runtime loads, used only for argument metadata
+ * when building documents: root presence is proven against the running server by
+ * the HTTP introspection test, and `loadTypeDefs` is the same input `app.ts`
+ * hands to Apollo, so the metadata cannot drift from what is served without that
+ * introspection assertion failing first.
+ */
 const servedSchema = (): GraphQLSchema =>
   buildSchema(loadTypeDefs().join("\n"));
 
@@ -133,9 +139,39 @@ const rootFields = (
 describe("runtime contract completeness", () => {
   let stack: Stack;
   let api: Api;
+  let configurationId: string;
 
   beforeAll(async () => {
     stack = await startStack();
+    // One real server-owned configuration version so "implemented root" means an
+    // actual value, not merely the absence of one error code.
+    configurationId = randomUUID();
+    const version = Number(
+      (
+        await stack.pool.query(
+          'SELECT COALESCE(MAX(version), 0) + 1 AS version FROM "RuntimeConfigurationVersion"',
+        )
+      ).rows[0].version,
+    );
+    await stack.pool.query(
+      'INSERT INTO "RuntimeConfigurationVersion"(id,version,document) VALUES($1,$2,$3)',
+      [
+        configurationId,
+        version,
+        {
+          countryCode: "MY",
+          currency: "MYR",
+          currencySymbol: "RM",
+          currencyMinorUnits: 2,
+          skipEmailVerification: false,
+          skipMobileVerification: false,
+        },
+      ],
+    );
+    await stack.pool.query(
+      'INSERT INTO "RuntimeConfigurationPointer"(id,"versionId") VALUES(1,$1) ON CONFLICT(id) DO UPDATE SET "versionId"=EXCLUDED."versionId"',
+      [configurationId],
+    );
     api = await startApi(stack);
   });
   afterAll(async () => {
@@ -200,41 +236,54 @@ describe("runtime contract completeness", () => {
     expect(failures).toEqual([]);
   }, 120_000);
 
-  it("returns NOT_IMPLEMENTED for the L12 subscription over the legacy frames", async () => {
-    const field = rootFields(servedSchema(), "subscription")[
-      "subscriptionPaymentSuccess"
-    ]!;
-    const required = requiredArguments(field);
-    const variables = Object.fromEntries(
-      required.map((argument) => [argument.name, valueFor(argument.type)]),
+  it("returns NOT_IMPLEMENTED for every L12 subscription over the legacy frames", async () => {
+    const subscriptions = inventory.operations.filter(
+      (operation) =>
+        operation.lane === "L12" && operation.type === "subscription",
     );
-    const variableDefinitions = required
-      .map((argument) => `$${argument.name}: ${argument.type}`)
-      .join(", ");
-    const query = `subscription Smoke${variableDefinitions ? `(${variableDefinitions})` : ""} { subscriptionPaymentSuccess(${required
-      .map((argument) => `${argument.name}: $${argument.name}`)
-      .join(", ")}) ${selectionFor(field.type)} }`;
-    const subscription = await legacySubscribe(api.wsUrl, query, variables, {
-      nonce: "runtime-contract",
-    });
-    try {
-      const payload = (await subscription.next()) as {
-        errors?: { extensions?: { code?: string } }[];
-      };
-      expect(payload.errors?.[0]?.extensions?.code).toBe("NOT_IMPLEMENTED");
-    } finally {
-      subscription.close();
+    expect(subscriptions.length).toBeGreaterThan(0);
+    const fields = rootFields(servedSchema(), "subscription");
+    for (const operation of subscriptions) {
+      const field = fields[operation.name]!;
+      const required = requiredArguments(field);
+      const variables = Object.fromEntries(
+        required.map((argument) => [argument.name, valueFor(argument.type)]),
+      );
+      const variableDefinitions = required
+        .map((argument) => `$${argument.name}: ${argument.type}`)
+        .join(", ");
+      const call = required.length
+        ? `(${required.map((argument) => `${argument.name}: $${argument.name}`).join(", ")})`
+        : "";
+      const query = `subscription Smoke${variableDefinitions ? `(${variableDefinitions})` : ""} { ${operation.name}${call} ${selectionFor(field.type)} }`;
+      const subscription = await legacySubscribe(api.wsUrl, query, variables, {
+        nonce: "runtime-contract",
+      });
+      try {
+        const payload = (await subscription.next()) as {
+          errors?: { extensions?: { code?: string } }[];
+        };
+        expect({
+          operation: `${operation.type}.${operation.name}`,
+          code: payload.errors?.[0]?.extensions?.code,
+        }).toEqual({
+          operation: `${operation.type}.${operation.name}`,
+          code: "NOT_IMPLEMENTED",
+        });
+      } finally {
+        subscription.close();
+      }
     }
   });
 
-  it("still serves implemented multivendor roots", async () => {
+  it("still serves an implemented multivendor root with real server-owned data", async () => {
     const configuration = await api.http.query<{
-      configuration: { currency: string } | null;
-    }>("{ configuration { currency } }");
-    expect(configuration.errors ?? []).not.toContainEqual(
-      expect.objectContaining({
-        extensions: expect.objectContaining({ code: "NOT_IMPLEMENTED" }),
-      }),
-    );
+      configuration: { _id: string; currency: string } | null;
+    }>("{ configuration { _id currency } }");
+    expect(configuration.errors ?? []).toEqual([]);
+    expect(configuration.data?.configuration).toEqual({
+      _id: configurationId,
+      currency: "MYR",
+    });
   });
 });
