@@ -147,4 +147,19 @@ export class IdentityResolver {
   ) {
     return this.enatega.deactivate({ email, isActive }, ctx);
   }
+
+  @Mutation("updateUser") updateUser(
+    @Args("updateUserInput") input: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.enatega.updateUser(
+      (input ?? {}) as {
+        name?: unknown;
+        phone?: unknown;
+        phoneIsVerified?: unknown;
+        emailIsVerified?: unknown;
+      },
+      ctx,
+    );
+  }
 }

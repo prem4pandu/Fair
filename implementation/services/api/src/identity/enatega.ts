@@ -263,6 +263,18 @@ export class EnategaIdentityAdapter {
     return this.identity.deactivate(input, context);
   }
 
+  async updateUser(
+    input: {
+      name?: unknown;
+      phone?: unknown;
+      phoneIsVerified?: unknown;
+      emailIsVerified?: unknown;
+    },
+    context: IdentityContext,
+  ) {
+    return this.identity.updateUser(input ?? {}, context);
+  }
+
   async ownerSession(context: IdentityContext) {
     return toEnategaOwnerSessionFromToken(
       await this.identity.ownerPrincipal(context),

@@ -645,6 +645,69 @@ export class IdentityService {
       isActive,
     };
   }
+  /**
+   * Updates the caller's own profile. The pinned clients send
+   * `phoneIsVerified`/`emailIsVerified` with this mutation, but those are
+   * client claims: the response is derived from persisted server state and the
+   * flags are never written, per the lane rule that verification comes only
+   * from a consumed server challenge. No phone proof can exist until the
+   * challenge store lands, so `phoneIsVerified` is always false for now.
+   */
+  async updateUser(
+    input: {
+      name?: unknown;
+      phone?: unknown;
+      phoneIsVerified?: unknown;
+      emailIsVerified?: unknown;
+    },
+    context: IdentityContext,
+  ): Promise<{
+    _id: string;
+    name: string;
+    phone: string | null;
+    phoneIsVerified: boolean;
+    emailIsVerified: boolean;
+  }> {
+    this.enabled();
+    const user = await this.identity("CUSTOMER", context);
+    await this.limit(context, `update-user:${user.id}`);
+    const name = typeof input?.name === "string" ? input.name.trim() : "";
+    if (name.length < 1 || name.length > 100)
+      return authError("BAD_USER_INPUT", "Invalid request");
+    // Absent or null means "leave the stored number alone"; any provided value
+    // must be a real E.164 number.
+    const requested = input?.phone;
+    const phone =
+      requested === undefined || requested === null
+        ? undefined
+        : normalizePhone(requested);
+    try {
+      const updated = await this.prisma.identityUser.update({
+        where: { id: user.id },
+        data: { displayName: name, ...(phone === undefined ? {} : { phone }) },
+        select: {
+          id: true,
+          displayName: true,
+          phone: true,
+          emailVerified: true,
+        },
+      });
+      return {
+        _id: updated.id,
+        name: updated.displayName,
+        phone: updated.phone,
+        phoneIsVerified: false,
+        emailIsVerified: updated.emailVerified,
+      };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      )
+        return authError("CONFLICT", "The resource changed, try again");
+      return unavailable();
+    }
+  }
   async identity(
     requested: Application,
     context: IdentityContext,
