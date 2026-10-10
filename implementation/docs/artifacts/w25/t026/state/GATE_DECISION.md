@@ -6,12 +6,20 @@ Date: 2026-10-10. Owner: lead-dsh-w25.
 
 `docs/TASK_BOARD.md` row T-026 says: "no gate command changes without re-recording that
 gate". task-2 changes the behaviour of `--check` in
-`tools/check-enatega-compatibility.mjs`, and the recorded **G1** run
-(`docs/GATES.json`, commit `ddd3f02`, closed at `3c1afc2`) consists of exactly:
+`tools/check-enatega-compatibility.mjs`. The recorded **G1** run
+(`docs/GATES.json`, commit `3c1afc2`) has **six** commands, three of which are the
+checker commands whose semantics changed:
 
-- `pnpm check:enatega`
-- `pnpm check:enatega:full`
-- `pnpm check:enatega:singlevendor`
+- `pnpm check:enatega` — changed
+- `pnpm check:enatega:full` — changed
+- `pnpm check:enatega:singlevendor` — changed
+- `pnpm codegen:check` — unaffected
+- `pnpm test:integration` — unaffected
+- `pnpm check:operations:schema` — unaffected
+
+(Correction recorded after the independent review, `5353c9f`, finding D3: an earlier
+revision of this file said G1 "consists of exactly" the three checker commands. It does
+not — the run has six, and only the three above are invalidated by T-026B.)
 
 So G1's evidence was produced by a checker that silently rewrote the report it was
 verifying. The recorded run is still a true record of what ran at that commit, but the

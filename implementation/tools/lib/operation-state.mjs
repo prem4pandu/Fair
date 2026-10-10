@@ -74,6 +74,14 @@ function decoratorsOf(node) {
  * comma) must not hide one. The returned key is the lowercased kind plus the
  * field name exactly as declared (`query.emailExist`), which is what the
  * generated artifacts compare against.
+ *
+ * A root field is a resolver *method*: `@Query`/`@Mutation`/`@Subscription`
+ * only register a resolver when they decorate one, so the same decorator name
+ * on a class, a property or a parameter is ignored rather than counted.
+ * Arguments are read only when they are a single plain string literal; a
+ * parenthesised or concatenated argument would require evaluating the
+ * expression, which a static inventory must not do — under-counting leaves the
+ * root on the NOT_IMPLEMENTED fallback, over-counting would fabricate progress.
  */
 export function implementedRoots({
   implementation = defaultImplementation,
@@ -90,16 +98,18 @@ export function implementedRoots({
       ts.ScriptKind.TS,
     );
     const visit = (node) => {
-      for (const decorator of decoratorsOf(node)) {
-        const call = decorator.expression;
-        if (!ts.isCallExpression(call) || !ts.isIdentifier(call.expression))
-          continue;
-        const kind = call.expression.text.toLowerCase();
-        if (!ROOT_DECORATORS.has(kind)) continue;
-        const [argument] = call.arguments;
-        if (!argument || !ts.isStringLiteralLike(argument)) continue;
-        if (!/^[A-Za-z0-9_]+$/.test(argument.text)) continue;
-        found.add(`${kind}.${argument.text}`);
+      if (ts.isMethodDeclaration(node)) {
+        for (const decorator of decoratorsOf(node)) {
+          const call = decorator.expression;
+          if (!ts.isCallExpression(call) || !ts.isIdentifier(call.expression))
+            continue;
+          const kind = call.expression.text.toLowerCase();
+          if (!ROOT_DECORATORS.has(kind)) continue;
+          const [argument] = call.arguments;
+          if (!argument || !ts.isStringLiteralLike(argument)) continue;
+          if (!/^[A-Za-z0-9_]+$/.test(argument.text)) continue;
+          found.add(`${kind}.${argument.text}`);
+        }
       }
       ts.forEachChild(node, visit);
     };

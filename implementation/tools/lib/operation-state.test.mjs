@@ -75,7 +75,7 @@ test("ignores decorator-shaped text inside string literals", () => {
     rootsFor({
       "strings.resolver.ts": [
         "export class StringsResolver {",
-        '  static example = \'@Query("inSingleQuotes")\';',
+        "  static example = '@Query(\"inSingleQuotes\")';",
         '  static other = `@Mutation("inTemplate")`;',
         '  @Query("realRoot")',
         "  realRoot() {}",
@@ -119,7 +119,7 @@ test("ignores non-root decorators and non-literal arguments", () => {
         '  @Field("name")',
         "  name() {}",
         "",
-        '  @Query(ROOT_NAME)',
+        "  @Query(ROOT_NAME)",
         "  dynamic() {}",
         "",
         '  @Query("with.dots")',
@@ -138,5 +138,56 @@ test("deduplicates the same root across files", () => {
       "b.ts": 'export class B {\n  @Query("shared")\n  shared() {}\n}',
     }),
     ["query.shared"],
+  );
+});
+
+test("counts only method roots, not class, property or parameter decorations", () => {
+  assert.deepEqual(
+    rootsFor({
+      "shapes.ts": [
+        "class PropertyDecorated {",
+        '  @Query("propertyDecorated")',
+        "  field = 1;",
+        "",
+        '  @Mutation("realMethod")',
+        "  realMethod() {}",
+        "}",
+        "",
+        "class ParameterDecorated {",
+        '  method(@Subscription("parameterDecorated") argument: string) {}',
+        "}",
+      ].join("\n"),
+      "class-decorated.ts": [
+        '@Query("classDecorated")',
+        "class Decorated {",
+        "  value() {}",
+        "}",
+      ].join("\n"),
+    }),
+    ["mutation.realMethod"],
+  );
+});
+
+test("documents the argument shapes that are deliberately not resolved", () => {
+  // A parenthesised or concatenated argument would need evaluation, which a
+  // static inventory must not do. These stay uncounted on purpose: an
+  // uncounted root falls back to NOT_IMPLEMENTED, an invented one would be
+  // fabricated progress.
+  assert.deepEqual(
+    rootsFor({
+      "arguments.ts": [
+        "class ArgumentShapes {",
+        '  @Query("plain")',
+        "  plain() {}",
+        "",
+        '  @Query(("parenthesised"))',
+        "  parenthesised() {}",
+        "",
+        '  @Query("con" + "catenated")',
+        "  concatenated() {}",
+        "}",
+      ].join("\n"),
+    }),
+    ["query.plain"],
   );
 });
