@@ -1,0 +1,62 @@
+{
+  "operation": "mutation.Deactivate",
+  "lane": "L1",
+  "workstream": "W3",
+  "commit": "768e0bc",
+  "sourceDocuments": [
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/mutations.js",
+      "exportName": "Deactivate",
+      "note": "Selects only isActive."
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/mutations/auth/index.ts",
+      "exportName": "DEACTIVATE_USER",
+      "note": "Selects _id, name, email, isActive."
+    }
+  ],
+  "migration": {
+    "name": "202610100003_l1_deactivate_audit",
+    "kind": "additive extension of a reviewed security control",
+    "change": "IdentityAuditEvent_action_check also allows DEACTIVATE; no action removed and no row touched.",
+    "rollback": "Restore the previous CHECK while no DEACTIVATE row exists."
+  },
+  "securityDecisions": [
+    "The email argument is an ownership claim, never a selector: it must equal the authenticated principal's normalized email, so the mutation cannot deactivate another account.",
+    "Deactivation revokes every session family in the same transaction as the SUSPENDED status change, so HTTP and WebSocket sessions both die.",
+    "Reactivation is only reachable by an already-active principal, because a suspended principal cannot authenticate; self-service recovery is therefore impossible by construction.",
+    "Identity resolution accepts only the CUSTOMER and RIDER applications that own this root, and only AUTHENTICATION_FAILED falls through to the next candidate — an infrastructure failure is never disguised as another application's rejection."
+  ],
+  "commands": [
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/deactivate.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "2 tests: the ownership claim and requested state are forwarded; a rejection is propagated without inventing a result."
+    },
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/deactivate.integration.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "6 tests: exact app and web documents; SUSPENDED plus every session revoked; DEACTIVATE audit row; another account by email refused with both accounts unchanged; rider application principal served; reactivation keeps the session; non-boolean and anonymous callers rejected without side effects."
+    },
+    {
+      "command": "pnpm test:integration",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "19 files / 110 tests green on commit 768e0bc."
+    }
+  ],
+  "evidenceStatus": {
+    "unit": "passed",
+    "integration": "passed",
+    "playwright": "not-run",
+    "reason": "The apps list is app, rider and web, so the evidence checker requires both web (W16) and device (W19) evidence. The record stays NOT_VERIFIED."
+  },
+  "knownLimits": [
+    "Latent defect found while implementing this root, outside its scope: the pre-existing refresh/logout/logoutAll revocations still pass a Node-side Date as revokedAt, which the same family CHECK can reject under container clock skew. They pass today, but they should move to the transaction clock like this root."
+  ],
+  "reviewer": null
+}

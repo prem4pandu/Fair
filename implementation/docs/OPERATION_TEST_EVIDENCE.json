@@ -2098,8 +2098,28 @@
       "apps": ["app", "rider", "web"],
       "status": "NOT_VERIFIED",
       "tests": {
-        "unit": [],
-        "integration": [],
+        "unit": [
+          {
+            "path": "services/api/test/unit/identity/deactivate.spec.ts",
+            "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/deactivate.spec.ts",
+            "result": {
+              "status": "passed",
+              "exitCode": 0,
+              "evidenceFiles": ["docs/artifacts/w3/deactivate.json"]
+            }
+          }
+        ],
+        "integration": [
+          {
+            "path": "services/api/test/integration/identity/deactivate.integration.spec.ts",
+            "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/deactivate.integration.spec.ts",
+            "result": {
+              "status": "passed",
+              "exitCode": 0,
+              "evidenceFiles": ["docs/artifacts/w3/deactivate.json"]
+            }
+          }
+        ],
         "playwright": [],
         "device": []
       }
