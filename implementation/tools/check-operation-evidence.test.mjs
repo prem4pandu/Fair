@@ -193,8 +193,8 @@ test("schema readiness fails for missing SDL or an unwired fallback", () => {
   );
 });
 
-test("the repository check rejects roots excluded from the active runtime", () => {
-  const result = checkOperationSchema({
+test("the repository check accepts the L12 roots now declared in the runtime contract", () => {
+  const declared = checkOperationSchema({
     total: 1,
     operations: [
       {
@@ -204,8 +204,21 @@ test("the repository check rejects roots excluded from the active runtime", () =
       },
     ],
   });
-  assert.equal(result.ready, false);
-  assert.equal(result.missing[0].reason, "SDL_MISSING");
+  // W2 serves the L12 declarations, so the fallback covers them explicitly.
+  assert.equal(declared.ready, true);
+  assert.equal(declared.explicitNotImplemented, 1);
+  assert.deepEqual(declared.missing, []);
+});
+
+test("the repository check still rejects a root no contract declares", () => {
+  const absent = checkOperationSchema({
+    total: 1,
+    operations: [
+      { type: "query", name: "inventedRoot", apps: ["svadmin(sv)"] },
+    ],
+  });
+  assert.equal(absent.ready, false);
+  assert.equal(absent.missing[0].reason, "SDL_MISSING");
 });
 
 test("zero inventories, unsupported types, and missing or unknown apps cannot pass", () => {

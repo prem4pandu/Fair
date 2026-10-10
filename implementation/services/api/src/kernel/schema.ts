@@ -7,8 +7,6 @@ const contracts = new URL("../../../../contracts/", import.meta.url);
 const EXCLUDED_ENATEGA_CONTRACTS = new Set([
   // Superseded by core.graphql. Loading both defines the kernel roots twice.
   "kernel.graphql",
-  // Single-vendor operations stay outside the multivendor runtime until Wave 5.
-  "L12-single-vendor.graphql",
 ]);
 
 // These schemas back implemented roots whose names do not collide with the
@@ -21,8 +19,11 @@ const COMPATIBLE_LEGACY_CONTRACTS = [
   "addresses.graphql",
 ];
 
-// Load the complete multivendor Enatega contract and only non-conflicting
-// implemented legacy roots in a stable order.
+// Load the complete Enatega contract — including the L12 single-vendor
+// declarations, which are served for contract completeness and return the
+// explicit NOT_IMPLEMENTED fallback until Wave 5 activates their business
+// behavior — plus only non-conflicting implemented legacy roots in a stable
+// order.
 export function loadTypeDefs(): string[] {
   const directory = fileURLToPath(new URL("enatega/", contracts));
   const enategaFiles = existsSync(directory)

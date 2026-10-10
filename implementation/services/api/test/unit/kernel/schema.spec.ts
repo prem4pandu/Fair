@@ -21,9 +21,18 @@ describe("runtime GraphQL contract", () => {
     expect(query.getDashboardUsers).toBeDefined();
   });
 
-  it("excludes the deferred single-vendor schema and old configuration type", () => {
+  it("serves the L12 declarations for contract completeness while excluding superseded types", () => {
     const schema = buildSchema(loadTypeDefs().join("\n"));
 
+    // L12 roots are declared so the complete pinned contract is served; their
+    // behavior stays explicit NOT_IMPLEMENTED until Wave 5 activates it.
+    expect(schema.getQueryType()?.getFields().getAllfoods).toBeDefined();
+    expect(schema.getMutationType()?.getFields().giveUserCredits).toBeDefined();
+    expect(
+      schema.getSubscriptionType()?.getFields().subscriptionPaymentSuccess,
+    ).toBeDefined();
+    // kernel.graphql stays excluded (core.graphql supersedes it) and the old
+    // configuration type is still replaced by the L2 response type.
     expect(schema.getType("L12DeferredContract")).toBeUndefined();
     expect(schema.getType("EnategaPublicConfiguration")).toBeUndefined();
     expect(
