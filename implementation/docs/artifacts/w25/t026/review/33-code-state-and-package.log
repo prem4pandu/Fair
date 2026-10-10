@@ -1,0 +1,41 @@
+=== smoke code-state-a1-a2.sha256 vs actual ===
+4e15638ace097ac24aadfbfbef6b2bebeff38a7d6167a299b7c94201fc5a3f34  e2e/smoke/run.mjs
+5c9f2aec9b082fdede92298f08f3cc98bc331f9b02601643628e93f1c826becb  e2e/smoke/environment.mjs
+5dacb27feaf375625c3c6c77eb891e92b4781b27748b88588bfeee8128466121  e2e/smoke/environment.test.mjs
+eeda23f2a562b73dbeab6ab51e87d20b4eb8e2da99c050020672e0b22f717703  e2e/smoke/fixtures/child-env-probe.cjs
+--- actual ---
+4e15638ace097ac24aadfbfbef6b2bebeff38a7d6167a299b7c94201fc5a3f34  e2e/smoke/run.mjs
+5c9f2aec9b082fdede92298f08f3cc98bc331f9b02601643628e93f1c826becb  e2e/smoke/environment.mjs
+5dacb27feaf375625c3c6c77eb891e92b4781b27748b88588bfeee8128466121  e2e/smoke/environment.test.mjs
+eeda23f2a562b73dbeab6ab51e87d20b4eb8e2da99c050020672e0b22f717703  e2e/smoke/fixtures/child-env-probe.cjs
+
+=== package.json relevant scripts ===
+test => turbo run test && node --test tools/*.test.mjs tools/lib/*.test.mjs
+test:e2e-smoke => undefined
+test:operation-evidence => node --test tools/check-operation-evidence.test.mjs
+format:check => prettier --check .
+
+=== is pnpm test a recorded gate command? ===
+GP0 @c814670e pnpm test exit 0
+GP0 @c814670e pnpm test exit 1
+GP0 @c814670e pnpm test exit 0
+GP0 @cabd63f1 pnpm test exit 1
+GP0 @5a75b7dd pnpm test exit 0
+GP0 @b4f7fd59 pnpm test exit 0
+GP0 @08bcd146 pnpm test exit 0
+GP0 @15143221 pnpm test exit 0
+GP0 @08a702b8 pnpm test exit 0
+ROADMAP GP0 ["pnpm install --frozen-lockfile","pnpm lint","pnpm format:check","pnpm typecheck","pnpm build","pnpm test","pnpm test:integration","pnpm coverage:report","pnpm check:enatega-ui-source","pnpm test:enatega-contracts","pnpm test:operation-evidence","node --test tools/*.test.mjs","pnpm traceability:check","pnpm roadmap:check","pnpm check:error-messages","pnpm e2e:backend"]
+ROADMAP G2 ["pnpm test","pnpm test:integration","pnpm coverage","pnpm e2e (lane specs)"]
+
+=== frozen fingerprint constant in the owner's test ===
+e2e/smoke/environment.test.mjs:270:    "77c151b2309f836b",
+e2e/smoke/environment.test.mjs:308:  assert.equal(fingerprintDeterministicSecrets(env), "60ecfee0ef6bcd2e");
+docs/artifacts/w25/t026/smoke/run1-normal-artifact.json:33:        "deterministicSecretsFingerprint": "60ecfee0ef6bcd2e",
+docs/artifacts/w25/t026/smoke/run1-normal-artifact.json:51:        "deterministicSecretsFingerprint": "60ecfee0ef6bcd2e",
+docs/artifacts/w25/t026/smoke/run1-normal-artifact.json:82:        "deterministicSecretsFingerprint": "77c151b2309f836b",
+docs/artifacts/w25/t026/smoke/run2-normal-artifact.json:33:        "deterministicSecretsFingerprint": "60ecfee0ef6bcd2e",
+docs/artifacts/w25/t026/smoke/run2-normal-artifact.json:51:        "deterministicSecretsFingerprint": "60ecfee0ef6bcd2e",
+docs/artifacts/w25/t026/smoke/run2-normal-artifact.json:82:        "deterministicSecretsFingerprint": "77c151b2309f836b",
+docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json:51:        "deterministicSecretsFingerprint": "60ecfee0ef6bcd2e",
+docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json:69:        "deterministicSecretsFingerprint": "60ecfee0ef6bcd2e",

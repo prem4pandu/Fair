@@ -1,0 +1,206 @@
+{
+  "gate": "G0",
+  "workstream": "W1",
+  "command": "pnpm e2e:smoke",
+  "startedAt": "2026-10-10T13:50:32.412Z",
+  "finishedAt": "2026-10-10T13:50:51.380Z",
+  "passed": true,
+  "error": null,
+  "transport": "real stack (PostGIS 17 + Redis 7 + built API process)",
+  "environment": {
+    "ambientSecretNames": [
+      "ACCESS_TOKEN_SECRET",
+      "PUBLIC_ACCESS_SECRET",
+      "REFRESH_TOKEN_PEPPER"
+    ],
+    "ambientHazards": [
+      {
+        "name": "DOCKER_HOST",
+        "reason": "container transport URL can carry credentials (userinfo)"
+      },
+      {
+        "name": "NODE_OPTIONS",
+        "reason": "node flags can inject code into a child (--require/--import/--eval/--loader)"
+      },
+      {
+        "name": "NODE_PATH",
+        "reason": "node module-resolution path can redirect imports"
+      },
+      {
+        "name": "SMTP_URL",
+        "reason": "value carries URL credentials (userinfo)"
+      }
+    ],
+    "children": {
+      "build": {
+        "cwd": "/Users/premkumarmamidi/Development/Fair/implementation",
+        "keys": [
+          "COREPACK_ENABLE_DOWNLOAD_PROMPT",
+          "HOME",
+          "LANG",
+          "LOGNAME",
+          "NO_COLOR",
+          "PATH",
+          "SHELL",
+          "TERM",
+          "TMPDIR",
+          "USER"
+        ],
+        "deterministicSecretsFingerprint": "60ecfee0ef6bcd2e",
+        "ephemeralContainerPlumbing": {}
+      },
+      "migrate": {
+        "cwd": "/Users/premkumarmamidi/Development/Fair/implementation/services/api",
+        "keys": [
+          "COREPACK_ENABLE_DOWNLOAD_PROMPT",
+          "DATABASE_URL",
+          "HOME",
+          "LANG",
+          "LOGNAME",
+          "NO_COLOR",
+          "PATH",
+          "SHELL",
+          "TERM",
+          "TMPDIR",
+          "USER"
+        ],
+        "deterministicSecretsFingerprint": "60ecfee0ef6bcd2e",
+        "ephemeralContainerPlumbing": {
+          "DATABASE_URL": "postgres://***:***@localhost:32929/test"
+        }
+      },
+      "api": {
+        "cwd": "/Users/premkumarmamidi/Development/Fair/implementation",
+        "keys": [
+          "ACCESS_TOKEN_SECRET",
+          "APP_ENV",
+          "COREPACK_ENABLE_DOWNLOAD_PROMPT",
+          "CORS_ORIGINS",
+          "DATABASE_URL",
+          "HOME",
+          "HOST",
+          "LANG",
+          "LOGNAME",
+          "NO_COLOR",
+          "PASSWORD_AUTH_ENABLED",
+          "PATH",
+          "PORT",
+          "PUBLIC_ACCESS_ENFORCED",
+          "PUBLIC_ACCESS_SECRET",
+          "PUBLIC_BASE_URL",
+          "REDIS_URL",
+          "REFRESH_TOKEN_PEPPER",
+          "SHELL",
+          "TERM",
+          "TMPDIR",
+          "USER"
+        ],
+        "deterministicSecretsFingerprint": "77c151b2309f836b",
+        "ephemeralContainerPlumbing": {
+          "DATABASE_URL": "postgres://***:***@localhost:32929/test",
+          "REDIS_URL": "redis://localhost:32930"
+        }
+      }
+    }
+  },
+  "pinnedDocuments": [
+    {
+      "id": "admin.metricsGeneral",
+      "app": "enatega-multivendor-admin",
+      "file": "lib/api/graphql/mutations/metrics/index.ts",
+      "exportName": "METRICS_GENERAL",
+      "role": "handshake"
+    },
+    {
+      "id": "web.metricsGeneral",
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/mutations/metrics/index.ts",
+      "exportName": "METRICS_GENERAL",
+      "role": "handshake"
+    },
+    {
+      "id": "web.configuration",
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/queries/config.ts",
+      "exportName": "GET_CONFIG",
+      "role": "configuration"
+    },
+    {
+      "id": "admin.subscribePlaceOrder",
+      "app": "enatega-multivendor-admin",
+      "file": "lib/api/graphql/subscription/order-subscription/index.ts",
+      "exportName": "SUBSCRIPTION_PLACE_ORDER",
+      "role": "subscription"
+    },
+    {
+      "id": "web.orderStatusChanged",
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/subscription/orders/index.ts",
+      "exportName": "orderStatusChanged",
+      "role": "subscription"
+    }
+  ],
+  "checks": [
+    {
+      "name": "health.live",
+      "at": "2026-10-10T13:50:49.885Z",
+      "summary": "HTTP 200"
+    },
+    {
+      "name": "health.ready",
+      "at": "2026-10-10T13:50:49.886Z",
+      "summary": "HTTP 200 (Postgres and Redis reachable)"
+    },
+    {
+      "name": "handshake.admin.metricsGeneral",
+      "at": "2026-10-10T13:50:49.917Z",
+      "summary": "HTTP 200, token bound to its nonce (10 pinned fields)"
+    },
+    {
+      "name": "handshake.web.metricsGeneral",
+      "at": "2026-10-10T13:50:49.919Z",
+      "summary": "HTTP 200, token bound to its nonce (10 pinned fields)"
+    },
+    {
+      "name": "gate.enforced",
+      "at": "2026-10-10T13:50:49.920Z",
+      "summary": "unauthenticated configuration rejected with PUBLIC_ACCESS_DENIED"
+    },
+    {
+      "name": "configuration.web",
+      "at": "2026-10-10T13:50:49.986Z",
+      "summary": "HTTP 200, active version f8f3acc6-5001-4da2-9722-b40b05727b33 (MYR)"
+    },
+    {
+      "name": "websocket.subscription.admin.subscribePlaceOrder",
+      "at": "2026-10-10T13:50:50.195Z",
+      "summary": "legacy (graphql-ws) and modern (graphql-transport-ws) both delivered the subscription to its explicit NOT_IMPLEMENTED terminal"
+    },
+    {
+      "name": "websocket.subscription.web.orderStatusChanged",
+      "at": "2026-10-10T13:50:50.402Z",
+      "summary": "legacy (graphql-ws) and modern (graphql-transport-ws) both delivered the subscription to its explicit NOT_IMPLEMENTED terminal"
+    },
+    {
+      "name": "websocket.data.graphql-ws",
+      "at": "2026-10-10T13:50:50.505Z",
+      "summary": "real configuration data delivered over graphql-ws"
+    },
+    {
+      "name": "websocket.data.graphql-transport-ws",
+      "at": "2026-10-10T13:50:50.610Z",
+      "summary": "real configuration data delivered over graphql-transport-ws"
+    },
+    {
+      "name": "limits.largest-document",
+      "at": "2026-10-10T13:50:51.379Z",
+      "summary": "enatega-multivendor-app src/singlevendor/apollo/queries.js measured 165/600 fields, depth 6/15; served without a limit error"
+    },
+    {
+      "name": "limits.negative-control",
+      "at": "2026-10-10T13:50:51.380Z",
+      "summary": "an over-limit document (31 aliases > 30) was rejected with \"Operation exceeds allowed limits\""
+    }
+  ],
+  "apiLogTail": "{\"event\":\"api_started\",\"port\":54878}\n"
+}

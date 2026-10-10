@@ -1,0 +1,26 @@
+=== delta D: repo-wide tools suite (REPO_TEST_STATUS.md claim) ===
+--- A: current AST implementation (88c075b) ---
+   2 ✖ status reports only derived facts and never claims an unapproved gate (26.073084ms)
+   2 ✖ status report is current, self-contained, and accessible (303.024ms)
+   2 ✖ roadmap status is current and internally consistent (269.362042ms)
+   2 ✖ reported resolver coverage matches an independent source scan (65.357708ms)
+   1 ✖ failing tests:
+   1 ℹ tests 112
+   1 ℹ pass 108
+   1 ℹ fail 4
+
+--- B: pre-T-026C regex implementation (2bbddc4^), sha bf9505c61992 ---
+   2 ✖ status reports only derived facts and never claims an unapproved gate (6.159583ms)
+   2 ✖ status report is current, self-contained, and accessible (121.200875ms)
+   2 ✖ roadmap status is current and internally consistent (94.449667ms)
+   2 ✖ reported resolver coverage matches an independent source scan (7.78ms)
+   2 ✖ ignores decorator-shaped text inside string literals (0.840708ms)
+   2 ✖ ignores decorator-shaped text in comments (1.234917ms)
+   2 ✖ counts only method roots, not class, property or parameter decorations (1.186917ms)
+   2 ✖ accepts valid formatting the regex-based reader missed (1.235292ms)
+   1 ✖ failing tests:
+   1 ℹ tests 112
+   1 ℹ pass 104
+   1 ℹ fail 8
+
+restored sha: 00e28c865f7bac05998fee342805ceec1078bce47ae52748d231816f3367f79c (expect 00e28c865f7bac05998fee342805ceec1078bce47ae52748d231816f3367f79c)

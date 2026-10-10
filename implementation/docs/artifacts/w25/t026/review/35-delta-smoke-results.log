@@ -1,0 +1,38 @@
+=== my three runs: result lines ===
+[e2e:smoke] excluding 1 ambient value(s) that can inject code or carry credentials: DOCKER_HOST (container transport URL can carry credentials (userinfo))
+[e2e:smoke] PASS — 12 checks; artifact test-results/e2e-smoke.json
+exit=0
+[e2e:smoke] excluding 1 ambient value(s) that can inject code or carry credentials: DOCKER_HOST (container transport URL can carry credentials (userinfo))
+[e2e:smoke] PASS — 12 checks; artifact test-results/e2e-smoke.json
+exit=0
+[e2e:smoke] excluding 3 ambient secret variable(s) from every child process: ACCESS_TOKEN_SECRET, PUBLIC_ACCESS_SECRET, REFRESH_TOKEN_PEPPER
+[e2e:smoke] excluding 4 ambient value(s) that can inject code or carry credentials: DOCKER_HOST (container transport URL can carry credentials (userinfo)); NODE_OPTIONS (node flags can inject code into a child (--require/--import/--eval/--loader)); NODE_PATH (node module-resolution path can redirect imports); SMTP_URL (value carries URL credentials (userinfo))
+[e2e:smoke] PASS — 12 checks; artifact test-results/e2e-smoke.json
+exit=0
+
+=== my artifacts: fingerprints + plumbing + keys ===
+32-run1-artifact.json passed=true checks=12
+  ambientSecretNames []
+  ambientHazards ["DOCKER_HOST"]
+    build 60ecfee0ef6bcd2e {} keys=10
+    migrate 60ecfee0ef6bcd2e {"DATABASE_URL":"postgres://***:***@localhost:32925/test"} keys=11
+    api 77c151b2309f836b {"DATABASE_URL":"postgres://***:***@localhost:32925/test","REDIS_URL":"redis://localhost:32926"} keys=22
+32-run2-artifact.json passed=true checks=12
+  ambientSecretNames []
+  ambientHazards ["DOCKER_HOST"]
+    build 60ecfee0ef6bcd2e {} keys=10
+    migrate 60ecfee0ef6bcd2e {"DATABASE_URL":"postgres://***:***@localhost:32927/test"} keys=11
+    api 77c151b2309f836b {"DATABASE_URL":"postgres://***:***@localhost:32927/test","REDIS_URL":"redis://localhost:32928"} keys=22
+32-run3-poisoned-artifact.json passed=true checks=12
+  ambientSecretNames ["ACCESS_TOKEN_SECRET","PUBLIC_ACCESS_SECRET","REFRESH_TOKEN_PEPPER"]
+  ambientHazards ["DOCKER_HOST","NODE_OPTIONS","NODE_PATH","SMTP_URL"]
+    build 60ecfee0ef6bcd2e {} keys=10
+    migrate 60ecfee0ef6bcd2e {"DATABASE_URL":"postgres://***:***@localhost:32929/test"} keys=11
+    api 77c151b2309f836b {"DATABASE_URL":"postgres://***:***@localhost:32929/test","REDIS_URL":"redis://localhost:32930"} keys=22
+
+=== my run3 probe (NODE_OPTIONS injection observation) ===
+       3
+  pid 36379 argv ["/Users/premkumarmamidi/.local/nodejs/bin/corepack","enable","--install-directory"] sensitive: ACCESS_TOKEN_SECRET,PUBLIC_ACCESS_SECRET,REFRESH_TOKEN_PEPPER
+  pid 36374 argv ["/Users/premkumarmamidi/Development/Fair/implementation/.toolchain/bin/pnpm","e2e:smoke"] sensitive: ACCESS_TOKEN_SECRET,PUBLIC_ACCESS_SECRET,REFRESH_TOKEN_PEPPER
+  pid 36392 argv ["/Users/premkumarmamidi/Development/Fair/implementation/e2e/smoke/run.mjs"] sensitive: ACCESS_TOKEN_SECRET,PUBLIC_ACCESS_SECRET,REFRESH_TOKEN_PEPPER
+  total observed: 3 (3 = bootstrap above the harness only; children no longer inherit NODE_OPTIONS)

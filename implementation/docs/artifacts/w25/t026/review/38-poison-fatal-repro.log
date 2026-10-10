@@ -1,0 +1,5 @@
+=== reviewer reproduction: poisoned secrets are fatal to the API config ===
+--- with poisoned secrets ---
+REJECTED: Invalid configuration: PUBLIC_ACCESS_SECRET
+--- with the deterministic smoke keys ---
+ACCEPTED (deterministic keys ok)

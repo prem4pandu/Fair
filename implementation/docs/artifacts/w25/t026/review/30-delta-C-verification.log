@@ -1,0 +1,57 @@
+=== delta C: my adversarial fixtures re-run against 88c075b ===
+fixture file written to /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/w25-review-ast-8IcUeK/services/api/src/adversarial/adversarial.ts
+observed keys: [
+  "mutation.changePassword",
+  "query.emailExist",
+  "query.firstArg",
+  "query.templateArg"
+]
+
+-- scoring --
+OK       absent   query.blockCommentMultiLine  (should NOT be counted: text inside a block comment)
+OK       absent   mutation.nestedCommentText  (should NOT be counted: text inside a nested comment region)
+OK       absent   query.inTemplateText  (should NOT be counted: decorator-shaped text inside a template literal)
+OK       absent   mutation.inSubstitution  (should NOT be counted: decorator-shaped text inside a template substitution string)
+OK       absent   query.inSingle  (should NOT be counted: decorator-shaped text inside a single-quoted string)
+OK       absent   mutation.inDouble  (should NOT be counted: decorator-shaped text inside a double-quoted string)
+OK       absent   query.esc"aped  (should NOT be counted: escaped quote makes an invalid field name)
+MISMATCH absent   query.parenthesised  (should be counted: parenthesised string argument is a real resolver registration)
+MISMATCH absent   query.concatenated  (should be counted: statically concatenated string is a real resolver registration)
+OK       absent   query.propertyDecorated  (should NOT be counted: decorator on a class property is not a root resolver)
+OK       absent   query.classDecorated  (should NOT be counted: decorator on a class declaration is not a root resolver)
+OK       absent   query.parameterDecorated  (should NOT be counted: decorator on a parameter is not a root resolver)
+OK       counted  query.emailExist  (should be counted: genuine @Query method; name case must be preserved)
+OK       counted  mutation.changePassword  (should be counted: genuine @Mutation method; kind must be lowercased)
+OK       counted  query.templateArg  (should be counted: no-substitution template literal is a genuine string-like argument)
+OK       counted  query.firstArg  (should be counted: @Query(name, options) is a real NestJS resolver form)
+
+(raw observed set for the record): mutation.changePassword, query.emailExist, query.firstArg, query.templateArg
+
+=== op-state spec (expect 8 tests) ===
+✔ counts a genuine root-field decorator (4.198583ms)
+✔ ignores decorator-shaped text in comments (1.395334ms)
+✔ ignores decorator-shaped text inside string literals (1.140792ms)
+✔ accepts valid formatting the regex-based reader missed (1.042166ms)
+✔ ignores non-root decorators and non-literal arguments (1.145333ms)
+✔ deduplicates the same root across files (5.588167ms)
+✔ counts only method roots, not class, property or parameter decorations (1.501791ms)
+✔ documents the argument shapes that are deliberately not resolved (0.945959ms)
+ℹ tests 8
+ℹ pass 8
+ℹ fail 0
+
+=== compare.mjs ===
+legacy regex keys: 39
+syntax-tree keys:  39
+dropped (regex said implemented, tree disagrees): 0
+added (tree found, regex missed): 0
+
+=== scoped prettier ===
+Checking formatting...
+All matched files use Prettier code style!
+
+=== repo-wide format:check ===
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!

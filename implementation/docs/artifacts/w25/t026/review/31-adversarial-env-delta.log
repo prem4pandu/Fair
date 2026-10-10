@@ -1,0 +1,34 @@
+OK       builder drops ambient NODE_OPTIONS — keys=APP_ENV
+OK       builder drops ambient NODE_PATH — keys=APP_ENV
+OK       builder drops ambient NODE_EXTRA_CA_CERTS — keys=APP_ENV
+OK       builder drops ambient DOCKER_HOST — keys=APP_ENV
+OK       builder drops ambient DOCKER_CONTEXT — keys=APP_ENV
+OK       builder drops ambient DOCKER_TLS_VERIFY — keys=APP_ENV
+OK       builder drops ambient DOCKER_CERT_PATH — keys=APP_ENV
+OK       guard rejects a re-added NODE_OPTIONS
+OK       guard rejects a re-added NODE_PATH
+OK       guard rejects a re-added NODE_EXTRA_CA_CERTS
+OK       guard rejects a re-added DOCKER_HOST
+OK       guard rejects a re-added DOCKER_CONTEXT
+OK       guard rejects a re-added DOCKER_TLS_VERIFY
+OK       guard rejects a re-added DOCKER_CERT_PATH
+OK       builder drops a non-allowlisted credential URL (HTTP_PROXY)
+OK       guard rejects a forced non-allowlisted credential URL
+OK       userinfo detector does not see a query-string password — describeAmbientHazard=null
+OK       builder drops a non-allowlisted query-string credential
+COUNTEREXAMPLE guard catches a query-string credential on an allowlisted name — expected to be a residual gap (no allowlisted name is URL-valued by contract)
+OK       PATH is inherited (documented residual)
+OK       guard does not (and cannot) flag a poisoned PATH
+OK       every other allowlisted name is non-URL, non-flag plumbing
+scanAmbientHazards: [{"name":"DOCKER_HOST","reason":"container transport URL can carry credentials (userinfo)"},{"name":"HTTP_PROXY","reason":"value carries URL credentials (userinfo)"},{"name":"NODE_OPTIONS","reason":"node flags can inject code into a child (--require/--import/--eval/--loader)"}]
+OK       hazard scan names NODE_OPTIONS/DOCKER_HOST/HTTP_PROXY but not the query-string URL or PATH
+OK       fingerprint identical for two runs with different ephemeral ports — 77c151b2309f836b
+OK       fingerprint changes when a deterministic secret changes
+OK       fingerprint of a secret-less child is defined
+note     redactCredentials(redis://user:secret@host:6379) = redis://***:***@host:6379  [must redact user:password]
+note     redactCredentials(redis://:onlypassword@host:6379) = redis://***:***@host:6379  [must redact password-only userinfo]
+note     redactCredentials(redis://user:p%40ss@host:6379) = redis://***:***@host:6379  [must redact percent-encoded password]
+COUNTEREXAMPLE redactCredentials(redis://user@host:6379) = redis://user@host:6379  [must redact username-only userinfo]
+note     redactCredentials(https://host/x?password=hunter2) = https://host/x?password=hunter2  [query-string password (documented gap)]
+
+reviewer adversarial env failures: 2 (excluding the two labelled notes/residuals)
