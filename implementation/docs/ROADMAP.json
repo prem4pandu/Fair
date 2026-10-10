@@ -593,7 +593,7 @@
       "workstreams": ["W21", "W22"],
       "requires": ["G4"],
       "commands": [
-        "pnpm check:enatega --scope singlevendor",
+        "pnpm check:enatega:singlevendor",
         "pnpm e2e (single-vendor project)"
       ],
       "approvals": ["reviewer-QA", "reviewer-SEC", "owner"]

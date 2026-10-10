@@ -474,21 +474,28 @@ if (
   const scopeAt = flags.indexOf("--scope");
   const scope = scopeAt >= 0 ? flags[scopeAt + 1] : undefined;
   const known = new Set(["--check", "--scope", scope]);
+  const scopes = new Set(["multivendor", "singlevendor"]);
   if (
     !source ||
     !contracts ||
     !output ||
     flags.some((flag) => !known.has(flag)) ||
-    (scopeAt >= 0 && scope !== "multivendor")
+    (scopeAt >= 0 && !scopes.has(scope))
   )
     throw new Error(
-      "Usage: node tools/check-enatega-compatibility.mjs SOURCE CONTRACTS OUTPUT [--check] [--scope multivendor]",
+      "Usage: node tools/check-enatega-compatibility.mjs SOURCE CONTRACTS OUTPUT [--check] [--scope multivendor|singlevendor]",
     );
   const lanesPath = resolve("docs/OPERATION_LANES.json");
   const lanes = scope ? JSON.parse(readFileSync(lanesPath, "utf8")) : undefined;
-  const scopedApps = scope
-    ? apps.filter((app) => app !== "enatega-singlevendor-admin")
-    : apps;
+  const documents = resolvedDocuments(scope ? { scope, lanes } : {});
+  // A scoped run audits exactly the apps those documents belong to; auditing an
+  // app with none of them would report an empty (and therefore failing) app.
+  const scopedApps =
+    scope === "multivendor"
+      ? apps.filter((app) => app !== "enatega-singlevendor-admin")
+      : scope === "singlevendor"
+        ? apps.filter((app) => documents.some((item) => item.app === app))
+        : apps;
   const report = audit(resolve(source), resolve(contracts), scopedApps, {
     scope,
     lanes,
@@ -497,7 +504,7 @@ if (
     // import/interpolated site is reported UNRESOLVED forever. Reconciliation
     // then guarantees that any site the resolver does not cover is still
     // reported rather than silently dropped.
-    documents: resolvedDocuments(scope ? { scope, lanes } : {}),
+    documents,
     reconcileUncoveredSites: !scope,
   });
   writeFileSync(

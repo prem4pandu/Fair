@@ -6,6 +6,7 @@ import {
   deriveFromDocuments,
   multivendorDocuments,
   reconcileDocumentSites,
+  singleVendorDocuments,
   verifyAutomaticSites,
   resolvedDocuments,
 } from "./derive-type-requirements.mjs";
@@ -196,6 +197,39 @@ test("multivendor scope excludes single-vendor apps and L12-only documents", () 
     ],
   };
   assert.deepEqual(multivendorDocuments(documents, lanes), [documents[0]]);
+});
+
+test("single-vendor scope keeps exactly the documents multivendor scope drops", () => {
+  const documents = [
+    { app: "enatega-multivendor-app", text: "query { restaurants { _id } }" },
+    { app: "enatega-multivendor-app", text: "query { getAllfoods { _id } }" },
+    {
+      app: "enatega-multivendor-app",
+      file: "src/singlevendor/queries.js",
+      text: "query { restaurants { _id } }",
+    },
+    {
+      app: "enatega-singlevendor-admin",
+      text: "query { restaurants { _id } }",
+    },
+  ];
+  const lanes = {
+    operations: [
+      { type: "query", name: "restaurants", lane: "L3" },
+      { type: "query", name: "getAllfoods", lane: "L12" },
+    ],
+  };
+  assert.deepEqual(singleVendorDocuments(documents, lanes), [
+    documents[1],
+    documents[2],
+    documents[3],
+  ]);
+  // The two scopes partition the pinned documents: neither may silently drop one.
+  assert.equal(
+    multivendorDocuments(documents, lanes).length +
+      singleVendorDocuments(documents, lanes).length,
+    documents.length,
+  );
 });
 
 test("contract scope keeps the single-vendor admin but drops single-vendor mode and L12", () => {

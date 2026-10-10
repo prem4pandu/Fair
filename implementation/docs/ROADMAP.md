@@ -310,7 +310,8 @@ W0 task list (each ends with the exact command that proves it):
 | **W1** | Kernel/transport completion: legacy + modern WS frame sets with a working WS context and masked errors, `mutation metricsGeneral` with `nonce`/`bop-auth` binding, bop-auth verified on WS **when supplied** (the gate itself is HTTP-only, decision D-G1), Redis pub/sub, limits proven against the largest real document, health/readiness, outbox worker hardening | backend-kernel   | 1 (L0) | `services/api/src/kernel/**`, `services/worker/**`, `services/api/src/app.ts` (WS context, error path, CORS only), `test/support/**`                                                  | W0      |
 | **W2** | Contract + data-model freeze: L12 SDL gap closed (71 roots have no declaration), migration from the populated 005 baseline, ports interface freeze, dynamic-document reconciliation, full-mode compatibility report                                                                                                                                                   | backend-contract | —      | `contracts/enatega/**`, `prisma/schema/base.prisma`, `prisma/migrations/**`, `kernel/ports.ts` (only), `test/integration/schema/**`, `docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json` | W0      |
 
-W2 exit criteria: `pnpm check:enatega` PASS for multivendor **and** single-vendor scope; every migration applies both on
+W2 exit criteria: `pnpm check:enatega` (multivendor) and `pnpm check:enatega:singlevendor` PASS — with
+`pnpm check:enatega:full` covering all six apps; every migration applies both on
 an empty database and as an upgrade from the populated baseline with no data loss; `docs/ENATEGA_DYNAMIC_DOCUMENT_RESOLUTIONS.json`
 accounts for every previously unresolved site; ports reviewed by the lead; **every Fair-authored artifact in the vendor tree
 is either recorded in `SOURCE_PROVENANCE.json → allowedModifications` or reverted to the upstream bytes**, and
@@ -745,6 +746,8 @@ DOCKER_HOST=unix://$HOME/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKE
 ./tools/pnpm.sh coverage
 ./tools/pnpm.sh codegen:check
 ./tools/pnpm.sh check:enatega
+./tools/pnpm.sh check:enatega:full
+./tools/pnpm.sh check:enatega:singlevendor
 ./tools/pnpm.sh check:enatega-ui-source
 ./tools/pnpm.sh test:enatega-contracts
 ./tools/pnpm.sh test:operation-evidence
@@ -769,7 +772,7 @@ node tools/manifest-enatega-ui.mjs [--check]
 | `docs/OPERATION_TRACEABILITY.md` + `tools/generate-operation-traceability.mjs` | per-operation state of record                                                                   |
 | `docs/ENATEGA_FRONTEND_INTEGRATION_AUDIT.md`                                   | full per-package frontend integration surface, 24 blockers, backend capability table            |
 | `docs/OPERATION_LANES.json` / `docs/ENATEGA_OPERATION_INVENTORY.json`          | lane ownership and inventory                                                                    |
-| `docs/ENATEGA_COMPATIBILITY_REPORT.json`                                       | static contract compatibility                                                                   |
+| `docs/ENATEGA_COMPATIBILITY_REPORT*.json`                                      | static contract compatibility (multivendor, single-vendor, full six-app)                        |
 | `docs/ENATEGA_URL_CONTRACT.json`                                               | REST/WS/route/navigation/hardcode requirements                                                  |
 | `docs/END_TO_END_ACCEPTANCE.json`                                              | 18 workflows, invariants, evidence fields                                                       |
 | `docs/OPERATION_TEST_EVIDENCE.json`                                            | per-operation evidence registry (gate input)                                                    |

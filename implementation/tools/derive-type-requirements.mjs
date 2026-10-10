@@ -249,6 +249,25 @@ export function multivendorDocuments(documents, lanes) {
   });
 }
 
+// The single-vendor gate scope: exactly the complement of
+// multivendorDocuments within the pinned sources — the single-vendor admin,
+// single-vendor MODE files, and documents whose roots are all L12. G5 consumes
+// it so the single-vendor contract is proven in its own scope rather than only
+// as a side effect of the six-app run.
+export function singleVendorDocuments(documents, lanes) {
+  const laneByRoot = new Map(
+    lanes.operations.map(({ type, name, lane }) => [`${type}.${name}`, lane]),
+  );
+  return documents.filter((document) => {
+    if (document.app === "enatega-singlevendor-admin") return true;
+    if (singleVendorModeFile(document.file)) return true;
+    const roots = operationRoots(document.text);
+    return (
+      roots.length > 0 && roots.every((root) => laneByRoot.get(root) === "L12")
+    );
+  });
+}
+
 // Which documents inform the generated SDL. This is deliberately wider than the
 // multivendor gate: the single-vendor admin's selections are additive (extra
 // fields and arguments break no document that does not select them), so the
@@ -396,13 +415,19 @@ export function resolvedDocuments(options = {}) {
       resolved: true,
     });
   }
-  if (options.scope === "multivendor" || options.scope === "contract") {
+  if (
+    options.scope === "multivendor" ||
+    options.scope === "singlevendor" ||
+    options.scope === "contract"
+  ) {
     const lanes =
       options.lanes ??
       JSON.parse(readFileSync(resolve(root, "docs/OPERATION_LANES.json")));
     return options.scope === "contract"
       ? contractDocuments(documents, lanes)
-      : multivendorDocuments(documents, lanes);
+      : options.scope === "singlevendor"
+        ? singleVendorDocuments(documents, lanes)
+        : multivendorDocuments(documents, lanes);
   }
   return documents;
 }
