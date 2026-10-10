@@ -275,6 +275,26 @@ export class EnategaIdentityAdapter {
     return this.identity.updateUser(input ?? {}, context);
   }
 
+  async sendOtpToEmail(
+    input: { email?: unknown; otp?: unknown },
+    context: IdentityContext,
+  ) {
+    return this.identity.sendOtp(
+      { email: input?.email, otp: input?.otp },
+      context,
+    );
+  }
+
+  async sendOtpToPhoneNumber(
+    input: { phone?: unknown; otp?: unknown },
+    context: IdentityContext,
+  ) {
+    return this.identity.sendOtp(
+      { phone: input?.phone, otp: input?.otp },
+      context,
+    );
+  }
+
   async ownerSession(context: IdentityContext) {
     return toEnategaOwnerSessionFromToken(
       await this.identity.ownerPrincipal(context),

@@ -162,4 +162,20 @@ export class IdentityResolver {
       ctx,
     );
   }
+
+  @Mutation("sendOtpToEmail") sendOtpToEmail(
+    @Args("email") email: unknown,
+    @Args("otp") otp: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.enatega.sendOtpToEmail({ email, otp }, ctx);
+  }
+
+  @Mutation("sendOtpToPhoneNumber") sendOtpToPhoneNumber(
+    @Args("phone") phone: unknown,
+    @Args("otp") otp: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.enatega.sendOtpToPhoneNumber({ phone, otp }, ctx);
+  }
 }

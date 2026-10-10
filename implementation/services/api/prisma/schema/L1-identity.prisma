@@ -62,3 +62,19 @@ model IdentityAuditEvent {
   outcome    String   @db.VarChar(10)
   occurredAt DateTime @default(now()) @db.Timestamptz(3)
 }
+
+/// Server-generated, single-use verification challenges. Only hashes are
+/// stored: neither the recipient nor the code can be recovered from the row.
+model IdentityVerificationChallenge {
+  id         String    @id @db.Uuid
+  purpose    String    @db.VarChar(20)
+  channel    String    @db.VarChar(10)
+  targetHash String    @db.Char(64)
+  codeHash   String    @db.Char(64)
+  attempts   Int       @default(0)
+  expiresAt  DateTime  @db.Timestamptz(3)
+  consumedAt DateTime? @db.Timestamptz(3)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@index([targetHash, purpose, createdAt])
+}

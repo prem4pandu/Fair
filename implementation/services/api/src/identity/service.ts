@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID, createHmac } from "node:crypto";
+import { randomBytes, randomInt, randomUUID, createHmac } from "node:crypto";
 import { argon2id, hash, verify } from "argon2";
 import { SignJWT, jwtVerify, decodeJwt } from "jose";
 import {
@@ -36,6 +36,11 @@ export function normalizeEmail(value: unknown) {
 // the clients allow in the input are removed before validation; anything else
 // is BAD_USER_INPUT rather than a silently stored near-miss.
 const e164 = /^\+?[1-9]\d{6,14}$/;
+// Verification challenge policy. The resend cooldown matches the pinned OTP
+// screens' 30-second resend timer; the TTL and attempt cap are server-owned.
+const OTP_TTL_MS = 10 * 60_000;
+const OTP_RESEND_COOLDOWN_MS = 30_000;
+export const OTP_MAX_ATTEMPTS = 5;
 export function normalizePhone(value: unknown) {
   if (typeof value !== "string")
     return authError("BAD_USER_INPUT", "Invalid request");
@@ -707,6 +712,107 @@ export class IdentityService {
         return authError("CONFLICT", "The resource changed, try again");
       return unavailable();
     }
+  }
+  /**
+   * Creates a single-use verification challenge for one recipient and delivers
+   * it. The code is generated here and stored only as a per-challenge HMAC; the
+   * `otp` argument some pinned clients send is deliberately ignored, because a
+   * caller-chosen code would let anyone verify a target they do not control.
+   * No email or SMS provider is configured, so production fails visibly with
+   * PROVIDER_UNAVAILABLE instead of claiming a delivery that never happened;
+   * development and test record the message in DevOutbox.
+   */
+  async sendOtp(
+    input: { email?: unknown; phone?: unknown; otp?: unknown },
+    context: IdentityContext,
+  ): Promise<{ result: string }> {
+    this.enabled();
+    const email =
+      typeof input?.email === "string" && input.email.trim() !== ""
+        ? input.email
+        : undefined;
+    const phone =
+      typeof input?.phone === "string" && input.phone.trim() !== ""
+        ? input.phone
+        : undefined;
+    let channel: "EMAIL" | "SMS";
+    let target: string;
+    if (email !== undefined && phone === undefined) {
+      channel = "EMAIL";
+      target = normalizeEmail(email);
+    } else if (phone !== undefined && email === undefined) {
+      channel = "SMS";
+      target = normalizePhone(phone);
+    } else {
+      return authError("BAD_USER_INPUT", "Invalid request");
+    }
+    await this.limit(context, `otp-send:${target}`);
+    if (this.config.APP_ENV === "production")
+      return authError("PROVIDER_UNAVAILABLE", "This service is not available");
+
+    const targetHash = this.challengeDigest(target);
+    const recent = await this.prisma.identityVerificationChallenge
+      .findFirst({
+        where: {
+          targetHash,
+          purpose: "VERIFY",
+          consumedAt: null,
+          createdAt: { gt: new Date(Date.now() - OTP_RESEND_COOLDOWN_MS) },
+        },
+        select: { id: true },
+      })
+      .catch(() => unavailable());
+    if (recent)
+      return authError("RATE_LIMITED", "Too many attempts, try again later");
+
+    const code = randomInt(0, 1_000_000).toString().padStart(6, "0");
+    const id = randomUUID();
+    const createdAt = new Date();
+    const expiresAt = new Date(createdAt.getTime() + OTP_TTL_MS);
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        // Only one challenge may be open per target and purpose.
+        await tx.$executeRaw`
+          UPDATE "IdentityVerificationChallenge"
+             SET "consumedAt" = now()
+           WHERE "targetHash" = ${targetHash}
+             AND "purpose" = 'VERIFY'
+             AND "consumedAt" IS NULL`;
+        await tx.identityVerificationChallenge.create({
+          data: {
+            id,
+            purpose: "VERIFY",
+            channel,
+            targetHash,
+            codeHash: this.challengeDigest(`${id}.${code}`),
+            attempts: 0,
+            expiresAt,
+            createdAt,
+          },
+        });
+        await tx.devOutbox.create({
+          data: {
+            id: randomUUID(),
+            channel,
+            recipient: target,
+            subject: channel === "EMAIL" ? "Your verification code" : null,
+            body: `Your verification code is ${code}. It expires in 10 minutes.`,
+          },
+        });
+      });
+    } catch {
+      return unavailable();
+    }
+    return { result: "SENT" };
+  }
+  /** HMAC with the server pepper; a database read yields no usable target or code. */
+  private challengeDigest(value: string) {
+    return createHmac(
+      "sha256",
+      Buffer.from(this.config.REFRESH_TOKEN_PEPPER ?? "", "base64url"),
+    )
+      .update(value)
+      .digest("hex");
   }
   async identity(
     requested: Application,
