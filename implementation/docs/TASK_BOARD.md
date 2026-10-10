@@ -55,13 +55,14 @@ approved dependency and it is now closed, but each lane still needs its own G2 e
 
 ## Blocked
 
-| Task  | Workstream | Subject                                                                                                    | Blocked on                                                                               | Owner       | Reviewer |
-| ----- | ---------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------- | -------- |
-| T-010 | W18        | Provider adapters and sandbox evidence                                                                     | payment/courier/maps credentials (owner)                                                 | _unclaimed_ | W24      |
-| T-011 | W19        | Native device E2E                                                                                          | devices, Apple/Google signing accounts, full Xcode (owner)                               | _unclaimed_ | W23      |
-| T-012 | W20        | Load, restore and retention evidence                                                                       | SLO/hosting/retention inputs (owner); no load harness is installed — `ROADMAP.md` §13 U5 | _unclaimed_ | W24      |
-| T-013 | W26        | Server-side localization                                                                                   | supported-locale list (owner decision D-S2)                                              | _unclaimed_ | W23      |
-| T-014 | W21        | Single-vendor implementation, and with it every FB15 capability (credits, referrals, deals, subscriptions) | owner decision D1/D-S1                                                                   | _unclaimed_ | W23      |
+| Task  | Workstream | Subject                                                                                                    | Blocked on                                                                                                      | Owner        | Reviewer |
+| ----- | ---------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | -------- |
+| T-010 | W18        | Provider adapters and sandbox evidence                                                                     | payment/courier/maps credentials (owner)                                                                        | _unclaimed_  | W24      |
+| T-011 | W19        | Native device E2E                                                                                          | devices, Apple/Google signing accounts, full Xcode (owner)                                                      | _unclaimed_  | W23      |
+| T-012 | W20        | Load, restore and retention evidence                                                                       | SLO/hosting/retention inputs (owner); no load harness is installed — `ROADMAP.md` §13 U5                        | _unclaimed_  | W24      |
+| T-013 | W26        | Server-side localization                                                                                   | supported-locale list (owner decision D-S2)                                                                     | _unclaimed_  | W23      |
+| T-014 | W21        | Single-vendor implementation, and with it every FB15 capability (credits, referrals, deals, subscriptions) | owner decision D1/D-S1                                                                                          | _unclaimed_  | W23      |
+| T-031 | W25        | Re-record G0 and G1 in a single clean-tree window so both gates stop resting on pre-T-026 tooling.         | clean shared worktree (concurrent Batch 3 quiescent); steps in `docs/artifacts/w25/t026/state/GATE_DECISION.md` | lead-dsh-w25 | W24      |
 
 ## Done
 
