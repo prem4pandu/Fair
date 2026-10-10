@@ -1,0 +1,29 @@
+$ node --test e2e/smoke/environment.test.mjs
+
+✔ no ambient secret material reaches a child environment (1.008459ms)
+✔ process plumbing and toolchain basics still reach the child (0.078875ms)
+✔ explicit overrides are the only source of API configuration (0.071083ms)
+✔ the child environment is deterministic across differing ambient secrets (0.301625ms)
+✔ the ambient scan names exactly the variables that must never be inherited (0.174417ms)
+✔ A1: node-flag and container-transport names never reach a child (0.070291ms)
+✔ A1: the passthrough allowlist holds no blocked or hazardous name (0.345916ms)
+✔ A1: the run-time guard rejects ambient credentials and injection flags (0.254334ms)
+✔ A1: the guard accepts credentialed plumbing the harness chose itself (0.08375ms)
+✔ A1: the ambient hazard scan names each vector with a reason (0.158167ms)
+✔ A2: the deterministic fingerprint is a frozen constant (0.279958ms)
+✔ A2: the fingerprint ignores per-run container endpoints (0.0785ms)
+✔ A2: the fingerprint changes when deterministic secret material changes (0.0385ms)
+✔ A2: a child with no deterministic secrets has a defined fingerprint (0.046375ms)
+✔ A2: per-run plumbing is recorded separately, with credentials redacted (0.070208ms)
+✔ the smoke secrets are deterministic canonical 32-byte keys (0.156333ms)
+✔ the run-time guard fails loudly when ambient secret material is carried (0.084292ms)
+✔ run.mjs constructs every child environment through the builder (0.737417ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 46.807334
+exit=0

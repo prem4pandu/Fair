@@ -1,0 +1,34 @@
+$ node docs/artifacts/w25/t026/smoke/compare-fingerprints.mjs \
+    docs/artifacts/w25/t026/smoke/run1-normal-artifact.json \
+    docs/artifacts/w25/t026/smoke/run2-normal-artifact.json \
+    docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json
+
+EQUAL   api deterministicSecretsFingerprint
+          77c151b2309f836b  docs/artifacts/w25/t026/smoke/run1-normal-artifact.json
+          77c151b2309f836b  docs/artifacts/w25/t026/smoke/run2-normal-artifact.json
+          77c151b2309f836b  docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json
+          ephemeralContainerPlumbing differs between runs: yes (expected)
+          {"DATABASE_URL":"postgres://***:***@localhost:32916/test","REDIS_URL":"redis://localhost:32917"}  docs/artifacts/w25/t026/smoke/run1-normal-artifact.json
+          {"DATABASE_URL":"postgres://***:***@localhost:32920/test","REDIS_URL":"redis://localhost:32921"}  docs/artifacts/w25/t026/smoke/run2-normal-artifact.json
+          {"DATABASE_URL":"postgres://***:***@localhost:32924/test","REDIS_URL":"redis://localhost:32923"}  docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json
+
+EQUAL   build deterministicSecretsFingerprint
+          60ecfee0ef6bcd2e  docs/artifacts/w25/t026/smoke/run1-normal-artifact.json
+          60ecfee0ef6bcd2e  docs/artifacts/w25/t026/smoke/run2-normal-artifact.json
+          60ecfee0ef6bcd2e  docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json
+          ephemeralContainerPlumbing differs between runs: no
+          {}  docs/artifacts/w25/t026/smoke/run1-normal-artifact.json
+          {}  docs/artifacts/w25/t026/smoke/run2-normal-artifact.json
+          {}  docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json
+
+EQUAL   migrate deterministicSecretsFingerprint
+          60ecfee0ef6bcd2e  docs/artifacts/w25/t026/smoke/run1-normal-artifact.json
+          60ecfee0ef6bcd2e  docs/artifacts/w25/t026/smoke/run2-normal-artifact.json
+          60ecfee0ef6bcd2e  docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json
+          ephemeralContainerPlumbing differs between runs: yes (expected)
+          {"DATABASE_URL":"postgres://***:***@localhost:32916/test"}  docs/artifacts/w25/t026/smoke/run1-normal-artifact.json
+          {"DATABASE_URL":"postgres://***:***@localhost:32920/test"}  docs/artifacts/w25/t026/smoke/run2-normal-artifact.json
+          {"DATABASE_URL":"postgres://***:***@localhost:32924/test"}  docs/artifacts/w25/t026/smoke/run3-poisoned-artifact.json
+
+result: PASS — 3 child environment(s), 3 artifact(s), 0 mismatch(es)
+exit=0

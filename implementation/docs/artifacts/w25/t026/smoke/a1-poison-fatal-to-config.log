@@ -1,0 +1,7 @@
+### the poisoned secret values are fatal to the API configuration
+### (so a passing poisoned smoke run proves the API child did not receive them)
+$ node --input-type=module -e 'import { readConfig } from "./services/api/dist/config.js"; readConfig(process.env)'
+    with the poisoned values in the environment
+
+REJECTED: Invalid configuration: PUBLIC_ACCESS_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_PEPPER
+exit=0

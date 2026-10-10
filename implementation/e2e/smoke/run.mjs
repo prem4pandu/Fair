@@ -50,7 +50,9 @@ import {
   assertNoInheritedSecrets,
   buildChildEnvironment,
   describeEnvironment,
-  fingerprintSecrets,
+  describeEphemeralContainerPlumbing,
+  fingerprintDeterministicSecrets,
+  scanAmbientHazards,
   scanAmbientSecrets,
   smokeSecrets,
 } from "./environment.mjs";
@@ -300,9 +302,11 @@ async function main() {
   let apiLog = "";
   // The environment evidence every child process was given. Recorded in the
   // artifact so a run proves for itself that no ambient secret material was
-  // inherited (T-026A).
+  // inherited (T-026A). `ambientSecretNames` are secret-named; `ambientHazards`
+  // are the values that can inject code or carry credentials (T-026A review A1).
   const environmentRecord = {
     ambientSecretNames: scanAmbientSecrets(process.env),
+    ambientHazards: scanAmbientHazards(process.env),
     children: {},
   };
 
@@ -361,6 +365,16 @@ async function main() {
         `excluding ${environmentRecord.ambientSecretNames.length} ambient secret variable(s) from every child process: ${environmentRecord.ambientSecretNames.join(", ")}`,
       );
     else log("no ambient secret variables were present to exclude");
+    if (environmentRecord.ambientHazards.length > 0)
+      log(
+        `excluding ${environmentRecord.ambientHazards.length} ambient value(s) that can inject code or carry credentials: ${environmentRecord.ambientHazards
+          .map((hazard) => `${hazard.name} (${hazard.reason})`)
+          .join("; ")}`,
+      );
+    else
+      log(
+        "no ambient code-injection or credential-bearing values were present to exclude",
+      );
 
     log("building the API and applying migrations");
     const buildOverrides = {};
@@ -433,21 +447,35 @@ async function main() {
       buildChildEnvironment(process.env, apiOverrides),
       apiOverrides,
     );
+    // `deterministicSecretsFingerprint` covers only the values smokeSecrets()
+    // derives and is therefore identical across consecutive runs and across a
+    // normal vs poisoned run. `ephemeralContainerPlumbing` holds the per-run
+    // testcontainers endpoints (new host ports every run), named as such and
+    // credential-redacted, so it is never mistaken for the secret material
+    // (T-026A review A2).
     environmentRecord.children = {
       build: {
         cwd: root,
         keys: describeEnvironment(buildEnv),
-        secretFingerprint: fingerprintSecrets(buildEnv),
+        deterministicSecretsFingerprint:
+          fingerprintDeterministicSecrets(buildEnv),
+        ephemeralContainerPlumbing:
+          describeEphemeralContainerPlumbing(buildEnv),
       },
       migrate: {
         cwd: apiRoot,
         keys: describeEnvironment(migrateEnv),
-        secretFingerprint: fingerprintSecrets(migrateEnv),
+        deterministicSecretsFingerprint:
+          fingerprintDeterministicSecrets(migrateEnv),
+        ephemeralContainerPlumbing:
+          describeEphemeralContainerPlumbing(migrateEnv),
       },
       api: {
         cwd: root,
         keys: describeEnvironment(apiEnv),
-        secretFingerprint: fingerprintSecrets(apiEnv),
+        deterministicSecretsFingerprint:
+          fingerprintDeterministicSecrets(apiEnv),
+        ephemeralContainerPlumbing: describeEphemeralContainerPlumbing(apiEnv),
       },
     };
     api = spawn("node", ["services/api/dist/main.js"], {

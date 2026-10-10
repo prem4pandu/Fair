@@ -18,6 +18,11 @@
  *    task's evidence.
  *  - It performs no other work and swallows every error, so it can never change
  *    the harness result.
+ *  - Since the A1 fix, `NODE_OPTIONS` is no longer on the harness's passthrough
+ *    allowlist, so a *post-fix* run preloaded this way records only the three
+ *    bootstrap processes above the harness (`corepack` → `pnpm e2e:smoke` →
+ *    `run.mjs`), never a harness-spawned child. That absence is the A1 canary:
+ *    if the vector were reopened, this file would appear in a child again.
  */
 // This fixture is loaded by `node --require`, which only supports CommonJS.
 /* eslint-disable @typescript-eslint/no-require-imports */
