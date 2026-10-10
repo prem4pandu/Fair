@@ -32,7 +32,7 @@
     "check:error-messages": "node tools/check-error-messages.mjs",
     "record-gate": "node tools/record-gate.mjs",
     "approve-gate": "node tools/approve-gate.mjs",
-    "e2e:smoke": "node tools/pending-gate.mjs e2e:smoke",
+    "e2e:smoke": "node e2e/smoke/run.mjs",
     "e2e": "node tools/pending-gate.mjs e2e",
     "test:journeys": "node tools/pending-gate.mjs test:journeys",
     "coverage:e2e": "node tools/pending-gate.mjs coverage:e2e"

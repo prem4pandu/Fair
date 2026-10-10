@@ -11,13 +11,10 @@ export const implementation = path.resolve(
 );
 
 export const pendingGates = {
-  "e2e:smoke": {
-    workstream: "W16",
-    requirement:
-      "admin web and customer web load against the real stack, the metricsGeneral/bop-auth handshake succeeds, the configuration query returns, and both WebSocket protocol frame sets deliver a test subscription",
-    blockedBy:
-      "requires the frontend integration in W12/W13 and the Playwright project layout in W16",
-  },
+  // `e2e:smoke` is implemented by W1 (`e2e/smoke/run.mjs`): it boots the real
+  // PostGIS/Redis/API stack and loads the exact pinned admin and customer web
+  // documents over HTTP and both WebSocket frame sets. It is deliberately no
+  // longer listed here — a pending entry would shadow the real harness.
   "test:journeys": {
     workstream: "W15",
     requirement:
