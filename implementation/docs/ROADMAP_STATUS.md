@@ -16,14 +16,14 @@ repository can prove.
   (531/531 documents valid).
 - Full six-app compatibility: **PASS**
   (845/845 valid, 0 invalid, 0 unresolved).
-- Gates with an independent approval recorded: **1/7**.
+- Gates with an independent approval recorded: **2/7**.
 
 ## Gates
 
 | Gate  | Last run        | Finished                 | Commit         | Approvals                       |
 | ----- | --------------- | ------------------------ | -------------- | ------------------------------- |
 | `GP0` | commands passed | 2026-10-09T17:23:06.917Z | `08a702b86aed` | lead, reviewer-QA, reviewer-SEC |
-| `G0`  | commands passed | 2026-10-10T11:55:20.063Z | `e00757f3faaf` | **none** of 2 required          |
+| `G0`  | commands passed | 2026-10-10T12:07:42.353Z | `76d8fd2e9853` | lead, reviewer-QA               |
 | `G1`  | never run       | —                        | —              | **none** of 2 required          |
 | `G2`  | never run       | —                        | —              | **none** of 2 required          |
 | `G3`  | never run       | —                        | —              | **none** of 2 required          |

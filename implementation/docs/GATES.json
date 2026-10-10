@@ -1479,17 +1479,85 @@
           "approvals": [],
           "reviewer": null,
           "approved": false
+        },
+        {
+          "gate": "G0",
+          "commit": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+          "dirty": false,
+          "recordedBy": "w1-gate-audit",
+          "startedAt": "2026-10-10T12:07:24.422Z",
+          "finishedAt": "2026-10-10T12:07:42.353Z",
+          "passed": true,
+          "partial": false,
+          "commands": [
+            {
+              "command": "pnpm e2e:smoke",
+              "executed": "./tools/pnpm.sh e2e:smoke",
+              "exitCode": 0,
+              "durationMs": 17930,
+              "startedAt": "2026-10-10T12:07:24.423Z",
+              "outputTail": "\n  └─ 202610090000_base_outbox/\n    └─ migration.sql\n  └─ 202610090100_l2_runtime_configuration/\n    └─ migration.sql\n  └─ 202610090150_L5_init/\n    └─ migration.sql\n\nAll migrations have been successfully applied.\n[e2e:smoke] activating one server-owned configuration version\n[e2e:smoke] starting the built API on 127.0.0.1:55668\n[e2e:smoke] health.live: HTTP 200\n[e2e:smoke] health.ready: HTTP 200 (Postgres and Redis reachable)\n[e2e:smoke] handshake.admin.metricsGeneral: HTTP 200, token bound to its nonce (10 pinned fields)\n[e2e:smoke] handshake.web.metricsGeneral: HTTP 200, token bound to its nonce (10 pinned fields)\n[e2e:smoke] gate.enforced: unauthenticated configuration rejected with PUBLIC_ACCESS_DENIED\n[e2e:smoke] configuration.web: HTTP 200, active version 8144c978-246f-4ab1-9274-6d1329fa076f (MYR)\n[e2e:smoke] websocket.subscription.admin.subscribePlaceOrder: legacy (graphql-ws) and modern (graphql-transport-ws) both delivered the subscription to its explicit NOT_IMPLEMENTED terminal\n[e2e:smoke] websocket.subscription.web.orderStatusChanged: legacy (graphql-ws) and modern (graphql-transport-ws) both delivered the subscription to its explicit NOT_IMPLEMENTED terminal\n[e2e:smoke] websocket.data.graphql-ws: real configuration data delivered over graphql-ws\n[e2e:smoke] websocket.data.graphql-transport-ws: real configuration data delivered over graphql-transport-ws\n[e2e:smoke] limits.largest-document: enatega-multivendor-app src/singlevendor/apollo/queries.js measured 165/600 fields, depth 6/15; served without a limit error\n[e2e:smoke] limits.negative-control: an over-limit document (31 aliases > 30) was rejected with \"Operation exceeds allowed limits\"\n[e2e:smoke] PASS — 12 checks; artifact test-results/e2e-smoke.json\n[e2e:smoke] WS subscriptions: admin.subscribePlaceOrder, web.orderStatusChanged\nLoaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from prisma/schema.\nLoaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from prisma/schema.\n"
+            }
+          ],
+          "missingCommands": [],
+          "approvals": ["lead", "reviewer-QA"],
+          "reviewer": "lead-fairbite-agent, w1-qa-review",
+          "approved": true,
+          "approvalRecords": [
+            {
+              "role": "lead",
+              "reviewer": "lead-fairbite-agent",
+              "at": "2026-10-10T12:10:36.246Z",
+              "runFinishedAt": "2026-10-10T12:07:42.353Z",
+              "commit": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+              "headAtApproval": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+              "approvedStaleTree": false,
+              "note": "Reviewed the clean 76d8fd2 G0 run: pnpm e2e:smoke passed 12/12 checks against the real PostGIS/Redis/built-API stack (metricsGeneral nonce binding, configuration value, both WS frame sets, limits positive+negative). Scope is the transport smoke recorded in ROADMAP.md 7 / ROADMAP.json G0; browser shell load remains W16/G3. T-024 evidence: docs/GATES.json run + test-results/e2e-smoke.json (gitignored)."
+            },
+            {
+              "role": "reviewer-QA",
+              "reviewer": "w1-qa-review",
+              "at": "2026-10-10T12:10:43.993Z",
+              "runFinishedAt": "2026-10-10T12:07:42.353Z",
+              "commit": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+              "headAtApproval": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+              "approvedStaleTree": false,
+              "note": "Independent QA (W23), re-review at HEAD 76d8fd2 after the ef8f1ec fixes. Verified: e2e:smoke 12/12 (real containers + built API, limits negative control exercises the served boundedOperation via app.ts validationRules); check:enatega:full now enforces --check, proven fail-able with and without the flag on a broken source; check:enatega:singlevendor is an enforced G1 command and passes 314/314 for the single-vendor scope; check:operations:schema ready over 334 roots; runtime-contract 4/4 with a real seeded configuration value and inventory-derived L12 subscriptions; codegen:check green. F1-F5 all closed. Residual (non-blocking): Wave 5 plan still names SINGLE_VENDOR_ENABLED, no subscription payload delivery yet, browser shells belong to W16/G3."
+            }
+          ]
         }
       ],
       "latest": {
-        "commit": "e00757f3faaf57b99c917cfb8e6c22e2ae6a2c68",
+        "commit": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
         "dirty": false,
-        "finishedAt": "2026-10-10T11:55:20.063Z",
+        "finishedAt": "2026-10-10T12:07:42.353Z",
         "passed": true,
-        "approvals": [],
-        "approved": false,
+        "approvals": ["lead", "reviewer-QA"],
+        "approved": true,
         "commands": [
-          { "command": "pnpm e2e:smoke", "exitCode": 0, "durationMs": 18673 }
+          { "command": "pnpm e2e:smoke", "exitCode": 0, "durationMs": 17930 }
+        ],
+        "approvalRecords": [
+          {
+            "role": "lead",
+            "reviewer": "lead-fairbite-agent",
+            "at": "2026-10-10T12:10:36.246Z",
+            "runFinishedAt": "2026-10-10T12:07:42.353Z",
+            "commit": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+            "headAtApproval": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+            "approvedStaleTree": false,
+            "note": "Reviewed the clean 76d8fd2 G0 run: pnpm e2e:smoke passed 12/12 checks against the real PostGIS/Redis/built-API stack (metricsGeneral nonce binding, configuration value, both WS frame sets, limits positive+negative). Scope is the transport smoke recorded in ROADMAP.md 7 / ROADMAP.json G0; browser shell load remains W16/G3. T-024 evidence: docs/GATES.json run + test-results/e2e-smoke.json (gitignored)."
+          },
+          {
+            "role": "reviewer-QA",
+            "reviewer": "w1-qa-review",
+            "at": "2026-10-10T12:10:43.993Z",
+            "runFinishedAt": "2026-10-10T12:07:42.353Z",
+            "commit": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+            "headAtApproval": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+            "approvedStaleTree": false,
+            "note": "Independent QA (W23), re-review at HEAD 76d8fd2 after the ef8f1ec fixes. Verified: e2e:smoke 12/12 (real containers + built API, limits negative control exercises the served boundedOperation via app.ts validationRules); check:enatega:full now enforces --check, proven fail-able with and without the flag on a broken source; check:enatega:singlevendor is an enforced G1 command and passes 314/314 for the single-vendor scope; check:operations:schema ready over 334 roots; runtime-contract 4/4 with a real seeded configuration value and inventory-derived L12 subscriptions; codegen:check green. F1-F5 all closed. Residual (non-blocking): Wave 5 plan still names SINGLE_VENDOR_ENABLED, no subscription payload delivery yet, browser shells belong to W16/G3."
+          }
         ]
       }
     }

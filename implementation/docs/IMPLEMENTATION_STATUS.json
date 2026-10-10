@@ -76,11 +76,11 @@
     {
       "id": "G0",
       "passed": true,
-      "finishedAt": "2026-10-10T11:55:20.063Z",
-      "commit": "e00757f3faaf57b99c917cfb8e6c22e2ae6a2c68",
-      "approvals": [],
+      "finishedAt": "2026-10-10T12:07:42.353Z",
+      "commit": "76d8fd2e985341a46af9afddc3f39f6427dfabca",
+      "approvals": ["lead", "reviewer-QA"],
       "requiredApprovals": ["lead", "reviewer-QA"],
-      "approved": false,
+      "approved": true,
       "commands": [{ "command": "pnpm e2e:smoke", "exitCode": 0 }]
     },
     {
@@ -112,7 +112,7 @@
     }
   ],
   "recordedGateRuns": 2,
-  "approvedGates": 1,
+  "approvedGates": 2,
   "notes": [
     "A resolving schema is not implementation: NOT_IMPLEMENTED roots are counted as unimplemented.",
     "A gate is approved only when every reviewer role it requires is recorded in docs/GATES.json by tools/approve-gate.mjs.",
