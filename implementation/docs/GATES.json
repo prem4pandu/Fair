@@ -1627,41 +1627,149 @@
           "approvals": [],
           "reviewer": null,
           "approved": false
+        },
+        {
+          "gate": "G1",
+          "commit": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+          "dirty": false,
+          "recordedBy": "w1-gate-audit",
+          "startedAt": "2026-10-10T12:20:28.774Z",
+          "finishedAt": "2026-10-10T12:22:50.370Z",
+          "passed": true,
+          "partial": false,
+          "commands": [
+            {
+              "command": "pnpm check:enatega",
+              "executed": "./tools/pnpm.sh check:enatega",
+              "exitCode": 0,
+              "durationMs": 1530,
+              "startedAt": "2026-10-10T12:20:28.775Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ check:enatega /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check --scope multivendor\n\n{\"status\":\"PASS\",\"apps\":5,\"documents\":531,\"validDocuments\":531,\"unresolvedDocuments\":0,\"outOfScopeDocuments\":0,\"missingRoots\":0}\n"
+            },
+            {
+              "command": "pnpm check:enatega:full",
+              "executed": "./tools/pnpm.sh check:enatega:full",
+              "exitCode": 0,
+              "durationMs": 1684,
+              "startedAt": "2026-10-10T12:20:30.306Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ check:enatega:full /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.full.json --check\n\n{\"status\":\"PASS\",\"apps\":6,\"documents\":845,\"validDocuments\":845,\"unresolvedDocuments\":0,\"outOfScopeDocuments\":0,\"missingRoots\":0}\n"
+            },
+            {
+              "command": "pnpm check:enatega:singlevendor",
+              "executed": "./tools/pnpm.sh check:enatega:singlevendor",
+              "exitCode": 0,
+              "durationMs": 1446,
+              "startedAt": "2026-10-10T12:20:31.990Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ check:enatega:singlevendor /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.singlevendor.json --check --scope singlevendor\n\n{\"status\":\"PASS\",\"apps\":3,\"documents\":314,\"validDocuments\":314,\"unresolvedDocuments\":0,\"outOfScopeDocuments\":0,\"missingRoots\":0}\n"
+            },
+            {
+              "command": "pnpm codegen:check",
+              "executed": "./tools/pnpm.sh codegen:check",
+              "exitCode": 0,
+              "durationMs": 489,
+              "startedAt": "2026-10-10T12:20:33.436Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ codegen:check /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-codegen.mjs\n\n❯ Parse Configuration\n✔ Parse Configuration\n❯ Generate outputs\n❯ Generate to packages/identity-contracts/src/generated.ts\n❯ Load GraphQL schemas\n✔ Load GraphQL schemas\n❯ Load GraphQL documents\n✔ Load GraphQL documents\n❯ Generate\n✔ Generate\n✔ Generate to packages/identity-contracts/src/generated.ts\n✔ Generate outputs\nGenerated schema matches frozen SDL\n"
+            },
+            {
+              "command": "pnpm test:integration",
+              "executed": "./tools/pnpm.sh test:integration",
+              "exitCode": 0,
+              "durationMs": 136120,
+              "startedAt": "2026-10-10T12:20:33.925Z",
+              "outputTail": "ual-role production CUSTOMER sessions to CUSTOMER for me, refresh and logoutAll  658ms\n     ✓ denies privileged password eligibility in production policy context  345ms\n     ✓ enforces family-user binding, absolute expiry, immutable audit and rejects multi-root auth aliases  443ms\n     ✓ shares atomic Redis account limits across API instances; rejects forged access claims  1106ms\n ✓ test/catalog.integration.spec.ts (7 tests) 21376ms\n     ✓ enforces unpublished defaults, storage checks, restrict deletion and composite tenant foreign keys  1590ms\n     ✓ fails closed during an actual isolated database outage and recovers after unpause  4229ms\n ✓ test/configuration.integration.spec.ts (6 tests) 18564ms\n   ✓ rejects private fields, malformed core values and unsupported capability flags in storage  551ms\n   ✓ bounds real database outage and recovers  3119ms\n ✓ test/foundation.integration.spec.ts (3 tests) 14903ms\n ✓ test/integration/schema/upgrade.integration.spec.ts (2 tests) 9875ms\n   ✓ preserves every populated migration-005 row through the complete deployed history and API reads  6528ms\n   ✓ deploys the same complete history to a fresh database  3016ms\n ✓ test/integration/kernel/public-access.integration.spec.ts (8 tests) 1291ms\n     ✓ serves every pinned client's exact MetricsGeneral document with a nonce  1156ms\n ✓ test/integration/support/clients.integration.spec.ts (3 tests) 486ms\n ✓ test/integration/kernel/ws.integration.spec.ts (9 tests) 443ms\n ✓ test/orders-persistence.integration.spec.ts (3 tests) 460ms\n ✓ test/integration/kernel/outbox.integration.spec.ts (5 tests) 426ms\n ✓ test/integration/schema/runtime-contract.integration.spec.ts (4 tests) 531ms\n ✓ test/integration/support/stack.integration.spec.ts (2 tests) 275ms\n ✓ test/integration/kernel/pubsub.integration.spec.ts (3 tests) 16ms\n\n Test Files  14 passed (14)\n      Tests  80 passed (80)\n   Start at  20:20:34\n   Duration  135.54s (transform 203ms, setup 0ms, import 4.21s, tests 115.66s, environment 1ms)\n\n"
+            },
+            {
+              "command": "pnpm check:operations:schema",
+              "executed": "./tools/pnpm.sh check:operations:schema",
+              "exitCode": 0,
+              "durationMs": 325,
+              "startedAt": "2026-10-10T12:22:50.045Z",
+              "outputTail": "{\n      \"type\": \"subscription\",\n      \"name\": \"riderUpdated\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"web\",\n        \"device\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscribePlaceOrder\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionAssignRider\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionDispatcher\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"web\",\n        \"device\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionNewMessage\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionOrder\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionOrderTracking\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionPaymentSuccess\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionRiderLocation\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionZoneOrders\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    }\n  ],\n  \"errors\": [],\n  \"complete\": false,\n  \"schemaReadiness\": {\n    \"ready\": true,\n    \"total\": 334,\n    \"implemented\": 18,\n    \"explicitNotImplemented\": 316,\n    \"missing\": [],\n    \"errors\": []\n  }\n}\n"
+            }
+          ],
+          "missingCommands": [],
+          "approvals": ["lead", "reviewer-SEC"],
+          "reviewer": "lead-fairbite-agent, w2-sec-review",
+          "approved": true,
+          "approvalRecords": [
+            {
+              "role": "lead",
+              "reviewer": "lead-fairbite-agent",
+              "at": "2026-10-10T12:23:14.256Z",
+              "runFinishedAt": "2026-10-10T12:22:50.370Z",
+              "commit": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+              "headAtApproval": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+              "approvedStaleTree": false,
+              "note": "Reviewed the clean 3c1afc2 G1 run: all 6 commands exit 0 on the real stack (check:enatega 531/531, check:enatega:full 845/845 with --check enforced, check:enatega:singlevendor 314/314, codegen:check frozen, test:integration 14 files/80 tests, check:operations:schema ready over 334 roots with 0 missing). Includes the W24 F1 reverse-direction fix so a served-but-uninventoried root now fails."
+            },
+            {
+              "role": "reviewer-SEC",
+              "reviewer": "w2-sec-review",
+              "at": "2026-10-10T12:23:18.794Z",
+              "runFinishedAt": "2026-10-10T12:22:50.370Z",
+              "commit": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+              "headAtApproval": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+              "approvedStaleTree": false,
+              "note": "Independent security/architecture review (W24) of W1/W2, re-run at 3c1afc2. Verified: no L12 root has a resolver and no flag can activate one (71 roots, fallback NOT_IMPLEMENTED proven at runtime for 70 queries/mutations + the subscription); no secret or personal field newly resolvable (ConfigurationConfiguration L12 fields resolve null and the stored configuration document is a strict schema that rejects googleApiKey/stripeSecretKey); smoke harness secrets in-process, loopback-only, never printed/committed; HTTP public-access gate and per-subscription WS revocation tests untouched and covering; contract report backendSchema hashes match current bytes; check:enatega:full provably fails a broken source. F1 (served root absent from inventory) fixed in c70bc14 and re-verified PASS: injected extra home now yields ready:false UNINVENTORIED_SDL_ROOT, repo stays ready:true with the two _kernel placeholders exempt."
+            }
+          ]
         }
       ],
       "latest": {
-        "commit": "ddd3f0218e2b912c3aa45c1104dcbde977bf1206",
+        "commit": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
         "dirty": false,
-        "finishedAt": "2026-10-10T12:13:18.270Z",
+        "finishedAt": "2026-10-10T12:22:50.370Z",
         "passed": true,
-        "approvals": [],
-        "approved": false,
+        "approvals": ["lead", "reviewer-SEC"],
+        "approved": true,
         "commands": [
           {
             "command": "pnpm check:enatega",
             "exitCode": 0,
-            "durationMs": 1585
+            "durationMs": 1530
           },
           {
             "command": "pnpm check:enatega:full",
             "exitCode": 0,
-            "durationMs": 1671
+            "durationMs": 1684
           },
           {
             "command": "pnpm check:enatega:singlevendor",
             "exitCode": 0,
-            "durationMs": 1469
+            "durationMs": 1446
           },
-          { "command": "pnpm codegen:check", "exitCode": 0, "durationMs": 577 },
+          { "command": "pnpm codegen:check", "exitCode": 0, "durationMs": 489 },
           {
             "command": "pnpm test:integration",
             "exitCode": 0,
-            "durationMs": 130948
+            "durationMs": 136120
           },
           {
             "command": "pnpm check:operations:schema",
             "exitCode": 0,
-            "durationMs": 295
+            "durationMs": 325
+          }
+        ],
+        "approvalRecords": [
+          {
+            "role": "lead",
+            "reviewer": "lead-fairbite-agent",
+            "at": "2026-10-10T12:23:14.256Z",
+            "runFinishedAt": "2026-10-10T12:22:50.370Z",
+            "commit": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+            "headAtApproval": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+            "approvedStaleTree": false,
+            "note": "Reviewed the clean 3c1afc2 G1 run: all 6 commands exit 0 on the real stack (check:enatega 531/531, check:enatega:full 845/845 with --check enforced, check:enatega:singlevendor 314/314, codegen:check frozen, test:integration 14 files/80 tests, check:operations:schema ready over 334 roots with 0 missing). Includes the W24 F1 reverse-direction fix so a served-but-uninventoried root now fails."
+          },
+          {
+            "role": "reviewer-SEC",
+            "reviewer": "w2-sec-review",
+            "at": "2026-10-10T12:23:18.794Z",
+            "runFinishedAt": "2026-10-10T12:22:50.370Z",
+            "commit": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+            "headAtApproval": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+            "approvedStaleTree": false,
+            "note": "Independent security/architecture review (W24) of W1/W2, re-run at 3c1afc2. Verified: no L12 root has a resolver and no flag can activate one (71 roots, fallback NOT_IMPLEMENTED proven at runtime for 70 queries/mutations + the subscription); no secret or personal field newly resolvable (ConfigurationConfiguration L12 fields resolve null and the stored configuration document is a strict schema that rejects googleApiKey/stripeSecretKey); smoke harness secrets in-process, loopback-only, never printed/committed; HTTP public-access gate and per-subscription WS revocation tests untouched and covering; contract report backendSchema hashes match current bytes; check:enatega:full provably fails a broken source. F1 (served root absent from inventory) fixed in c70bc14 and re-verified PASS: injected extra home now yields ready:false UNINVENTORIED_SDL_ROOT, repo stays ready:true with the two _kernel placeholders exempt."
           }
         ]
       }

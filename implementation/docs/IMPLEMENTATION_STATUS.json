@@ -86,11 +86,11 @@
     {
       "id": "G1",
       "passed": true,
-      "finishedAt": "2026-10-10T12:13:18.270Z",
-      "commit": "ddd3f0218e2b912c3aa45c1104dcbde977bf1206",
-      "approvals": [],
+      "finishedAt": "2026-10-10T12:22:50.370Z",
+      "commit": "3c1afc290a0011650f7c526a63bcef30dcb685e4",
+      "approvals": ["lead", "reviewer-SEC"],
       "requiredApprovals": ["lead", "reviewer-SEC"],
-      "approved": false,
+      "approved": true,
       "commands": [
         { "command": "pnpm check:enatega", "exitCode": 0 },
         { "command": "pnpm check:enatega:full", "exitCode": 0 },
@@ -129,7 +129,7 @@
     }
   ],
   "recordedGateRuns": 3,
-  "approvedGates": 2,
+  "approvedGates": 3,
   "notes": [
     "A resolving schema is not implementation: NOT_IMPLEMENTED roots are counted as unimplemented.",
     "A gate is approved only when every reviewer role it requires is recorded in docs/GATES.json by tools/approve-gate.mjs.",
