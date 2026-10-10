@@ -1431,17 +1431,41 @@
           "approvals": [],
           "reviewer": null,
           "approved": false
+        },
+        {
+          "gate": "G0",
+          "commit": "ed8082544b29892491e83739269c2ca3acba2d3d",
+          "dirty": false,
+          "recordedBy": "lead-fairbite-agent",
+          "startedAt": "2026-10-10T11:46:34.317Z",
+          "finishedAt": "2026-10-10T11:46:52.542Z",
+          "passed": true,
+          "partial": false,
+          "commands": [
+            {
+              "command": "pnpm e2e:smoke",
+              "executed": "./tools/pnpm.sh e2e:smoke",
+              "exitCode": 0,
+              "durationMs": 18224,
+              "startedAt": "2026-10-10T11:46:34.318Z",
+              "outputTail": "talog/\n    └─ migration.sql\n  └─ 202610080004_addresses/\n    └─ migration.sql\n  └─ 202610080005_configuration/\n    └─ migration.sql\n  └─ 202610090000_base_outbox/\n    └─ migration.sql\n  └─ 202610090100_l2_runtime_configuration/\n    └─ migration.sql\n  └─ 202610090150_L5_init/\n    └─ migration.sql\n\nAll migrations have been successfully applied.\n[e2e:smoke] activating one server-owned configuration version\n[e2e:smoke] starting the built API on 127.0.0.1:53501\n[e2e:smoke] health.live: HTTP 200\n[e2e:smoke] health.ready: HTTP 200 (Postgres and Redis reachable)\n[e2e:smoke] handshake.admin.metricsGeneral: HTTP 200, token bound to its nonce (10 pinned fields)\n[e2e:smoke] handshake.web.metricsGeneral: HTTP 200, token bound to its nonce (10 pinned fields)\n[e2e:smoke] gate.enforced: unauthenticated configuration rejected with PUBLIC_ACCESS_DENIED\n[e2e:smoke] configuration.web: HTTP 200, active version 8f2d2b37-0ea8-41e7-9e3d-8476dedd7d77 (MYR)\n[e2e:smoke] websocket.subscription.admin.subscribePlaceOrder: legacy (graphql-ws) and modern (graphql-transport-ws) both delivered the subscription to its explicit NOT_IMPLEMENTED terminal\n[e2e:smoke] websocket.subscription.web.orderStatusChanged: legacy (graphql-ws) and modern (graphql-transport-ws) both delivered the subscription to its explicit NOT_IMPLEMENTED terminal\n[e2e:smoke] websocket.data.graphql-ws: real configuration data delivered over graphql-ws\n[e2e:smoke] websocket.data.graphql-transport-ws: real configuration data delivered over graphql-transport-ws\n[e2e:smoke] limits.largest-document: enatega-multivendor-app src/singlevendor/apollo/queries.js measured 165/600 fields, depth 6/15; served without a limit error\n[e2e:smoke] PASS — 11 checks; artifact test-results/e2e-smoke.json\n[e2e:smoke] WS subscriptions: admin.subscribePlaceOrder, web.orderStatusChanged\nLoaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from prisma/schema.\nLoaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from prisma/schema.\n"
+            }
+          ],
+          "missingCommands": [],
+          "approvals": [],
+          "reviewer": null,
+          "approved": false
         }
       ],
       "latest": {
-        "commit": "d257e7045698dba05b9c7cb624a9cd036a49ee2c",
+        "commit": "ed8082544b29892491e83739269c2ca3acba2d3d",
         "dirty": false,
-        "finishedAt": "2026-10-10T11:42:14.149Z",
+        "finishedAt": "2026-10-10T11:46:52.542Z",
         "passed": true,
         "approvals": [],
         "approved": false,
         "commands": [
-          { "command": "pnpm e2e:smoke", "exitCode": 0, "durationMs": 18159 }
+          { "command": "pnpm e2e:smoke", "exitCode": 0, "durationMs": 18224 }
         ]
       }
     }

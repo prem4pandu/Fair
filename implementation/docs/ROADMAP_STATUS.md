@@ -23,7 +23,7 @@ repository can prove.
 | Gate  | Last run        | Finished                 | Commit         | Approvals                       |
 | ----- | --------------- | ------------------------ | -------------- | ------------------------------- |
 | `GP0` | commands passed | 2026-10-09T17:23:06.917Z | `08a702b86aed` | lead, reviewer-QA, reviewer-SEC |
-| `G0`  | commands passed | 2026-10-10T11:42:14.149Z | `d257e7045698` | **none** of 2 required          |
+| `G0`  | commands passed | 2026-10-10T11:46:52.542Z | `ed8082544b29` | **none** of 2 required          |
 | `G1`  | never run       | —                        | —              | **none** of 2 required          |
 | `G2`  | never run       | —                        | —              | **none** of 2 required          |
 | `G3`  | never run       | —                        | —              | **none** of 2 required          |
