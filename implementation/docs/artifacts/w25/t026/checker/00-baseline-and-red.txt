@@ -1,0 +1,24 @@
+# T-026B baseline + TDD red (pre-change), 2026-10-10T21:28:44+08:00
+
+Tool sha256 (pre-change):
+1981fe5ddd4de78f2720d4680044602a54d3980368c7011fe67650601aad8c6d  tools/check-enatega-compatibility.mjs
+
+## 1. Defect proof on a temp copy (no repo file touched)
+$ cp docs/ENATEGA_COMPATIBILITY_REPORT.full.json /tmp/t026-checker-baseline/corrupt.json + corrupt one document record + summary
+$ sha256sum /tmp/t026-checker-baseline/corrupt.json  # before
+199ad3eb8a77fb83ba40c78bd0f858252b8a5c3fc371985b346bccb98d84dfaf
+$ node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts /tmp/t026-checker-baseline/corrupt.json --check
+{"status":"PASS","apps":6,"documents":845,"validDocuments":845,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0
+$ sha256sum /tmp/t026-checker-baseline/corrupt.json  # after
+11819108d017f5c41a8cda0a9cf9c312f78dfaeb4e2dab4e4bc2facad90dddcb
+=> --check SILENTLY OVERWROTE the corrupted report with the regenerated one and exited 0. Defect confirmed.
+
+## 2. pnpm check:enatega* baseline (bundled node/pnpm; reports hashed before and after)
+Before: full=11819108d017f5a... json=2751c5a401129... singlevendor=5d13a2934239c...
+
+> fairbite-fresh-workspace@ check:enatega /Users/premkumarmamidi/Development/Fair/implementation
+> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check --scope multivendor
+
+{"status":"PASS","apps":5,"documents":531,"validDocuments":531,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0

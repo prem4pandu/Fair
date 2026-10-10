@@ -465,6 +465,108 @@ export function audit(source, contracts, appNames = apps, options = {}) {
     apps: reports,
   };
 }
+const previewValue = (value) => {
+  const text = JSON.stringify(value) ?? String(value);
+  return text.length > 120 ? `${text.slice(0, 117)}...` : text;
+};
+
+function differingRecords(computed = [], onDisk = []) {
+  let count = 0;
+  for (let index = 0; index < Math.max(computed.length, onDisk.length); index++)
+    if (JSON.stringify(computed[index]) !== JSON.stringify(onDisk[index]))
+      count++;
+  return count;
+}
+
+/**
+ * Describes every difference between a freshly computed report and the report
+ * already on disk. Returns an empty array when they match, so `--check` can use
+ * it as the gate without ever writing the output file. Exported for tests.
+ */
+export function reportDrift(computed, onDiskText, serialized) {
+  if (onDiskText === null || onDiskText === undefined)
+    return ["report file is missing"];
+  let onDisk;
+  try {
+    onDisk = JSON.parse(onDiskText);
+  } catch (error) {
+    return [`report file is not valid JSON (${error.message})`];
+  }
+  const lines = [];
+  const keys = [
+    ...new Set([...Object.keys(computed), ...Object.keys(onDisk)]),
+  ].sort();
+  for (const key of keys) {
+    if (key === "apps") continue;
+    if (JSON.stringify(computed[key]) !== JSON.stringify(onDisk[key]))
+      lines.push(
+        `${key}: differs (on-disk=${previewValue(onDisk[key])}, computed=${previewValue(computed[key])})`,
+      );
+  }
+  const computedApps = Array.isArray(computed.apps) ? computed.apps : [];
+  const onDiskApps = Array.isArray(onDisk.apps) ? onDisk.apps : [];
+  if (JSON.stringify(computedApps) !== JSON.stringify(onDiskApps)) {
+    const index = (list) =>
+      new Map(
+        list
+          .filter((app) => app && typeof app === "object" && app.app)
+          .map((app) => [app.app, app]),
+      );
+    const computedIndex = index(computedApps);
+    const onDiskIndex = index(onDiskApps);
+    const names = [
+      ...new Set([...computedIndex.keys(), ...onDiskIndex.keys()]),
+    ].sort();
+    const differing = [];
+    for (const name of names) {
+      const left = computedIndex.get(name);
+      const right = onDiskIndex.get(name);
+      if (JSON.stringify(left) === JSON.stringify(right)) continue;
+      const details = [];
+      if (!left) details.push("absent from the computed report");
+      else if (!right) details.push("absent from the on-disk report");
+      else {
+        const records = differingRecords(left.documents, right.documents);
+        if (records)
+          details.push(
+            `${records} of ${Math.max(
+              (left.documents ?? []).length,
+              (right.documents ?? []).length,
+            )} document record(s) differ`,
+          );
+        const fields = [
+          ...new Set([...Object.keys(left), ...Object.keys(right)]),
+        ]
+          .filter((key) => key !== "documents")
+          .filter(
+            (key) => JSON.stringify(left[key]) !== JSON.stringify(right[key]),
+          )
+          .sort();
+        if (fields.length)
+          details.push(`field(s) differ: ${fields.join(", ")}`);
+        if (!details.length) details.push("records differ");
+      }
+      differing.push(`${name} (${details.join("; ")})`);
+    }
+    if (differing.length)
+      lines.push(
+        `apps: ${differing.length} of ${Math.max(
+          computedApps.length,
+          onDiskApps.length,
+        )} app record(s) differ — ${differing.join(", ")}`,
+      );
+  }
+  if (
+    !lines.length &&
+    typeof serialized === "string" &&
+    serialized !== onDiskText
+  )
+    lines.push(
+      "report bytes differ from the regenerated serialization although the parsed content matches (formatting churn)",
+    );
+  return lines;
+}
+
 if (
   process.argv[1] &&
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
@@ -483,7 +585,11 @@ if (
     (scopeAt >= 0 && !scopes.has(scope))
   )
     throw new Error(
-      "Usage: node tools/check-enatega-compatibility.mjs SOURCE CONTRACTS OUTPUT [--check] [--scope multivendor|singlevendor]",
+      "Usage: node tools/check-enatega-compatibility.mjs SOURCE CONTRACTS OUTPUT [--check] [--scope multivendor|singlevendor]\n" +
+        "Without --check the freshly computed report is written to OUTPUT.\n" +
+        "With --check the tool never writes OUTPUT: it compares the computed report\n" +
+        "with the report already on disk, prints every difference to stderr and exits\n" +
+        "nonzero when they differ or the report is missing.",
     );
   const lanesPath = resolve("docs/OPERATION_LANES.json");
   const lanes = scope ? JSON.parse(readFileSync(lanesPath, "utf8")) : undefined;
@@ -507,10 +613,22 @@ if (
     documents,
     reconcileUncoveredSites: !scope,
   });
-  writeFileSync(
-    output,
-    await format(JSON.stringify(report), { parser: "json" }),
-  );
+  const serialized = await format(JSON.stringify(report), { parser: "json" });
+  let differences = [];
+  if (check) {
+    // --check is a verifier, not a generator: it must never write OUTPUT, or a
+    // drifted report would be silently "fixed" and the gate could not detect it.
+    const onDisk = existsSync(output) ? readFileSync(output, "utf8") : null;
+    differences = reportDrift(report, onDisk, serialized);
+    if (differences.length) {
+      console.error(
+        `check:enatega: DRIFT DETECTED for ${output} — the on-disk report does not match the freshly computed report; it was NOT modified:`,
+      );
+      for (const difference of differences) console.error(`  - ${difference}`);
+    }
+  } else {
+    writeFileSync(output, serialized);
+  }
   console.log(
     JSON.stringify({
       status: report.staticCompatibility,
@@ -518,5 +636,9 @@ if (
       missingRoots: report.summary.missingRoots.length,
     }),
   );
-  if (check && report.staticCompatibility !== "PASS") process.exitCode = 1;
+  if (
+    check &&
+    (differences.length > 0 || report.staticCompatibility !== "PASS")
+  )
+    process.exitCode = 1;
 }

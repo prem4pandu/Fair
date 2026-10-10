@@ -1,0 +1,56 @@
+# TDD green run (post-change) — acceptance #1, 2026-10-10T21:29:41+08:00
+$ node --test tools/check-enatega-compatibility.test.mjs
+✔ CLI without --check regenerates and writes the report (1213.152417ms)
+✔ --check on an identical report exits 0 and leaves the file byte-identical (2449.057417ms)
+✔ --check detects a mutated on-disk report, names the drift and never writes (2430.599542ms)
+✔ --check fails when the report is missing and does not create it (1270.902208ms)
+✔ usage text documents that --check never writes the report (158.320834ms)
+✔ reads boundedOperation from services/api/src/kernel/limits.ts when present (28.450834ms)
+✔ multivendor scope ignores documents whose only missing roots are L12 (10.580291ms)
+✔ reads the configured GraphQL body-limit default (7.637292ms)
+✔ multivendor scope still fails documents with any in-scope missing root (10.196292ms)
+✔ valid static fragments, aliases and multiline comments validate deterministically (11.3485ms)
+✔ a standalone shared fragment export is a valid static document (6.447375ms)
+✔ a fragment-only document selecting an absent field still fails (8.110625ms)
+✔ a fragment-only document on an unknown type condition still fails (6.595458ms)
+✔ an unused fragment beside an operation is still rejected (6.201334ms)
+✔ field, argument and variable-type mismatches fail beyond root-name matching (6.304792ms)
+✔ absent Subscription type and fragment-wrapped missing roots cannot pass (7.907667ms)
+✔ interpolated documents and imported gql arguments remain unresolved (6.279ms)
+✔ missing fragment imports and malformed documents fail without execution (5.615375ms)
+✔ actual backend rule rejects multiple mutation roots and excessive field count (8.419583ms)
+✔ actual backend rule checks depth and total definitions (7.82075ms)
+✔ configured query-only JSON limit is a minimum bound and oversized source fails (15.849917ms)
+✔ empty source and TypeScript parse errors fail closed (13.885916ms)
+✔ absent server source, unknown body limit and empty app sets cannot pass (8.447959ms)
+✔ a supplied resolution set is the whole audit unless reconciliation is requested (5.89875ms)
+✔ reconciliation still audits a static site the resolver did not cover (6.030167ms)
+✔ reconciliation reports a dynamic site the resolver did not cover instead of dropping it (4.983583ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7884.752666
+EXIT=0
+# Post-format re-verification, 2026-10-10T21:29:56+08:00
+$ node --test tools/check-enatega-compatibility.test.mjs
+ℹ tests 26
+ℹ pass 26
+ℹ fail 0
+TEST_EXIT=0
+
+$ pnpm check:enatega
+{"status":"PASS","apps":5,"documents":531,"validDocuments":531,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0
+$ pnpm check:enatega:full
+{"status":"PASS","apps":6,"documents":845,"validDocuments":845,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0
+$ pnpm check:enatega:singlevendor
+{"status":"PASS","apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0
+
+$ git status --short -- docs/ENATEGA_COMPATIBILITY_REPORT*.json
+(end - empty means unmodified)

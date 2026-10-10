@@ -1,0 +1,41 @@
+# TDD red run (pre-change), 2026-10-10T21:28:49+08:00
+$ node --test tools/check-enatega-compatibility.test.mjs
+✔ CLI without --check regenerates and writes the report (1335.104083ms)
+✔ --check on an identical report exits 0 and leaves the file byte-identical (2498.089166ms)
+✖ --check detects a mutated on-disk report, names the drift and never writes (2462.840792ms)
+✖ --check fails when the report is missing and does not create it (1244.963541ms)
+✖ usage text documents that --check never writes the report (160.447375ms)
+✔ reads boundedOperation from services/api/src/kernel/limits.ts when present (26.180458ms)
+✔ multivendor scope ignores documents whose only missing roots are L12 (8.521958ms)
+✔ reads the configured GraphQL body-limit default (6.614917ms)
+✔ multivendor scope still fails documents with any in-scope missing root (6.805584ms)
+✔ valid static fragments, aliases and multiline comments validate deterministically (9.069084ms)
+✔ a standalone shared fragment export is a valid static document (4.793542ms)
+✔ a fragment-only document selecting an absent field still fails (5.722417ms)
+✔ a fragment-only document on an unknown type condition still fails (5.237375ms)
+✔ an unused fragment beside an operation is still rejected (4.935875ms)
+✔ field, argument and variable-type mismatches fail beyond root-name matching (4.88975ms)
+✔ absent Subscription type and fragment-wrapped missing roots cannot pass (4.45625ms)
+✔ interpolated documents and imported gql arguments remain unresolved (5.932959ms)
+✔ missing fragment imports and malformed documents fail without execution (4.519ms)
+✔ actual backend rule rejects multiple mutation roots and excessive field count (6.31325ms)
+✔ actual backend rule checks depth and total definitions (6.785458ms)
+✔ configured query-only JSON limit is a minimum bound and oversized source fails (15.54275ms)
+✔ empty source and TypeScript parse errors fail closed (11.602583ms)
+✔ absent server source, unknown body limit and empty app sets cannot pass (5.44075ms)
+✔ a supplied resolution set is the whole audit unless reconciliation is requested (4.588958ms)
+✔ reconciliation still audits a static site the resolver did not cover (4.821458ms)
+✔ reconciliation reports a dynamic site the resolver did not cover instead of dropping it (4.740166ms)
+✖ failing tests:
+✖ --check detects a mutated on-disk report, names the drift and never writes (2462.840792ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to: 0
+    code: 'ERR_ASSERTION',
+    operator: 'notStrictEqual',
+✖ --check fails when the report is missing and does not create it (1244.963541ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to: 0
+    code: 'ERR_ASSERTION',
+    operator: 'notStrictEqual',
+✖ usage text documents that --check never writes the report (160.447375ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /never writes OUTPUT/. Input:
+    code: 'ERR_ASSERTION',
+EXIT=1

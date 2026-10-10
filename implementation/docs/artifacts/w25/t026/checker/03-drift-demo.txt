@@ -1,0 +1,26 @@
+# T-026B drift demonstration (temp files only), 2026-10-10T21:29:34+08:00
+
+$ mkdir -p /tmp/t026-checker-drift && cp docs/ENATEGA_COMPATIBILITY_REPORT.full.json /tmp/t026-checker-drift/drift.json
+$ <corrupt one document record and summary.documents in /tmp/t026-checker-drift/drift.json>
+$ sha256sum /tmp/t026-checker-drift/drift.json   # before --check
+34dbf86c92d71fbe4be36632873361482a04601b574b4c29ed92ae2718b3d529  /tmp/t026-checker-drift/drift.json
+
+$ node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts /tmp/t026-checker-drift/drift.json --check
+check:enatega: DRIFT DETECTED for /tmp/t026-checker-drift/drift.json — the on-disk report does not match the freshly computed report; it was NOT modified:
+  - summary: differs (on-disk={"apps":6,"documents":846,"validDocuments":845,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":[]}, computed={"apps":6,"documents":845,"validDocuments":845,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":[]})
+  - apps: 1 of 6 app record(s) differ — enatega-multivendor-web (1 of 111 document record(s) differ)
+{"status":"PASS","apps":6,"documents":845,"validDocuments":845,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=1
+
+$ sha256sum /tmp/t026-checker-drift/drift.json   # after --check (must be unchanged)
+34dbf86c92d71fbe4be36632873361482a04601b574b4c29ed92ae2718b3d529  /tmp/t026-checker-drift/drift.json
+
+$ node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts /tmp/t026-checker-drift/noncheck.json   # non-check still writes
+{"status":"PASS","apps":6,"documents":845,"validDocuments":845,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0
+noncheck.json exists: yes
+$ cmp /tmp/t026-checker-drift/noncheck.json docs/ENATEGA_COMPATIBILITY_REPORT.full.json && echo 'non-check output is byte-identical to the committed report'
+non-check output is byte-identical to the committed report
+
+$ rm -rf /tmp/t026-checker-drift
+temp files deleted

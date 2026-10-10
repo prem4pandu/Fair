@@ -1,0 +1,44 @@
+# T-026B post-change acceptance, 2026-10-10T21:29:23+08:00
+
+Tool sha256 (post-change):
+c2d684f84ce13f2f6af7a14c300df40e4f01e3b6154c4deb809c20ca8f1c7b55  tools/check-enatega-compatibility.mjs
+
+## Reports before
+2751c5a40112923558b5ff5cd39543241ee85dc004291c33964bddaf75c282f1  docs/ENATEGA_COMPATIBILITY_REPORT.json
+11819108d017f5c41a8cda0a9cf9c312f78dfaeb4e2dab4e4bc2facad90dddcb  docs/ENATEGA_COMPATIBILITY_REPORT.full.json
+5d13a2934239cd3cb032c21669324599e08591587198f979e2154b52c6701ee1  docs/ENATEGA_COMPATIBILITY_REPORT.singlevendor.json
+
+===== $ pnpm check:enatega =====
+
+> fairbite-fresh-workspace@ check:enatega /Users/premkumarmamidi/Development/Fair/implementation
+> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check --scope multivendor
+
+{"status":"PASS","apps":5,"documents":531,"validDocuments":531,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0
+elapsed=2s
+
+===== $ pnpm check:enatega:full =====
+
+> fairbite-fresh-workspace@ check:enatega:full /Users/premkumarmamidi/Development/Fair/implementation
+> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.full.json --check
+
+{"status":"PASS","apps":6,"documents":845,"validDocuments":845,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0
+elapsed=3s
+
+===== $ pnpm check:enatega:singlevendor =====
+
+> fairbite-fresh-workspace@ check:enatega:singlevendor /Users/premkumarmamidi/Development/Fair/implementation
+> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.singlevendor.json --check --scope singlevendor
+
+{"status":"PASS","apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+EXIT=0
+elapsed=2s
+
+## Reports after
+2751c5a40112923558b5ff5cd39543241ee85dc004291c33964bddaf75c282f1  docs/ENATEGA_COMPATIBILITY_REPORT.json
+11819108d017f5c41a8cda0a9cf9c312f78dfaeb4e2dab4e4bc2facad90dddcb  docs/ENATEGA_COMPATIBILITY_REPORT.full.json
+5d13a2934239cd3cb032c21669324599e08591587198f979e2154b52c6701ee1  docs/ENATEGA_COMPATIBILITY_REPORT.singlevendor.json
+
+===== $ git status --short -- <three reports> =====
+(end - empty means unmodified)

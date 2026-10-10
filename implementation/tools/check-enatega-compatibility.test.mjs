@@ -6,10 +6,130 @@ import {
   writeFileSync,
   rmSync,
   readFileSync,
+  existsSync,
 } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { audit } from "./check-enatega-compatibility.mjs";
+
+const implementationRoot = fileURLToPath(new URL("..", import.meta.url));
+const toolPath = fileURLToPath(
+  new URL("./check-enatega-compatibility.mjs", import.meta.url),
+);
+
+// The CLI audits the six pinned app names against the real backend SDL, so the
+// CLI fixture keeps real contracts/limits but a tiny throwaway source tree whose
+// only sites are valid against that SDL. That makes the computed report PASS and
+// keeps these tests focused on write/diff semantics instead of SDL drift.
+const cliApps = [
+  "enatega-multivendor-web",
+  "enatega-multivendor-admin",
+  "enatega-singlevendor-admin",
+  "enatega-multivendor-app",
+  "enatega-multivendor-store",
+  "enatega-multivendor-rider",
+];
+
+function cliFixture(t) {
+  const root = mkdtempSync(join(tmpdir(), "fair-compatibility-cli-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const app of cliApps) {
+    mkdirSync(join(root, "source", app), { recursive: true });
+    writeFileSync(
+      join(root, "source", app, "operations.ts"),
+      "const doc = gql`query { __typename }`;",
+    );
+  }
+  const report = join(root, "report.json");
+  const run = (extra = []) =>
+    spawnSync(
+      process.execPath,
+      [
+        toolPath,
+        join(root, "source"),
+        join(implementationRoot, "contracts"),
+        report,
+        ...extra,
+      ],
+      {
+        cwd: implementationRoot,
+        encoding: "utf8",
+        maxBuffer: 64 * 1024 * 1024,
+      },
+    );
+  return { root, report, run };
+}
+
+const digest = (path) =>
+  createHash("sha256").update(readFileSync(path)).digest("hex");
+
+test("CLI without --check regenerates and writes the report", (t) => {
+  const fixture = cliFixture(t);
+  assert.equal(existsSync(fixture.report), false);
+  const result = fixture.run();
+  assert.equal(result.status, 0);
+  assert.equal(existsSync(fixture.report), true);
+  const report = JSON.parse(readFileSync(fixture.report, "utf8"));
+  assert.equal(report.staticCompatibility, "PASS");
+  assert.equal(report.apps.length, 6);
+});
+
+test("--check on an identical report exits 0 and leaves the file byte-identical", (t) => {
+  const fixture = cliFixture(t);
+  assert.equal(fixture.run().status, 0);
+  const before = digest(fixture.report);
+  const result = fixture.run(["--check"]);
+  assert.equal(result.status, 0);
+  assert.equal(digest(fixture.report), before);
+  assert.equal(
+    /DRIFT|missing/i.test(result.stderr),
+    false,
+    `unexpected stderr: ${result.stderr}`,
+  );
+  assert.match(result.stdout, /"status":"PASS"/);
+});
+
+test("--check detects a mutated on-disk report, names the drift and never writes", (t) => {
+  const fixture = cliFixture(t);
+  assert.equal(fixture.run().status, 0);
+  const report = JSON.parse(readFileSync(fixture.report, "utf8"));
+  report.summary.documents += 1;
+  report.apps[0].documents[0].status = "DELIBERATELY_CORRUPTED";
+  writeFileSync(fixture.report, JSON.stringify(report, null, 2));
+  const before = digest(fixture.report);
+  const result = fixture.run(["--check"]);
+  assert.notEqual(result.status, 0);
+  assert.equal(
+    digest(fixture.report),
+    before,
+    "the report file must not be rewritten",
+  );
+  assert.match(result.stderr, /DRIFT DETECTED/);
+  assert.match(result.stderr, /summary: differs/);
+  assert.match(result.stderr, /apps: 1 of 6 app record\(s\) differ/);
+  assert.match(result.stderr, /1 of \d+ document record\(s\) differ/);
+});
+
+test("--check fails when the report is missing and does not create it", (t) => {
+  const fixture = cliFixture(t);
+  const result = fixture.run(["--check"]);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /missing/);
+  assert.equal(existsSync(fixture.report), false);
+});
+
+test("usage text documents that --check never writes the report", () => {
+  const result = spawnSync(process.execPath, [toolPath], {
+    cwd: implementationRoot,
+    encoding: "utf8",
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /never writes OUTPUT/);
+  assert.match(result.stderr, /Without --check/);
+});
 
 function fixture(
   t,
