@@ -1560,6 +1560,111 @@
           }
         ]
       }
+    },
+    "G1": {
+      "gate": "G1",
+      "runs": [
+        {
+          "gate": "G1",
+          "commit": "ddd3f0218e2b912c3aa45c1104dcbde977bf1206",
+          "dirty": false,
+          "recordedBy": "w1-gate-audit",
+          "startedAt": "2026-10-10T12:11:01.724Z",
+          "finishedAt": "2026-10-10T12:13:18.270Z",
+          "passed": true,
+          "partial": false,
+          "commands": [
+            {
+              "command": "pnpm check:enatega",
+              "executed": "./tools/pnpm.sh check:enatega",
+              "exitCode": 0,
+              "durationMs": 1585,
+              "startedAt": "2026-10-10T12:11:01.725Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ check:enatega /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.json --check --scope multivendor\n\n{\"status\":\"PASS\",\"apps\":5,\"documents\":531,\"validDocuments\":531,\"unresolvedDocuments\":0,\"outOfScopeDocuments\":0,\"missingRoots\":0}\n"
+            },
+            {
+              "command": "pnpm check:enatega:full",
+              "executed": "./tools/pnpm.sh check:enatega:full",
+              "exitCode": 0,
+              "durationMs": 1671,
+              "startedAt": "2026-10-10T12:11:03.310Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ check:enatega:full /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.full.json --check\n\n{\"status\":\"PASS\",\"apps\":6,\"documents\":845,\"validDocuments\":845,\"unresolvedDocuments\":0,\"outOfScopeDocuments\":0,\"missingRoots\":0}\n"
+            },
+            {
+              "command": "pnpm check:enatega:singlevendor",
+              "executed": "./tools/pnpm.sh check:enatega:singlevendor",
+              "exitCode": 0,
+              "durationMs": 1469,
+              "startedAt": "2026-10-10T12:11:04.981Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ check:enatega:singlevendor /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-enatega-compatibility.mjs vendor/enatega-ui contracts docs/ENATEGA_COMPATIBILITY_REPORT.singlevendor.json --check --scope singlevendor\n\n{\"status\":\"PASS\",\"apps\":3,\"documents\":314,\"validDocuments\":314,\"unresolvedDocuments\":0,\"outOfScopeDocuments\":0,\"missingRoots\":0}\n"
+            },
+            {
+              "command": "pnpm codegen:check",
+              "executed": "./tools/pnpm.sh codegen:check",
+              "exitCode": 0,
+              "durationMs": 577,
+              "startedAt": "2026-10-10T12:11:06.450Z",
+              "outputTail": "\n> fairbite-fresh-workspace@ codegen:check /Users/premkumarmamidi/Development/Fair/implementation\n> node tools/check-codegen.mjs\n\n❯ Parse Configuration\n✔ Parse Configuration\n❯ Generate outputs\n❯ Generate to packages/identity-contracts/src/generated.ts\n❯ Load GraphQL schemas\n✔ Load GraphQL schemas\n❯ Load GraphQL documents\n✔ Load GraphQL documents\n❯ Generate\n✔ Generate\n✔ Generate to packages/identity-contracts/src/generated.ts\n✔ Generate outputs\nGenerated schema matches frozen SDL\n"
+            },
+            {
+              "command": "pnpm test:integration",
+              "executed": "./tools/pnpm.sh test:integration",
+              "exitCode": 0,
+              "durationMs": 130948,
+              "startedAt": "2026-10-10T12:11:07.027Z",
+              "outputTail": "ed logins to current roles and explicit grants without public onboarding  899ms\n     ✓ logout of old refresh revokes entire family and logoutAll stays within own identity  348ms\n     ✓ bounds password work globally and protects absolute expiry  308ms\n     ✓ binds dual-role production CUSTOMER sessions to CUSTOMER for me, refresh and logoutAll  601ms\n     ✓ denies privileged password eligibility in production policy context  325ms\n     ✓ enforces family-user binding, absolute expiry, immutable audit and rejects multi-root auth aliases  413ms\n     ✓ shares atomic Redis account limits across API instances; rejects forged access claims  1019ms\n ✓ test/configuration.integration.spec.ts (6 tests) 18914ms\n   ✓ rejects private fields, malformed core values and unsupported capability flags in storage  484ms\n   ✓ bounds real database outage and recovers  3117ms\n ✓ test/foundation.integration.spec.ts (3 tests) 14285ms\n ✓ test/integration/schema/upgrade.integration.spec.ts (2 tests) 9354ms\n   ✓ preserves every populated migration-005 row through the complete deployed history and API reads  6285ms\n   ✓ deploys the same complete history to a fresh database  2924ms\n ✓ test/integration/kernel/public-access.integration.spec.ts (8 tests) 1228ms\n     ✓ serves every pinned client's exact MetricsGeneral document with a nonce  1098ms\n ✓ test/integration/schema/runtime-contract.integration.spec.ts (4 tests) 328ms\n ✓ test/integration/support/clients.integration.spec.ts (3 tests) 469ms\n ✓ test/orders-persistence.integration.spec.ts (3 tests) 455ms\n ✓ test/integration/kernel/ws.integration.spec.ts (9 tests) 460ms\n ✓ test/integration/kernel/outbox.integration.spec.ts (5 tests) 422ms\n ✓ test/integration/support/stack.integration.spec.ts (2 tests) 166ms\n ✓ test/integration/kernel/pubsub.integration.spec.ts (3 tests) 15ms\n\n Test Files  14 passed (14)\n      Tests  80 passed (80)\n   Start at  20:11:07\n   Duration  130.40s (transform 204ms, setup 0ms, import 4.10s, tests 111.69s, environment 0ms)\n\n"
+            },
+            {
+              "command": "pnpm check:operations:schema",
+              "executed": "./tools/pnpm.sh check:operations:schema",
+              "exitCode": 0,
+              "durationMs": 295,
+              "startedAt": "2026-10-10T12:13:17.975Z",
+              "outputTail": "{\n      \"type\": \"subscription\",\n      \"name\": \"riderUpdated\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"web\",\n        \"device\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscribePlaceOrder\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionAssignRider\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionDispatcher\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"web\",\n        \"device\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionNewMessage\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionOrder\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionOrderTracking\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionPaymentSuccess\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionRiderLocation\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    },\n    {\n      \"type\": \"subscription\",\n      \"name\": \"subscriptionZoneOrders\",\n      \"missing\": [\n        \"unit\",\n        \"integration\",\n        \"device\",\n        \"web\"\n      ]\n    }\n  ],\n  \"errors\": [],\n  \"complete\": false,\n  \"schemaReadiness\": {\n    \"ready\": true,\n    \"total\": 334,\n    \"implemented\": 18,\n    \"explicitNotImplemented\": 316,\n    \"missing\": [],\n    \"errors\": []\n  }\n}\n"
+            }
+          ],
+          "missingCommands": [],
+          "approvals": [],
+          "reviewer": null,
+          "approved": false
+        }
+      ],
+      "latest": {
+        "commit": "ddd3f0218e2b912c3aa45c1104dcbde977bf1206",
+        "dirty": false,
+        "finishedAt": "2026-10-10T12:13:18.270Z",
+        "passed": true,
+        "approvals": [],
+        "approved": false,
+        "commands": [
+          {
+            "command": "pnpm check:enatega",
+            "exitCode": 0,
+            "durationMs": 1585
+          },
+          {
+            "command": "pnpm check:enatega:full",
+            "exitCode": 0,
+            "durationMs": 1671
+          },
+          {
+            "command": "pnpm check:enatega:singlevendor",
+            "exitCode": 0,
+            "durationMs": 1469
+          },
+          { "command": "pnpm codegen:check", "exitCode": 0, "durationMs": 577 },
+          {
+            "command": "pnpm test:integration",
+            "exitCode": 0,
+            "durationMs": 130948
+          },
+          {
+            "command": "pnpm check:operations:schema",
+            "exitCode": 0,
+            "durationMs": 295
+          }
+        ]
+      }
     }
   }
 }

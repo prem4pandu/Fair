@@ -84,6 +84,23 @@
       "commands": [{ "command": "pnpm e2e:smoke", "exitCode": 0 }]
     },
     {
+      "id": "G1",
+      "passed": true,
+      "finishedAt": "2026-10-10T12:13:18.270Z",
+      "commit": "ddd3f0218e2b912c3aa45c1104dcbde977bf1206",
+      "approvals": [],
+      "requiredApprovals": ["lead", "reviewer-SEC"],
+      "approved": false,
+      "commands": [
+        { "command": "pnpm check:enatega", "exitCode": 0 },
+        { "command": "pnpm check:enatega:full", "exitCode": 0 },
+        { "command": "pnpm check:enatega:singlevendor", "exitCode": 0 },
+        { "command": "pnpm codegen:check", "exitCode": 0 },
+        { "command": "pnpm test:integration", "exitCode": 0 },
+        { "command": "pnpm check:operations:schema", "exitCode": 0 }
+      ]
+    },
+    {
       "id": "GP0",
       "passed": true,
       "finishedAt": "2026-10-09T17:23:06.917Z",
@@ -111,7 +128,7 @@
       ]
     }
   ],
-  "recordedGateRuns": 2,
+  "recordedGateRuns": 3,
   "approvedGates": 2,
   "notes": [
     "A resolving schema is not implementation: NOT_IMPLEMENTED roots are counted as unimplemented.",
