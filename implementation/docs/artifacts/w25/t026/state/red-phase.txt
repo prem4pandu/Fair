@@ -1,0 +1,15 @@
+$ node --test tools/lib/operation-state.test.mjs   # HEAD (regex) implementation
+
+✔ counts a genuine root-field decorator (2.062875ms)
+✖ ignores decorator-shaped text in comments (1.204ms)
+✖ ignores decorator-shaped text inside string literals (1.229542ms)
+✖ accepts valid formatting the regex-based reader missed (0.937208ms)
+✔ ignores non-root decorators and non-literal arguments (0.804458ms)
+✔ deduplicates the same root across files (6.363708ms)
+ℹ tests 6
+ℹ pass 3
+ℹ fail 3
+✖ failing tests:
+✖ ignores decorator-shaped text in comments (1.204ms)
+✖ ignores decorator-shaped text inside string literals (1.229542ms)
+✖ accepts valid formatting the regex-based reader missed (0.937208ms)

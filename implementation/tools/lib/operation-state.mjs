@@ -8,6 +8,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import ts from "typescript";
 
 export const LANE_NAMES = {
   L0: "Platform kernel",
@@ -57,21 +58,52 @@ function walk(directory, extensions) {
     });
 }
 
+const ROOT_DECORATORS = new Set(["query", "mutation", "subscription"]);
+
+function decoratorsOf(node) {
+  return ts.canHaveDecorators(node) ? (ts.getDecorators(node) ?? []) : [];
+}
+
 /**
  * Root fields that have a real resolver. Everything else is filled by
  * kernel/not-implemented.ts and fails with NOT_IMPLEMENTED.
+ *
+ * Detection reads the TypeScript syntax tree, never the raw file text: a
+ * decorator written inside a comment or a string literal is not a resolver,
+ * and valid formatting (multi-line arguments, an inline comment, a trailing
+ * comma) must not hide one. The returned key is the lowercased kind plus the
+ * field name exactly as declared (`query.emailExist`), which is what the
+ * generated artifacts compare against.
  */
 export function implementedRoots({
   implementation = defaultImplementation,
 } = {}) {
   const found = new Set();
-  const pattern = /@(Query|Mutation|Subscription)\(\s*"([A-Za-z0-9_]+)"\s*\)/g;
   for (const path of walk(resolve(implementation, "services/api/src"), [
     "ts",
   ])) {
-    const text = readFileSync(path, "utf8");
-    for (const match of text.matchAll(pattern))
-      found.add(`${match[1].toLowerCase()}.${match[2]}`);
+    const source = ts.createSourceFile(
+      path,
+      readFileSync(path, "utf8"),
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS,
+    );
+    const visit = (node) => {
+      for (const decorator of decoratorsOf(node)) {
+        const call = decorator.expression;
+        if (!ts.isCallExpression(call) || !ts.isIdentifier(call.expression))
+          continue;
+        const kind = call.expression.text.toLowerCase();
+        if (!ROOT_DECORATORS.has(kind)) continue;
+        const [argument] = call.arguments;
+        if (!argument || !ts.isStringLiteralLike(argument)) continue;
+        if (!/^[A-Za-z0-9_]+$/.test(argument.text)) continue;
+        found.add(`${kind}.${argument.text}`);
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(source);
   }
   return found;
 }

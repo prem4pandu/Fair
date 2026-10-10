@@ -1,0 +1,11 @@
+$ node --test tools/lib/operation-state.test.mjs   # AST implementation
+
+✔ counts a genuine root-field decorator (5.128916ms)
+✔ ignores decorator-shaped text in comments (1.9715ms)
+✔ ignores decorator-shaped text inside string literals (1.83625ms)
+✔ accepts valid formatting the regex-based reader missed (1.133041ms)
+✔ ignores non-root decorators and non-literal arguments (1.1855ms)
+✔ deduplicates the same root across files (6.101166ms)
+ℹ tests 6
+ℹ pass 6
+ℹ fail 0

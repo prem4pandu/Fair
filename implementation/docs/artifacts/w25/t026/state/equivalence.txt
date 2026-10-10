@@ -1,0 +1,6 @@
+$ node docs/artifacts/w25/t026/state/compare.mjs
+
+legacy regex keys: 37
+syntax-tree keys:  37
+dropped (regex said implemented, tree disagrees): 0
+added (tree found, regex missed): 0
