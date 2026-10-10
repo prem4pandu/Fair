@@ -3151,8 +3151,28 @@
       "apps": ["app", "app(sv)", "rider", "web"],
       "status": "NOT_VERIFIED",
       "tests": {
-        "unit": [],
-        "integration": [],
+        "unit": [
+          {
+            "path": "services/api/test/unit/identity/emailExist.spec.ts",
+            "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/emailExist.spec.ts",
+            "result": {
+              "status": "passed",
+              "exitCode": 0,
+              "evidenceFiles": ["docs/artifacts/w3/emailExist.json"]
+            }
+          }
+        ],
+        "integration": [
+          {
+            "path": "services/api/test/integration/identity/emailExist.integration.spec.ts",
+            "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/emailExist.integration.spec.ts",
+            "result": {
+              "status": "passed",
+              "exitCode": 0,
+              "evidenceFiles": ["docs/artifacts/w3/emailExist.json"]
+            }
+          }
+        ],
         "playwright": [],
         "device": []
       }

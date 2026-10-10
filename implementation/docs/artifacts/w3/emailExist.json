@@ -1,0 +1,43 @@
+{
+  "operation": "mutation.emailExist",
+  "lane": "L1",
+  "workstream": "W3",
+  "commit": "7702c53",
+  "sourceDocument": {
+    "app": "enatega-multivendor-web",
+    "file": "lib/api/graphql/mutations/auth/index.ts",
+    "exportName": "EMAIL_EXISTS",
+    "note": "Loaded through tools/lib/documents.mjs. The multivendor app and rider declare the same mutation; the single-vendor variants are the same Boolean contract."
+  },
+  "commands": [
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/emailExist.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "3 tests: adapter delegation to the identity service, false propagation, and the normalize/reject input boundary."
+    },
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/emailExist.integration.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "6 tests against the real HTTP server, PostgreSQL and Redis: exact pinned document true/false, case+whitespace normalization, BAD_USER_INPUT, public-access 403 without the handshake, the RATE_LIMITED abuse cap on repeated probing, and no writes on lookup."
+    },
+    {
+      "command": "pnpm test:integration",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "16 files / 93 tests green on commit 7702c53."
+    }
+  ],
+  "evidenceStatus": {
+    "unit": "passed",
+    "integration": "passed",
+    "playwright": "not-run",
+    "reason": "The apps list includes web, app and rider, so the evidence checker requires both web (playwright/webJourney) and device evidence. Neither harness exists yet (W16 and W19), so this record stays NOT_VERIFIED and is never counted as evidenced."
+  },
+  "knownLimits": [
+    "The contract is an enumeration oracle by design: any caller with the public handshake can learn whether an address is registered. Mitigated by the shared per-caller (60/min) and per-address (10/min) Redis limits and by returning nothing else; a stricter product policy would need an owner decision, not an invented behaviour.",
+    "Existence is status-independent on purpose (a suspended account keeps its unique address), which is recorded here rather than silently choosing either behaviour."
+  ],
+  "reviewer": null
+}
