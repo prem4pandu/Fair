@@ -454,6 +454,26 @@ export class IdentityService {
     await this.revokeDigest(this.digest(token));
     return { accepted: true };
   }
+  /**
+   * Whether an account already owns this normalized address. It is deliberately
+   * status-independent: the address stays taken for a suspended account, so the
+   * onboarding flow routes to sign-in instead of colliding with the unique
+   * email. The contract is itself an enumeration oracle, so the lookup is
+   * rate-limited per caller and per address and every other path reveals
+   * nothing else about the account.
+   */
+  async emailExists(
+    value: unknown,
+    context: IdentityContext,
+  ): Promise<boolean> {
+    this.enabled();
+    const email = normalizeEmail(value);
+    await this.limit(context, `email-exist:${email}`);
+    const user = await this.prisma.identityUser
+      .findUnique({ where: { email }, select: { id: true } })
+      .catch(() => unavailable());
+    return user !== null;
+  }
   async identity(
     requested: Application,
     context: IdentityContext,

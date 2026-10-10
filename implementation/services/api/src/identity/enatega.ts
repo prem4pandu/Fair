@@ -241,6 +241,10 @@ export class EnategaIdentityAdapter {
     };
   }
 
+  async emailExist(email: unknown, context: IdentityContext) {
+    return this.identity.emailExists(email, context);
+  }
+
   async ownerSession(context: IdentityContext) {
     return toEnategaOwnerSessionFromToken(
       await this.identity.ownerPrincipal(context),

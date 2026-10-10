@@ -117,4 +117,11 @@ export class IdentityResolver {
   @Query("ownerSession") ownerSession(@Context() ctx: IdentityContext) {
     return this.enatega.ownerSession(ctx);
   }
+
+  @Mutation("emailExist") emailExist(
+    @Args("email") email: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.enatega.emailExist(email, ctx);
+  }
 }
