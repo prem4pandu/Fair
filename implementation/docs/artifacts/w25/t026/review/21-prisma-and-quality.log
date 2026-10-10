@@ -1,0 +1,18 @@
+=== Prisma .env decisive test (single-file schema, DATABASE_URL only in .env) ===
+env: /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.Zb08iwWQh2/services/api/node_modules/.bin/prisma: No such file or directory
+exit=127
+
+=== scoped quality gates claimed in smoke README ===
+$ ./tools/pnpm.sh exec prettier --check e2e/smoke
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+$ ./tools/pnpm.sh exec eslint e2e/smoke
+exit=0
+
+=== checker README formatting claim ===
+$ ./tools/pnpm.sh exec prettier --check tools/check-enatega-compatibility.mjs tools/check-enatega-compatibility.test.mjs tools/lib/operation-state.mjs tools/lib/operation-state.test.mjs
+Checking formatting...
+[warn] tools/lib/operation-state.test.mjs
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+exit=0

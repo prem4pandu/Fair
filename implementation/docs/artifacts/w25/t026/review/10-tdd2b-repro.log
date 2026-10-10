@@ -1,0 +1,18 @@
+=== reproduce tdd-2b: final environment.test.mjs vs pre-fix run.mjs (temp dir, no repo file touched) ===
+pre-fix run.mjs sha256: 310961a30958a62e949fe5cc0f3d901d32cb068844a6e8974d708fcc6b5c2f69
+$ node --test /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.R28wyxoFA6/environment.test.mjs
+✔ no ambient secret material reaches a child environment (0.375417ms)
+✔ process plumbing and toolchain basics still reach the child (0.068542ms)
+✔ explicit overrides are the only source of API configuration (0.063125ms)
+✔ the child environment is deterministic across differing ambient secrets (0.26625ms)
+✔ the ambient scan names exactly the variables that must never be inherited (0.573833ms)
+✔ the smoke secrets are deterministic canonical 32-byte keys (0.198125ms)
+✔ the run-time guard fails loudly when ambient secret material is carried (0.198333ms)
+✖ run.mjs constructs every child environment through the builder (0.340125ms)
+ℹ tests 8
+ℹ pass 7
+ℹ fail 1
+✖ failing tests:
+✖ run.mjs constructs every child environment through the builder (0.340125ms)
+  AssertionError [ERR_ASSERTION]: run.mjs still spreads the ambient process.env into a child environment
+exit=0

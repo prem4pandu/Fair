@@ -1,0 +1,82 @@
+### reviewer poisoned-parent run (own probe) 2026-10-10T13:36:01Z
+$ ACCESS_TOKEN_SECRET=... REFRESH_TOKEN_PEPPER=... PUBLIC_ACCESS_SECRET=... DATABASE_URL=... REDIS_URL=... NODE_OPTIONS="--require /Users/premkumarmamidi/Development/Fair/implementation/docs/artifacts/w25/t026/review/child-env-probe.cjs" ./tools/pnpm.sh e2e:smoke
+
+> fairbite-fresh-workspace@ e2e:smoke /Users/premkumarmamidi/Development/Fair/implementation
+> node e2e/smoke/run.mjs
+
+[e2e:smoke] starting PostGIS and Redis containers
+[e2e:smoke] excluding 5 ambient secret variable(s) from every child process: ACCESS_TOKEN_SECRET, DATABASE_URL, PUBLIC_ACCESS_SECRET, REDIS_URL, REFRESH_TOKEN_PEPPER
+[e2e:smoke] building the API and applying migrations
+
+> @fairbite/api@0.0.0 build /Users/premkumarmamidi/Development/Fair/implementation/services/api
+> prisma generate && tsc -p tsconfig.build.json
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.
+
+✔ Generated Prisma Client (7.10.0) to ./src/generated/prisma in 66ms
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.
+Datasource "db": PostgreSQL database "test", schema "public" at "localhost:32880"
+
+11 migrations found in prisma/migrations
+
+Applying migration `202610080001_foundation`
+Applying migration `202610080002_identity`
+Applying migration `202610080003_catalog`
+Applying migration `202610080004_addresses`
+Applying migration `202610080005_configuration`
+Applying migration `202610090000_base_outbox`
+Applying migration `202610090100_l2_runtime_configuration`
+Applying migration `202610090150_L5_init`
+Applying migration `202610100001_l1_phone`
+Applying migration `202610100002_l1_audit_actions`
+Applying migration `202610100003_l1_deactivate_audit`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 202610080001_foundation/
+    └─ migration.sql
+  └─ 202610080002_identity/
+    └─ migration.sql
+  └─ 202610080003_catalog/
+    └─ migration.sql
+  └─ 202610080004_addresses/
+    └─ migration.sql
+  └─ 202610080005_configuration/
+    └─ migration.sql
+  └─ 202610090000_base_outbox/
+    └─ migration.sql
+  └─ 202610090100_l2_runtime_configuration/
+    └─ migration.sql
+  └─ 202610090150_L5_init/
+    └─ migration.sql
+  └─ 202610100001_l1_phone/
+    └─ migration.sql
+  └─ 202610100002_l1_audit_actions/
+    └─ migration.sql
+  └─ 202610100003_l1_deactivate_audit/
+    └─ migration.sql
+
+All migrations have been successfully applied.
+[e2e:smoke] activating one server-owned configuration version
+[e2e:smoke] starting the built API on 127.0.0.1:51765
+[e2e:smoke] health.live: HTTP 200
+[e2e:smoke] health.ready: HTTP 200 (Postgres and Redis reachable)
+[e2e:smoke] handshake.admin.metricsGeneral: HTTP 200, token bound to its nonce (10 pinned fields)
+[e2e:smoke] handshake.web.metricsGeneral: HTTP 200, token bound to its nonce (10 pinned fields)
+[e2e:smoke] gate.enforced: unauthenticated configuration rejected with PUBLIC_ACCESS_DENIED
+[e2e:smoke] configuration.web: HTTP 200, active version 0b2b24df-364a-4cd0-b2d0-e650adb759bf (MYR)
+[e2e:smoke] websocket.subscription.admin.subscribePlaceOrder: legacy (graphql-ws) and modern (graphql-transport-ws) both delivered the subscription to its explicit NOT_IMPLEMENTED terminal
+[e2e:smoke] websocket.subscription.web.orderStatusChanged: legacy (graphql-ws) and modern (graphql-transport-ws) both delivered the subscription to its explicit NOT_IMPLEMENTED terminal
+[e2e:smoke] websocket.data.graphql-ws: real configuration data delivered over graphql-ws
+[e2e:smoke] websocket.data.graphql-transport-ws: real configuration data delivered over graphql-transport-ws
+[e2e:smoke] limits.largest-document: enatega-multivendor-app src/singlevendor/apollo/queries.js measured 165/600 fields, depth 6/15; served without a limit error
+[e2e:smoke] limits.negative-control: an over-limit document (31 aliases > 30) was rejected with "Operation exceeds allowed limits"
+[e2e:smoke] PASS — 12 checks; artifact test-results/e2e-smoke.json
+[e2e:smoke] WS subscriptions: admin.subscribePlaceOrder, web.orderStatusChanged
+exit=0

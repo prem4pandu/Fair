@@ -1,0 +1,21 @@
+=== D9. G0 runs in GATES.json (commit + approvals) ===
+commit d257e70456 dirty false passed true approvals [] finished 2026-10-10T11:42:14.149Z
+commit ed8082544b dirty false passed true approvals [] finished 2026-10-10T11:46:52.542Z
+commit e00757f3fa dirty false passed true approvals [] finished 2026-10-10T11:55:20.063Z
+commit 76d8fd2e98 dirty false passed true approvals ["lead","reviewer-QA"] finished 2026-10-10T12:07:42.353Z
+
+=== D10. source of the extra live resolver mutation.Deactivate ===
+services/api/src/identity/resolver.ts
+ M services/api/src/identity/enatega.ts
+ M services/api/src/identity/resolver.ts
+ M services/api/src/identity/service.ts
+
+=== D11. approve-gate dirty-tree claim ===
+tools/approve-gate.mjs:90:  if (latest.dirty)
+tools/approve-gate.mjs:92:      `gate ${gate.id}'s latest run was recorded on a dirty tree (${latest.finishedAt}); commit and re-run before approving`,
+
+=== D12. record-gate clears approvals claim ===
+tools/record-gate.mjs:97:        `${gate.id}: ${gate.commands.length} command(s), approvals: ${(gate.approvals ?? []).join(", ") || "none"}\n`,
+tools/record-gate.mjs:153:    approvals: [],
+tools/record-gate.mjs:174:  // A complete run also resets the approvals: reviewers signed off a specific
+tools/record-gate.mjs:182:      approvals: [],

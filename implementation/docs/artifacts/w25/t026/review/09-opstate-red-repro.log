@@ -1,0 +1,16 @@
+=== reproduce red-phase: new spec vs pre-T-026C (regex) operation-state.mjs ===
+$ node --test tools/lib/operation-state.test.mjs   # regex implementation (bf9505c61992)
+✔ counts a genuine root-field decorator (1.905542ms)
+✖ ignores decorator-shaped text in comments (1.192083ms)
+✖ ignores decorator-shaped text inside string literals (0.952375ms)
+✖ accepts valid formatting the regex-based reader missed (0.868291ms)
+✔ ignores non-root decorators and non-literal arguments (0.816ms)
+✔ deduplicates the same root across files (5.372167ms)
+ℹ tests 6
+ℹ pass 3
+ℹ fail 3
+✖ failing tests:
+✖ ignores decorator-shaped text in comments (1.192083ms)
+✖ ignores decorator-shaped text inside string literals (0.952375ms)
+✖ accepts valid formatting the regex-based reader missed (0.868291ms)
+exit=0

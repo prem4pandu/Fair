@@ -1,0 +1,30 @@
+fixture file written to /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/w25-review-ast-oX81Pn/services/api/src/adversarial/adversarial.ts
+observed keys: [
+  "mutation.changePassword",
+  "query.classDecorated",
+  "query.emailExist",
+  "query.firstArg",
+  "query.parameterDecorated",
+  "query.propertyDecorated",
+  "query.templateArg"
+]
+
+-- scoring --
+OK       absent   query.blockCommentMultiLine  (should NOT be counted: text inside a block comment)
+OK       absent   mutation.nestedCommentText  (should NOT be counted: text inside a nested comment region)
+OK       absent   query.inTemplateText  (should NOT be counted: decorator-shaped text inside a template literal)
+OK       absent   mutation.inSubstitution  (should NOT be counted: decorator-shaped text inside a template substitution string)
+OK       absent   query.inSingle  (should NOT be counted: decorator-shaped text inside a single-quoted string)
+OK       absent   mutation.inDouble  (should NOT be counted: decorator-shaped text inside a double-quoted string)
+OK       absent   query.esc"aped  (should NOT be counted: escaped quote makes an invalid field name)
+MISMATCH absent   query.parenthesised  (should be counted: parenthesised string argument is a real resolver registration)
+MISMATCH absent   query.concatenated  (should be counted: statically concatenated string is a real resolver registration)
+MISMATCH counted  query.propertyDecorated  (should NOT be counted: decorator on a class property is not a root resolver)
+MISMATCH counted  query.classDecorated  (should NOT be counted: decorator on a class declaration is not a root resolver)
+MISMATCH counted  query.parameterDecorated  (should NOT be counted: decorator on a parameter is not a root resolver)
+OK       counted  query.emailExist  (should be counted: genuine @Query method; name case must be preserved)
+OK       counted  mutation.changePassword  (should be counted: genuine @Mutation method; kind must be lowercased)
+OK       counted  query.templateArg  (should be counted: no-substitution template literal is a genuine string-like argument)
+OK       counted  query.firstArg  (should be counted: @Query(name, options) is a real NestJS resolver form)
+
+(raw observed set for the record): mutation.changePassword, query.classDecorated, query.emailExist, query.firstArg, query.parameterDecorated, query.propertyDecorated, query.templateArg

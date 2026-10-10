@@ -1,0 +1,43 @@
+=== reviewer-independent --check write-safety matrix (temp dir /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.mtjk0meY3a) ===
+
+--- 0. non-check path: output missing -> must create it and exit 0 ---
+{"status":"PASS","apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+exit=0
+created: /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.mtjk0meY3a/report.json 213237 bytes
+
+--- 1. --check on identical report -> exit 0, byte-identical, no drift text ---
+stdout: {"status":"PASS","apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+stderr: 
+exit=0
+file unchanged: YES
+
+--- 2. --check on a CORRUPTED copy -> nonzero, drift named, file byte-identical ---
+check:enatega: DRIFT DETECTED for /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.mtjk0meY3a/report.json — the on-disk report does not match the freshly computed report; it was NOT modified:
+  - summary: differs (on-disk={"apps":3,"documents":321,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":[]}, computed={"apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":[]})
+  - apps: 1 of 3 app record(s) differ — enatega-multivendor-web (1 of 39 document record(s) differ)
+{"status":"PASS","apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+exit=1
+file unchanged: YES (d14f429d89efe68cbe05c654a0aa35952fb583c6d69cf994c16c56e09273959e)
+check:enatega: DRIFT DETECTED for /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.mtjk0meY3a/report.json — the on-disk report does not match the freshly computed report; it was NOT modified:
+  - summary: differs (on-disk={"apps":3,"documents":321,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":[]}, computed={"apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":[]})
+  - apps: 1 of 3 app record(s) differ — enatega-multivendor-web (1 of 39 document record(s) differ)
+
+--- 3. --check on an INVALID-JSON file -> nonzero, names the parse failure, file byte-identical ---
+check:enatega: DRIFT DETECTED for /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.mtjk0meY3a/report.json — the on-disk report does not match the freshly computed report; it was NOT modified:
+  - report file is not valid JSON (Expected property name or '}' in JSON at position 2 (line 1 column 3))
+exit=1
+file unchanged: YES
+
+--- 4. --check on a MISSING file -> nonzero, does not create it ---
+check:enatega: DRIFT DETECTED for /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.mtjk0meY3a/report.json — the on-disk report does not match the freshly computed report; it was NOT modified:
+  - report file is missing
+{"status":"PASS","apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+exit=1
+file created: NO (correct)
+
+--- 5. --check on an output path in a non-existent directory -> nonzero, no directory created ---
+check:enatega: DRIFT DETECTED for /var/folders/ft/21n2tbx50vq5h2xff3995slh0000gn/T/tmp.mtjk0meY3a/nope/deep/report.json — the on-disk report does not match the freshly computed report; it was NOT modified:
+  - report file is missing
+{"status":"PASS","apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+exit=1
+directory created: NO (correct)

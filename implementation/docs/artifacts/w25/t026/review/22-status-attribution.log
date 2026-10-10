@@ -1,0 +1,13 @@
+=== D17. last commits touching docs/TASK_BOARD.md and the format:check failures ===
+1ad6580 docs(board): claim T-026 (W25 tooling residuals) for the disjoint DSH lane
+b003c8a docs(board): record the minimal-baseline migration fragility as T-028
+8e20d72 docs(board): record the evidence-placeholder device-key follow-up as T-027
+
+=== D18. implementedRoots over HEAD versions of the working-tree src (excludes uncommitted W3 work) ===
+HEAD-source implemented count: 38
+live working-tree implemented count: 38
+keys present live but absent at HEAD: (none)
+keys present at HEAD but absent live: (none)
+
+=== D19. scoped eslint on the changed tool files ===
+eslint exit=0

@@ -1,0 +1,8 @@
+--- pre-fix checker (8b9c84d^), physical temp path, --check against a DELIBERATELY CORRUPTED report copy ---
+canonical sha: 5d13a2934239cd3cb032c21669324599e08591587198f979e2154b52c6701ee1
+corrupted sha: d14f429d89efe68cbe05c654a0aa35952fb583c6d69cf994c16c56e09273959e
+exit=0
+sha after:     5d13a2934239cd3cb032c21669324599e08591587198f979e2154b52c6701ee1
+RESULT: pre-fix --check SILENTLY REWROTE the drifted report back to canonical while exiting 0 (defect confirmed)
+stdout: {"status":"PASS","apps":3,"documents":314,"validDocuments":314,"unresolvedDocuments":0,"outOfScopeDocuments":0,"missingRoots":0}
+stderr: 

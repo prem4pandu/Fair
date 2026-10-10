@@ -1,0 +1,103 @@
+=== D1. declared scopes vs actual commit paths ===
+--- 24468a8 fix(W25): make e2e smoke child environments deterministic and non-inheriting (T-026A) ---
+implementation/docs/artifacts/w25/t026/smoke/README.md
+implementation/docs/artifacts/w25/t026/smoke/analyse-probe.mjs
+implementation/docs/artifacts/w25/t026/smoke/baseline-pre-fix.log
+implementation/docs/artifacts/w25/t026/smoke/code-state.sha256
+implementation/docs/artifacts/w25/t026/smoke/poisoned-postfix-artifact.json
+implementation/docs/artifacts/w25/t026/smoke/poisoned-postfix-probe.jsonl
+implementation/docs/artifacts/w25/t026/smoke/poisoned-postfix-run.log
+implementation/docs/artifacts/w25/t026/smoke/poisoned-prefix-probe.jsonl
+implementation/docs/artifacts/w25/t026/smoke/poisoned-prefix-run.log
+implementation/docs/artifacts/w25/t026/smoke/postfix-normal-artifact.json
+implementation/docs/artifacts/w25/t026/smoke/postfix-normal-run.log
+implementation/docs/artifacts/w25/t026/smoke/probe-analysis-postfix.log
+implementation/docs/artifacts/w25/t026/smoke/probe-analysis-prefix.log
+implementation/docs/artifacts/w25/t026/smoke/probe-inheritance-demo.log
+implementation/docs/artifacts/w25/t026/smoke/run-acceptance.sh
+implementation/docs/artifacts/w25/t026/smoke/tdd-1-red-module-missing.log
+implementation/docs/artifacts/w25/t026/smoke/tdd-2-red-run-mjs-still-inherits.log
+implementation/docs/artifacts/w25/t026/smoke/tdd-2b-red-final-spec-vs-prefix.log
+implementation/docs/artifacts/w25/t026/smoke/tdd-3-green-after-fix.log
+implementation/e2e/smoke/environment.mjs
+implementation/e2e/smoke/environment.test.mjs
+implementation/e2e/smoke/fixtures/child-env-probe.cjs
+implementation/e2e/smoke/run.mjs
+--- 8b9c84d fix(tools): check:enatega --check diffs its report instead of rewriting it (T-026B) ---
+implementation/docs/artifacts/w25/t026/checker/00-baseline-and-red.txt
+implementation/docs/artifacts/w25/t026/checker/01-tdd-red.txt
+implementation/docs/artifacts/w25/t026/checker/02-acceptance-pnpm.txt
+implementation/docs/artifacts/w25/t026/checker/03-drift-demo.txt
+implementation/docs/artifacts/w25/t026/checker/04-tdd-green.txt
+implementation/docs/artifacts/w25/t026/checker/README.md
+implementation/tools/check-enatega-compatibility.mjs
+implementation/tools/check-enatega-compatibility.test.mjs
+--- 2bbddc4 fix(W25): detect implemented roots from the syntax tree, not source text ---
+implementation/docs/artifacts/w25/t026/state/EVIDENCE.md
+implementation/docs/artifacts/w25/t026/state/compare.mjs
+implementation/docs/artifacts/w25/t026/state/equivalence.txt
+implementation/docs/artifacts/w25/t026/state/green-phase.txt
+implementation/docs/artifacts/w25/t026/state/red-phase.txt
+implementation/tools/lib/operation-state.mjs
+implementation/tools/lib/operation-state.test.mjs
+--- c6b91bb docs(W25): record the G1 re-record window decision for T-026B ---
+implementation/docs/artifacts/w25/t026/state/GATE_DECISION.md
+
+=== D2. any W3-lane path in these commits? (expect empty) ===
+(no output above = none)
+
+=== D3. all files changed by the whole lane since 1ad6580 (T-026 claim commit) ===
+implementation/docs/IMPLEMENTATION_STATUS.html
+implementation/docs/IMPLEMENTATION_STATUS.json
+implementation/docs/OPERATION_TEST_EVIDENCE.json
+implementation/docs/OPERATION_TRACEABILITY.md
+implementation/docs/ROADMAP_STATUS.md
+implementation/docs/artifacts/w25/t026/checker/00-baseline-and-red.txt
+implementation/docs/artifacts/w25/t026/checker/01-tdd-red.txt
+implementation/docs/artifacts/w25/t026/checker/02-acceptance-pnpm.txt
+implementation/docs/artifacts/w25/t026/checker/03-drift-demo.txt
+implementation/docs/artifacts/w25/t026/checker/04-tdd-green.txt
+implementation/docs/artifacts/w25/t026/checker/README.md
+implementation/docs/artifacts/w25/t026/smoke/README.md
+implementation/docs/artifacts/w25/t026/smoke/analyse-probe.mjs
+implementation/docs/artifacts/w25/t026/smoke/baseline-pre-fix.log
+implementation/docs/artifacts/w25/t026/smoke/code-state.sha256
+implementation/docs/artifacts/w25/t026/smoke/poisoned-postfix-artifact.json
+implementation/docs/artifacts/w25/t026/smoke/poisoned-postfix-probe.jsonl
+implementation/docs/artifacts/w25/t026/smoke/poisoned-postfix-run.log
+implementation/docs/artifacts/w25/t026/smoke/poisoned-prefix-probe.jsonl
+implementation/docs/artifacts/w25/t026/smoke/poisoned-prefix-run.log
+implementation/docs/artifacts/w25/t026/smoke/postfix-normal-artifact.json
+implementation/docs/artifacts/w25/t026/smoke/postfix-normal-run.log
+implementation/docs/artifacts/w25/t026/smoke/probe-analysis-postfix.log
+implementation/docs/artifacts/w25/t026/smoke/probe-analysis-prefix.log
+implementation/docs/artifacts/w25/t026/smoke/probe-inheritance-demo.log
+implementation/docs/artifacts/w25/t026/smoke/run-acceptance.sh
+implementation/docs/artifacts/w25/t026/smoke/tdd-1-red-module-missing.log
+implementation/docs/artifacts/w25/t026/smoke/tdd-2-red-run-mjs-still-inherits.log
+implementation/docs/artifacts/w25/t026/smoke/tdd-2b-red-final-spec-vs-prefix.log
+implementation/docs/artifacts/w25/t026/smoke/tdd-3-green-after-fix.log
+implementation/docs/artifacts/w25/t026/state/EVIDENCE.md
+implementation/docs/artifacts/w25/t026/state/GATE_DECISION.md
+implementation/docs/artifacts/w25/t026/state/compare.mjs
+implementation/docs/artifacts/w25/t026/state/equivalence.txt
+implementation/docs/artifacts/w25/t026/state/green-phase.txt
+implementation/docs/artifacts/w25/t026/state/red-phase.txt
+implementation/docs/artifacts/w3/changePassword.json
+implementation/e2e/smoke/environment.mjs
+implementation/e2e/smoke/environment.test.mjs
+implementation/e2e/smoke/fixtures/child-env-probe.cjs
+implementation/e2e/smoke/run.mjs
+implementation/services/api/prisma/migrations/202610100002_l1_audit_actions/migration.sql
+implementation/services/api/src/identity/enatega.ts
+implementation/services/api/src/identity/resolver.ts
+implementation/services/api/src/identity/service.ts
+implementation/services/api/test/integration/identity/changePassword.integration.spec.ts
+implementation/services/api/test/unit/identity/changePassword.spec.ts
+implementation/tools/check-enatega-compatibility.mjs
+implementation/tools/check-enatega-compatibility.test.mjs
+implementation/tools/lib/operation-state.mjs
+implementation/tools/lib/operation-state.test.mjs
+
+=== D4. staged (index) content right now ===
+(empty = nothing staged by any lane)

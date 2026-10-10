@@ -1,0 +1,13 @@
+=== D23. environment fingerprint stability (owner's own committed artifacts) ===
+docs/artifacts/w25/t026/smoke/postfix-normal-artifact.json
+   build fingerprint e3b0c44298fc1c14
+   migrate fingerprint a1de175fbade3cfe
+   api fingerprint 8c5e51d6058283b4
+docs/artifacts/w25/t026/smoke/poisoned-postfix-artifact.json
+   build fingerprint e3b0c44298fc1c14
+   migrate fingerprint 834137e8c4318dd7
+   api fingerprint 38301b6391eb086b
+
+reviewer runs (artifact read before it was overwritten by the next run):
+  normal   build e3b0c44298fc1c14  migrate 279974985cfbfe40  api eed2f0d2945dde07
+  poisoned build e3b0c44298fc1c14  migrate 2f51b5c4c33f83b5  api 283311c578bfa0da

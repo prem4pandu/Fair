@@ -1,0 +1,6 @@
+=== D13. G1 commands and approvals ===
+commit ddd3f0218e dirty false commands ["pnpm check:enatega","pnpm check:enatega:full","pnpm check:enatega:singlevendor","pnpm codegen:check","pnpm test:integration","pnpm check:operations:schema"] approvals []
+commit 3c1afc290a dirty false commands ["pnpm check:enatega","pnpm check:enatega:full","pnpm check:enatega:singlevendor","pnpm codegen:check","pnpm test:integration","pnpm check:operations:schema"] approvals ["lead","reviewer-SEC"]
+
+=== D14. does the approved G0 run's recorded output say 12 checks? ===
+approved run commit 76d8fd2e98 -> PASS — 12 checks; artifact test-results/e2e-smoke.json

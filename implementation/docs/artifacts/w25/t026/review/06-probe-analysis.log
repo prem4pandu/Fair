@@ -1,0 +1,47 @@
+node processes observed: 11
+pid=29677 ppid=29672 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation
+  argv=["/Users/premkumarmamidi/.local/nodejs/bin/corepack","enable","--install-directory"]
+  sensitive names present: ["ACCESS_TOKEN_SECRET","DATABASE_URL","PUBLIC_ACCESS_SECRET","REDIS_URL","REFRESH_TOKEN_PEPPER"]
+  classification: POISONED-AMBIENT <- LEAK: ACCESS_TOKEN_SECRET,REFRESH_TOKEN_PEPPER,PUBLIC_ACCESS_SECRET,DATABASE_URL,REDIS_URL
+pid=29672 ppid=29668 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/.toolchain/bin/pnpm","e2e:smoke"]
+  sensitive names present: ["ACCESS_TOKEN_SECRET","DATABASE_URL","PUBLIC_ACCESS_SECRET","REDIS_URL","REFRESH_TOKEN_PEPPER"]
+  classification: POISONED-AMBIENT <- LEAK: ACCESS_TOKEN_SECRET,REFRESH_TOKEN_PEPPER,PUBLIC_ACCESS_SECRET,DATABASE_URL,REDIS_URL
+pid=29700 ppid=29672 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/e2e/smoke/run.mjs"]
+  sensitive names present: ["ACCESS_TOKEN_SECRET","DATABASE_URL","PUBLIC_ACCESS_SECRET","REDIS_URL","REFRESH_TOKEN_PEPPER"]
+  classification: POISONED-AMBIENT <- LEAK: ACCESS_TOKEN_SECRET,REFRESH_TOKEN_PEPPER,PUBLIC_ACCESS_SECRET,DATABASE_URL,REDIS_URL
+pid=29801 ppid=29796 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation
+  argv=["/Users/premkumarmamidi/.local/nodejs/bin/corepack","enable","--install-directory"]
+  sensitive names present: []
+  classification: filtered/other
+pid=29796 ppid=29700 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/.toolchain/bin/pnpm","--filter","@fairbite/api"]
+  sensitive names present: []
+  classification: filtered/other
+pid=29833 ppid=29832 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation/services/api
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/services/api/node_modules/prisma/build/index.js","generate"]
+  sensitive names present: []
+  classification: filtered/other
+pid=29845 ppid=29833 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation/services/api
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/node_modules/.pnpm/prisma@7.10.0_@types+react-dom@19.2.7_@types+react@19.2.18__@types+react@19.2.18_magica_c1db13a3726ea2a2d9b00795b38f0b7c/node_modules/prisma/build/child","{\"product\":\"prisma\",\"version\":\"7.10.0\",\"cli_install_type\":\"local\",\"information\":\"\",\"local_timestamp\":\"2026-10-10T21:36:17+08:00\",\"project_hash\":\"da807f61\",\"cli_path\":\"/Users/premkumarmamidi/Development/Fair/implementation/services/api/node_modules/prisma/build/index.js\",\"cli_path_hash\":\"36d3e295\",\"endpoint\":\"https://checkpoint.prisma.io\",\"disable\":false,\"arch\":\"arm64\",\"os\":\"darwin\",\"node_version\":\"v24.20.0\",\"ci\":false,\"ci_name\":\"\",\"command\":\"generate\",\"schema_providers\":[\"postgresql\"],\"schema_preview_features\":[],\"schema_generators_providers\":[\"prisma-client\"],\"cache_file\":\"/Users/premkumarmamidi/Library/Caches/checkpoint-nodejs/prisma-36d3e295\",\"cache_duration\":43200000,\"remind_duration\":172800000,\"force\":false,\"timeout\":5000,\"unref\":true,\"child_path\":\"/Users/premkumarmamidi/Development/Fair/implementation/node_modules/.pnpm/prisma@7.10.0_@types+react-dom@19.2.7_@types+react@19.2.18__@types+react@19.2.18_magica_c1db13a3726ea2a2d9b00795b38f0b7c/node_modules/prisma/build/child\",\"client_event_id\":\"\",\"previous_client_event_id\":\"\",\"check_if_update_available\":false}"]
+  sensitive names present: []
+  classification: filtered/other
+pid=29846 ppid=29832 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation/services/api
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/services/api/node_modules/typescript/bin/tsc","-p","tsconfig.build.json"]
+  sensitive names present: []
+  classification: filtered/other
+pid=29861 ppid=29700 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation/services/api
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/services/api/node_modules/prisma/build/index.js","migrate","deploy"]
+  sensitive names present: ["DATABASE_URL"]
+  classification: filtered/other
+pid=29867 ppid=29861 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation/services/api
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/node_modules/.pnpm/prisma@7.10.0_@types+react-dom@19.2.7_@types+react@19.2.18__@types+react@19.2.18_magica_c1db13a3726ea2a2d9b00795b38f0b7c/node_modules/prisma/build/child","{\"product\":\"prisma\",\"version\":\"7.10.0\",\"cli_install_type\":\"local\",\"information\":\"\",\"local_timestamp\":\"2026-10-10T21:36:18+08:00\",\"project_hash\":\"da807f61\",\"cli_path\":\"/Users/premkumarmamidi/Development/Fair/implementation/services/api/node_modules/prisma/build/index.js\",\"cli_path_hash\":\"36d3e295\",\"endpoint\":\"https://checkpoint.prisma.io\",\"disable\":false,\"arch\":\"arm64\",\"os\":\"darwin\",\"node_version\":\"v24.20.0\",\"ci\":false,\"ci_name\":\"\",\"command\":\"migrate deploy\",\"schema_providers\":[\"postgresql\"],\"schema_preview_features\":[],\"schema_generators_providers\":[\"prisma-client\"],\"cache_file\":\"/Users/premkumarmamidi/Library/Caches/checkpoint-nodejs/prisma-36d3e295\",\"cache_duration\":43200000,\"remind_duration\":172800000,\"force\":false,\"timeout\":5000,\"unref\":true,\"child_path\":\"/Users/premkumarmamidi/Development/Fair/implementation/node_modules/.pnpm/prisma@7.10.0_@types+react-dom@19.2.7_@types+react@19.2.18__@types+react@19.2.18_magica_c1db13a3726ea2a2d9b00795b38f0b7c/node_modules/prisma/build/child\",\"client_event_id\":\"\",\"previous_client_event_id\":\"\",\"check_if_update_available\":false}"]
+  sensitive names present: ["DATABASE_URL"]
+  classification: filtered/other
+pid=29889 ppid=29700 probe=true cwd=/Users/premkumarmamidi/Development/Fair/implementation
+  argv=["/Users/premkumarmamidi/Development/Fair/implementation/services/api/dist/main.js"]
+  sensitive names present: ["ACCESS_TOKEN_SECRET","DATABASE_URL","PASSWORD_AUTH_ENABLED","PUBLIC_ACCESS_SECRET","REDIS_URL","REFRESH_TOKEN_PEPPER"]
+  classification: deterministic-harness-values
+
+processes that received a poisoned ambient value: 3

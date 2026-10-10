@@ -1,0 +1,24 @@
+=== Prisma .env decisive test (fixed path) ===
+Prisma schema loaded from schema.prisma.
+
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+error: Error validating: This line is invalid. It does not start with any known Prisma schema keyword.
+  -->  schema.prisma:5
+   | 
+ 4 | }
+ 5 | model T { id String @id }
+ 6 | 
+   | 
+error: The datasource property `url` is no longer supported in schema files. Move connection URLs for Migrate to `prisma.config.ts` and pass either `adapter` for a direct database connection or `accelerateUrl` for Accelerate to the `PrismaClient` constructor. See https://pris.ly/d/config-datasource and https://pris.ly/d/prisma7-client-config
+  -->  schema.prisma:3
+   | 
+ 2 |   provider = "postgresql"
+ 3 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 2
+[Context: validate]
+
+Prisma CLI Version : 7.10.0
+exit=1

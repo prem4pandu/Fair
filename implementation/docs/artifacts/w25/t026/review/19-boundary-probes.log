@@ -1,0 +1,22 @@
+=== A-boundary 1. allowlisted names that can carry credentials/code ===
+child env keys: APP_ENV, DOCKER_CERT_PATH, DOCKER_HOST, NODE_EXTRA_CA_CERTS, NODE_OPTIONS, PATH
+DOCKER_HOST carried: true -> tcp://deploy-user:s3cr3t-daemon-password@docker.internal:2376
+NODE_OPTIONS carried: true -> --require /tmp/evil-preload.cjs
+DOCKER_CERT_PATH carried: true
+AWS_SESSION_TOKEN dropped: true
+isSensitiveEnvironmentName(DOCKER_HOST): false
+isSensitiveEnvironmentName(NODE_OPTIONS): false
+assertNoInheritedSecrets: did NOT flag the carried DOCKER_HOST userinfo / NODE_OPTIONS preload
+
+=== A-boundary 2. pre-fix run.mjs inheritance lines (24468a8^) ===
+339:      env: process.env,
+348:      env: { ...process.env, DATABASE_URL: databaseUrl },
+378:        ...process.env,
+
+=== A-boundary 3. does Prisma CLI load a project .env? ===
+
+Validation Error Count: 3
+[Context: validate]
+
+Prisma CLI Version : 7.10.0
+prisma exit=0

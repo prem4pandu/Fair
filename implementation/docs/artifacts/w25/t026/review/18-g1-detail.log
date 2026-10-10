@@ -1,0 +1,46 @@
+=== D15. full G1 run records ===
+run[0] commit ddd3f0218e2b912c3aa45c1104dcbde977bf1206 dirty false finished 2026-10-10T12:13:18.270Z
+  commands:
+   - pnpm check:enatega exit 0
+   - pnpm check:enatega:full exit 0
+   - pnpm check:enatega:singlevendor exit 0
+   - pnpm codegen:check exit 0
+   - pnpm test:integration exit 0
+   - pnpm check:operations:schema exit 0
+  approvals keys: ["gate","commit","dirty","recordedBy","startedAt","finishedAt","passed","partial","commands","missingCommands","approvals","reviewer","approved"]
+  approvals: []
+  approval detail: null
+run[1] commit 3c1afc290a0011650f7c526a63bcef30dcb685e4 dirty false finished 2026-10-10T12:22:50.370Z
+  commands:
+   - pnpm check:enatega exit 0
+   - pnpm check:enatega:full exit 0
+   - pnpm check:enatega:singlevendor exit 0
+   - pnpm codegen:check exit 0
+   - pnpm test:integration exit 0
+   - pnpm check:operations:schema exit 0
+  approvals keys: ["gate","commit","dirty","recordedBy","startedAt","finishedAt","passed","partial","commands","missingCommands","approvals","reviewer","approved","approvalRecords"]
+  approvals: ["lead","reviewer-SEC"]
+  approval detail: null
+
+=== D16. ROADMAP.json G1 declared commands ===
+{
+ "id": "G1",
+ "workstreams": [
+  "W2"
+ ],
+ "requires": [
+  "G0"
+ ],
+ "commands": [
+  "pnpm check:enatega",
+  "pnpm check:enatega:full",
+  "pnpm check:enatega:singlevendor",
+  "pnpm codegen:check",
+  "pnpm test:integration",
+  "pnpm check:operations:schema"
+ ],
+ "approvals": [
+  "lead",
+  "reviewer-SEC"
+ ]
+}
