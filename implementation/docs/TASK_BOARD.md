@@ -44,6 +44,13 @@ map to.
 | T-022 | W6         | Continue L4 customers/addresses/support implementation per `13-lane-L4-discovery.md`.                                | agent-l4     | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead                   | W23      |
 | T-024 | W1         | Implement the real `e2e:smoke` harness against the real stack and complete W1 kernel/transport acceptance (W1 → G0). | lead         | 2026-10-10 | `pnpm e2e:smoke` green on a clean tree, then every `G0` command in `ROADMAP.json` | W23      |
 
+T-024 acceptance ran: `pnpm e2e:smoke` passed 11/11 checks on the clean tree `d257e70` and
+`docs/GATES.json` holds the run (`test-results/e2e-smoke.json`, gitignored artifact). The row
+stays **In progress** because rule 5 forbids the implementing agent from completing it: the
+W23/independent review and the G0 approvals are still outstanding, so G0 is "commands passed",
+not closed. W2 runtime work (`check:operations:schema` ready over all 334 roots) is implemented
+and its G1 command set was run green, but G1 is deliberately not recorded until G0 is approved.
+
 ## Blocked
 
 | Task  | Workstream | Subject                                                                                                    | Blocked on                                                                               | Owner       | Reviewer |

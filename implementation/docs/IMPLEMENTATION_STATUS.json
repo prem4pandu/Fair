@@ -74,6 +74,16 @@
   },
   "gates": [
     {
+      "id": "G0",
+      "passed": true,
+      "finishedAt": "2026-10-10T11:42:14.149Z",
+      "commit": "d257e7045698dba05b9c7cb624a9cd036a49ee2c",
+      "approvals": [],
+      "requiredApprovals": ["lead", "reviewer-QA"],
+      "approved": false,
+      "commands": [{ "command": "pnpm e2e:smoke", "exitCode": 0 }]
+    },
+    {
       "id": "GP0",
       "passed": true,
       "finishedAt": "2026-10-09T17:23:06.917Z",
@@ -101,7 +111,7 @@
       ]
     }
   ],
-  "recordedGateRuns": 1,
+  "recordedGateRuns": 2,
   "approvedGates": 1,
   "notes": [
     "A resolving schema is not implementation: NOT_IMPLEMENTED roots are counted as unimplemented.",
