@@ -42,6 +42,7 @@ map to.
 | T-020 | W4         | Continue L2 platform configuration + maps/media REST per `11-lane-L2-configuration.md`. | agent-l2     | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead | W23      |
 | T-021 | W5a        | Continue L3 vendors/outlets implementation per `12-lane-L3-catalog.md` (vendors half).  | agent-l3a    | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead | W23      |
 | T-022 | W6         | Continue L4 customers/addresses/support implementation per `13-lane-L4-discovery.md`.   | agent-l4     | 2026-10-09 | scoped unit + typecheck green; integration run serially by lead | W23      |
+| T-024 | W1         | Implement the real `e2e:smoke` harness against the real stack and complete W1 kernel/transport acceptance (W1 → G0). | lead         | 2026-10-10 | `pnpm e2e:smoke` green on a clean tree, then every `G0` command in `ROADMAP.json` | W23      |
 
 ## Blocked
 
