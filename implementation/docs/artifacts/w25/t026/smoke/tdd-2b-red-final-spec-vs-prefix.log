@@ -1,0 +1,42 @@
+### RED reproduction with the FINAL spec against the committed pre-fix run.mjs
+$ mkdir -p /tmp/t026-red && cp e2e/smoke/environment.mjs e2e/smoke/environment.test.mjs /tmp/t026-red/
+$ git show HEAD:implementation/e2e/smoke/run.mjs > /tmp/t026-red/run.mjs
+$ node --test /tmp/t026-red/environment.test.mjs
+
+✔ no ambient secret material reaches a child environment (0.417541ms)
+✔ process plumbing and toolchain basics still reach the child (0.074542ms)
+✔ explicit overrides are the only source of API configuration (0.065292ms)
+✔ the child environment is deterministic across differing ambient secrets (0.292792ms)
+✔ the ambient scan names exactly the variables that must never be inherited (0.221791ms)
+✔ the smoke secrets are deterministic canonical 32-byte keys (0.221917ms)
+✔ the run-time guard fails loudly when ambient secret material is carried (0.236417ms)
+✖ run.mjs constructs every child environment through the builder (0.410125ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 46.897833
+
+✖ failing tests:
+
+test at ../../../../../private/tmp/t026-red/environment.test.mjs:157:1
+✖ run.mjs constructs every child environment through the builder (0.410125ms)
+  AssertionError [ERR_ASSERTION]: run.mjs still spreads the ambient process.env into a child environment
+      at TestContext.<anonymous> (file:///private/tmp/t026-red/environment.test.mjs:159:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+exit=1

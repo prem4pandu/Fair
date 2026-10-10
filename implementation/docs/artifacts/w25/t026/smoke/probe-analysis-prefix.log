@@ -1,0 +1,27 @@
+$ node docs/artifacts/w25/t026/smoke/analyse-probe.mjs docs/artifacts/w25/t026/smoke/poisoned-prefix-probe.jsonl
+probe file: docs/artifacts/w25/t026/smoke/poisoned-prefix-probe.jsonl
+node processes observed: 11
+  harness bootstrap processes (launched by the shell, before the harness can filter anything): 3
+  processes spawned by the harness: 8
+
+POISONED | bootstrap | 5 sensitive name(s) | /Users/premkumarmamidi/.local/nodejs/bin/corepack enable
+POISONED | bootstrap | 5 sensitive name(s) | ./.toolchain/bin/pnpm e2e:smoke
+POISONED | bootstrap | 5 sensitive name(s) | ./e2e/smoke/run.mjs
+POISONED | harness   | 5 sensitive name(s) | /Users/premkumarmamidi/.local/nodejs/bin/corepack enable
+POISONED | harness   | 5 sensitive name(s) | ./.toolchain/bin/pnpm --filter
+POISONED | harness   | 5 sensitive name(s) | ./services/api/node_modules/prisma/build/index.js generate
+POISONED | harness   | 5 sensitive name(s) | ./node_modules/.pnpm/prisma@7.10.0_@types+react-dom@19.2.7_@types+react@19.2.18__@types+react@19.2.18_magica_c1db13a3726ea2a2d9b00795b38f0b7c/node_modules/prisma/build/child 
+POISONED | harness   | 5 sensitive name(s) | ./services/api/node_modules/typescript/bin/tsc -p
+POISONED | harness   | 5 sensitive name(s) | ./services/api/node_modules/prisma/build/index.js migrate
+POISONED | harness   | 5 sensitive name(s) | ./node_modules/.pnpm/prisma@7.10.0_@types+react-dom@19.2.7_@types+react@19.2.18__@types+react@19.2.18_magica_c1db13a3726ea2a2d9b00795b38f0b7c/node_modules/prisma/build/child 
+clean    | harness   | 5 sensitive name(s) | ./services/api/dist/main.js
+
+harness-spawned processes that received a poisoned ambient value: 7
+
+API child configuration (must be the deterministic set):
+  ACCESS_TOKEN_SECRET = AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE  [deterministic smoke key]
+  REFRESH_TOKEN_PEPPER = AgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgI  [deterministic smoke key]
+  PUBLIC_ACCESS_SECRET = BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc  [deterministic smoke key]
+  DATABASE_URL = postgres://test:test@localhost:32854/test
+  REDIS_URL = redis://localhost:32855
+exit=1

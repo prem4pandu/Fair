@@ -26,6 +26,13 @@
  * upstream endpoint. A domain operation that is not built yet must return the
  * explicit `NOT_IMPLEMENTED` contract, and this harness asserts that shape
  * rather than substituting data.
+ *
+ * Environment (T-026A): every child process this harness spawns — the API
+ * build, `prisma migrate deploy` and the built API — receives one explicitly
+ * constructed, deterministic environment from `environment.mjs`. No child
+ * inherits the ambient `process.env`, so a developer `.env` cannot leak a real
+ * secret into the run. The artifact records which ambient secret names were
+ * excluded and the exact key set each child was given.
  */
 import { spawn, spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
@@ -39,6 +46,14 @@ import { Pool } from "pg";
 import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { GenericContainer } from "testcontainers";
 import { listDocuments, loadDocument } from "../../tools/lib/documents.mjs";
+import {
+  assertNoInheritedSecrets,
+  buildChildEnvironment,
+  describeEnvironment,
+  fingerprintSecrets,
+  scanAmbientSecrets,
+  smokeSecrets,
+} from "./environment.mjs";
 
 const require = createRequire(import.meta.url);
 const WebSocket = require(
@@ -51,10 +66,11 @@ const apiRoot = path.join(root, "services/api");
 const artifactPath = path.join(root, "test-results/e2e-smoke.json");
 const pnpm = path.join(root, "tools/pnpm.sh");
 
-const secret = Buffer.alloc(32, 7).toString("base64url");
-const publicAccessSecret = secret;
-const accessTokenSecret = Buffer.alloc(32, 1).toString("base64url");
-const refreshPepper = Buffer.alloc(32, 2).toString("base64url");
+// Deterministic secrets for the whole run. Every child process is configured
+// with exactly these values; nothing is read from the ambient environment, so
+// a developer `.env` cannot change what this smoke proves (see
+// `environment.mjs`).
+const { publicAccessSecret, accessTokenSecret, refreshPepper } = smokeSecrets();
 
 const DB_DOCUMENT = {
   countryCode: "MY",
@@ -282,6 +298,13 @@ async function main() {
   let api;
   let pool;
   let apiLog = "";
+  // The environment evidence every child process was given. Recorded in the
+  // artifact so a run proves for itself that no ambient secret material was
+  // inherited (T-026A).
+  const environmentRecord = {
+    ambientSecretNames: scanAmbientSecrets(process.env),
+    children: {},
+  };
 
   const writeArtifact = (passed, error) => {
     mkdirSync(path.dirname(artifactPath), { recursive: true });
@@ -297,6 +320,7 @@ async function main() {
           passed,
           error: error ? String(error.stack ?? error) : null,
           transport: "real stack (PostGIS 17 + Redis 7 + built API process)",
+          environment: environmentRecord,
           pinnedDocuments: PINNED.map(
             ({ id, app, file, exportName, role }) => ({
               id,
@@ -332,20 +356,38 @@ async function main() {
     pool = new Pool({ connectionString: databaseUrl, max: 2 });
     pool.on("error", () => {});
 
+    if (environmentRecord.ambientSecretNames.length > 0)
+      log(
+        `excluding ${environmentRecord.ambientSecretNames.length} ambient secret variable(s) from every child process: ${environmentRecord.ambientSecretNames.join(", ")}`,
+      );
+    else log("no ambient secret variables were present to exclude");
+
     log("building the API and applying migrations");
+    const buildOverrides = {};
+    const buildEnv = assertNoInheritedSecrets(
+      process.env,
+      buildChildEnvironment(process.env, buildOverrides),
+      buildOverrides,
+    );
     const build = spawnSync(pnpm, ["--filter", "@fairbite/api", "build"], {
       cwd: root,
       stdio: "inherit",
-      env: process.env,
+      env: buildEnv,
     });
     if (build.status !== 0)
       throw new Error(`API build failed with exit code ${build.status}`);
 
     const prisma = path.join(apiRoot, "node_modules/.bin/prisma");
+    const migrateOverrides = { DATABASE_URL: databaseUrl };
+    const migrateEnv = assertNoInheritedSecrets(
+      process.env,
+      buildChildEnvironment(process.env, migrateOverrides),
+      migrateOverrides,
+    );
     const migrate = spawnSync(prisma, ["migrate", "deploy"], {
       cwd: apiRoot,
       stdio: "inherit",
-      env: { ...process.env, DATABASE_URL: databaseUrl },
+      env: migrateEnv,
     });
     if (migrate.status !== 0)
       throw new Error(
@@ -372,23 +414,45 @@ async function main() {
 
     const port = await freePort();
     log(`starting the built API on 127.0.0.1:${port}`);
+    const apiOverrides = {
+      APP_ENV: "development",
+      HOST: "127.0.0.1",
+      PORT: String(port),
+      PUBLIC_BASE_URL: `http://127.0.0.1:${port}`,
+      DATABASE_URL: databaseUrl,
+      REDIS_URL: redisUrl,
+      PUBLIC_ACCESS_ENFORCED: "true",
+      PUBLIC_ACCESS_SECRET: publicAccessSecret,
+      PASSWORD_AUTH_ENABLED: "true",
+      ACCESS_TOKEN_SECRET: accessTokenSecret,
+      REFRESH_TOKEN_PEPPER: refreshPepper,
+      CORS_ORIGINS: "http://localhost:3000,http://localhost:3001",
+    };
+    const apiEnv = assertNoInheritedSecrets(
+      process.env,
+      buildChildEnvironment(process.env, apiOverrides),
+      apiOverrides,
+    );
+    environmentRecord.children = {
+      build: {
+        cwd: root,
+        keys: describeEnvironment(buildEnv),
+        secretFingerprint: fingerprintSecrets(buildEnv),
+      },
+      migrate: {
+        cwd: apiRoot,
+        keys: describeEnvironment(migrateEnv),
+        secretFingerprint: fingerprintSecrets(migrateEnv),
+      },
+      api: {
+        cwd: root,
+        keys: describeEnvironment(apiEnv),
+        secretFingerprint: fingerprintSecrets(apiEnv),
+      },
+    };
     api = spawn("node", ["services/api/dist/main.js"], {
       cwd: root,
-      env: {
-        ...process.env,
-        APP_ENV: "development",
-        HOST: "127.0.0.1",
-        PORT: String(port),
-        PUBLIC_BASE_URL: `http://127.0.0.1:${port}`,
-        DATABASE_URL: databaseUrl,
-        REDIS_URL: redisUrl,
-        PUBLIC_ACCESS_ENFORCED: "true",
-        PUBLIC_ACCESS_SECRET: publicAccessSecret,
-        PASSWORD_AUTH_ENABLED: "true",
-        ACCESS_TOKEN_SECRET: accessTokenSecret,
-        REFRESH_TOKEN_PEPPER: refreshPepper,
-        CORS_ORIGINS: "http://localhost:3000,http://localhost:3001",
-      },
+      env: apiEnv,
       stdio: ["ignore", "pipe", "pipe"],
     });
     api.stdout.on("data", (data) => (apiLog += data));

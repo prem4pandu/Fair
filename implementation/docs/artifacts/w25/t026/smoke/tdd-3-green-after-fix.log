@@ -1,0 +1,19 @@
+$ node --test e2e/smoke/environment.test.mjs
+
+✔ no ambient secret material reaches a child environment (0.375959ms)
+✔ process plumbing and toolchain basics still reach the child (0.068375ms)
+✔ explicit overrides are the only source of API configuration (0.0605ms)
+✔ the child environment is deterministic across differing ambient secrets (0.2615ms)
+✔ the ambient scan names exactly the variables that must never be inherited (0.176125ms)
+✔ the smoke secrets are deterministic canonical 32-byte keys (0.176875ms)
+✔ the run-time guard fails loudly when ambient secret material is carried (0.20025ms)
+✔ run.mjs constructs every child environment through the builder (0.202583ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40.092208
+exit=0

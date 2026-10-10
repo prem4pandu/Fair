@@ -1,0 +1,11 @@
+### focused pre/post observation, one fixture, two spawn styles
+$ ACCESS_TOKEN_SECRET='poisoned-ambient-access-token-secret-000' DATABASE_URL='postgresql://poisoned:poisoned@poisoned.invalid:5432/poisoned' NODE_OPTIONS="--require $PWD/e2e/smoke/fixtures/child-env-probe.cjs" node --input-type=module -e '<spawn two children: env: process.env, then buildChildEnvironment()>'
+
+A: pre-fix style (env: process.env)
+B: fixed style (explicit builder, one DATABASE_URL override)
+
+=== probe (one JSON line per node process; parent, A child, B child) ===
+$ cat docs/artifacts/w25/t026/smoke/child-env-probe.jsonl
+{"pid":27261,"argv":[],"cwd":"/Users/premkumarmamidi/Development/Fair/implementation","present":{"DATABASE_URL":"postgresql://poisoned:poisoned@poisoned.invalid:5432/poisoned","ACCESS_TOKEN_SECRET":"poisoned-ambient-access-token-secret-000"}}
+{"pid":27262,"argv":[],"cwd":"/Users/premkumarmamidi/Development/Fair/implementation","present":{"DATABASE_URL":"postgresql://poisoned:poisoned@poisoned.invalid:5432/poisoned","ACCESS_TOKEN_SECRET":"poisoned-ambient-access-token-secret-000"}}
+{"pid":27263,"argv":[],"cwd":"/Users/premkumarmamidi/Development/Fair/implementation","present":{"DATABASE_URL":"postgresql://smoke@127.0.0.1:5432/smoke"}}
