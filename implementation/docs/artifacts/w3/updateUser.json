@@ -1,0 +1,56 @@
+{
+  "operation": "mutation.updateUser",
+  "lane": "L1",
+  "workstream": "W3",
+  "commit": "499a71b",
+  "sourceDocuments": [
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/mutations.js",
+      "exportName": "updateUser",
+      "note": "Passes the input fields as individual variables and sends phoneIsVerified/emailIsVerified."
+    },
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/mutations/auth/index.ts",
+      "exportName": "UPDATE_USER",
+      "note": "Same individual-variable shape and the same client-supplied verification flags."
+    }
+  ],
+  "securityDecisions": [
+    "Client verification flags are never trusted or written: the lane rule derives verification from a consumed server challenge only. The response reports persisted state (IdentityUser.emailVerified); phoneIsVerified is false because no server-side phone proof can exist until the challenge store lands.",
+    "The root always targets the authenticated principal: the input type has no id or email selector, so there is no ownership argument to forge.",
+    "A phone already owned by another account returns CONFLICT and leaves the caller's row untouched; absent or null phone leaves the stored number unchanged; malformed name or number is BAD_USER_INPUT before any write."
+  ],
+  "commands": [
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/updateUser.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "2 tests: the profile input and context are forwarded; a missing input object degrades to {} instead of undefined."
+    },
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/updateUser.integration.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "6 tests: exact app and web documents; name trim and phone normalization persisted; client flags ignored in both directions (unverified stays false, server-verified stays true); taken phone is CONFLICT with no change; malformed input changes nothing; anonymous refused and another principal untouched."
+    },
+    {
+      "command": "pnpm test:integration",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "20 files / 116 tests green on commit 499a71b."
+    }
+  ],
+  "evidenceStatus": {
+    "unit": "passed",
+    "integration": "passed",
+    "playwright": "not-run",
+    "reason": "The apps list is app and web, so the evidence checker requires web (W16) and device (W19) evidence. The record stays NOT_VERIFIED."
+  },
+  "knownLimits": [
+    "Because no challenge store exists yet, phoneIsVerified can never become true through this root; the pinned phone-verification screen will therefore read an honest unverified state until the OTP/challenge slice lands. That is the truthful outcome, not a fabricated success.",
+    "The OTP documents also pass a client-supplied otp argument to the send mutations; that needs its own design round before sendOtpToEmail/sendOtpToPhoneNumber/verifyOtp are implemented."
+  ],
+  "reviewer": null
+}
