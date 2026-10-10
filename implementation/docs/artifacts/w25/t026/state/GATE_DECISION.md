@@ -34,7 +34,7 @@ Reasons, in order of severity:
    shared working tree is continuously dirty — a second, concurrently running session is
    committing W3 identity work (it added migrations `202610100001_l1_phone` and
    `202610100002_l1_audit_actions` and holds uncommitted `changePassword` sources during
-   this task). Re-recording now would erase the existing `lead` + `w2-sec-review`
+   this task). Re-recording now would erase the existing `lead` + `reviewer-SEC`
    approvals on G1 and replace them with a run that can never be approved. That is a
    strictly worse repository state than leaving G1 as-is with a recorded follow-up.
 2. The dirty-tree condition is not ours to fix: those files belong to another lane, and
