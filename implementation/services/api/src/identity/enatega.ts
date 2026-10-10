@@ -249,6 +249,13 @@ export class EnategaIdentityAdapter {
     return this.identity.phoneExists(phone, context);
   }
 
+  async changePassword(
+    input: { oldPassword?: unknown; newPassword?: unknown },
+    context: IdentityContext,
+  ) {
+    return this.identity.changePassword(input, context);
+  }
+
   async ownerSession(context: IdentityContext) {
     return toEnategaOwnerSessionFromToken(
       await this.identity.ownerPrincipal(context),

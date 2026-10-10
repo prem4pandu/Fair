@@ -6,6 +6,7 @@ import {
   registrationSchema,
   passwordLoginSchema,
   emailSchema,
+  passwordSchema,
 } from "@fairbite/identity-contracts";
 import { GraphQLError } from "graphql";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -503,6 +504,67 @@ export class IdentityService {
       .findUnique({ where: { phone }, select: { id: true } })
       .catch(() => unavailable());
     return user !== null;
+  }
+  /**
+   * Changes the caller's own password. The pinned client branches on the
+   * falsiness of the returned String and shows its own "invalid password"
+   * message, so a wrong old password is a null result rather than an error;
+   * malformed input and policy failures stay BAD_USER_INPUT. On success every
+   * other session family is revoked inside the same transaction as the new
+   * hash, while the caller's own session stays usable.
+   */
+  async changePassword(
+    input: { oldPassword?: unknown; newPassword?: unknown },
+    context: IdentityContext,
+  ): Promise<string | null> {
+    this.enabled();
+    const user = await this.identity("CUSTOMER", context);
+    await this.limit(context, `password-change:${user.id}`);
+    const newPassword = input?.newPassword;
+    const oldPassword = input?.oldPassword;
+    if (
+      typeof newPassword !== "string" ||
+      !passwordSchema.safeParse(newPassword).success
+    )
+      return authError("BAD_USER_INPUT", "Invalid request");
+    if (typeof oldPassword !== "string" || oldPassword.length === 0)
+      return authError("BAD_USER_INPUT", "Invalid request");
+    const authorization = context.authorization ?? "";
+    const token = authorization.startsWith("Bearer ")
+      ? authorization.slice(7)
+      : "";
+    const sessionId = token ? decodeJwt(token).sid : undefined;
+    if (typeof sessionId !== "string") return fail();
+
+    const credential = await this.prisma.identityCredential
+      .findUnique({
+        where: { userId: user.id },
+        select: { passwordHash: true },
+      })
+      .catch(() => unavailable());
+    if (!credential) return fail();
+    const matches = await this.hashWork(async () => {
+      try {
+        return await verify(credential.passwordHash, oldPassword);
+      } catch {
+        return false;
+      }
+    });
+    if (!matches) return null;
+
+    const passwordHash = await this.hashWork(() => this.encode(newPassword));
+    await this.prisma.$transaction(async (tx) => {
+      await tx.identityCredential.update({
+        where: { userId: user.id },
+        data: { passwordHash },
+      });
+      await tx.identitySessionFamily.updateMany({
+        where: { userId: user.id, revokedAt: null, id: { not: sessionId } },
+        data: { revokedAt: new Date() },
+      });
+      await this.audit(tx, "PASSWORD_CHANGED", "SUCCESS", user.id);
+    });
+    return "ok";
   }
   async identity(
     requested: Application,

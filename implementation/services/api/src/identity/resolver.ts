@@ -131,4 +131,12 @@ export class IdentityResolver {
   ) {
     return this.enatega.phoneExist(phone, ctx);
   }
+
+  @Mutation("changePassword") changePassword(
+    @Args("oldPassword") oldPassword: unknown,
+    @Args("newPassword") newPassword: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.enatega.changePassword({ oldPassword, newPassword }, ctx);
+  }
 }
