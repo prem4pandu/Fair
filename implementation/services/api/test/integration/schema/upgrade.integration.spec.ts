@@ -69,12 +69,50 @@ async function migrate(databaseUrl: string, args: string[]) {
     timeout: 120_000,
   });
 }
-async function snapshot(pool: Pool) {
+type ColumnSet = Record<string, string[]>;
+
+/**
+ * The columns each tracked table has at this moment. Captured after the
+ * populated 005 baseline and again after the full history so the preservation
+ * assertion can ignore columns later migrations add: an additive column must
+ * not rewrite a baseline row, and it must not make the comparison fail either.
+ */
+async function tableColumns(pool: Pool): Promise<ColumnSet> {
+  const result = await pool.query<{
+    table_name: string;
+    column_name: string;
+  }>(
+    `SELECT table_name, column_name FROM information_schema.columns
+      WHERE table_schema = 'public' AND table_name = ANY($1::text[])
+      ORDER BY table_name, ordinal_position`,
+    [tables],
+  );
+  const columns: ColumnSet = {};
+  for (const row of result.rows)
+    (columns[row.table_name] ??= []).push(row.column_name);
+  return columns;
+}
+
+function columnsAddedSince(baseline: ColumnSet, current: ColumnSet): ColumnSet {
+  const added: ColumnSet = {};
+  for (const table of tables) {
+    const existing = new Set(baseline[table] ?? []);
+    added[table] = (current[table] ?? []).filter(
+      (column) => !existing.has(column),
+    );
+  }
+  return added;
+}
+
+async function snapshot(pool: Pool, subtract: ColumnSet = {}) {
   const result: Record<string, unknown> = {};
   for (const table of tables) {
+    const added = subtract[table] ?? [];
     result[table] = (
       await pool.query(
-        `SELECT to_jsonb(t) AS row FROM "${table}" t ORDER BY to_jsonb(t)::text`,
+        `SELECT (to_jsonb(t) - $1::text[]) AS row FROM "${table}" t
+         ORDER BY (to_jsonb(t) - $1::text[])::text`,
+        [added],
       )
     ).rows;
   }
@@ -144,9 +182,24 @@ it("preserves every populated migration-005 row through the complete deployed hi
       ($1,'22222222-2222-4222-8222-222222222222','Private','Private Road','',103.7,1.2,true)`,
     [foreignAddressId],
   );
+  const baselineColumns = await tableColumns(upgraded.pool);
   const before = await snapshot(upgraded.pool);
   await migrate(upgraded.databaseUrl, ["deploy"]);
-  expect(await snapshot(upgraded.pool)).toEqual(before);
+  const addedColumns = columnsAddedSince(
+    baselineColumns,
+    await tableColumns(upgraded.pool),
+  );
+  expect(await snapshot(upgraded.pool, addedColumns)).toEqual(before);
+  // Additive extension only: every column the upgrade introduced is nullable
+  // and empty for the preserved rows, so no baseline value was rewritten.
+  expect(
+    (
+      await upgraded.pool.query(
+        'SELECT count(*)::int AS n FROM "IdentityUser" WHERE "phone" IS NOT NULL',
+      )
+    ).rows[0].n,
+  ).toBe(0);
+  expect(addedColumns.IdentityUser).toEqual(["phone"]);
   const applied = await upgraded.pool.query(
     'SELECT migration_name FROM "_prisma_migrations" WHERE finished_at IS NOT NULL ORDER BY migration_name',
   );
@@ -162,7 +215,7 @@ it("preserves every populated migration-005 row through the complete deployed hi
     'UPDATE "CatalogItem" SET "outletId"=\'11111111-1111-4111-8111-111111111111\'',
   ])
     await expect(upgraded.pool.query(sql)).rejects.toThrow();
-  expect(await snapshot(upgraded.pool)).toEqual(before);
+  expect(await snapshot(upgraded.pool, addedColumns)).toEqual(before);
   await expect(
     upgraded.pool.query(
       'INSERT INTO "RuntimeConfigurationVersion"(id,version,document) SELECT $1,3,document || \'{"deliveryFleets":{}}\'::jsonb FROM "RuntimeConfigurationVersion" WHERE version=2',
@@ -229,7 +282,7 @@ it("preserves every populated migration-005 row through the complete deployed hi
   expect(foreignSelection.errors.map((error) => error.extensions.code)).toEqual(
     ["NOT_FOUND"],
   );
-  const afterReads = await snapshot(upgraded.pool);
+  const afterReads = await snapshot(upgraded.pool, addedColumns);
   for (const table of [
     "CustomerAddress",
     "IdentityRefreshSession",

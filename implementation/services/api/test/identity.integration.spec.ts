@@ -90,7 +90,14 @@ beforeAll(async () => {
     .withExposedPorts(6379)
     .start();
   pool = new Pool({ connectionString: db.getConnectionUri() });
-  for (const migration of ["202610080001_foundation", "202610080002_identity"])
+  // The minimal identity baseline the Prisma client expects. Every additive
+  // column the client selects must be applied here too, or every Prisma read
+  // fails on the missing column.
+  for (const migration of [
+    "202610080001_foundation",
+    "202610080002_identity",
+    "202610100001_l1_phone",
+  ])
     await pool.query(
       readFileSync(
         new URL(

@@ -7,7 +7,7 @@
 - Operations: 334 (159 query, 164 mutation, 11 subscription)
 - Scoped multivendor document compatibility: PASS (531/531 documents valid)
 - Full six-app document compatibility: PASS (845/845 valid; 0 unresolved)
-- Resolvers implemented today: 20/334
+- Resolvers implemented today: 21/334
 - Recorded per-operation evidence: 0/334
 - Roots with no SDL declaration: 0
 - `OPERATION_LANES.json` is internally consistent (its `perLane` counts match the `operations` array).
@@ -24,7 +24,7 @@ been recorded yet, which is what `pnpm check:operations` fails on.
 | Lane | Name                           | Operations | Resolver implemented | Not implemented |
 | ---- | ------------------------------ | ---------- | -------------------- | --------------- |
 | L0   | Platform kernel                | 1          | 1                    | 0               |
-| L1   | Identity & sessions            | 30         | 10                   | 20              |
+| L1   | Identity & sessions            | 30         | 11                   | 19              |
 | L2   | Platform configuration         | 54         | 2                    | 52              |
 | L3   | Vendors, catalog & discovery   | 75         | 2                    | 73              |
 | L4   | Customers, addresses & support | 22         | 5                    | 17              |
@@ -66,7 +66,7 @@ been recorded yet, which is what `pnpm check:operations` fails on.
 | 9   | L1   | 2    | mutation     | `forgotPassword`                                          | app, rider, web               | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
 | 10  | L1   | 2    | mutation     | `login`                                                   | app, rider, web               | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
 | 11  | L1   | 2    | mutation     | `ownerLogin`                                              | admin                         | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
-| 12  | L1   | 2    | mutation     | `phoneExist`                                              | app, rider, web               | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
+| 12  | L1   | 2    | mutation     | `phoneExist`                                              | app, rider, web               | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
 | 13  | L1   | 2    | mutation     | `pushToken`                                               | app                           | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
 | 14  | L1   | 2    | mutation     | `refreshToken`                                            | admin                         | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
 | 15  | L1   | 2    | mutation     | `resetPassword`                                           | app, rider, web               | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |

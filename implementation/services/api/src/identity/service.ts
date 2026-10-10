@@ -30,6 +30,18 @@ export function normalizeEmail(value: unknown) {
     return authError("BAD_USER_INPUT", "Invalid request");
   return email;
 }
+// E.164 is what the pinned apps produce (`toE164(phone, countryCode)`), so the
+// stored form is `+` followed by 7–15 digits with no leading zero. Separators
+// the clients allow in the input are removed before validation; anything else
+// is BAD_USER_INPUT rather than a silently stored near-miss.
+const e164 = /^\+?[1-9]\d{6,14}$/;
+export function normalizePhone(value: unknown) {
+  if (typeof value !== "string")
+    return authError("BAD_USER_INPUT", "Invalid request");
+  const phone = value.trim().replace(/[\s().-]/g, "");
+  if (!e164.test(phone)) return authError("BAD_USER_INPUT", "Invalid request");
+  return phone;
+}
 export function opaqueValid(value: unknown): value is string {
   if (typeof value !== "string") return false;
   const [id, secret, ...rest] = value.split(".");
@@ -471,6 +483,24 @@ export class IdentityService {
     await this.limit(context, `email-exist:${email}`);
     const user = await this.prisma.identityUser
       .findUnique({ where: { email }, select: { id: true } })
+      .catch(() => unavailable());
+    return user !== null;
+  }
+  /**
+   * Whether an account already owns this normalized number. Like `emailExists`
+   * it is status-independent (a suspended account keeps its unique number) and
+   * rate-limited, because the contract answers an existence question about
+   * another principal.
+   */
+  async phoneExists(
+    value: unknown,
+    context: IdentityContext,
+  ): Promise<boolean> {
+    this.enabled();
+    const phone = normalizePhone(value);
+    await this.limit(context, `phone-exist:${phone}`);
+    const user = await this.prisma.identityUser
+      .findUnique({ where: { phone }, select: { id: true } })
       .catch(() => unavailable());
     return user !== null;
   }

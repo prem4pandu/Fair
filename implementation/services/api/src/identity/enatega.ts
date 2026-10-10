@@ -245,6 +245,10 @@ export class EnategaIdentityAdapter {
     return this.identity.emailExists(email, context);
   }
 
+  async phoneExist(phone: unknown, context: IdentityContext) {
+    return this.identity.phoneExists(phone, context);
+  }
+
   async ownerSession(context: IdentityContext) {
     return toEnategaOwnerSessionFromToken(
       await this.identity.ownerPrincipal(context),

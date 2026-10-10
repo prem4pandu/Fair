@@ -124,4 +124,11 @@ export class IdentityResolver {
   ) {
     return this.enatega.emailExist(email, ctx);
   }
+
+  @Mutation("phoneExist") phoneExist(
+    @Args("phone") phone: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.enatega.phoneExist(phone, ctx);
+  }
 }

@@ -1,6 +1,7 @@
 model IdentityUser {
   id            String                     @id @default(uuid()) @db.Uuid
   email         String                     @unique @db.VarChar(254)
+  phone         String?                    @unique @db.VarChar(20)
   displayName   String                     @db.VarChar(100)
   status        String                     @default("ACTIVE")
   emailVerified Boolean                    @default(false)
