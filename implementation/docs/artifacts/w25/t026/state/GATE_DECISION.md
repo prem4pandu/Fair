@@ -78,9 +78,20 @@ Until then, any status document or handoff that references G1 must say it is
 
 ## Same class of issue to watch
 
-`package.json` `test` currently globs `tools/*.test.mjs tools/lib/*.test.mjs`. Adding a
-new spec directory to that glob would change what the recorded GP0/G1 `pnpm test`
-command covers — the same re-record requirement applies. So task-1's
-`e2e/smoke/environment.test.mjs` is deliberately **not** wired into `pnpm test` in this
-round; it runs explicitly as `node --test e2e/smoke/environment.test.mjs` and the wiring
-is deferred to the same clean-tree window.
+`package.json` `test` globs `tools/*.test.mjs tools/lib/*.test.mjs`. Adding a new spec
+directory to that glob would change what the recorded GP0/G1 `pnpm test` command covers
+— the same re-record requirement applies. So task-1's `e2e/smoke/environment.test.mjs`
+is deliberately **not** added to the `pnpm test` glob.
+
+It is instead reachable through a standalone script added by the Lead:
+`pnpm test:e2e-smoke-env` → `node --test e2e/smoke/environment.test.mjs`. A new script
+is additive: no recorded gate command changes, so it needs no re-record. Wiring the spec
+into `pnpm test` itself remains deferred to the clean-tree window.
+
+- [ ] Optional, same window: decide whether the smoke env spec joins the `pnpm test`
+      glob (it would require re-recording GP0/G1, because that command's coverage
+      changes).
+
+Note that repo-wide `pnpm test` is not green at the moment for reasons unrelated to
+T-026: `docs/artifacts/w25/t026/state/REPO_TEST_STATUS.md` records 4 generated-status
+consistency failures that reproduce identically with the pre-T-026 implementation.

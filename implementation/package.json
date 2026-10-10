@@ -34,6 +34,7 @@
     "record-gate": "node tools/record-gate.mjs",
     "approve-gate": "node tools/approve-gate.mjs",
     "e2e:smoke": "node e2e/smoke/run.mjs",
+    "test:e2e-smoke-env": "node --test e2e/smoke/environment.test.mjs",
     "e2e": "node tools/pending-gate.mjs e2e",
     "test:journeys": "node tools/pending-gate.mjs test:journeys",
     "coverage:e2e": "node tools/pending-gate.mjs coverage:e2e"
