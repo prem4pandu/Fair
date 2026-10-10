@@ -68,7 +68,7 @@
   "apps": [
     {
       "app": "enatega-multivendor-web",
-      "filesScanned": 566,
+      "filesScanned": 568,
       "totalDocuments": 72,
       "validDocuments": 72,
       "unresolvedDocuments": 0,
@@ -629,7 +629,7 @@
         {
           "file": "enatega-multivendor-web/lib/api/graphql/queries/config.ts",
           "line": 3,
-          "sha256": "b2aa0bd527c4c946d1bb3c403babd8c1af54c942aa10a9be1064feb6f21f9897",
+          "sha256": "88ec048f9f1d9fa80269b3bc62292bd37937c93d81fc84aa63c1a0b8fa3efdc8",
           "status": "VALID_STATIC_DOCUMENT",
           "operations": [
             {
@@ -642,7 +642,7 @@
           "errors": [],
           "documentKind": "OPERATION",
           "backendOperationLimits": [],
-          "minimumHttpBodyBytes": 438,
+          "minimumHttpBodyBytes": 452,
           "minimumHttpBodyExceedsLimit": false
         },
         {
