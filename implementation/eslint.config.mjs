@@ -19,4 +19,12 @@ export default tseslint.config(
     ],
   },
   ...tseslint.configs.recommended,
+  {
+    // Evidence bundles under docs/artifacts may include CommonJS probe fixtures
+    // that are loaded with `node --require`. `.cjs` is CommonJS by definition,
+    // so require() is the only available import form there; every other lint
+    // rule still applies to those files.
+    files: ["docs/artifacts/**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
 );
