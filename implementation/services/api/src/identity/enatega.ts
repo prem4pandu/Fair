@@ -256,6 +256,13 @@ export class EnategaIdentityAdapter {
     return this.identity.changePassword(input, context);
   }
 
+  async deactivate(
+    input: { email?: unknown; isActive?: unknown },
+    context: IdentityContext,
+  ) {
+    return this.identity.deactivate(input, context);
+  }
+
   async ownerSession(context: IdentityContext) {
     return toEnategaOwnerSessionFromToken(
       await this.identity.ownerPrincipal(context),

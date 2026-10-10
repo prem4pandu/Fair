@@ -7,7 +7,7 @@
 - Operations: 334 (159 query, 164 mutation, 11 subscription)
 - Scoped multivendor document compatibility: PASS (531/531 documents valid)
 - Full six-app document compatibility: PASS (845/845 valid; 0 unresolved)
-- Resolvers implemented today: 22/334
+- Resolvers implemented today: 23/334
 - Recorded per-operation evidence: 0/334
 - Roots with no SDL declaration: 0
 - `OPERATION_LANES.json` is internally consistent (its `perLane` counts match the `operations` array).
@@ -24,7 +24,7 @@ been recorded yet, which is what `pnpm check:operations` fails on.
 | Lane | Name                           | Operations | Resolver implemented | Not implemented |
 | ---- | ------------------------------ | ---------- | -------------------- | --------------- |
 | L0   | Platform kernel                | 1          | 1                    | 0               |
-| L1   | Identity & sessions            | 30         | 12                   | 18              |
+| L1   | Identity & sessions            | 30         | 13                   | 17              |
 | L2   | Platform configuration         | 54         | 2                    | 52              |
 | L3   | Vendors, catalog & discovery   | 75         | 2                    | 73              |
 | L4   | Customers, addresses & support | 22         | 5                    | 17              |
@@ -59,7 +59,7 @@ been recorded yet, which is what `pnpm check:operations` fails on.
 | 2   | L1   | 2    | mutation     | `changePassword`                                          | app                           | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
 | 3   | L1   | 2    | mutation     | `createStaff`                                             | admin                         | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
 | 4   | L1   | 2    | mutation     | `createUser`                                              | app, web                      | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
-| 5   | L1   | 2    | mutation     | `Deactivate`                                              | app, rider, web               | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
+| 5   | L1   | 2    | mutation     | `Deactivate`                                              | app, rider, web               | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
 | 6   | L1   | 2    | mutation     | `deleteStaff`                                             | admin                         | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
 | 7   | L1   | 2    | mutation     | `editStaff`                                               | admin                         | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
 | 8   | L1   | 2    | mutation     | `emailExist`                                              | app, rider, web               | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |

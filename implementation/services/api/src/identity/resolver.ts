@@ -139,4 +139,12 @@ export class IdentityResolver {
   ) {
     return this.enatega.changePassword({ oldPassword, newPassword }, ctx);
   }
+
+  @Mutation("Deactivate") deactivate(
+    @Args("email") email: unknown,
+    @Args("isActive") isActive: unknown,
+    @Context() ctx: IdentityContext,
+  ) {
+    return this.enatega.deactivate({ email, isActive }, ctx);
+  }
 }

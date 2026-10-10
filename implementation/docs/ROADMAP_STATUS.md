@@ -8,7 +8,7 @@ repository can prove.
 
 ## Headline
 
-- **22/334** root operations have a real resolver
+- **23/334** root operations have a real resolver
   (159 queries, 164 mutations, 11 subscriptions in scope).
 - **0/334** operations have recorded evidence in `OPERATION_TEST_EVIDENCE.json`.
 - **0** roots have no SDL declaration.
@@ -43,7 +43,7 @@ refuses self-approval and refuses a failing or dirty-tree run.
 | `W0`   | Baseline repair and gate instrumentation                               | —     | **APPROVED**      | GP0 approved                     | —                               |
 | `W1`   | Kernel and transport completion                                        | L0    | RESOLVERS_ONLY    | 1/1 resolvers · 0/1 evidenced    | —                               |
 | `W2`   | Contract and data-model freeze                                         | —     | **APPROVED**      | G1 approved                      | —                               |
-| `W3`   | Identity, roles, staff scopes, MFA, recovery, OTP/social               | L1    | IN_PROGRESS       | 12/30 resolvers · 0/30 evidenced | —                               |
+| `W3`   | Identity, roles, staff scopes, MFA, recovery, OTP/social               | L1    | IN_PROGRESS       | 13/30 resolvers · 0/30 evidenced | —                               |
 | `W4`   | Platform configuration, maps and media REST                            | L2    | IN_PROGRESS       | 2/54 resolvers · 0/54 evidenced  | —                               |
 | `W5a`  | Vendors, outlets, onboarding, publication, hours, media                | L3    | IN_PROGRESS       | 2/75 resolvers · 0/75 evidenced  | —                               |
 | `W6`   | Customers, addresses, favourites, support, privacy                     | L4    | IN_PROGRESS       | 5/22 resolvers · 0/22 evidenced  | waiting on W3                   |
@@ -106,7 +106,7 @@ deliberate, recorded choice — it is listed here so it is never silent.
 | Lane  | Name                           | Operations | Resolvers | Evidenced |
 | ----- | ------------------------------ | ---------- | --------- | --------- |
 | `L0`  | Platform kernel                | 1          | 1         | 0         |
-| `L1`  | Identity & sessions            | 30         | 12        | 0         |
+| `L1`  | Identity & sessions            | 30         | 13        | 0         |
 | `L2`  | Platform configuration         | 54         | 2         | 0         |
 | `L3`  | Vendors, catalog & discovery   | 75         | 2         | 0         |
 | `L4`  | Customers, addresses & support | 22         | 5         | 0         |

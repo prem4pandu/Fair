@@ -6,7 +6,7 @@
   "release": "NOT_APPROVED",
   "operations": {
     "total": 334,
-    "withRealResolvers": 22,
+    "withRealResolvers": 23,
     "withRecordedEvidence": 0,
     "withoutSdlDeclaration": 0,
     "byKind": { "query": 159, "mutation": 164, "subscription": 11 }
@@ -32,7 +32,7 @@
     "L1": {
       "name": "Identity & sessions",
       "roots": 30,
-      "withRealResolvers": 12
+      "withRealResolvers": 13
     },
     "L2": {
       "name": "Platform configuration",

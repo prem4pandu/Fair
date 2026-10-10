@@ -566,6 +566,85 @@ export class IdentityService {
     });
     return "ok";
   }
+  /**
+   * Resolves the caller against any of the applications that own a root.
+   * Only an authentication failure falls through to the next candidate; an
+   * infrastructure failure is surfaced immediately rather than disguised as a
+   * different application's rejection.
+   */
+  private async identityFor(
+    applications: Application[],
+    context: IdentityContext,
+  ): Promise<PublicUser> {
+    let failure: unknown;
+    for (const requested of applications) {
+      try {
+        return await this.identity(requested, context);
+      } catch (error) {
+        if (
+          error instanceof GraphQLError &&
+          error.extensions?.code === "AUTHENTICATION_FAILED"
+        ) {
+          failure = error;
+          continue;
+        }
+        throw error;
+      }
+    }
+    throw failure ?? fail();
+  }
+  /**
+   * Activates or deactivates the caller's own account. `email` is required by
+   * the pinned contract but is an ownership claim, not a selector: it must name
+   * the authenticated principal, so the argument can never target another
+   * account. Deactivation revokes every session family in the same transaction
+   * as the status change; reactivation is only reachable by an already-active
+   * principal, because a suspended one cannot authenticate.
+   */
+  async deactivate(
+    input: { email?: unknown; isActive?: unknown },
+    context: IdentityContext,
+  ): Promise<{
+    _id: string;
+    email: string;
+    name: string;
+    isActive: boolean;
+  }> {
+    this.enabled();
+    const user = await this.identityFor(["CUSTOMER", "RIDER"], context);
+    await this.limit(context, `deactivate:${user.id}`);
+    const isActive = input?.isActive;
+    if (typeof isActive !== "boolean")
+      return authError("BAD_USER_INPUT", "Invalid request");
+    const email = normalizeEmail(input?.email);
+    if (email !== user.email)
+      // The argument is an ownership claim only; formatError replaces this with
+      // the canonical FORBIDDEN message at the edge.
+      return authError("FORBIDDEN", "Not permitted");
+    await this.prisma.$transaction(async (tx) => {
+      await tx.identityUser.update({
+        where: { id: user.id },
+        data: { status: isActive ? "ACTIVE" : "SUSPENDED" },
+      });
+      if (!isActive)
+        // now() is the transaction clock, which is always at or after the
+        // family's database-side createdAt. A Node-side Date here can be skewed
+        // behind the database clock and violate the family's
+        // "revokedAt >= createdAt" check.
+        await tx.$executeRaw`
+          UPDATE "IdentitySessionFamily"
+             SET "revokedAt" = now()
+           WHERE "userId" = ${user.id}::uuid
+             AND "revokedAt" IS NULL`;
+      await this.audit(tx, "DEACTIVATE", "SUCCESS", user.id);
+    });
+    return {
+      _id: user.id,
+      email: user.email,
+      name: user.displayName,
+      isActive,
+    };
+  }
   async identity(
     requested: Application,
     context: IdentityContext,
