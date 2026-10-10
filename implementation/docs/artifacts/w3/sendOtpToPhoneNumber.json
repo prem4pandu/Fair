@@ -1,0 +1,58 @@
+{
+  "operation": "mutation.sendOtpToPhoneNumber",
+  "lane": "L1",
+  "workstream": "W3",
+  "commit": "c20ddbd",
+  "sourceDocuments": [
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/mutations/auth/index.ts",
+      "exportName": "SENT_OTP_TO_PHONE",
+      "note": "Sends only the phone target."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/mutations.js",
+      "exportName": "sendOtpToPhoneNumber",
+      "note": "Same shape."
+    },
+    {
+      "app": "enatega-multivendor-rider",
+      "file": "lib/apollo/mutations/authentication.mutation.ts",
+      "exportName": "sendOtpToPhoneNumber",
+      "note": "Also sends a client-chosen otp, which the server ignores."
+    }
+  ],
+  "sharedImplementation": "Same service path as mutation.sendOtpToEmail: one target-only challenge on the SMS channel, hashed recipient and code, server-generated code, DevOutbox delivery while no provider exists, 30-second per-target cooldown and the shared per-caller limits.",
+  "commands": [
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/sendOtp.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "2 tests including the SMS adapter delegation."
+    },
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/sendOtp.integration.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "The phone case asserts the exact pinned document, an SMS-channel VERIFY challenge, a DevOutbox delivery to the normalized E.164 number with a 6-digit code, a malformed-number rejection with no side effects, and the shared cooldown path."
+    },
+    {
+      "command": "pnpm test:integration",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "21 files / 121 tests green on commit c20ddbd."
+    }
+  ],
+  "evidenceStatus": {
+    "unit": "passed",
+    "integration": "passed",
+    "playwright": "not-run",
+    "reason": "The apps list includes web, app and rider, so web (W16) and device (W19) evidence are genuinely owed. The record stays NOT_VERIFIED."
+  },
+  "knownLimits": [
+    "SMS delivery has no provider: production returns PROVIDER_UNAVAILABLE and only development/test write to DevOutbox. Real SMS acceptance is W18/W10 provider work, not something this slice can fake.",
+    "verifyOtp and account-level derivation from a consumed challenge land next."
+  ],
+  "reviewer": null
+}

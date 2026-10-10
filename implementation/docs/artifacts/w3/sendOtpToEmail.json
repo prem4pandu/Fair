@@ -1,0 +1,70 @@
+{
+  "operation": "mutation.sendOtpToEmail",
+  "lane": "L1",
+  "workstream": "W3",
+  "commit": "c20ddbd",
+  "sourceDocuments": [
+    {
+      "app": "enatega-multivendor-web",
+      "file": "lib/api/graphql/mutations/auth/index.ts",
+      "exportName": "SENT_OTP_TO_EMAIL",
+      "note": "Sends only the email target."
+    },
+    {
+      "app": "enatega-multivendor-app",
+      "file": "src/apollo/mutations.js",
+      "exportName": "sendOtpToEmail",
+      "note": "Same shape."
+    },
+    {
+      "app": "enatega-multivendor-rider",
+      "file": "lib/apollo/mutations/authentication.mutation.ts",
+      "exportName": "sendOtpToEmail",
+      "note": "Also sends a client-chosen otp, which the server ignores."
+    }
+  ],
+  "migration": {
+    "name": "202610100004_l1_verification_challenges",
+    "kind": "additive new table",
+    "storage": "Only HMAC-SHA256 of the recipient and of (challenge id + code) are stored; a database read recovers neither the address nor the code.",
+    "guards": "CHECK constraints for purpose, channel, hash shape, attempt bounds, expiry window and consumption ordering, plus a BEFORE UPDATE trigger that makes the binding immutable and lets attempts only rise and consumption happen once, and no-delete/no-truncate triggers.",
+    "rollback": "DROP TABLE \"IdentityVerificationChallenge\"; open challenges are lost, which only means the user requests a new code."
+  },
+  "securityDecisions": [
+    "The code is generated server-side with crypto.randomInt and delivered only through DevOutbox while no provider exists; production fails visibly with PROVIDER_UNAVAILABLE rather than claiming a delivery.",
+    "The rider's client-supplied otp is ignored; a caller-chosen code would let anyone verify a target they do not control. The test asserts the delivered code differs from the client's.",
+    "A 30-second per-target cooldown matches the pinned screens' resend timer, on top of the shared per-caller Redis limits.",
+    "Only one challenge can be open per target and purpose: sending consumes any earlier open one in the same transaction."
+  ],
+  "commands": [
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/sendOtp.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "2 tests: the adapter forwards the target (and the ignorable otp) for both send roots."
+    },
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/sendOtp.integration.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "5 tests: exact web/app/rider documents; challenge row with 64-char hashes, VERIFY purpose, 10-minute expiry, zero attempts and no consumption; DevOutbox message with a 6-digit code; the rider's code never delivered; phone root over SMS; resend cooldown RATE_LIMITED with no second delivery; malformed targets rejected without any challenge or delivery."
+    },
+    {
+      "command": "pnpm test:integration",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "21 files / 121 tests green on commit c20ddbd, including the populated migration-005 upgrade and fresh deploy."
+    }
+  ],
+  "evidenceStatus": {
+    "unit": "passed",
+    "integration": "passed",
+    "playwright": "not-run",
+    "reason": "The apps list includes web, app and rider, so web (W16) and device (W19) evidence are genuinely owed. The record stays NOT_VERIFIED."
+  },
+  "knownLimits": [
+    "verifyOtp is not implemented yet, so a challenge cannot be consumed through the API in this commit; consumption semantics (expiry, attempt cap, single-use under concurrency) land with that root.",
+    "Account-level derivation from a consumed challenge (emailVerified/phoneVerified) is also still to come; until then the challenge is real server-side proof but no account flag is set from it."
+  ],
+  "reviewer": null
+}

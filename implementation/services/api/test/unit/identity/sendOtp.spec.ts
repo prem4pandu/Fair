@@ -23,7 +23,7 @@ describe(op("mutation.sendOtpToEmail"), () => {
     );
   });
 
-  it("forwards the phone target for the SMS root", async () => {
+  it(`${op("mutation.sendOtpToPhoneNumber")} forwards the phone target for the SMS root`, async () => {
     const sendOtp = vi.fn().mockResolvedValue({ result: "SENT" });
     const adapter = new EnategaIdentityAdapter({
       sendOtp,
