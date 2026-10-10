@@ -1,0 +1,57 @@
+{
+  "operation": "mutation.phoneExist",
+  "lane": "L1",
+  "workstream": "W3",
+  "commit": "4afbd0e",
+  "sourceDocument": {
+    "app": "enatega-multivendor-web",
+    "file": "lib/api/graphql/mutations/auth/index.ts",
+    "exportName": "PHONE_EXISTS",
+    "note": "Loaded through tools/lib/documents.mjs. The multivendor app and rider declare the same mutation; single-vendor variants carry the same Boolean contract."
+  },
+  "migration": {
+    "name": "202610100001_l1_phone",
+    "kind": "additive extension",
+    "sql": "ALTER TABLE \"IdentityUser\" ADD COLUMN \"phone\" VARCHAR(20); CREATE UNIQUE INDEX \"IdentityUser_phone_key\" ON \"IdentityUser\"(\"phone\");",
+    "rollback": "DROP INDEX \"IdentityUser_phone_key\"; ALTER TABLE \"IdentityUser\" DROP COLUMN \"phone\";",
+    "preservation": "test/integration/schema/upgrade.integration.spec.ts now snapshots the baseline column set, asserts every added column is empty for the preserved migration-005 rows, and asserts the fresh-database deploy applies the same history."
+  },
+  "commands": [
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.config.ts test/unit/identity/phoneExist.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "4 tests: adapter delegation, false propagation, separator normalization to E.164, malformed-number rejection."
+    },
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/identity/phoneExist.integration.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "7 tests against the real HTTP server, PostgreSQL and Redis: exact pinned document true/false, separator normalization, BAD_USER_INPUT for five malformed shapes, public-access 403 without the handshake, RATE_LIMITED cap, unique-index enforcement, and no writes on lookup."
+    },
+    {
+      "command": "pnpm --filter @fairbite/api exec vitest run --config vitest.integration.config.ts test/integration/schema/upgrade.integration.spec.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "Populated migration-005 upgrade preserves every baseline row with the phone column empty, and the fresh-database deploy applies the complete history."
+    },
+    {
+      "command": "pnpm test:integration",
+      "result": "passed",
+      "exitCode": 0,
+      "detail": "17 files / 100 tests green on commit 4afbd0e."
+    }
+  ],
+  "evidenceStatus": {
+    "unit": "passed",
+    "integration": "passed",
+    "playwright": "not-run",
+    "reason": "The apps list includes web, app and rider, so the evidence checker requires web (playwright/webJourney, W16) and device (W19) evidence. Both harnesses are unbuilt, so this record stays NOT_VERIFIED."
+  },
+  "knownLimits": [
+    "Phone shape policy is recorded rather than assumed: `+` plus 7-15 digits with no leading zero, client separators removed first. The pinned apps send toE164(phone, countryCode), which this accepts; an owner-specified country policy would be a configuration change, not an invented rule.",
+    "Existence is status-independent, matching emailExist: a suspended account keeps its unique number.",
+    "The contract answers an existence question about another principal, so it is rate-limited per caller and per number and returns nothing else."
+  ],
+  "reviewer": null
+}
