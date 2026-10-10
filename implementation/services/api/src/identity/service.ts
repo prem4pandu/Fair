@@ -1,6 +1,6 @@
 import { randomBytes, randomUUID, createHmac } from "node:crypto";
 import { argon2id, hash, verify } from "argon2";
-import { SignJWT, jwtVerify } from "jose";
+import { SignJWT, jwtVerify, decodeJwt } from "jose";
 import {
   applicationSchema as application,
   registrationSchema,
@@ -48,7 +48,7 @@ const roleFor = {
   RIDER: "RIDER",
   ADMIN: "ADMIN",
 } as const;
-type PublicUser = {
+export type PublicUser = {
   id: string;
   email: string;
   displayName: string;
@@ -551,6 +551,21 @@ export class IdentityService {
   }
   async me(requested: Application, context: IdentityContext) {
     return publicUser(await this.identity(requested, context));
+  }
+  /**
+   * The authenticated owner principal plus the access token that proved it.
+   * `authorize` has already validated the header, so slicing it here cannot
+   * accept an unverified token; the expiry comes from the same claims.
+   */
+  async ownerPrincipal(context: IdentityContext) {
+    const user = await this.identity("ADMIN", context);
+    const authorization = context.authorization ?? "";
+    const token = authorization.startsWith("Bearer ")
+      ? authorization.slice(7)
+      : "";
+    const expiresAt = token ? decodeJwt(token).exp : undefined;
+    if (!token || typeof expiresAt !== "number") return fail();
+    return { user, token, expiresAt };
   }
   async logoutAll(requested: Application, context: IdentityContext) {
     const user = await this.identity(requested, context);

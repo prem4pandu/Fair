@@ -113,4 +113,8 @@ export class IdentityResolver {
   ) {
     return this.enatega.hasOwnerPermission(permission, ctx);
   }
+
+  @Query("ownerSession") ownerSession(@Context() ctx: IdentityContext) {
+    return this.enatega.ownerSession(ctx);
+  }
 }

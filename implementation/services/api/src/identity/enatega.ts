@@ -1,5 +1,10 @@
 import { decodeJwt } from "jose";
-import { authError, type IdentityContext, IdentityService } from "./service.js";
+import {
+  authError,
+  type IdentityContext,
+  IdentityService,
+  type PublicUser,
+} from "./service.js";
 
 type Application = "CUSTOMER" | "MERCHANT" | "RIDER" | "ADMIN";
 
@@ -78,6 +83,40 @@ export function toEnategaOwnerSession(session: Session) {
     image: null,
     name: session.user.displayName,
     isActive: true,
+  };
+}
+
+/**
+ * `ownerSession` resolves purely from the bearer token: it echoes the current
+ * access token and never mints or rotates a refresh token, because the pinned
+ * client deliberately keeps its cached refresh pair (normalizeOwnerSession in
+ * the admin app). The admin application is only issuable to an ADMIN-role user
+ * today (`IdentityService.eligible`), so ADMIN is the only reachable userType;
+ * STAFF/VENDOR/RESTAURANT need the ownership records W5a adds. `userTypeId` is
+ * the caller's own id — the same convention `restaurantLogin` already uses for
+ * a merchant principal. `restaurants: []` is what the reference accepts for
+ * ADMIN/STAFF.
+ */
+export function toEnategaOwnerSessionFromToken(principal: {
+  user: PublicUser;
+  token: string;
+  expiresAt: number;
+}) {
+  const { user, token, expiresAt } = principal;
+  return {
+    userId: user.id,
+    email: user.email,
+    userType: "ADMIN",
+    userTypeId: user.id,
+    permissions: user.roles,
+    name: user.displayName,
+    image: null,
+    restaurants: [],
+    token,
+    tokenExpiration: String(expiresAt),
+    refreshToken: null,
+    refreshTokenExpiration: null,
+    isActive: user.status === "ACTIVE",
   };
 }
 
@@ -200,6 +239,12 @@ export class EnategaIdentityAdapter {
       userType: user.roles[0] ?? null,
       stripe_plan_id: null,
     };
+  }
+
+  async ownerSession(context: IdentityContext) {
+    return toEnategaOwnerSessionFromToken(
+      await this.identity.ownerPrincipal(context),
+    );
   }
 
   async hasOwnerPermission(permission: unknown, context: IdentityContext) {

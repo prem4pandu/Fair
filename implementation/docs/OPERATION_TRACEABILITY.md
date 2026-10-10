@@ -7,7 +7,7 @@
 - Operations: 334 (159 query, 164 mutation, 11 subscription)
 - Scoped multivendor document compatibility: PASS (531/531 documents valid)
 - Full six-app document compatibility: PASS (845/845 valid; 0 unresolved)
-- Resolvers implemented today: 18/334
+- Resolvers implemented today: 19/334
 - Recorded per-operation evidence: 0/334
 - Roots with no SDL declaration: 0
 - `OPERATION_LANES.json` is internally consistent (its `perLane` counts match the `operations` array).
@@ -24,7 +24,7 @@ been recorded yet, which is what `pnpm check:operations` fails on.
 | Lane | Name                           | Operations | Resolver implemented | Not implemented |
 | ---- | ------------------------------ | ---------- | -------------------- | --------------- |
 | L0   | Platform kernel                | 1          | 1                    | 0               |
-| L1   | Identity & sessions            | 30         | 8                    | 22              |
+| L1   | Identity & sessions            | 30         | 9                    | 21              |
 | L2   | Platform configuration         | 54         | 2                    | 52              |
 | L3   | Vendors, catalog & discovery   | 75         | 2                    | 73              |
 | L4   | Customers, addresses & support | 22         | 5                    | 17              |
@@ -82,7 +82,7 @@ been recorded yet, which is what `pnpm check:operations` fails on.
 | 25  | L1   | 2    | mutation     | `verifyOtp`                                               | app, web                      | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
 | 26  | L1   | 2    | query        | `appleAuthNonce`                                          | app                           | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
 | 27  | L1   | 2    | query        | `hasOwnerPermission`                                      | admin                         | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
-| 28  | L1   | 2    | query        | `ownerSession`                                            | admin                         | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
+| 28  | L1   | 2    | query        | `ownerSession`                                            | admin                         | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
 | 29  | L1   | 2    | query        | `profile`                                                 | app, web                      | IMPLEMENTED     | L1-identity.graphql          | NOT_VERIFIED |
 | 30  | L1   | 2    | query        | `staffs`                                                  | admin                         | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
 | 31  | L1   | 2    | query        | `staffsPaginated`                                         | admin                         | NOT_IMPLEMENTED | L1-identity.graphql          | NOT_VERIFIED |
